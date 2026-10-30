@@ -1,0 +1,35 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-or-hybrid-control",
+  "name": {"zh-CN": "复合手术室控制室", "en": "Hybrid OR control room"},
+  "description": {"zh-CN": "复合手术室的控制与技术间：成像控制台面向铅玻璃观察窗，内侧是高压发生器、不间断电源与图像处理机柜；门可直通手术间。", "en": "Control and technical room of the hybrid OR: the imaging console faces the lead-glass window, with the generator, UPS and image-processing cabinets behind; a door leads straight into the OR."},
+  "kind": "imaging",
+  "size": {"w": 4, "d": 9},
+  "floor": "lino",
+  "partitions": [
+    {"side": "n", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "w", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "e", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "window", "offset": 0, "width": 3, "sill": 1, "height": 1.3}, {"kind": "sliding-door", "offset": 3, "width": 1.4, "height": 2.4}]},
+    {"side": "s", "material": "white", "base": "sc-or-wall-base", "openings": [{"kind": "door", "offset": -0.8, "width": 1.4, "height": 2.6}]}
+  ],
+  "sign": {"text": {"zh-CN": "复合手术控制室", "en": "Hybrid OR control"}, "color": "#d98a3d"},
+  "lights": [
+    {"x": 0, "z": -2.5},
+    {"x": 0, "z": 2.5}
+  ],
+  "placements": [
+    {"id": "console", "type": "radiology-console", "x": 1.05, "z": 0, "rot": 90, "label": {"zh-CN": "血管造影控制台", "en": "Angiography console"}},
+    {"id": "chair-1", "type": "office-chair", "x": -0.1, "z": -0.6},
+    {"id": "chair-2", "type": "office-chair", "x": -0.1, "z": 0.6},
+    {"id": "generator", "type": "cabinet", "x": -1, "z": -4.075, "label": {"zh-CN": "高压发生器柜", "en": "X-ray generator cabinet"}},
+    {"id": "ups", "type": "cabinet", "x": 0.1, "z": -4.075, "label": {"zh-CN": "UPS 与图像处理机柜", "en": "UPS & image-processing rack"}},
+    {"id": "records", "type": "records-terminal", "x": 1.45, "z": -2.6, "label": {"zh-CN": "电子病历终端", "en": "EHR terminal"}},
+    {"id": "pacs", "type": "sc-wall-display", "x": -1.765, "z": -1.6, "rot": 90, "label": {"zh-CN": "PACS 显示屏", "en": "PACS display"}},
+    {"id": "aprons", "type": "sc-apron-rack", "x": -1.675, "z": 3.4, "rot": 90, "label": {"zh-CN": "铅衣架", "en": "Lead apron rack"}}
+  ],
+  "staff": [
+    {"id": "radiographer", "role": "radiologist", "name": {"zh-CN": "介入放射医师", "en": "Interventional radiologist"}, "x": -0.6, "z": -2.0, "rot": 90, "greeting": {"zh-CN": "造影前请所有人穿好铅衣，铅屏风我来摆位。", "en": "Lead aprons on for everyone before we screen — I'll position the shield."}}
+  ],
+  "capabilities": ["records"],
+  "tags": ["hybrid", "imaging", "control-room"]
+}
