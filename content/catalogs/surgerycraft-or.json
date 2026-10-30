@@ -23,7 +23,21 @@
     {"id": "sc-gas-air", "color": "#2b2b2b", "pattern": "flat", "variance": 0.02},
     {"id": "sc-gas-n2o", "color": "#3a64b5", "pattern": "flat", "variance": 0.02},
     {"id": "sc-gas-agss", "color": "#b5479a", "pattern": "flat", "variance": 0.02},
-    {"id": "sc-matte-black", "color": "#25292c", "pattern": "flat", "variance": 0.01, "roughness": 0.5}
+    {"id": "sc-matte-black", "color": "#25292c", "pattern": "flat", "variance": 0.01, "roughness": 0.5},
+    {"id": "sc-ext-panel", "color": "#ecedea", "pattern": "grid", "variance": 0.015, "roughness": 0.55},
+    {"id": "sc-ext-spandrel", "color": "#2d353c", "pattern": "flat", "variance": 0.01, "roughness": 0.22, "metalness": 0.35},
+    {"id": "sc-ext-frame", "color": "#2a2f34", "pattern": "flat", "variance": 0.01, "roughness": 0.35, "metalness": 0.45},
+    {"id": "sc-ext-roof", "color": "#f2f3f1", "pattern": "flat", "variance": 0.01, "roughness": 0.6},
+    {"id": "sc-ext-timber", "color": "#b5835a", "pattern": "plank", "variance": 0.07, "roughness": 0.7},
+    {"id": "sc-ext-soffit", "color": "#c49a6c", "pattern": "plank", "variance": 0.06, "roughness": 0.75},
+    {"id": "sc-ext-led", "color": "#fff4dc", "pattern": "flat", "variance": 0, "emissive": "#ffe9c0", "emissiveIntensity": 1.4},
+    {"id": "sc-ext-paving", "color": "#dcdbd4", "pattern": "tile", "variance": 0.04, "roughness": 0.8, "castShadow": false},
+    {"id": "sc-ext-paving-dark", "color": "#7d817f", "pattern": "tile", "variance": 0.04, "roughness": 0.8, "castShadow": false},
+    {"id": "sc-ext-corten", "color": "#8c4a26", "pattern": "noise", "variance": 0.08, "roughness": 0.85},
+    {"id": "sc-ext-pv", "color": "#1d2c47", "pattern": "grid", "variance": 0.03, "roughness": 0.25, "metalness": 0.5},
+    {"id": "sc-ext-deck", "color": "#3b4045", "pattern": "noise", "variance": 0.04, "roughness": 0.8},
+    {"id": "sc-ext-shrub", "color": "#4f7d45", "pattern": "noise", "variance": 0.12, "roughness": 0.95},
+    {"id": "sc-ext-louvre", "color": "#c3c8cb", "pattern": "stripe", "variance": 0.03, "roughness": 0.45, "metalness": 0.3}
   ],
   "equipment": [
     {
@@ -1959,6 +1973,387 @@
         {"m": "plastic", "p": [-0.08, 0.025, 0], "s": [0.18, 0.04, 0.05]},
         {"m": "sc-robot-accent", "p": [0.08, 0.03, 0], "s": [0.18, 0.05, 0.07]},
         {"m": "led-green", "p": [-0.12, 0.048, 0], "s": [0.03, 0.004, 0.02]}
+      ]
+    },
+    {
+      "id": "sc-ext-fins",
+      "name": {"zh-CN": "立面竖向遮阳格栅", "en": "Facade fin screen"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "手术部立面的竖向遮阳格栅：仿木纹铝合金翼片按 0.6 m 间距排列、进深在 0.30–0.65 m 之间起伏，遮挡低角度日照与视线，同时让病房和走廊保留远景。",
+        "en": "Vertical solar-shading screen of the operating floor: timber-look aluminium fins at 0.6 m centres whose depth undulates between 0.30 and 0.65 m, cutting low-angle sun and overlooking while keeping the view out."
+      },
+      "capabilities": [],
+      "footprint": {"w": 4.8, "d": 0.7, "h": 5.3},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "facade", "shading"],
+      "parts": [
+        {"m": "sc-ext-timber", "p": [-2.1, 2.65, -0.1125], "s": [0.09, 5.2, 0.475]},
+        {"m": "sc-ext-timber", "p": [-1.5, 2.65, -0.0506], "s": [0.09, 5.2, 0.5987]},
+        {"m": "sc-ext-timber", "p": [-0.9, 2.65, -0.025], "s": [0.09, 5.2, 0.65]},
+        {"m": "sc-ext-timber", "p": [-0.3, 2.65, -0.0506], "s": [0.09, 5.2, 0.5987]},
+        {"m": "sc-ext-timber", "p": [0.3, 2.65, -0.1125], "s": [0.09, 5.2, 0.475]},
+        {"m": "sc-ext-timber", "p": [0.9, 2.65, -0.1744], "s": [0.09, 5.2, 0.3513]},
+        {"m": "sc-ext-timber", "p": [1.5, 2.65, -0.2], "s": [0.09, 5.2, 0.3]},
+        {"m": "sc-ext-timber", "p": [2.1, 2.65, -0.1744], "s": [0.09, 5.2, 0.3513]},
+        {"m": "sc-ext-frame", "p": [0, 0.08, -0.3], "s": [4.8, 0.06, 0.08]},
+        {"m": "sc-ext-frame", "p": [0, 5.22, -0.3], "s": [4.8, 0.06, 0.08]}
+      ]
+    },
+    {
+      "id": "sc-ext-canopy",
+      "name": {"zh-CN": "入口悬挑雨篷", "en": "Entrance canopy"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "主入口的白色悬挑雨篷：28 cm 薄板、暖色木纹吊顶与嵌入式 LED 筒灯，两根细柱落在车道一侧，雨天也能从落客区一路走到门口。",
+        "en": "Floating white entrance canopy: a 28 cm plate with a warm timber soffit and recessed LED downlights on two slender columns, so you walk from the drop-off to the door under cover."
+      },
+      "capabilities": [],
+      "footprint": {"w": 16, "d": 7, "h": 4.9},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "entrance"],
+      "parts": [
+        {"m": "sc-ext-roof", "p": [0, 4.71, 0], "s": [16, 0.28, 7]},
+        {"m": "sc-ext-soffit", "p": [0, 4.555, 0], "s": [15.8, 0.03, 6.8]},
+        {"m": "sc-ext-frame", "p": [0, 4.71, 3.49], "s": [16, 0.08, 0.02]},
+        {"m": "sc-ext-led", "p": [-6, 4.535, -2.2], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [-6, 4.535, 0.4], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [-6, 4.535, 2.8], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [-3, 4.535, -2.2], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [-3, 4.535, 0.4], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [-3, 4.535, 2.8], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [0, 4.535, -2.2], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [0, 4.535, 0.4], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [0, 4.535, 2.8], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [3, 4.535, -2.2], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [3, 4.535, 0.4], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [3, 4.535, 2.8], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [6, 4.535, -2.2], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [6, 4.535, 0.4], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [6, 4.535, 2.8], "s": [0.25, 0.01, 0.25]}
+      ]
+    },
+    {
+      "id": "sc-ext-walkway-canopy",
+      "name": {"zh-CN": "有盖连廊雨篷", "en": "Covered walkway canopy"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "沿立面的悬挑连廊雨篷，把落客区和主入口连成一条有遮蔽的步道，吊顶同为暖色木纹并带 LED 筒灯。",
+        "en": "A cantilevered walkway canopy along the facade linking the drop-off to the main entrance under cover, with the same warm timber soffit and LED downlights."
+      },
+      "capabilities": [],
+      "footprint": {"w": 15, "d": 3.5, "h": 4.9},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "entrance"],
+      "parts": [
+        {"m": "sc-ext-roof", "p": [0, 4.73, 0], "s": [15, 0.24, 3.5]},
+        {"m": "sc-ext-soffit", "p": [0, 4.595, 0], "s": [14.8, 0.03, 3.3]},
+        {"m": "sc-ext-frame", "p": [0, 4.73, 1.74], "s": [15, 0.08, 0.02]},
+        {"m": "sc-ext-led", "p": [-6, 4.575, 0.3], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [-3, 4.575, 0.3], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [0, 4.575, 0.3], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [3, 4.575, 0.3], "s": [0.25, 0.01, 0.25]},
+        {"m": "sc-ext-led", "p": [6, 4.575, 0.3], "s": [0.25, 0.01, 0.25]}
+      ]
+    },
+    {
+      "id": "sc-ext-column",
+      "name": {"zh-CN": "雨篷柱", "en": "Canopy column"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "雨篷的细钢柱。",
+        "en": "A slender steel canopy column."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.24, "d": 0.24, "h": 4.6},
+      "solid": true,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "entrance"],
+      "parts": [
+        {"m": "sc-ext-frame", "p": [0, 2.28, 0], "s": [0.22, 4.56, 0.22]}
+      ]
+    },
+    {
+      "id": "sc-ext-letters-impf",
+      "name": {"zh-CN": "IMPF 立体字", "en": "IMPF letters"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "雨篷上的 IMPF 立体字：石墨色铝字，底部暖光灯带。",
+        "en": "The IMPF letters standing on the canopy: graphite aluminium with a warm light line below."
+      },
+      "capabilities": [],
+      "footprint": {"w": 4, "d": 0.3, "h": 1.3},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "entrance", "brand"],
+      "parts": [
+        {"m": "sc-ext-frame", "p": [-1.8, 0.66, 0], "s": [0.2, 1.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [-1.25, 0.66, 0], "s": [0.2, 1.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [-0.45, 0.66, 0], "s": [0.2, 1.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [-1.02, 1.1, 0], "s": [0.26, 0.3, 0.18]},
+        {"m": "sc-ext-frame", "p": [-0.85, 0.85, 0], "s": [0.2, 0.3, 0.18]},
+        {"m": "sc-ext-frame", "p": [-0.68, 1.1, 0], "s": [0.26, 0.3, 0.18]},
+        {"m": "sc-ext-frame", "p": [0.1, 0.66, 0], "s": [0.2, 1.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [0.4, 1.16, 0], "s": [0.8, 0.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [0.4, 0.72, 0], "s": [0.8, 0.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [0.7, 0.94, 0], "s": [0.2, 0.44, 0.18]},
+        {"m": "sc-ext-frame", "p": [1.25, 0.66, 0], "s": [0.2, 1.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [1.525, 1.16, 0], "s": [0.75, 0.2, 0.18]},
+        {"m": "sc-ext-frame", "p": [1.45, 0.72, 0], "s": [0.6, 0.2, 0.18]},
+        {"m": "sc-ext-led", "p": [0, 0.03, 0.1], "s": [4, 0.03, 0.04]}
+      ]
+    },
+    {
+      "id": "sc-ext-totem",
+      "name": {"zh-CN": "医院标识塔", "en": "Hospital totem"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "入口广场的标识塔：石墨色铝板塔身、白色标识面和竖向暖光灯带。",
+        "en": "The arrival totem: a graphite aluminium column with a white sign face and a vertical warm light line."
+      },
+      "capabilities": [],
+      "footprint": {"w": 1.4, "d": 0.45, "h": 4.2},
+      "solid": true,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "brand", "wayfinding"],
+      "parts": [
+        {"m": "sc-ext-frame", "p": [0, 2.1, 0], "s": [1.3, 4.2, 0.4]},
+        {"m": "sc-ext-roof", "p": [0, 2.75, 0.205], "s": [1.1, 1.7, 0.01]},
+        {"m": "sc-ext-led", "p": [-0.58, 2.1, 0.205], "s": [0.05, 3.6, 0.01]}
+      ]
+    },
+    {
+      "id": "sc-ext-planter-bench",
+      "name": {"zh-CN": "耐候钢花池座椅", "en": "Corten planter bench"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "耐候钢花池与木质长椅：低矮灌木、香草与座位，供患者家属在室外等候。",
+        "en": "A corten steel planter with a timber bench: low shrubs, herbs and a seat for families waiting outside."
+      },
+      "capabilities": [],
+      "footprint": {"w": 4, "d": 1.4, "h": 1.1},
+      "solid": true,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "landscape", "seating"],
+      "parts": [
+        {"m": "sc-ext-corten", "p": [0, 0.25, -0.2], "s": [4, 0.5, 1]},
+        {"m": "sc-ext-timber", "p": [0, 0.46, 0.47], "s": [3.8, 0.06, 0.45]},
+        {"m": "sc-ext-frame", "p": [-1.6, 0.21, 0.47], "s": [0.08, 0.42, 0.4]},
+        {"m": "sc-ext-frame", "p": [1.6, 0.21, 0.47], "s": [0.08, 0.42, 0.4]},
+        {"m": "sc-ext-shrub", "p": [-1.45, 0.7, -0.2], "s": [0.8, 0.4, 0.8]},
+        {"m": "sc-ext-shrub", "p": [-0.5, 0.7, -0.2], "s": [0.8, 0.55, 0.8]},
+        {"m": "sc-ext-shrub", "p": [0.45, 0.7, -0.2], "s": [0.8, 0.4, 0.8]},
+        {"m": "sc-ext-shrub", "p": [1.4, 0.7, -0.2], "s": [0.8, 0.55, 0.8]}
+      ]
+    },
+    {
+      "id": "sc-ext-bollard",
+      "name": {"zh-CN": "庭院灯柱", "en": "Light bollard"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "1 m 高的石墨色庭院灯柱，顶部暖光。",
+        "en": "A 1 m graphite light bollard with a warm head."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.18, "d": 0.18, "h": 1},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "landscape", "lighting"],
+      "parts": [
+        {"m": "sc-ext-frame", "p": [0, 0.45, 0], "s": [0.16, 0.9, 0.16]},
+        {"m": "sc-ext-led", "p": [0, 0.93, 0], "s": [0.17, 0.06, 0.17]}
+      ]
+    },
+    {
+      "id": "sc-ext-roof-garden",
+      "name": {"zh-CN": "屋顶员工花园", "en": "Rooftop staff garden"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "手术部屋顶的员工花园：木平台、耐候钢花池与长椅、玻璃护栏——手术间隙可以到室外透口气（循证设计：自然与日光减轻医护疲劳）。",
+        "en": "The staff garden on the operating department roof: a timber deck, corten planters and benches behind a glass balustrade — fresh air between cases (evidence-based design: nature and daylight reduce staff fatigue)."
+      },
+      "capabilities": [],
+      "footprint": {"w": 12, "d": 4, "h": 1.3},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "roof", "garden"],
+      "parts": [
+        {"m": "sc-ext-timber", "p": [0, 0.06, 0], "s": [12, 0.12, 4]},
+        {"m": "sc-ext-corten", "p": [-4.5, 0.35, -1.35], "s": [2.6, 0.5, 1.1]},
+        {"m": "sc-ext-corten", "p": [-1.5, 0.35, -1.35], "s": [2.6, 0.5, 1.1]},
+        {"m": "sc-ext-corten", "p": [1.5, 0.35, -1.35], "s": [2.6, 0.5, 1.1]},
+        {"m": "sc-ext-corten", "p": [4.5, 0.35, -1.35], "s": [2.6, 0.5, 1.1]},
+        {"m": "sc-ext-shrub", "p": [-4.5, 0.75, -1.35], "s": [2.2, 0.35, 0.8]},
+        {"m": "sc-ext-shrub", "p": [-1.5, 0.75, -1.35], "s": [2.2, 0.5, 0.8]},
+        {"m": "sc-ext-shrub", "p": [1.5, 0.75, -1.35], "s": [2.2, 0.35, 0.8]},
+        {"m": "sc-ext-shrub", "p": [4.5, 0.75, -1.35], "s": [2.2, 0.5, 0.8]},
+        {"m": "sc-ext-timber", "p": [-3.5, 0.4, 1], "s": [2.4, 0.08, 0.5]},
+        {"m": "sc-ext-timber", "p": [0.5, 0.4, 1], "s": [2.4, 0.08, 0.5]},
+        {"m": "sc-ext-timber", "p": [4, 0.4, 1], "s": [2.4, 0.08, 0.5]},
+        {"m": "glass", "p": [0, 0.7, 1.97], "s": [12, 1.1, 0.04]}
+      ]
+    },
+    {
+      "id": "sc-ext-pv-array",
+      "name": {"zh-CN": "屋顶光伏阵列", "en": "Rooftop photovoltaic array"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "屋面光伏阵列：倾斜单晶硅组件，为不间断电源和空调系统补充电力。",
+        "en": "Rooftop photovoltaic array: tilted monocrystalline modules feeding the UPS and HVAC plant."
+      },
+      "capabilities": [],
+      "footprint": {"w": 8, "d": 3.2, "h": 1},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "roof", "energy"],
+      "parts": [
+        {"m": "sc-ext-pv", "p": [0, 0.42, -1.25], "s": [7.8, 0.06, 0.42]},
+        {"m": "sc-ext-pv", "p": [0, 0.62, -0.85], "s": [7.8, 0.06, 0.42]},
+        {"m": "chrome", "p": [-3.8, 0.24, -1.05], "s": [0.06, 0.48, 0.06]},
+        {"m": "chrome", "p": [0, 0.24, -1.05], "s": [0.06, 0.48, 0.06]},
+        {"m": "chrome", "p": [3.8, 0.24, -1.05], "s": [0.06, 0.48, 0.06]},
+        {"m": "sc-ext-pv", "p": [0, 0.42, -0.2], "s": [7.8, 0.06, 0.42]},
+        {"m": "sc-ext-pv", "p": [0, 0.62, 0.2], "s": [7.8, 0.06, 0.42]},
+        {"m": "chrome", "p": [-3.8, 0.24, 0], "s": [0.06, 0.48, 0.06]},
+        {"m": "chrome", "p": [0, 0.24, 0], "s": [0.06, 0.48, 0.06]},
+        {"m": "chrome", "p": [3.8, 0.24, 0], "s": [0.06, 0.48, 0.06]},
+        {"m": "sc-ext-pv", "p": [0, 0.42, 0.85], "s": [7.8, 0.06, 0.42]},
+        {"m": "sc-ext-pv", "p": [0, 0.62, 1.25], "s": [7.8, 0.06, 0.42]},
+        {"m": "chrome", "p": [-3.8, 0.24, 1.05], "s": [0.06, 0.48, 0.06]},
+        {"m": "chrome", "p": [0, 0.24, 1.05], "s": [0.06, 0.48, 0.06]},
+        {"m": "chrome", "p": [3.8, 0.24, 1.05], "s": [0.06, 0.48, 0.06]}
+      ]
+    },
+    {
+      "id": "sc-ext-helipad",
+      "name": {"zh-CN": "屋顶直升机停机坪", "en": "Rooftop helipad"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "屋顶直升机停机坪：15 × 15 m 抬升甲板、黄色安全区边线、白色着陆圈与 H 标、绿色边界灯和风向袋，供创伤和器官转运直达复合手术室。",
+        "en": "Rooftop helipad: a raised 15 × 15 m deck with a yellow safety-area line, the white touchdown marking and H, green perimeter lights and a windsock — trauma and organ retrieval straight to the hybrid OR."
+      },
+      "capabilities": [],
+      "footprint": {"w": 15, "d": 15, "h": 3.4},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "roof", "helipad"],
+      "parts": [
+        {"m": "sc-ext-deck", "p": [0, 0.8, 0], "s": [15, 0.2, 15]},
+        {"m": "steel", "p": [-7, 0.35, -7], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [-7, 0.35, 0], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [-7, 0.35, 7], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [0, 0.35, -7], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [0, 0.35, 0], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [0, 0.35, 7], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [7, 0.35, -7], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [7, 0.35, 0], "s": [0.25, 0.7, 0.25]},
+        {"m": "steel", "p": [7, 0.35, 7], "s": [0.25, 0.7, 0.25]},
+        {"m": "white", "p": [0, 0.915, -3.6], "s": [7.2, 0.02, 0.35]},
+        {"m": "white", "p": [0, 0.915, 3.6], "s": [7.2, 0.02, 0.35]},
+        {"m": "white", "p": [-3.6, 0.915, 0], "s": [0.35, 0.02, 7.2]},
+        {"m": "white", "p": [3.6, 0.915, 0], "s": [0.35, 0.02, 7.2]},
+        {"m": "white", "p": [-1.1, 0.92, 0], "s": [0.45, 0.02, 3.4]},
+        {"m": "white", "p": [1.1, 0.92, 0], "s": [0.45, 0.02, 3.4]},
+        {"m": "white", "p": [0, 0.92, 0], "s": [1.75, 0.02, 0.45]},
+        {"m": "yellow", "p": [0, 0.912, -7.2], "s": [14.6, 0.02, 0.2]},
+        {"m": "yellow", "p": [0, 0.912, 7.2], "s": [14.6, 0.02, 0.2]},
+        {"m": "yellow", "p": [-7.2, 0.912, 0], "s": [0.2, 0.02, 14.6]},
+        {"m": "yellow", "p": [7.2, 0.912, 0], "s": [0.2, 0.02, 14.6]},
+        {"m": "led-green", "p": [-6, 0.95, -7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [-6, 0.95, 7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [-3, 0.95, -7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [-3, 0.95, 7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [0, 0.95, -7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [0, 0.95, 7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [3, 0.95, -7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [3, 0.95, 7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [6, 0.95, -7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [6, 0.95, 7.35], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [-7.35, 0.95, -6], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [7.35, 0.95, -6], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [-7.35, 0.95, -3], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [7.35, 0.95, -3], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [-7.35, 0.95, 3], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [7.35, 0.95, 3], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [-7.35, 0.95, 6], "s": [0.18, 0.08, 0.18]},
+        {"m": "led-green", "p": [7.35, 0.95, 6], "s": [0.18, 0.08, 0.18]},
+        {"m": "steel", "p": [0, 0.8, -7.45], "s": [15, 0.12, 0.1]},
+        {"m": "steel", "p": [0, 0.8, 7.45], "s": [15, 0.12, 0.1]},
+        {"m": "steel", "p": [6.9, 2, 6.9], "s": [0.08, 2.4, 0.08]},
+        {"m": "orange", "p": [6.55, 3, 6.9], "s": [0.6, 0.26, 0.26]},
+        {"m": "white", "p": [6.35, 3, 6.9], "s": [0.12, 0.27, 0.27]}
+      ]
+    },
+    {
+      "id": "sc-ext-plant-screen",
+      "name": {"zh-CN": "屋顶设备百叶围护", "en": "Rooftop plant screen"},
+      "category": "decor",
+      "description": {
+        "zh-CN": "屋顶设备区的铝合金百叶围护，遮挡排风机与冷却设备，从地面和直升机坪看都是整洁的屋面。",
+        "en": "Louvred aluminium screen round the rooftop plant (exhaust fans and heat rejection), so the roof reads clean from the ground and the helipad."
+      },
+      "capabilities": [],
+      "footprint": {"w": 12, "d": 6, "h": 2.6},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "none",
+      "tags": ["exterior", "roof", "plant"],
+      "parts": [
+        {"m": "sc-ext-louvre", "p": [0, 0.3, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 0.3, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 0.6, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 0.6, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 0.9, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 0.9, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 1.2, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 1.2, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 1.5, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 1.5, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 1.8, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 1.8, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 2.1, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 2.1, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 2.4, -2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [0, 2.4, 2.95], "s": [12, 0.12, 0.08]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 0.3, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 0.3, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 0.6, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 0.6, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 0.9, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 0.9, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 1.2, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 1.2, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 1.5, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 1.5, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 1.8, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 1.8, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 2.1, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 2.1, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [-5.95, 2.4, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-louvre", "p": [5.95, 2.4, 0], "s": [0.08, 0.12, 6]},
+        {"m": "sc-ext-frame", "p": [-5.95, 1.3, -2.95], "s": [0.1, 2.6, 0.1]},
+        {"m": "sc-ext-frame", "p": [-5.95, 1.3, 2.95], "s": [0.1, 2.6, 0.1]},
+        {"m": "sc-ext-frame", "p": [5.95, 1.3, -2.95], "s": [0.1, 2.6, 0.1]},
+        {"m": "sc-ext-frame", "p": [5.95, 1.3, 2.95], "s": [0.1, 2.6, 0.1]},
+        {"m": "steel", "p": [-3.5, 1, 0], "s": [3, 2, 2.6]},
+        {"m": "steel", "p": [0.2, 1, 0], "s": [3, 2, 2.6]},
+        {"m": "coal", "p": [-3.5, 2.05, 0], "s": [1, 0.1, 1]},
+        {"m": "coal", "p": [0.2, 2.05, 0], "s": [1, 0.1, 1]},
+        {"m": "steel", "p": [4, 0.9, 0], "s": [1.6, 1.8, 2]}
       ]
     }
   ]
