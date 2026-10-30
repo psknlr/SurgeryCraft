@@ -1,0 +1,29 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-prep-room",
+  "name": {"zh-CN": "无菌准备间", "en": "Sterile set-up room"},
+  "description": {"zh-CN": "器械护士打开器械包、按清点单摆台的无菌准备间：连通无菌核心区（北侧）和两侧手术室；配无菌存放架、摆台器械台与器械配送车。", "en": "Sterile set-up (lay-up) room where the scrub nurse opens and lays out the instrument sets against the count sheet: connected to the sterile core (north) and the ORs on both sides; sterile rack, lay-up table and a case cart."},
+  "kind": "storage",
+  "size": {"w": 3, "d": 5},
+  "floor": "sc-or-floor",
+  "partitions": [
+    {"side": "n", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 0, "width": 1.4, "height": 2.6}]},
+    {"side": "w", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 0.8, "width": 1.4, "height": 2.6}]},
+    {"side": "e", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 0.8, "width": 1.4, "height": 2.6}]},
+    {"side": "s", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6}
+  ],
+  "sign": {"text": {"zh-CN": "无菌准备", "en": "Sterile set-up"}, "color": "#2f7fd1"},
+  "lights": [
+    {"x": 0, "z": 0}
+  ],
+  "placements": [
+    {"id": "rack", "type": "sc-sterile-rack", "x": 0, "z": 2.025, "rot": 180, "label": {"zh-CN": "无菌存放架", "en": "Sterile rack"}},
+    {"id": "lay-up", "type": "instrument-table", "x": -1.025, "z": -1.4, "rot": 90, "label": {"zh-CN": "摆台器械台", "en": "Lay-up table"}},
+    {"id": "case-cart", "type": "sc-case-cart", "x": 1, "z": -1.525, "rot": 90, "label": {"zh-CN": "器械配送车", "en": "Case cart"}}
+  ],
+  "zones": [
+    {"id": "sterile", "name": {"zh-CN": "无菌准备间（限制区）", "en": "Set-up room (restricted)"}, "rect": {"x": 0, "z": 0, "w": 3, "d": 5}, "roles": ["clinician", "attending", "nurse"]}
+  ],
+  "capabilities": [],
+  "tags": ["sterile", "restricted"]
+}

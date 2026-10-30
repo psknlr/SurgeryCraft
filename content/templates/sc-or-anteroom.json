@@ -1,0 +1,33 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-or-anteroom",
+  "name": {"zh-CN": "隔离手术室缓冲间", "en": "Isolation OR anteroom"},
+  "description": {"zh-CN": "负压隔离手术室的缓冲间：两道互锁门不同时开启，维持走廊 → 缓冲间 → 手术间的压力梯度；配刷手池、防护用品穿戴站、手消毒液和压差监测。", "en": "Anteroom of the negative-pressure OR: two interlocked doors never open together, holding the corridor → anteroom → OR pressure cascade; scrub trough, PPE donning station, hand-rub and a pressure monitor."},
+  "kind": "corridor",
+  "size": {"w": 3, "d": 9},
+  "floor": "sc-or-floor",
+  "partitions": [
+    {"side": "n", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6},
+    {"side": "w", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6},
+    {"side": "e", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 1, "width": 2, "height": 2.6}]},
+    {"side": "s", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 0, "width": 1.6, "height": 2.6}]}
+  ],
+  "sign": {"text": {"zh-CN": "缓冲间 · 互锁门", "en": "Anteroom · interlocked doors"}, "color": "#c9473c"},
+  "lights": [
+    {"x": 0, "z": -2.5},
+    {"x": 0, "z": 2.5}
+  ],
+  "placements": [
+    {"id": "scrub", "type": "sc-scrub-trough", "x": 0, "z": -3.975, "label": {"zh-CN": "刷手池", "en": "Scrub trough"}},
+    {"id": "ppe", "type": "sc-ppe-station", "x": -1.175, "z": -1, "rot": 90, "label": {"zh-CN": "防护用品穿戴站", "en": "PPE donning station"}},
+    {"id": "pressure", "type": "sc-pressure-monitor", "x": -1.285, "z": 1.4, "rot": 90, "label": {"zh-CN": "压差监测", "en": "Pressure monitor"}},
+    {"id": "gloves", "type": "glove-dispenser", "x": 1.265, "z": -1.6, "rot": 270, "label": {"zh-CN": "手套", "en": "Gloves"}},
+    {"id": "sanitizer", "type": "hand-sanitizer", "x": -1, "z": 2.6, "label": {"zh-CN": "手消毒液", "en": "Hand rub"}},
+    {"id": "ppe-bin", "type": "trash-bin", "x": 1, "z": 3.8, "label": {"zh-CN": "防护用品脱卸废物桶", "en": "PPE doffing bin"}}
+  ],
+  "zones": [
+    {"id": "buffer", "name": {"zh-CN": "隔离缓冲间（限制区）", "en": "Isolation anteroom (restricted)"}, "rect": {"x": 0, "z": 0, "w": 3, "d": 9}, "roles": ["clinician", "attending", "nurse", "porter"]}
+  ],
+  "capabilities": [],
+  "tags": ["isolation", "restricted"]
+}

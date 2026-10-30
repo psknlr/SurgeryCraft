@@ -1,0 +1,21 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-bed-lift-car",
+  "name": {"zh-CN": "医用病床电梯", "en": "Bed lift"},
+  "description": {"zh-CN": "医用病床电梯轿厢：2.6 × 3.0 m，1.8 m 宽侧开门，可容纳病床与陪同医护。", "en": "Hospital bed-lift car: 2.6 × 3.0 m with a 1.8 m side-opening door, room for a bed and its escort."},
+  "kind": "elevator",
+  "size": {"w": 2.6, "d": 3},
+  "floor": "steel",
+  "partitions": [
+    {"side": "n", "material": "steel"},
+    {"side": "w", "material": "steel"},
+    {"side": "e", "material": "steel"},
+    {"side": "s", "material": "steel", "openings": [{"kind": "sliding-door", "offset": 0, "width": 1.8, "height": 2.4}]}
+  ],
+  "lights": [
+    {"x": 0, "z": 0}
+  ],
+  "placements": [],
+  "capabilities": [],
+  "tags": ["elevator", "connector", "bed-lift"]
+}

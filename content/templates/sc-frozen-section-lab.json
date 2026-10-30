@@ -1,0 +1,34 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-frozen-section-lab",
+  "name": {"zh-CN": "术中冰冻病理室", "en": "Frozen-section laboratory"},
+  "description": {"zh-CN": "紧邻手术室的术中快速冰冻病理室：冰冻切片机、快速染色台、显微镜与数字切片扫描，病理医师在约 20–30 分钟内回报术中诊断（如切缘、淋巴结）。", "en": "Intra-operative frozen-section lab next to the ORs: cryostat, rapid staining bench, microscope and slide scanner; the pathologist reports intra-operative diagnoses (margins, nodes) within about 20–30 minutes."},
+  "kind": "pathology",
+  "size": {"w": 4.5, "d": 7},
+  "floor": "lino",
+  "partitions": [
+    {"side": "n", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "w", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "e", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "s", "material": "white", "base": "sc-or-wall-base", "openings": [{"kind": "door", "offset": 0, "width": 1.4, "height": 2.6}]}
+  ],
+  "sign": {"text": {"zh-CN": "冰冻病理", "en": "Frozen section"}, "color": "#a397bc"},
+  "lights": [
+    {"x": 0, "z": -1.8},
+    {"x": 0, "z": 1.8}
+  ],
+  "placements": [
+    {"id": "cryostat", "type": "sc-cryostat", "x": -1.6, "z": -2.6, "label": {"zh-CN": "冰冻切片机", "en": "Cryostat"}},
+    {"id": "scanner", "type": "slide-scanner", "x": -1.6, "z": -1.2, "label": {"zh-CN": "数字切片扫描仪", "en": "Slide scanner"}},
+    {"id": "microscope", "type": "microscope", "x": -1.775, "z": 0.5, "rot": 90, "label": {"zh-CN": "显微镜", "en": "Microscope"}},
+    {"id": "bench", "type": "lab-bench", "x": 1.625, "z": -1, "rot": 270, "label": {"zh-CN": "快速染色台", "en": "Rapid staining bench"}},
+    {"id": "sink", "type": "sink", "x": 1.4, "z": -3.05, "label": {"zh-CN": "洗手池", "en": "Sink"}},
+    {"id": "records", "type": "records-terminal", "x": 1.7, "z": 1.2, "label": {"zh-CN": "病理报告终端", "en": "Pathology reporting terminal"}},
+    {"id": "stool", "type": "stool", "x": -0.9, "z": 0.5}
+  ],
+  "staff": [
+    {"id": "pathologist", "role": "pathologist", "name": {"zh-CN": "病理医师", "en": "Pathologist"}, "x": 0, "z": -0.6, "rot": 270, "greeting": {"zh-CN": "冰冻标本送来后大约二十分钟出报告。", "en": "Send the frozen specimen over — I'll call the result through in about twenty minutes."}}
+  ],
+  "capabilities": ["histopathology", "cytology", "records"],
+  "tags": ["pathology", "frozen-section"]
+}

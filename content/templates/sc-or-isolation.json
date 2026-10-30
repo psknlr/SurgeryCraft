@@ -1,0 +1,58 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-or-isolation",
+  "name": {"zh-CN": "负压隔离手术室", "en": "Negative-pressure isolation OR"},
+  "description": {"zh-CN": "9 × 9 m 正负压可切换的隔离手术室，用于经空气/飞沫传播感染患者：只经缓冲间（local 西侧）进出，不与无菌核心区和走廊直接相通；房间压差监测仪在门旁显示负压，排风经高效过滤后排放。其余配置同一体化手术室。", "en": "9 × 9 m switchable-pressure isolation OR for patients with airborne or droplet-transmitted infection: entered only through its anteroom (local west), with no direct door to the sterile core or the corridor; a room pressure monitor by the door shows the negative differential and the exhaust is HEPA-filtered. Otherwise equipped as the integrated OR."},
+  "kind": "operating-room",
+  "size": {"w": 9, "d": 9},
+  "floor": "sc-or-floor",
+  "partitions": [
+    {"side": "n", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6},
+    {"side": "w", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 1, "width": 2, "height": 2.6}]},
+    {"side": "e", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6},
+    {"side": "s", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6}
+  ],
+  "sign": {"text": {"zh-CN": "负压隔离手术室", "en": "Negative-pressure isolation OR"}, "color": "#c9473c"},
+  "lights": [
+    {"x": -3, "z": -3},
+    {"x": 3, "z": -3},
+    {"x": -3, "z": 3},
+    {"x": 3, "z": 3}
+  ],
+  "placements": [
+    {"id": "canopy", "type": "sc-laminar-canopy", "x": 0.5, "z": 0.2, "label": {"zh-CN": "层流送风天花", "en": "Laminar-flow ceiling"}},
+    {"id": "table", "type": "operating-table", "x": 0.5, "z": 0.2, "rot": 90, "label": {"zh-CN": "手术床", "en": "Operating table"}},
+    {"id": "light", "type": "surgical-light", "x": 0.5, "z": 0.2, "label": {"zh-CN": "LED 无影灯", "en": "LED surgical light"}},
+    {"id": "anaesthesia", "type": "sc-anaesthesia-workstation", "x": -1.45, "z": -0.35, "rot": 90, "label": {"zh-CN": "麻醉工作站", "en": "Anaesthesia workstation"}},
+    {"id": "monitor", "type": "patient-monitor", "x": -1.45, "z": 0.85, "label": {"zh-CN": "麻醉监护仪", "en": "Anaesthesia monitor"}},
+    {"id": "anaes-pendant", "type": "sc-anaesthesia-pendant", "x": -1.45, "z": -1.65, "label": {"zh-CN": "麻醉吊塔", "en": "Anaesthesia pendant"}},
+    {"id": "surg-pendant", "type": "sc-surgical-pendant", "x": 2.35, "z": -1, "label": {"zh-CN": "外科吊塔（电刀/气腹机）", "en": "Surgical pendant (ESU / insufflator)"}},
+    {"id": "back-table", "type": "instrument-table", "x": 2.55, "z": 1.15, "label": {"zh-CN": "器械台", "en": "Back table"}},
+    {"id": "mayo", "type": "sc-mayo-stand", "x": 1.1, "z": 1.25, "label": {"zh-CN": "Mayo 托盘", "en": "Mayo stand"}},
+    {"id": "infusion-pump", "type": "infusion-pump", "x": -0.45, "z": 1.35, "label": {"zh-CN": "输液泵", "en": "Infusion pump"}},
+    {"id": "warmer", "type": "sc-forced-air-warmer", "x": 0.35, "z": 1.85, "label": {"zh-CN": "充气保温机", "en": "Forced-air warmer"}},
+    {"id": "drugs", "type": "medication-cabinet", "x": -3.6, "z": -3.975, "label": {"zh-CN": "麻醉药品柜", "en": "Anaesthetic drug cabinet"}},
+    {"id": "iv-cart", "type": "treatment-cart", "x": -2.5, "z": -4.015, "label": {"zh-CN": "静脉穿刺与治疗车", "en": "IV cannulation & treatment cart"}},
+    {"id": "records", "type": "records-terminal", "x": 2, "z": 4.025, "rot": 180, "label": {"zh-CN": "手术室电子病历终端", "en": "Theatre EHR terminal"}},
+    {"id": "pacs", "type": "sc-wall-display", "x": 4.265, "z": 1.2, "rot": 270, "label": {"zh-CN": "PACS / 一体化显示屏", "en": "PACS & integration display"}},
+    {"id": "control-panel", "type": "sc-or-control-panel", "x": 0.6, "z": 4.275, "rot": 180, "label": {"zh-CN": "环境控制面板", "en": "OR control panel"}},
+    {"id": "checklist", "type": "sc-who-checklist", "x": 3.3, "z": 4.285, "rot": 180, "label": {"zh-CN": "WHO 手术安全核查板", "en": "WHO Surgical Safety Checklist"}},
+    {"id": "grille-1", "type": "sc-return-grille", "x": 3.9, "z": -4.285},
+    {"id": "grille-2", "type": "sc-return-grille", "x": -3.9, "z": 4.285, "rot": 180},
+    {"id": "lap-tower", "type": "sc-laparoscopy-tower", "x": 0.5, "z": -1.35, "label": {"zh-CN": "4K/3D 腹腔镜系统", "en": "4K/3D laparoscopy tower"}},
+    {"id": "ultrasound", "type": "ultrasound-machine", "x": 0.2, "z": -3.9, "label": {"zh-CN": "超声", "en": "Ultrasound"}},
+    {"id": "airway", "type": "sc-difficult-airway-trolley", "x": -1.4, "z": -4.05, "label": {"zh-CN": "困难气道车", "en": "Difficult airway trolley"}},
+    {"id": "display-1", "type": "sc-ceiling-display", "x": 1.6, "z": 2.6, "rot": 180, "label": {"zh-CN": "吊臂显示器 1", "en": "Ceiling display 1"}},
+    {"id": "display-2", "type": "sc-ceiling-display", "x": -0.6, "z": -2.7, "label": {"zh-CN": "吊臂显示器 2", "en": "Ceiling display 2"}},
+    {"id": "pressure", "type": "sc-pressure-monitor", "x": -4.285, "z": 2.6, "rot": 90, "label": {"zh-CN": "房间压差监测（负压）", "en": "Room pressure monitor (negative)"}},
+    {"id": "sanitizer", "type": "hand-sanitizer", "x": -3.9, "z": 3.6, "label": {"zh-CN": "手消毒液", "en": "Hand rub"}}
+  ],
+  "patientSlots": [
+    {"id": "slot", "x": 0, "z": -0.3, "rot": 90, "posture": "lying", "bed": "table", "accepts": ["operating-room"], "monitor": "monitor"}
+  ],
+  "zones": [
+    {"id": "sterile", "name": {"zh-CN": "隔离手术间（限制区）", "en": "Isolation OR (restricted)"}, "rect": {"x": 0, "z": 0, "w": 9, "d": 9}, "roles": ["clinician", "attending", "nurse", "porter"]}
+  ],
+  "capabilities": ["surgery", "anesthesia", "airway", "ventilator", "capnography", "cardiac-monitor", "oxygen", "suction", "infusion-pump", "iv-access", "medications", "records", "ultrasound", "echocardiography"],
+  "tags": ["surgery", "restricted", "isolation", "negative-pressure"]
+}
