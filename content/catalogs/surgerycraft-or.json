@@ -154,9 +154,10 @@
       "capabilities": [],
       "footprint": {"w": 0.6, "d": 0.6, "h": 1.65},
       "solid": true,
-      "interaction": {"kind": "none"},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 高压注射器", "en": "E · Contrast injector"}},
       "screen": "text",
       "tags": ["or", "hybrid", "imaging"],
+      "behavior": {"initial": "empty", "states": {"empty": {"name": {"zh-CN": "未装药", "en": "empty"}}, "loaded": {"name": {"zh-CN": "已装造影剂", "en": "loaded"}}, "armed": {"name": {"zh-CN": "已排气并上锁", "en": "air purged, armed"}}}, "operations": {"load": {"name": {"zh-CN": "装造影剂（无菌操作）", "en": "Load contrast (aseptic)"}, "from": ["empty"], "to": "loaded", "requires": [{"handsClean": true}], "durationSeconds": 60, "roles": ["radiologist", "attending", "clinician", "nurse"]}, "purge_and_arm": {"name": {"zh-CN": "排气并上锁（确认管路无气泡）", "en": "Purge air and arm (no bubbles in the line)"}, "from": ["loaded"], "to": "armed", "durationSeconds": 20, "roles": ["radiologist", "attending", "clinician", "nurse"]}, "inject": {"name": {"zh-CN": "透视下注射（需穿铅衣、铅屏风就位）", "en": "Inject under fluoroscopy (lead apron on, shield in place)"}, "from": ["armed"], "to": "empty", "requires": [{"actorHolding": "sc-lead-apron"}, {"nearbyState": {"type": "sc-lead-shield", "state": "in-place", "within": 4}}], "durationSeconds": 20, "roles": ["radiologist", "attending", "clinician"]}}},
       "parts": [
         {"m": "rubber", "p": [-0.24, 0.04, -0.24], "s": [0.08, 0.08, 0.08]},
         {"m": "rubber", "p": [-0.24, 0.04, 0.24], "s": [0.08, 0.08, 0.08]},
@@ -184,9 +185,10 @@
       "capabilities": [],
       "footprint": {"w": 0.9, "d": 0.4, "h": 5},
       "solid": false,
-      "interaction": {"kind": "none"},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 铅屏风", "en": "E · Lead shield"}},
       "screen": "none",
       "tags": ["or", "hybrid", "ceiling", "radiation"],
+      "behavior": {"initial": "stowed", "states": {"stowed": {"name": {"zh-CN": "收起", "en": "stowed"}}, "in-place": {"name": {"zh-CN": "已就位（术者与球管之间）", "en": "in place (between the operator and the tube)"}}}, "operations": {"position": {"name": {"zh-CN": "拉到术者与球管之间", "en": "Bring between the operator and the tube"}, "from": ["stowed"], "to": "in-place", "durationSeconds": 10, "roles": ["radiologist", "attending", "clinician", "nurse"]}, "stow": {"name": {"zh-CN": "收起", "en": "Stow"}, "from": ["in-place"], "to": "stowed", "durationSeconds": 5, "roles": ["radiologist", "attending", "clinician", "nurse"]}}},
       "parts": [
         {"m": "plastic", "p": [0, 4.97, 0], "s": [0.4, 0.06, 0.3]},
         {"m": "chrome", "p": [0, 4, 0], "s": [0.08, 1.9, 0.08]},
@@ -353,9 +355,10 @@
       "capabilities": [],
       "footprint": {"w": 0.8, "d": 0.8, "h": 5},
       "solid": true,
-      "interaction": {"kind": "none", "prompt": {"zh-CN": "E · 外科设备吊塔", "en": "E · Surgical pendant"}},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 电刀主机 / 气腹机", "en": "E · Generator / insufflator"}},
       "screen": "text",
       "tags": ["or", "ceiling", "pendant"],
+      "behavior": {"initial": "standby", "states": {"standby": {"name": {"zh-CN": "电刀待机", "en": "generator standby"}}, "monitored": {"name": {"zh-CN": "负极板接触监测正常", "en": "return electrode monitored"}}, "ready": {"name": {"zh-CN": "电刀就绪（输出已启用）", "en": "generator ready (output enabled)"}}}, "operations": {"check_return_electrode": {"name": {"zh-CN": "贴负极板并确认接触质量监测（REM/CQM）", "en": "Place the return electrode and confirm contact-quality monitoring (REM/CQM)"}, "from": ["standby"], "to": "monitored", "requires": [{"patientWithin": 1.4}], "durationSeconds": 45, "roles": ["clinician", "attending", "nurse"]}, "enable_output": {"name": {"zh-CN": "启用电刀输出（需烟雾排除器运行）", "en": "Enable generator output (needs the smoke evacuator running)"}, "from": ["monitored"], "to": "ready", "requires": [{"nearbyState": {"type": "sc-smoke-evacuator", "state": "running", "within": 4}}], "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "standby": {"name": {"zh-CN": "电刀待机", "en": "Generator to standby"}, "from": ["ready"], "to": "monitored", "durationSeconds": 5, "roles": ["clinician", "attending", "nurse"]}, "remove_return_electrode": {"name": {"zh-CN": "移除负极板，检查皮肤", "en": "Remove the return electrode and check the skin"}, "from": ["monitored"], "to": "standby", "requires": [{"patientWithin": 1.4}], "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}}},
       "parts": [
         {"m": "plastic", "p": [0, 4.97, 0], "s": [0.6, 0.06, 0.6]},
         {"m": "chrome", "p": [0, 4.18, 0], "s": [0.14, 1.52, 0.14]},
@@ -437,9 +440,10 @@
       "capabilities": [],
       "footprint": {"w": 1, "d": 0.1, "h": 1.9},
       "solid": false,
-      "interaction": {"kind": "none", "prompt": {"zh-CN": "E · 查看环境参数", "en": "E · Read the room parameters"}},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 环境控制面板", "en": "E · OR control panel"}},
       "screen": "text",
       "tags": ["wall", "or", "hvac"],
+      "behavior": {"initial": "operating", "states": {"operating": {"name": {"zh-CN": "手术模式：≥ 25 次/h、+15 Pa、20–24 °C、35–60 % RH", "en": "operating mode: ≥ 25 ACH, +15 Pa, 20–24 °C, 35–60 % RH"}}, "setback": {"name": {"zh-CN": "夜间节能模式（保持正压）", "en": "unoccupied set-back (pressure kept)"}}}, "operations": {"check_room": {"name": {"zh-CN": "核对环境参数（换气、压差、温湿度、层流、气体报警）", "en": "Check the room (air changes, pressure, temperature, humidity, laminar flow, gas alarms)"}, "from": ["operating", "setback"], "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "set_setback": {"name": {"zh-CN": "切换夜间节能模式", "en": "Switch to unoccupied set-back"}, "from": ["operating"], "to": "setback", "durationSeconds": 5, "roles": ["clinician", "attending", "nurse"]}, "set_operating": {"name": {"zh-CN": "切换手术模式（开台前至少 15 分钟）", "en": "Switch to operating mode (at least 15 min before the case)"}, "from": ["setback"], "to": "operating", "durationSeconds": 900, "roles": ["clinician", "attending", "nurse"]}}},
       "parts": [
         {"m": "plastic", "p": [0, 1.45, -0.03], "s": [0.94, 0.74, 0.04]},
         {"m": "coal", "p": [-0.16, 1.5, -0.008], "s": [0.54, 0.4, 0.006]},
@@ -487,9 +491,10 @@
       "capabilities": [],
       "footprint": {"w": 1.2, "d": 0.08, "h": 2},
       "solid": false,
-      "interaction": {"kind": "none", "prompt": {"zh-CN": "E · 手术安全核查", "en": "E · Surgical safety checklist"}},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 手术安全核查", "en": "E · Surgical safety checklist"}},
       "screen": "none",
       "tags": ["wall", "or", "safety"],
+      "behavior": {"initial": "pending", "states": {"pending": {"name": {"zh-CN": "待核查", "en": "pending"}}, "signed-in": {"name": {"zh-CN": "麻醉前核查完成（Sign in）", "en": "signed in (before induction)"}}, "timed-out": {"name": {"zh-CN": "切皮前暂停核查完成（Time out）", "en": "timed out (before incision)"}}, "signed-out": {"name": {"zh-CN": "离室前核查完成（Sign out）", "en": "signed out (before leaving)"}}}, "operations": {"sign_in": {"name": {"zh-CN": "Sign in：核对身份、术式、部位标记、过敏、气道与失血风险", "en": "Sign in: identity, procedure, site marking, allergies, airway and blood-loss risk"}, "from": ["pending"], "to": "signed-in", "requires": [{"actorWithin": 3}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "time_out": {"name": {"zh-CN": "Time out：全员暂停，确认患者、术式、部位，预防性抗菌药与影像（需切皮前清点完成）", "en": "Time out: the whole team pauses — patient, procedure, site, antibiotic prophylaxis, imaging (needs the baseline count)"}, "from": ["signed-in"], "to": "timed-out", "requires": [{"actorWithin": 3}, {"nearbyState": {"type": "sc-count-board", "state": ["baseline", "cavity", "closing", "reconciled"], "within": 8}}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "sign_out": {"name": {"zh-CN": "Sign out：术式记录、清点相符、标本标识、设备问题（需最终清点相符）", "en": "Sign out: procedure recorded, counts reconciled, specimens labelled, equipment problems (needs the reconciled count)"}, "from": ["timed-out"], "to": "signed-out", "requires": [{"actorWithin": 3}, {"nearbyState": {"type": "sc-count-board", "state": "reconciled", "within": 8}}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "reset": {"name": {"zh-CN": "下一台手术：新的核查表", "en": "Next case: a fresh checklist"}, "from": ["signed-out"], "to": "pending", "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}}},
       "parts": [
         {"m": "plastic", "p": [0, 1.5, -0.03], "s": [1.12, 0.84, 0.02]},
         {"m": "sc-robot-accent", "p": [-0.36, 1.86, -0.017], "s": [0.34, 0.07, 0.006]},
@@ -772,10 +777,11 @@
       "capabilities": [],
       "footprint": {"w": 0.75, "d": 0.7, "h": 2.15},
       "solid": true,
-      "interaction": {"kind": "none"},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 腹腔镜系统", "en": "E · Laparoscopy tower"}},
       "screen": "pacs",
       "tags": ["or", "mis", "endoscopy", "display"],
       "portable": "cart",
+      "behavior": {"initial": "off", "states": {"off": {"name": {"zh-CN": "关闭", "en": "off"}}, "on": {"name": {"zh-CN": "开机自检完成", "en": "on (self-test passed)"}}, "balanced": {"name": {"zh-CN": "已白平衡", "en": "white-balanced"}}, "insufflating": {"name": {"zh-CN": "气腹中（压力按术式设定）", "en": "insufflating (pressure set for the procedure)"}}}, "operations": {"power_on": {"name": {"zh-CN": "开机自检", "en": "Power on and self-test"}, "from": ["off"], "to": "on", "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}, "white_balance": {"name": {"zh-CN": "白平衡", "en": "White balance"}, "from": ["on"], "to": "balanced", "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "start_insufflation": {"name": {"zh-CN": "开始气腹", "en": "Start insufflation"}, "from": ["balanced"], "to": "insufflating", "requires": [{"patientWithin": 1.4}], "durationSeconds": 60, "roles": ["clinician", "attending"]}, "stop_insufflation": {"name": {"zh-CN": "停止气腹并排气", "en": "Stop insufflation and desufflate"}, "from": ["insufflating"], "to": "balanced", "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}, "power_off": {"name": {"zh-CN": "关机", "en": "Power off"}, "from": ["on", "balanced"], "to": "off", "durationSeconds": 5, "roles": ["clinician", "attending", "nurse"]}}},
       "parts": [
         {"m": "rubber", "p": [-0.315, 0.04, -0.29], "s": [0.08, 0.08, 0.08]},
         {"m": "rubber", "p": [-0.315, 0.04, 0.29], "s": [0.08, 0.08, 0.08]},
@@ -1153,9 +1159,10 @@
       "capabilities": [],
       "footprint": {"w": 1.6, "d": 1.6, "h": 2.3},
       "solid": true,
-      "interaction": {"kind": "none"},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 压力蒸汽灭菌器", "en": "E · Steam steriliser"}},
       "screen": "text",
       "tags": ["cssd", "sterile"],
+      "behavior": {"initial": "idle", "states": {"idle": {"name": {"zh-CN": "空闲（待 B-D 试验）", "en": "idle (Bowie-Dick due)"}}, "tested": {"name": {"zh-CN": "B-D 试验通过", "en": "Bowie-Dick passed"}}, "cycle-complete": {"name": {"zh-CN": "134 °C 程序完成", "en": "134 °C cycle complete"}}, "released": {"name": {"zh-CN": "指示物合格，已放行", "en": "indicators passed, load released"}}}, "operations": {"bowie_dick": {"name": {"zh-CN": "B-D 空气排除试验（每日首锅）", "en": "Bowie-Dick air-removal test (first cycle of the day)"}, "from": ["idle"], "to": "tested", "durationSeconds": 240, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}, "run_cycle": {"name": {"zh-CN": "运行 134 °C 脉动真空程序（EN 285、ISO 17665）", "en": "Run the 134 °C pre-vacuum cycle (EN 285, ISO 17665)"}, "from": ["tested"], "to": "cycle-complete", "durationSeconds": 900, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}, "release": {"name": {"zh-CN": "核对物理参数与化学/生物指示物后放行", "en": "Check physical parameters and chemical / biological indicators, release the load"}, "from": ["cycle-complete"], "to": "released", "durationSeconds": 60, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}, "unload": {"name": {"zh-CN": "卸载到无菌存放区", "en": "Unload into sterile storage"}, "from": ["released"], "to": "tested", "durationSeconds": 60, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
       "parts": [
         {"m": "steel", "p": [0, 1.12, 0], "s": [1.56, 2.2, 1.4]},
         {"m": "chrome", "p": [-0.12, 1.1, 0.71], "s": [1, 1.3, 0.02]},
@@ -1181,9 +1188,10 @@
       "capabilities": [],
       "footprint": {"w": 1.1, "d": 1.4, "h": 2.1},
       "solid": true,
-      "interaction": {"kind": "none"},
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 清洗消毒器", "en": "E · Washer-disinfector"}},
       "screen": "text",
       "tags": ["cssd"],
+      "behavior": {"initial": "idle", "states": {"idle": {"name": {"zh-CN": "空闲", "en": "idle"}}, "loaded": {"name": {"zh-CN": "已装载（去污侧）", "en": "loaded (dirty side)"}}, "complete": {"name": {"zh-CN": "程序完成：A0 ≥ 3000，已干燥（清洁侧）", "en": "cycle complete: A0 ≥ 3000, dried (clean side)"}}}, "operations": {"load": {"name": {"zh-CN": "在去污侧装载器械", "en": "Load instruments on the dirty side"}, "from": ["idle"], "to": "loaded", "durationSeconds": 60, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}, "run_cycle": {"name": {"zh-CN": "运行清洗消毒程序（ISO 15883-1:2024）", "en": "Run the wash–disinfect cycle (ISO 15883-1:2024)"}, "from": ["loaded"], "to": "complete", "durationSeconds": 600, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}, "unload": {"name": {"zh-CN": "在清洁侧卸载", "en": "Unload on the clean side"}, "from": ["complete"], "to": "idle", "durationSeconds": 60, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
       "parts": [
         {"m": "steel", "p": [0, 1.03, 0], "s": [1.06, 2.02, 1.2]},
         {"m": "glass", "p": [0, 1, 0.61], "s": [0.8, 1, 0.02]},
@@ -1560,6 +1568,397 @@
         {"m": "steel", "p": [-1.6, 3.65, -0.2], "s": [1, 2.5, 0.9]},
         {"m": "steel", "p": [1.4, 3.65, -0.2], "s": [1.2, 2.5, 1]},
         {"m": "warning-yellow", "p": [0, 2.4, 0.885], "s": [4.9, 0.06, 0.02]}
+      ]
+    },
+    {
+      "id": "sc-scalpel",
+      "name": {"zh-CN": "安全手术刀（3 号刀柄 + 10/15 号刀片）", "en": "Safety scalpel (No. 3 handle, No. 10/15 blade)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "可回缩护套的安全手术刀：刀柄与刀片配合尺寸符合 ISO 7740，刀片为马氏体不锈钢（ISO 7153-1、ASTM F899-23），护套单手推出、用后回缩，刀柄激光直接标记 UDI（欧盟 MDR 附录 VI、21 CFR 801.45）。锐器经中立区传递（AORN），不手递手。",
+        "en": "Safety scalpel with a retractable shield: handle-to-blade fit to ISO 7740, martensitic stainless blade (ISO 7153-1, ASTM F899-23), one-handed shield advance and retraction, UDI laser-marked on the handle (EU MDR Annex VI, 21 CFR 801.45). Pass sharps through a neutral zone, never hand to hand (AORN)."
+      },
+      "usage": {
+        "zh-CN": "切皮前必须完成 WHO 暂停核查，手术间处于手术模式，术者已外科手消毒并穿无菌手术衣、戴无菌手套。",
+        "en": "Before skin incision: the WHO time-out done, the room in operating mode, the surgeon scrubbed, gowned and gloved."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.16, "d": 0.04, "h": 0.03},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"incise": {"name": {"zh-CN": "切开（切皮）", "en": "Incise (skin incision)"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}, {"nearbyState": {"type": "sc-who-checklist", "state": ["timed-out", "signed-out"], "within": 7}}, {"nearbyState": {"type": "sc-or-control-panel", "state": "operating", "within": 7}}], "durationSeconds": 20, "roles": ["clinician", "attending"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "steel", "p": [-0.025, 0.01, 0], "s": [0.1, 0.012, 0.016]},
+        {"m": "chrome", "p": [0.055, 0.01, 0], "s": [0.05, 0.006, 0.012]},
+        {"m": "sc-robot-accent", "p": [0.02, 0.016, 0], "s": [0.03, 0.012, 0.02]}
+      ]
+    },
+    {
+      "id": "sc-needle-holder",
+      "name": {"zh-CN": "Mayo-Hegar 持针器（碳化钨钳口）", "en": "Mayo-Hegar needle holder (tungsten-carbide jaws)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "碳化钨镶片钳口的持针器（金色手柄识别），关节器械通用要求与试验按 ISO 7151:2024，耐高压蒸汽与腐蚀按 ISO 13402:2025 验证，UDI 直接标记。",
+        "en": "Needle holder with tungsten-carbide jaw inserts (gold handles), articulated-instrument requirements and tests to ISO 7151:2024, autoclave and corrosion resistance verified to ISO 13402:2025, UDI direct-marked."
+      },
+      "usage": {
+        "zh-CN": "先夹针（针体后 1/3），再缝合；锐器计数。",
+        "en": "Load the needle (at the back third of the body), then suture; count the needles."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.18, "d": 0.05, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"load_needle": {"name": {"zh-CN": "夹针", "en": "Load a needle"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}], "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "suture": {"name": {"zh-CN": "缝合", "en": "Suture"}, "from": ["in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 60, "roles": ["clinician", "attending"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [-0.01, 0.008, -0.01], "s": [0.12, 0.008, 0.008]},
+        {"m": "chrome", "p": [-0.01, 0.008, 0.01], "s": [0.12, 0.008, 0.008]},
+        {"m": "gold", "p": [-0.07, 0.01, 0], "s": [0.03, 0.012, 0.04]},
+        {"m": "steel", "p": [0.065, 0.008, 0], "s": [0.04, 0.008, 0.012]}
+      ]
+    },
+    {
+      "id": "sc-tissue-forceps",
+      "name": {"zh-CN": "DeBakey 无损伤组织镊", "en": "DeBakey atraumatic tissue forceps"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "DeBakey 无损伤组织镊（纵向细齿，适合血管与肠管），ISO 7153-1 不锈钢，UDI 直接标记。",
+        "en": "DeBakey atraumatic tissue forceps (fine longitudinal teeth for vessels and bowel), ISO 7153-1 stainless steel, UDI direct-marked."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.16, "d": 0.03, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"grasp": {"name": {"zh-CN": "夹持组织", "en": "Grasp tissue"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0, 0.008, -0.006], "s": [0.15, 0.006, 0.006]},
+        {"m": "chrome", "p": [0, 0.008, 0.006], "s": [0.15, 0.006, 0.006]},
+        {"m": "steel", "p": [-0.06, 0.008, 0], "s": [0.02, 0.008, 0.018]}
+      ]
+    },
+    {
+      "id": "sc-metzenbaum-scissors",
+      "name": {"zh-CN": "Metzenbaum 解剖剪（碳化钨刃口）", "en": "Metzenbaum dissecting scissors (tungsten-carbide edges)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "弯头 Metzenbaum 解剖剪，碳化钨刃口（黑色手柄识别），剪刀通用要求与切割试验按 ISO 7741:1986，UDI 直接标记。",
+        "en": "Curved Metzenbaum dissecting scissors with tungsten-carbide edges (black handles), scissors requirements and cutting test to ISO 7741:1986, UDI direct-marked."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.18, "d": 0.05, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"dissect": {"name": {"zh-CN": "锐性分离", "en": "Dissect"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 30, "roles": ["clinician", "attending"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.02, 0.008, -0.005], "s": [0.12, 0.008, 0.008]},
+        {"m": "chrome", "p": [0.02, 0.008, 0.005], "s": [0.12, 0.008, 0.008]},
+        {"m": "sc-matte-black", "p": [-0.065, 0.01, 0], "s": [0.04, 0.012, 0.04]}
+      ]
+    },
+    {
+      "id": "sc-artery-forceps",
+      "name": {"zh-CN": "弯止血钳（Kelly）", "en": "Curved artery forceps (Kelly)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "Kelly 弯止血钳，带锁扣的关节器械（ISO 7151:2024），UDI 直接标记。",
+        "en": "Curved Kelly artery forceps, a ratcheted articulated instrument (ISO 7151:2024), UDI direct-marked."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.16, "d": 0.05, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"clamp": {"name": {"zh-CN": "钳夹止血", "en": "Clamp a bleeding vessel"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.02, 0.008, -0.005], "s": [0.11, 0.008, 0.008]},
+        {"m": "chrome", "p": [0.02, 0.008, 0.005], "s": [0.11, 0.008, 0.008]},
+        {"m": "steel", "p": [-0.06, 0.01, 0], "s": [0.03, 0.012, 0.04]}
+      ]
+    },
+    {
+      "id": "sc-esu-pencil",
+      "name": {"zh-CN": "带排烟罩的电刀笔", "en": "Electrosurgical pencil with smoke-evacuation shroud"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "一次性单极电刀笔，带排烟罩（直接接烟雾排除器），按钮激发切割/电凝；配合 IEC 60601-2-2:2017+A1:2023 的电刀主机和负极板接触质量监测使用。",
+        "en": "Single-use monopolar pencil with an integrated smoke-evacuation shroud (piped to the smoke evacuator), hand-switched cut and coag; used with an IEC 60601-2-2:2017+A1:2023 generator with return-electrode contact-quality monitoring."
+      },
+      "usage": {
+        "zh-CN": "电刀主机就绪（负极板已监测）且烟雾排除器运行时才能激发（AORN：所有手术烟雾都应排出并过滤）。",
+        "en": "Activates only with the generator ready (return electrode monitored) and the smoke evacuator running (AORN: evacuate and filter all surgical smoke)."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.2, "d": 0.04, "h": 0.03},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 电刀笔", "en": "E · ESU pencil"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "single-use", "energy"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌", "en": "sterile"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "discarded": {"name": {"zh-CN": "已丢弃", "en": "discarded"}, "available": false}}, "operations": {"cut": {"name": {"zh-CN": "切割 / 电凝", "en": "Cut / coagulate"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}, {"nearbyState": {"type": "sc-surgical-pendant", "state": "ready", "within": 6}}, {"nearbyState": {"type": "sc-smoke-evacuator", "state": "running", "within": 6}}], "durationSeconds": 15, "roles": ["clinician", "attending"]}, "discard": {"name": {"zh-CN": "用毕丢弃", "en": "Discard after use"}, "from": ["in-use"], "to": "discarded", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "white", "p": [-0.02, 0.012, 0], "s": [0.13, 0.016, 0.02]},
+        {"m": "yellow", "p": [-0.02, 0.022, 0], "s": [0.02, 0.006, 0.01]},
+        {"m": "blue", "p": [0.01, 0.022, 0], "s": [0.02, 0.006, 0.01]},
+        {"m": "chrome", "p": [0.075, 0.01, 0], "s": [0.04, 0.004, 0.006]},
+        {"m": "plastic", "p": [0.05, 0.014, 0], "s": [0.03, 0.022, 0.026]}
+      ]
+    },
+    {
+      "id": "sc-gauze-swabs",
+      "name": {"zh-CN": "X 线可显影 RFID 纱布（10 块）", "en": "X-ray-detectable RFID gauze swabs (pack of 10)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "带 X 线显影线与 RFID 标签的腹部纱布垫，每包 10 块；清点按日本手术医学会指南的时点进行，RF 检测作为计数的辅助手段（AORN）。",
+        "en": "Abdominal swabs with an X-ray-detectable thread and an RFID tag, ten to a pack; counted at the JAOM guideline points, with RF detection as the count adjunct (AORN)."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.12, "d": 0.1, "h": 0.04},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 纱布", "en": "E · Swabs"}},
+      "screen": "none",
+      "tags": ["or", "count", "rfid"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "counted", "states": {"counted": {"name": {"zh-CN": "已清点", "en": "counted"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "retrieved": {"name": {"zh-CN": "已取回并计数", "en": "retrieved and counted"}}}, "operations": {"pack": {"name": {"zh-CN": "填塞 / 拭血", "en": "Pack / mop"}, "from": ["counted", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "retrieve": {"name": {"zh-CN": "取回并计数", "en": "Retrieve and count"}, "from": ["in-use"], "to": "retrieved", "requires": [{"state": "held"}], "durationSeconds": 20, "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "white", "p": [0, 0.015, 0], "s": [0.11, 0.03, 0.09]},
+        {"m": "sc-drape", "p": [0, 0.032, 0], "s": [0.11, 0.004, 0.02]},
+        {"m": "blue", "p": [0.04, 0.032, 0.03], "s": [0.02, 0.004, 0.02]}
+      ]
+    },
+    {
+      "id": "sc-instrument-set",
+      "name": {"zh-CN": "硬质无菌器械盒（基础剖腹器械包）", "en": "Rigid sterile container (major laparotomy set)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "带过滤器与一次性封签的硬质灭菌容器（EN 868-8:2018），内放化学指示物（ISO 11140-1 第 5 类）与器械清单；开包前核对封签、外部指示物和有效期，开包后核对内部指示物。",
+        "en": "Rigid sterilisation container with filters and tamper-evident seals (EN 868-8:2018), a class 5 chemical integrator (ISO 11140-1) and the tray list inside; check seal, external indicator and expiry before opening and the internal integrator after."
+      },
+      "usage": {
+        "zh-CN": "先核对（封签、指示物、有效期），再在无菌区内无菌开包；用毕关盒送消毒供应中心再处理。",
+        "en": "Verify (seal, indicators, expiry), then open aseptically inside the sterile field; close after use and send to the CSSD for reprocessing."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.38, "d": 0.26, "h": 0.15},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械盒", "en": "E · Instrument set"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "container", "cssd"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sealed", "states": {"sealed": {"name": {"zh-CN": "密封（灭菌合格）", "en": "sealed (sterile)"}}, "verified": {"name": {"zh-CN": "已核对封签与指示物", "en": "seal & indicators verified"}}, "open": {"name": {"zh-CN": "已无菌打开", "en": "open (sterile field)"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"verify": {"name": {"zh-CN": "核对封签、指示物与有效期", "en": "Check seal, indicators and expiry"}, "from": ["sealed"], "to": "verified", "durationSeconds": 20, "roles": ["clinician", "attending", "nurse"]}, "open_aseptically": {"name": {"zh-CN": "无菌开包", "en": "Open aseptically"}, "from": ["verified"], "to": "open", "requires": [{"handsClean": true}], "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}, "close_case": {"name": {"zh-CN": "用毕关盒，送消毒供应中心", "en": "Close and send to the CSSD"}, "from": ["open"], "to": "used", "durationSeconds": 20, "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "清洗、检查包装、灭菌（消毒供应中心）", "en": "Wash, inspect & pack, sterilise (CSSD)"}, "from": ["used"], "to": "sealed", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 180, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "steel", "p": [0, 0.06, 0], "s": [0.38, 0.12, 0.26]},
+        {"m": "chrome", "p": [0, 0.125, 0], "s": [0.36, 0.01, 0.24]},
+        {"m": "sc-robot-accent", "p": [0.17, 0.08, 0.131], "s": [0.03, 0.05, 0.004]},
+        {"m": "led-green", "p": [-0.15, 0.1, 0.131], "s": [0.04, 0.02, 0.004]},
+        {"m": "paper", "p": [0, 0.06, 0.131], "s": [0.12, 0.05, 0.004]}
+      ]
+    },
+    {
+      "id": "sc-sterile-gown",
+      "name": {"zh-CN": "加强型无菌手术衣（AAMI 4 级）", "en": "Reinforced sterile surgical gown (AAMI Level 4)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "加强型无菌手术衣：关键区达到 AAMI PB70:2022 4 级屏障，同时满足 EN 13795-1:2019 高性能要求；外科手消毒后在无菌区内由洗手护士协助穿戴。",
+        "en": "Reinforced sterile gown: AAMI PB70:2022 Level 4 barrier in the critical zones and EN 13795-1:2019 high-performance; put on in the sterile field after the surgical scrub, helped by the scrub nurse."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.3, "d": 0.24, "h": 0.06},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 穿戴", "en": "E · Put on"}},
+      "screen": "none",
+      "tags": ["or", "wearable", "gown", "sterile"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "parts": [
+        {"m": "sc-drape", "p": [0, 0.025, 0], "s": [0.3, 0.05, 0.24]},
+        {"m": "paper", "p": [0.08, 0.052, 0.06], "s": [0.08, 0.004, 0.06]},
+        {"m": "sc-robot-accent", "p": [-0.1, 0.052, -0.08], "s": [0.06, 0.004, 0.04]}
+      ]
+    },
+    {
+      "id": "sc-sterile-gloves",
+      "name": {"zh-CN": "无粉无菌外科手套（双层带穿孔指示）", "en": "Powder-free sterile surgical gloves (double-glove indicator system)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "无粉灭菌外科手套，内层彩色穿孔指示（EN 455 系列、ASTM D3577），按 AORN 建议双层佩戴。",
+        "en": "Powder-free sterile surgical gloves with a coloured perforation-indicator underglove (EN 455 series, ASTM D3577), double-gloved as AORN recommends."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.18, "d": 0.12, "h": 0.03},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 穿戴", "en": "E · Put on"}},
+      "screen": "none",
+      "tags": ["or", "wearable", "gloves", "sterile"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "parts": [
+        {"m": "paper", "p": [0, 0.012, 0], "s": [0.18, 0.024, 0.12]},
+        {"m": "green", "p": [-0.04, 0.026, 0], "s": [0.06, 0.004, 0.08]},
+        {"m": "cream", "p": [0.04, 0.026, 0], "s": [0.06, 0.004, 0.08]}
+      ]
+    },
+    {
+      "id": "sc-lead-apron",
+      "name": {"zh-CN": "铅衣（0.5 mm 铅当量，环绕式）", "en": "Lead apron (0.5 mm Pb, wrap-around)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "环绕式铅/无铅复合防护围裙，正面 0.5 mm 铅当量（IEC 61331-3:2014 标识），透视与注射时佩戴；定期做透视完整性检查。",
+        "en": "Wrap-around lead-composite apron, 0.5 mm lead equivalent at the front (marked to IEC 61331-3:2014), worn during fluoroscopy and injections; screened for integrity periodically."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.5, "d": 0.1, "h": 0.9},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 穿戴", "en": "E · Put on"}},
+      "screen": "none",
+      "tags": ["or", "wearable", "radiation", "lead"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "parts": [
+        {"m": "sc-lead-rubber", "p": [0, 0.45, 0], "s": [0.46, 0.84, 0.06]},
+        {"m": "sc-robot-accent", "p": [0, 0.86, 0], "s": [0.3, 0.06, 0.07]},
+        {"m": "chrome", "p": [0, 0.89, 0], "s": [0.04, 0.02, 0.02]}
+      ]
+    },
+    {
+      "id": "sc-sterile-setup-table",
+      "name": {"zh-CN": "无菌器械台（铺巾摆台）", "en": "Sterile set-up table (draped back table)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "不锈钢器械后台，双层无菌巾铺到台面以下（台面以下视为非无菌），按器械清单摆台；整台位于层流保护区内。",
+        "en": "Stainless back table draped double to below the top (below the top is non-sterile), laid out to the tray list; the whole table sits inside the clean airflow zone."
+      },
+      "capabilities": [],
+      "footprint": {"w": 1.2, "d": 0.6, "h": 1},
+      "solid": true,
+      "interaction": {"kind": "storage", "prompt": {"zh-CN": "E · 无菌器械台", "en": "E · Sterile set-up table"}},
+      "screen": "none",
+      "tags": ["or", "sterile"],
+      "parts": [
+        {"m": "rubber", "p": [-0.52, 0.03, -0.22], "s": [0.06, 0.06, 0.06]},
+        {"m": "rubber", "p": [-0.52, 0.03, 0.22], "s": [0.06, 0.06, 0.06]},
+        {"m": "rubber", "p": [0.52, 0.03, -0.22], "s": [0.06, 0.06, 0.06]},
+        {"m": "rubber", "p": [0.52, 0.03, 0.22], "s": [0.06, 0.06, 0.06]},
+        {"m": "chrome", "p": [-0.52, 0.46, -0.22], "s": [0.04, 0.8, 0.04]},
+        {"m": "chrome", "p": [-0.52, 0.46, 0.22], "s": [0.04, 0.8, 0.04]},
+        {"m": "chrome", "p": [0.52, 0.46, -0.22], "s": [0.04, 0.8, 0.04]},
+        {"m": "chrome", "p": [0.52, 0.46, 0.22], "s": [0.04, 0.8, 0.04]},
+        {"m": "steel", "p": [0, 0.265, 0], "s": [1.06, 0.03, 0.46]},
+        {"m": "steel", "p": [0, 0.875, 0], "s": [1.12, 0.03, 0.52]},
+        {"m": "sc-drape", "p": [0, 0.895, 0], "s": [1.16, 0.01, 0.56]},
+        {"m": "sc-drape", "p": [0, 0.8, 0.285], "s": [1.16, 0.2, 0.01]},
+        {"m": "sc-drape", "p": [0, 0.8, -0.285], "s": [1.16, 0.2, 0.01]},
+        {"m": "sc-drape", "p": [-0.585, 0.8, 0], "s": [0.01, 0.2, 0.57]},
+        {"m": "sc-drape", "p": [0.585, 0.8, 0], "s": [0.01, 0.2, 0.57]}
+      ]
+    },
+    {
+      "id": "sc-smoke-evacuator",
+      "name": {"zh-CN": "手术烟雾排除器（ULPA 过滤）", "en": "Surgical smoke evacuator (ULPA filtration)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "外科吊塔旁的手术烟雾排除器：四级过滤（预过滤、ULPA ≥ 99.9995 % @ 0.1–0.2 µm、活性炭），电刀激发时自动启动；AORN 要求排出并过滤所有手术烟雾。",
+        "en": "Surgical smoke evacuator beside the surgical pendant: four-stage filtration (pre-filter, ULPA ≥ 99.9995 % at 0.1–0.2 µm, activated carbon), auto-starting with electrosurgical activation; AORN: evacuate and filter all surgical smoke."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.46, "d": 0.4, "h": 0.9},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 烟雾排除器", "en": "E · Smoke evacuator"}},
+      "screen": "text",
+      "tags": ["or", "smoke", "energy"],
+      "behavior": {"initial": "off", "states": {"off": {"name": {"zh-CN": "关闭", "en": "off"}}, "running": {"name": {"zh-CN": "运行中（ULPA）", "en": "running (ULPA)"}}, "filter-due": {"name": {"zh-CN": "滤芯到期", "en": "filter due"}, "available": false}}, "operations": {"switch_on": {"name": {"zh-CN": "开启（自动激发模式）", "en": "Switch on (auto-activation mode)"}, "from": ["off"], "to": "running", "durationSeconds": 5, "roles": ["clinician", "attending", "nurse"]}, "switch_off": {"name": {"zh-CN": "关闭", "en": "Switch off"}, "from": ["running"], "to": "off", "durationSeconds": 5, "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "white", "p": [0, 0.42, 0], "s": [0.44, 0.8, 0.38]},
+        {"m": "coal", "p": [-0.08, 0.7, 0.195], "s": [0.2, 0.12, 0.006]},
+        {"m": "screen-dark", "p": [-0.08, 0.7, 0.199], "s": [0.17, 0.09, 0.004], "name": "screen"},
+        {"m": "blue", "p": [0.12, 0.62, 0.195], "s": [0.08, 0.08, 0.006]},
+        {"m": "led-green", "p": [0.12, 0.74, 0.195], "s": [0.04, 0.02, 0.006]},
+        {"m": "rubber", "p": [0, 0.02, 0], "s": [0.4, 0.04, 0.34]}
+      ]
+    },
+    {
+      "id": "sc-count-board",
+      "name": {"zh-CN": "手术清点板（RF 计数辅助）", "en": "Surgical count board (RF count adjunct)"},
+      "category": "teaching",
+      "description": {
+        "zh-CN": "墙挂式清点板与 RF/条码计数系统读写器：纱布、缝针、器械在切皮前、关闭体腔前、关闭皮肤前及人员交接时清点（日本手术医学会《手术医疗实践指南》）；即使清点相符，最终清点前也用 RF 检测棒扫描患者（AORN）。",
+        "en": "Wall count board with the RF/barcode count reader: swabs, sharps and instruments counted before incision, before closing a cavity, before skin closure and at every staff hand-over (JAOM Practice Guidelines); even when the counts reconcile, the patient is scanned with the RF wand before the final count (AORN)."
+      },
+      "capabilities": [],
+      "footprint": {"w": 1.2, "d": 0.08, "h": 2},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 清点", "en": "E · Count"}},
+      "screen": "text",
+      "tags": ["wall", "or", "count", "safety"],
+      "behavior": {"initial": "not-started", "states": {"not-started": {"name": {"zh-CN": "未开始", "en": "not started"}}, "baseline": {"name": {"zh-CN": "切皮前清点完成", "en": "baseline counted (before incision)"}}, "cavity": {"name": {"zh-CN": "关体腔前清点完成", "en": "counted before cavity closure"}}, "closing": {"name": {"zh-CN": "关皮前清点完成", "en": "counted before skin closure"}}, "reconciled": {"name": {"zh-CN": "最终清点相符（RF 扫描阴性）", "en": "final count reconciled (RF scan clear)"}}, "discrepancy": {"name": {"zh-CN": "清点不符：寻找 / X 线", "en": "discrepancy: search / X-ray"}}}, "operations": {"baseline_count": {"name": {"zh-CN": "切皮前清点（洗手护士与巡回护士唱点）", "en": "Baseline count before incision (scrub and circulator aloud)"}, "from": ["not-started"], "to": "baseline", "requires": [{"actorWithin": 2.5}], "durationSeconds": 120, "roles": ["nurse", "clinician", "attending"]}, "handover_count": {"name": {"zh-CN": "人员交接清点", "en": "Count at a staff hand-over"}, "from": ["baseline", "cavity", "closing"], "requires": [{"actorWithin": 2.5}], "durationSeconds": 90, "roles": ["nurse", "clinician", "attending"]}, "cavity_count": {"name": {"zh-CN": "关闭体腔前清点", "en": "Count before closing a cavity"}, "from": ["baseline"], "to": "cavity", "requires": [{"actorWithin": 2.5}], "durationSeconds": 90, "roles": ["nurse", "clinician", "attending"]}, "closing_count": {"name": {"zh-CN": "关闭皮肤前清点", "en": "Count before skin closure"}, "from": ["baseline", "cavity"], "to": "closing", "requires": [{"actorWithin": 2.5}], "durationSeconds": 90, "roles": ["nurse", "clinician", "attending"]}, "final_count": {"name": {"zh-CN": "最终清点（需 RF 扫描阴性）", "en": "Final count (needs a clear RF scan)"}, "from": ["closing"], "to": "reconciled", "requires": [{"actorWithin": 2.5}, {"nearbyState": {"type": "sc-rf-wand", "state": "clear", "within": 6}}], "durationSeconds": 60, "roles": ["nurse", "clinician", "attending"]}, "report_discrepancy": {"name": {"zh-CN": "报告清点不符（寻找，必要时术中 X 线）", "en": "Report a discrepancy (search; intra-operative X-ray if needed)"}, "from": ["baseline", "cavity", "closing"], "to": "discrepancy", "durationSeconds": 30, "roles": ["nurse", "clinician", "attending"]}, "resolve": {"name": {"zh-CN": "找到缺失物品，重新清点", "en": "Missing item found — recount"}, "from": ["discrepancy"], "to": "closing", "requires": [{"actorWithin": 2.5}], "durationSeconds": 120, "roles": ["nurse", "clinician", "attending"]}, "reset": {"name": {"zh-CN": "下一台手术：清空清点板", "en": "Next case: clear the board"}, "from": ["reconciled"], "to": "not-started", "durationSeconds": 30, "roles": ["nurse", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "white", "p": [0, 1.45, -0.03], "s": [1.12, 0.9, 0.02]},
+        {"m": "sc-robot-accent", "p": [0, 1.86, -0.017], "s": [1, 0.06, 0.006]},
+        {"m": "coal", "p": [-0.3, 1.7, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [-0.3, 1.6, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [-0.3, 1.5, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [-0.3, 1.4, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [-0.3, 1.3, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [-0.3, 1.2, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0, 1.7, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0, 1.6, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0, 1.5, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0, 1.4, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0, 1.3, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0, 1.2, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0.3, 1.7, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0.3, 1.6, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0.3, 1.5, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0.3, 1.4, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0.3, 1.3, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "coal", "p": [0.3, 1.2, -0.017], "s": [0.24, 0.012, 0.004]},
+        {"m": "plastic", "p": [0.42, 1.12, -0.025], "s": [0.18, 0.22, 0.03]},
+        {"m": "screen-dark", "p": [0.42, 1.12, -0.009], "s": [0.14, 0.12, 0.004], "name": "screen"},
+        {"m": "led-green", "p": [0.42, 1.2, -0.008], "s": [0.04, 0.03, 0.004]}
+      ]
+    },
+    {
+      "id": "sc-rf-wand",
+      "name": {"zh-CN": "RF 纱布检测棒", "en": "RF surgical-sponge detection wand"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "射频检测棒：在关闭前扫描患者全身，检出遗留的 RFID 纱布；作为计数的辅助手段，即使清点相符也要扫描（AORN）。",
+        "en": "Radio-frequency wand: swept over the patient before closure to detect a retained RFID swab — the count adjunct, used even when the counts reconcile (AORN)."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.36, "d": 0.08, "h": 0.06},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · RF 检测棒", "en": "E · RF wand"}},
+      "screen": "none",
+      "tags": ["or", "count", "rfid"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "ready", "states": {"ready": {"name": {"zh-CN": "待用", "en": "ready"}}, "clear": {"name": {"zh-CN": "扫描阴性（无遗留）", "en": "scan clear (nothing retained)"}}}, "operations": {"scan": {"name": {"zh-CN": "扫描患者", "en": "Scan the patient"}, "from": ["ready"], "to": "clear", "requires": [{"state": "held"}, {"patientWithin": 1.4}], "durationSeconds": 45, "roles": ["nurse", "clinician", "attending"]}, "reset": {"name": {"zh-CN": "复位（下一台手术）", "en": "Reset (next case)"}, "from": ["clear"], "to": "ready", "durationSeconds": 5, "roles": ["nurse", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "plastic", "p": [-0.08, 0.025, 0], "s": [0.18, 0.04, 0.05]},
+        {"m": "sc-robot-accent", "p": [0.08, 0.03, 0], "s": [0.18, 0.05, 0.07]},
+        {"m": "led-green", "p": [-0.12, 0.048, 0], "s": [0.03, 0.004, 0.02]}
       ]
     }
   ]

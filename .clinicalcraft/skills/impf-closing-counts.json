@@ -1,0 +1,195 @@
+{
+  "schema": "clinicalcraft/skill@1",
+  "id": "impf_closing_counts",
+  "name": {
+    "zh-CN": "关闭前清点、RF 扫描与离室前核查",
+    "en": "Closing counts, RF scan and sign-out"
+  },
+  "description": {
+    "zh-CN": "先到患者身旁（本手术间），关闭体腔前与关闭皮肤前清点；即使清点相符也用 RF 检测棒扫描患者（AORN），最终清点相符后完成 WHO Sign out。",
+    "en": "From the patient's side in this OR: count before closing the cavity and before skin closure; scan the patient with the RF wand even when the counts agree (AORN); after the reconciled final count, the WHO sign-out."
+  },
+  "params": {
+    "patient": {
+      "type": "entity",
+      "default": "$patient",
+      "description": {
+        "zh-CN": "患者（默认本次手术的患者）",
+        "en": "The patient (default: this operation's patient)"
+      }
+    }
+  },
+  "safety": "physical",
+  "steps": [
+    {
+      "id": "go",
+      "tool": "navigate_to",
+      "args": {
+        "target": "${patient}"
+      },
+      "when": {
+        "not": {
+          "actorNear": "${patient}",
+          "range": 3
+        }
+      }
+    },
+    {
+      "id": "checklist",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-who-checklist",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "board",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-count-board",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "wand",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-rf-wand",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "cavity",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.board.data.entities.0.id}",
+        "operation": "cavity_count"
+      },
+      "when": {
+        "entityState": "${steps.board.data.entities.0.id}",
+        "state": [
+          "baseline"
+        ]
+      }
+    },
+    {
+      "id": "closing",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.board.data.entities.0.id}",
+        "operation": "closing_count"
+      },
+      "when": {
+        "entityState": "${steps.board.data.entities.0.id}",
+        "state": [
+          "baseline",
+          "cavity"
+        ]
+      }
+    },
+    {
+      "id": "reset_wand",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.wand.data.entities.0.id}",
+        "operation": "reset"
+      },
+      "when": {
+        "entityState": "${steps.wand.data.entities.0.id}",
+        "state": [
+          "clear"
+        ]
+      }
+    },
+    {
+      "id": "take_wand",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.wand.data.entities.0.id}",
+        "operation": "pick_up"
+      },
+      "when": {
+        "entityState": "${steps.wand.data.entities.0.id}",
+        "state": [
+          "ready",
+          "clear"
+        ]
+      }
+    },
+    {
+      "id": "scan",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.wand.data.entities.0.id}",
+        "operation": "scan"
+      },
+      "when": {
+        "entityState": "${steps.board.data.entities.0.id}",
+        "state": [
+          "closing"
+        ]
+      }
+    },
+    {
+      "id": "final",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.board.data.entities.0.id}",
+        "operation": "final_count"
+      },
+      "when": {
+        "entityState": "${steps.board.data.entities.0.id}",
+        "state": [
+          "closing"
+        ]
+      }
+    },
+    {
+      "id": "sign_out",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.checklist.data.entities.0.id}",
+        "operation": "sign_out"
+      },
+      "when": {
+        "entityState": "${steps.checklist.data.entities.0.id}",
+        "state": [
+          "timed-out"
+        ]
+      }
+    },
+    {
+      "id": "dock_wand",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.wand.data.entities.0.id}",
+        "operation": "put_down"
+      },
+      "onError": "continue"
+    }
+  ],
+  "postconditions": [
+    {
+      "entityState": "${steps.board.data.entities.0.id}",
+      "state": "reconciled"
+    },
+    {
+      "entityState": "${steps.checklist.data.entities.0.id}",
+      "state": "signed-out"
+    }
+  ],
+  "recovery": [
+    {
+      "on": [
+        "SPATIAL_REQUIREMENT_UNMET",
+        "NOT_IN_RANGE",
+        "NOT_VISIBLE",
+        "NO_INTERACTION_POINT"
+      ],
+      "strategy": "replan"
+    }
+  ]
+}

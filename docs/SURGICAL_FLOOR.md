@@ -1,17 +1,22 @@
-# SurgeryCraft surgical floor · 二层 · 手术部
+# IMPF Surgery Hospital · surgical floor · 二层 · 手术部
 
-The operating department of the **SurgeryCraft Surgical Centre** (`surgical-centre`), a two-storey
-facility for the ClinicalCraft engine. The first floor (L1) is the new surgical floor: eight
-operating rooms built to the room types and planning rules used by top-tier hospitals
-(FGI / ASHRAE 170, GB 50333, DIN 1946-4, HTM 03-01 / HBN 26, IEC and ISO device standards),
-plus everything an operating department needs around them. The ground floor (L0) holds the
-services the floor depends on: admissions, the central sterile services department (CSSD),
-the perioperative lab and blood bank, a surgical skills and simulation centre and the OR plant.
+The operating department of **IMPF Surgery Hospital** (`impf-surgery-hospital`, IMPF 外科医院), a
+two-storey hospital for the ClinicalCraft engine. The first floor (L1) is the surgical floor:
+eight operating rooms designed to **the strictest of the Singaporean, European, US and Japanese
+requirements** for each topic ([STANDARDS.md](STANDARDS.md)), plus everything an operating
+department needs around them. The ground floor (L0) holds the services the floor depends on:
+admissions, the central sterile services department (CSSD), the perioperative lab and blood
+bank, a surgical skills and simulation centre and the OR plant.
 
-Everything is data for ClinicalCraft's existing engine — no engine change is needed. The
-content passes `clinicalcraft facilities validate --all` with **0 errors and 0 warnings**, and
-ClinicalCraft's own world model confirms that every room, device and patient bay can be walked
-to (see [§8](#8-validation)).
+People, instruments and devices **interact**: each OR has its team, every instrument has a
+lifecycle and the safety-critical devices are state machines whose rules depend on each other —
+no incision before the time-out, no energy without smoke evacuation, no sign-out before the
+counts reconcile with an RF scan, no reuse before the CSSD ([INTERACTIONS.md](INTERACTIONS.md)).
+
+Everything is data for ClinicalCraft; the interactions use the general mechanics of its hands
+round ([psknlr/ClinicalCraft#7](https://github.com/psknlr/ClinicalCraft/pull/7)). The content passes `clinicalcraft facilities validate --all` with
+**0 errors and 0 warnings**, and ClinicalCraft's own world model confirms that every room, device
+and patient bay can be walked to and that every workflow runs (see [§8](#8-validation)).
 
 ![First floor zoning](img/surgical-floor-L1-zoning.png)
 
@@ -22,13 +27,25 @@ to (see [§8](#8-validation)).
 | Operating rooms | 8: hybrid (robotic angiography), robotic, 2 × Class I ultra-clean, 3 × integrated digital (one held 24/7 for emergency & obstetric surgery), 1 × negative-pressure isolation |
 | Perioperative | 8-bay PACU, 5-bay pre-op holding, patient transfer zone (换床间), theatre control desk |
 | OR support | 6 scrub bays, 6 sterile set-up (lay-up) rooms, 58 × 8 m sterile core with clean lift, hybrid control room, anaesthesia workroom (satellite blood fridge, blood gas), frozen-section lab, theatre pharmacy, equipment store, soiled utility with dirty lift |
-| Staff | one-way changing rooms (women / men) with step-over benches and scrub dispensers, staff lounge, staff corridor |
+| Staff areas | one-way changing rooms (women / men) with step-over benches and scrub dispensers, staff lounge, staff corridor |
+| OR teams | a scrub nurse, a circulating nurse and an anaesthetist in each OR and the simulation OR, by name |
+| Interactions | 12 handheld instruments and wearables with lifecycles; 19 operable state machines (64 operations) gated by hand hygiene, worn apparel, roles and the state of nearby devices; "pass me …" to any colleague; 3 workflow skills |
 | Ground floor | main hall & admissions, family lounge, day surgery, 2 pre-anaesthesia clinics, perioperative lab, blood bank, CSSD (decontamination → packing & sterilising → sterile store), skills lab, OR live-video room, simulation OR + debrief, AHU plant room, stores |
 | Vertical links | 2 bed lifts, clean lift (CSSD → sterile core), dirty lift (soiled utility → decontamination), main stairs, escape stairs |
-| Size | building 64 × 44 m, two 5 m storeys; 69 rooms (46 on L1), 703 placements (471 on L1), 21 patient slots, 13 staff, 22 access zones |
-| New content | 1 facility, 15 room templates, 1 catalog with 47 equipment types and 21 materials (all bilingual zh-CN / en) |
+| Size | building 64 × 44 m, two 5 m storeys; 69 rooms (46 on L1), 822 placements (577 on L1, 101 of them handheld), 21 patient slots, 40 staff, 22 access zones |
+| Content | 1 facility, 15 room templates, 1 catalog with 62 equipment types and 21 materials, 3 skills (all bilingual zh-CN / en) |
 
 ## 中文概要
+
+IMPF 外科医院按新加坡、欧洲、美国和日本规范中每一项最严格的要求设计（见 [STANDARDS.md](STANDARDS.md)）：
+每间手术室 ≥ 25 次/h 换气，超净手术室手术区 ISO 5、浮游菌设计均值 ≤ 5 CFU/m³，相邻区域压差 15 ± 5 Pa，
+净面积 ≥ 55.74 m²，≥ 36 个插座与 IT 隔离电源，无影灯不间断电源，医用气体 400 ± 40 kPa。
+
+人、器械和设备可以交互（见 [INTERACTIONS.md](INTERACTIONS.md)）：每间手术室有洗手护士、巡回护士和麻醉医生；
+说“把手术刀递给我”或“纱布”，洗手护士就会拿起器械走过来递给你；器械有“无菌 → 使用中 → 待再处理”的
+生命周期，用过的器械必须送到一层消毒供应中心清洗消毒、灭菌放行后才能再次使用；切皮前必须完成手卫生、
+穿无菌手术衣戴手套、WHO 暂停核查（需先完成切皮前清点）；电刀需要烟雾排除器运行；离室前核查需要最终
+清点相符，而最终清点需要 RF 检测棒扫描阴性；复合手术室透视下注射需要穿铅衣、铅屏风就位。
 
 二层手术部采用“中央无菌核心区 + 环形洁净走廊”的布局：8 间手术室围绕无菌核心区排成南北两排，
 手术室一侧开向无菌核心区（无菌物品），另一侧开向半限制区洁净走廊（患者与医护）。按 AORN/FGI 的
@@ -119,8 +136,8 @@ Sizes are room rectangles (walls are 0.35 m, so clear dimensions are ≈ 0.35 m 
 ## 3. The operating rooms
 
 All ORs share one equipment skeleton, arranged as a compact **clinical island** — table,
-anaesthesia workstation and monitor at the head, anaesthesia and surgical pendants, back table,
-Mayo stand, infusion pump and warmer — with at least 1.3 m clear all round it (see
+anaesthesia workstation and monitor at the head, anaesthesia and surgical pendants, the sterile
+set-up table, Mayo stand, infusion pump and warmer — with at least 1.3 m clear all round it (see
 [§7](#7-authoring-rules-learned-from-the-engine)):
 
 * ceiling unidirectional-flow supply canopy with terminal HEPA filters over the table
@@ -135,7 +152,12 @@ Mayo stand, infusion pump and warmer — with at least 1.3 m clear all round it 
   laminar-flow status, medical-gas alarms, surgical and anaesthesia timers) and the
   **WHO Surgical Safety Checklist** board (Sign in · Time out · Sign out);
 * low-level return grilles at opposite corners; drug cabinet, IV cannulation cart, EHR
-  terminal, hand rub.
+  terminal, hand rub;
+* the **sterile set-up table** laid out to the tray list — rigid instrument container, counted
+  RFID swabs, sterile gown and gloves, safety scalpel, needle holder, tissue forceps, dissecting
+  scissors, artery forceps, ESU pencil with smoke shroud — all handheld, with lifecycles and UDI;
+* a **ULPA smoke evacuator** beside the surgical pendant, the **surgical count board** with the
+  **RF sponge-detection wand** in its cradle, and the OR team at their posts.
 
 | type | used for | what sets it apart |
 |---|---|---|
@@ -151,31 +173,21 @@ optical navigation and an operating microscope.
 
 ## 4. Standards basis
 
-Design targets are written into the equipment and room descriptions the learner reads in
-game. ClinicalCraft does not simulate airflow, pressure, temperature or radiation: these values
-are **teaching content and design intent**, not engineering. Figures below were cross-checked
-against the sources listed at the end, several of them secondary; check the current edition of
-each standard (and the local code) before using any of them for a real building.
+The full matrix — Singapore, Europe, USA and Japan side by side, with sources — is
+[STANDARDS.md](STANDARDS.md). For each topic IMPF takes the strictest requirement:
 
-| topic | design target used here | reference |
+| topic | IMPF target | strictest source |
 |---|---|---|
-| Traffic zoning | restricted / semi-restricted / unrestricted areas; attire rules at the red line | AORN *Traffic patterns*; FGI Guidelines |
-| OR size | 9 × 9 m standard ORs (≈ 75 m² clear, 8.65 m min. dimension); hybrid ≈ 92 m² clear | FGI-based state rules: ≥ 600 sq ft (55.7 m²) clear, ≥ 20 ft (6.1 m) min. dimension for ORs with large equipment; hybrid ORs ≈ 70–85 m² + control room (Getinge planning guide) |
-| Ventilation (conventional / Class II) | ≥ 20 total and ≥ 4 outdoor air changes per hour; positive to the corridor (≥ 2.5 Pa / 0.01 in w.c.); supply array over the table, low returns | ASHRAE 170 (adopted by FGI) |
-| Cleanliness classes | Class I: operating zone ISO 5, ≤ 0.2 CFU/30 min·Φ90 plate (≈ 5 CFU/m³), 0.20–0.25 m/s at 1.2 m above floor; Class II: operating zone ISO 6 | GB 50333-2013 (医院洁净手术部建筑技术规范), ISO 14644-1 |
-| Pressure cascade | ≥ 5 Pa between connected rooms of different cleanliness, < 20 Pa | GB 50333-2013 |
-| Ultra-clean air | ≤ 10 CFU/m³ in the UCV zone; TAV ceilings of ≥ 3.2 × 3.2 m (class Ia), protected area sized by a positioning analysis | HTM 03-01; DIN 1946-4:2018 |
-| Temperature & humidity | 20–24 °C, 20–60 % RH (ASHRAE 170); 21–25 °C, 30–60 % RH (GB 50333 Class I) | ASHRAE 170; GB 50333 |
-| Lighting | surgical light 40 000–160 000 lx central illuminance; OR general lighting 1 000 lx (EN 12464-1), ≥ 350 lx (GB 50333 Class I) | IEC 60601-2-41; EN 12464-1; GB 50333 |
-| Medical gases | O₂, medical air, vacuum and WAGD/AGSS in every OR (+ N₂O); area alarms and zone valve boxes on the corridors | FGI / NFPA 99; HTM 02-01; ISO 7396-1 |
-| Electrical | ≥ 36 receptacles per OR; Group 2 medical locations on a medical IT (isolated) system with insulation monitoring | NEC 517.19 / NFPA 99; IEC 60364-7-710 |
-| Anaesthesia | workstation with ventilator and gas monitoring; difficult-airway trolley in the suite | ISO 80601-2-13; difficult-airway algorithms (Plan A–D drawers) |
-| Radiation | hybrid OR shielding by a medical physicist (commonly 1.5–3 mm Pb eq.), ceiling shield, lead curtain, aprons | NCRP 147; vendor planning guides |
-| Safety process | Sign in · Time out · Sign out board in every OR | WHO Surgical Safety Checklist (2009) |
-| Perioperative hypothermia | forced-air warmers, warming cabinets | NICE CG65 |
-| Recovery | 8 PACU bays for 8 ORs, station in direct view of every bay | common planning ratio ≈ 1–1.5 bays per OR |
-| Sterile services | one-way decontamination → inspection/packing/sterilising → sterile store; pass-through washer-disinfectors and sterilisers | ISO 15883; ISO 17665; WS 310.1–.3-2016; HTM 01-01 |
-| Infection control | negative-pressure isolation OR behind an interlocked anteroom | GB 50333 (negative-pressure OR provisions); local infection-control policy |
+| Air changes | ≥ 25 total, ≥ 4 outdoor ACH in every OR | HTM 03-01 (> ASHRAE 170's 20, > Japan's 15) |
+| Ultra-clean ORs (1, 3, 4) | ISO 5 operating zone; ≤ 10 CFU/m³ in use, design mean ≤ 5; 3.2 × 3.2 m unidirectional zone over the table **and** the opened instrument tables; non-aspirating array | NF S 90-351, SIS/TS 39:2025, DIN 1946-4 Ia, SWKI 1a, ASHRAE 170 |
+| Pressure | positive OR; 15 ± 5 Pa between zones; isolation OR negative behind an interlocked anteroom | NF S 90-351 |
+| Climate · filters | 20–24 °C, 35–60 % RH; MERV-16 then terminal HEPA ≥ 99.97 % | ASHRAE 170, AfPP, HEAS-02 |
+| OR size | ≥ 55.74 m² clear, ≥ 6.1 m minimum dimension (built: ≈ 75 m², hybrid ≈ 92 m²) | FGI |
+| Electrical | ≥ 36 receptacles; medical IT systems with insulation monitoring; uninterruptible supply for the surgical lights | NFPA 99 / NEC 517.19, IEC 60364-7-710, JIS T 1022:2023 |
+| Medical gases | O₂, air, N₂O, vacuum, AGSS/WAGD, instrument air; 400 ± 40 kPa; O₂ ≥ 60 NL/min | JIS T 7101:2020, FGI / NFPA 99 |
+| Monitoring | SpO₂, capnography, ECG, NIBP ≤ 5 min, temperature, neuromuscular | JSA 2019 |
+| Practice (gated in game) | WHO Sign in · Time out · Sign out; counts at the four JAOM points with the RF adjunct; smoke evacuation for all energy; hand hygiene, gown and gloves; lead apron and shield for injections under fluoroscopy; CSSD reprocessing before reuse | WHO, JAOM 2019, AORN, MOH Singapore IPC, IEC 61331-3, ISO 15883 / ISO 17665 |
+| Instruments · apparel | stainless to ISO 7153-1 / ASTM F899-23, autoclave-tested to ISO 13402:2025, UDI direct-marked (EU MDR, 21 CFR 801.45); gowns AAMI PB70 Level 4 / EN 13795-1 | see [STANDARDS.md §3](STANDARDS.md#3-instruments-apparel-and-devices) |
 
 Choices made deliberately: no separate anaesthetic induction rooms (induction in the OR, as
 in US and Chinese practice; HBN 26 plans one per theatre), and the PACU kept on the floor
@@ -205,10 +217,14 @@ three dedicated AHUs.
   be completed here: every capability it needs is on the floor (anaesthesia, airway,
   ventilator, monitoring, infusion, echo at the bedside; blood bank, blood gas and haematology
   in the suite and the lab). `facilities validate` reports no capability gap.
-* **Staff** (13): charge nurse (theatre coordinator) and duty anaesthetist at the control
-  desk, porter in the lobby, PACU and pre-op nurses, interventional radiologist, pathologist,
-  theatre pharmacist; on the ground floor the admissions receptionist, day-surgery nurse,
-  transfusion scientist, lab technician and the surgical educator.
+* **Staff** (40): an OR team — scrub nurse, circulating nurse, anaesthetist — in each of the 8
+  ORs and the simulation OR; charge nurse (theatre coordinator) and duty anaesthetist at the
+  control desk, porter in the lobby, PACU and pre-op nurses, interventional radiologist,
+  pathologist, theatre pharmacist; on the ground floor the admissions receptionist, day-surgery
+  nurse, transfusion scientist, lab technician and the surgical educator.
+* **Interactions**: pick up, wear, pass and use instruments; call for them by name ("Scalpel.",
+  "把手术刀递给我"); run the WHO checklist, the counts, energy, radiation protection and CSSD
+  reprocessing as gated operations or as the pack's skills — see [INTERACTIONS.md](INTERACTIONS.md).
 * **Walking routes** (ClinicalCraft planner): spawn → OR 7 is ≈ 62 m via the main stairs; a
   bed goes by bed lift.
 
@@ -238,14 +254,23 @@ runs, against a ClinicalCraft checkout (nothing is left behind in it):
 1. `clinicalcraft facilities validate --all` with this pack in `contentDirs` — catalog,
    15 templates and the compiled facility: **0 errors, 0 warnings**, no capability gaps;
 2. `tools/navcheck.test.ts` on ClinicalCraft's world model — 5 checks: the case starts in
-   OR 7 one storey up; a bed takes a bed lift; **every interactive placement** is reachable
-   by a clinician from the spawn; all 21 patient slots are reachable; the zoning refuses
-   porters in the sterile core, receptionists and lab technicians in the ORs and lets the
-   radiologist into the hybrid OR only.
+   OR 7 one storey up; a bed takes a bed lift; **every interactive placement** (instruments
+   included) is reachable by a clinician from the spawn; all 21 patient slots are reachable;
+   the zoning refuses porters in the sterile core, receptionists and lab technicians in the
+   ORs and lets the radiologist into the hybrid OR only;
+3. `tools/orflow.test.ts` on the world runtime — 7 workflows: every in-room gate resolves only
+   to its own room's device; no incision before scrub, gown, gloves, sign-in, baseline count,
+   time-out and operating mode; the scrub nurse passes the needle holder and only its holder
+   uses it; energy needs the electrode monitored and smoke evacuation; the counts, RF scan and
+   sign-out; a used scalpel reprocessed in the CSSD; no injection without lead;
+4. `tools/skills.test.ts` in an embodied ClinicalCraft session — the pack's skills run through
+   the learner's tool path and verify against the world, and "Pass me the needle holder" to
+   Nurse Lim ends with it in the learner's hands.
 
 ## 9. Gallery
 
-Screenshots from ClinicalCraft's world harness (`world-harness.html`).
+Screenshots from ClinicalCraft's world harness (`world-harness.html`) and, for the
+interactions, from the web world served with the pack (`clinicalcraft serve`).
 
 | | |
 |---|---|
@@ -256,6 +281,8 @@ Screenshots from ClinicalCraft's world harness (`world-harness.html`).
 | ![Scrub bay](img/scrub-bay.jpg) Scrub bay · 刷手间 | ![OR 8 anteroom](img/or8-isolation-anteroom.jpg) Isolation anteroom · 缓冲间 |
 | ![PACU](img/pacu.jpg) PACU · 麻醉后恢复室 | ![Changing](img/staff-changing.jpg) Staff changing · 更衣室 |
 | ![CSSD](img/cssd-packing.jpg) CSSD packing & sterilising · 消毒供应中心 | ![Skills lab](img/skills-lab.jpg) Skills lab · 技能实训室 |
+| ![Set-up table](img/set-up-table-or7.jpg) OR 7's set-up table after Nurse Lim passed the needle holder · 器械台 | ![In your hands](img/hands-in-your-hands.jpg) In your hands: two instruments, gown and gloves worn · 手中物品 |
+| ![Scalpel](img/hands-scalpel-panel.jpg) The safety scalpel: lifecycle, UDI, Pick up · 安全手术刀 | ![Refused](img/hands-incise-refused.jpg) Incision refused until hand hygiene, with the way to the scrub trough · 拒绝并指路 |
 
 ## Sources
 
