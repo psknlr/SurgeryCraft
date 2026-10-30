@@ -5,7 +5,8 @@ SurgeryCraft builds surgical training content on the
 `ClinicalCraft-main (1).zip`). This repository is a ClinicalCraft **content pack**: plain JSON
 that ClinicalCraft loads through its `contentDirs` setting, plus declarative skills. It needs a
 ClinicalCraft with the hands round ([psknlr/ClinicalCraft#7](https://github.com/psknlr/ClinicalCraft/pull/7)): hand-over, worn items, `nearbyState`
-and "pass me …".
+and "pass me …" — and with window frame and mullion materials
+([psknlr/ClinicalCraft#8](https://github.com/psknlr/ClinicalCraft/pull/8)) for the exterior.
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 
@@ -35,6 +36,14 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
 
 ![In your hands](docs/img/hands-in-your-hands.jpg)
 
+The exterior is a white rainscreen volume with ribbon glazing. The entrance is a double-height
+glass lantern under a floating canopy that carries the IMPF letters, and timber-look fins screen
+the operating floor. Outside there is a granite arrival plaza with a reflecting pool and a tree
+bosque. On the roof sit a helipad, photovoltaics, a plant screen and staff gardens. See
+[docs/EXTERIOR.md](docs/EXTERIOR.md).
+
+![Arrival](docs/img/exterior.jpg)
+
 Design specification, room schedule and screenshots:
 **[docs/SURGICAL_FLOOR.md](docs/SURGICAL_FLOOR.md)** · standards matrix:
 **[docs/STANDARDS.md](docs/STANDARDS.md)** · interactions:
@@ -51,11 +60,12 @@ content/
 docs/SURGICAL_FLOOR.md               design specification · docs/img/ figures
 docs/STANDARDS.md                    SG / EU / US / JP standards matrix and the targets chosen
 docs/INTERACTIONS.md                 people, instruments and devices: lifecycles, gates, skills, words
+docs/EXTERIOR.md                     the exterior: envelope, arrival, landscape, roof
 tools/check.sh                       validate the pack and run the tests below against ClinicalCraft
 tools/navcheck.test.ts               navigation & zoning (run by check.sh)
 tools/orflow.test.ts                 the OR workflows on the world runtime (run by check.sh)
 tools/skills.test.ts                 the skills and "pass me" in a session (run by check.sh)
-tools/content-gen/                   Python generator that writes content/ (python3 build.py)
+tools/content-gen/                   Python generator that writes content/ (python3 build.py; exterior.py: the exterior)
 dataset/                             150 CMCR surgical case-report archives (zip; source material)
 ```
 

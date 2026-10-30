@@ -32,8 +32,9 @@ and patient bay can be walked to and that every workflow runs (see [§8](#8-vali
 | Interactions | 12 handheld instruments and wearables with lifecycles; 19 operable state machines (64 operations) gated by hand hygiene, worn apparel, roles and the state of nearby devices; "pass me …" to any colleague; 3 workflow skills |
 | Ground floor | main hall & admissions, family lounge, day surgery, 2 pre-anaesthesia clinics, perioperative lab, blood bank, CSSD (decontamination → packing & sterilising → sterile store), skills lab, OR live-video room, simulation OR + debrief, AHU plant room, stores |
 | Vertical links | 2 bed lifts, clean lift (CSSD → sterile core), dirty lift (soiled utility → decontamination), main stairs, escape stairs |
-| Size | building 64 × 44 m, two 5 m storeys; 69 rooms (46 on L1), 822 placements (577 on L1, 101 of them handheld), 21 patient slots, 40 staff, 22 access zones |
-| Content | 1 facility, 15 room templates, 1 catalog with 62 equipment types and 21 materials, 3 skills (all bilingual zh-CN / en) |
+| Exterior | white rainscreen volume with ribbon glazing, a double-height glass lantern at the entrance, timber-look fin screen on the operating floor, floating canopy with the IMPF letters and a covered walkway, granite arrival plaza with a reflecting pool and tree bosque, rooftop helipad, PV, plant screen and staff gardens ([EXTERIOR.md](EXTERIOR.md)) |
+| Size | building 64 × 44 m, two 5 m storeys; 69 rooms (46 on L1), 885 placements (577 on L1, 101 of them handheld, 63 exterior), 21 patient slots, 40 staff, 22 access zones |
+| Content | 1 facility, 15 room templates, 1 catalog with 74 equipment types and 35 materials, 3 skills (all bilingual zh-CN / en) |
 
 ## 中文概要
 
@@ -225,7 +226,7 @@ three dedicated AHUs.
 * **Interactions**: pick up, wear, pass and use instruments; call for them by name ("Scalpel.",
   "把手术刀递给我"); run the WHO checklist, the counts, energy, radiation protection and CSSD
   reprocessing as gated operations or as the pack's skills — see [INTERACTIONS.md](INTERACTIONS.md).
-* **Walking routes** (ClinicalCraft planner): spawn → OR 7 is ≈ 62 m via the main stairs; a
+* **Walking routes** (ClinicalCraft planner): spawn (the end of the approach) → OR 7 is ≈ 67 m via the main stairs; a
   bed goes by bed lift.
 
 ## 7. Authoring rules learned from the engine
@@ -269,12 +270,14 @@ runs, against a ClinicalCraft checkout (nothing is left behind in it):
 
 ## 9. Gallery
 
+The exterior has its own page and gallery: [EXTERIOR.md](EXTERIOR.md).
+
 Screenshots from ClinicalCraft's world harness (`world-harness.html`) and, for the
 interactions, from the web world served with the pack (`clinicalcraft serve`).
 
 | | |
 |---|---|
-| ![Exterior](img/exterior.jpg) Exterior · 外观 | ![L1 lobby](img/l1-lobby.jpg) Operating department lobby · 手术部入口厅 |
+| ![Exterior](img/exterior.jpg) Arrival: glass lantern, canopy, fin screen · 外观 | ![L1 lobby](img/l1-lobby.jpg) Operating department lobby · 手术部入口厅 |
 | ![OR 1 hybrid](img/or1-hybrid.jpg) OR 1 · hybrid · 复合手术室 | ![Hybrid control room](img/hybrid-control-room.jpg) Hybrid control room · 控制室 |
 | ![OR 2 robotic](img/or2-robotic.jpg) OR 2 · robotic · 机器人手术室 | ![OR 3 ultra-clean](img/or3-ultraclean.jpg) OR 3 · ultra-clean · 超净层流手术室 |
 | ![OR 7](img/or7-emergency-obstetric.jpg) OR 7 · emergency & obstetric · 急诊/产科 | ![Sterile core](img/sterile-core.jpg) Sterile core · 无菌核心区 |

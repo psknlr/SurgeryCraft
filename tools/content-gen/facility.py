@@ -2,6 +2,7 @@
 from common import L, num
 import footprints as fp
 from templates import SEMI, OR_ROLES, CORE_ROLES, OR_WALL, CLEAN_WALL
+import exterior
 
 FACILITY_ID = "impf-surgery-hospital"
 ISSUES = []
@@ -564,26 +565,129 @@ CONNECTORS = [
 ]
 
 
-def win(side, offset, levels, width=2.0):
-    return {"side": side, "offset": num(offset), "width": num(width), "height": 1.6, "kind": "window", "sill": 1.0, "levels": levels}
+# ------------------------------------------------------------------------------------------------ the envelope
+# Windows are derived from the rooms behind each facade (never across an interior wall): ribbon glazing in the
+# rooms people use, a full-height glass lantern in the entrance hall and the lobby above it, vertical slots in
+# the escape stairs, clerestories in plant and stores (exterior.py has the concept).
+BX0, BX1, BZ0, BZ1 = -32, 32, -22, 22
+ENTRANCE = {"side": "s", "offset": 11, "width": 3.2, "height": 3.2, "kind": "double-door", "levels": ["L0"]}
+LANTERN = {"l0-hall", "l1-lobby"}
+CLERESTORY = {"l0-plant", "l0-stores", "l0-decon", "l0-service-corridor"}
 
 
-OPENINGS = [{"side": "s", "offset": 11, "width": 3.2, "height": 3.2, "kind": "double-door", "levels": ["L0"]}]
-OPENINGS += [win("n", x, ["L1"]) for x in (-28, -20, -12, -4, 4, 12, 20, 28)]
-OPENINGS += [win("s", x, ["L1"]) for x in (-29, -25, -21, -15, -12, -4, 1, 9, 17, 23)]
-OPENINGS += [win("w", z, ["L1"]) for z in (-15, -8, 0, 7, 13, 19)]
-OPENINGS += [win("e", z, ["L1"]) for z in (-15, -8, 0, 7, 16)]
-OPENINGS += [win("s", x, ["L0"]) for x in (-30, -27, -24, -18, -12, -6, 2, 19, 23, 29)]
-OPENINGS += [win("w", z, ["L0"]) for z in (-18, -8.5, 0, 12, 18)]
-OPENINGS += [win("n", x, ["L0"]) for x in (-28, -22, -16, -4, 4, 12, 20, 28)]
-OPENINGS += [win("e", z, ["L0"]) for z in (-10, -4, 2, 14)]
+def window_style(room_id):
+    """(sill, height, max width, gap, margin to the room's ends, fixed width) of a room's facade windows."""
+    if room_id in LANTERN:
+        return 0.25, 4.25, 5.6, 0.3, 0.5, None
+    if "escape-stair" in room_id:
+        return 0.6, 3.6, 1.0, 1.6, 0.8, 1.0
+    if room_id in CLERESTORY:
+        return 2.6, 1.2, 6.0, 1.0, 0.8, None
+    return 1.0, 2.6, 6.0, 0.6, 0.7, None
+
+
+def fill(a, b, maxw, gap, fixed):
+    """Window centres and widths filling [a, b]: equal panes ≤ maxw with `gap` piers, or fixed-width slots."""
+    length = b - a
+    if fixed:
+        n = int((length + gap) // (fixed + gap))
+        if n < 1:
+            return []
+        start = a + (length - (n * fixed + (n - 1) * gap)) / 2 + fixed / 2
+        return [(start + k * (fixed + gap), fixed) for k in range(n)]
+    n = max(1, -int(-(length + gap) // (maxw + gap)))
+    w = (length - (n - 1) * gap) / n
+    if w < 0.8:
+        return []
+    return [(a + w / 2 + k * (w + gap), w) for k in range(n)]
+
+
+def facade_openings():
+    out = [ENTRANCE]
+    door = (ENTRANCE["offset"] - ENTRANCE["width"] / 2 - 0.35, ENTRANCE["offset"] + ENTRANCE["width"] / 2 + 0.35)
+    for rid, (x0, x1, z0, z1) in sorted(_room_rect.items()):
+        lv = _room_level[rid]
+        sides = []
+        if abs(z1 - BZ1) < 0.6:
+            sides.append(("s", x0, x1))
+        if abs(z0 - BZ0) < 0.6:
+            sides.append(("n", x0, x1))
+        if abs(x1 - BX1) < 0.6:
+            sides.append(("e", z0, z1))
+        if abs(x0 - BX0) < 0.6:
+            sides.append(("w", z0, z1))
+        sill, height, maxw, gap, margin, fixed = window_style(rid)
+        for side, a, b in sides:
+            segs = [(a + margin, b - margin)]
+            if side == "s" and lv == "L0":
+                segs = [seg for s0, s1 in segs for seg in ((s0, min(s1, door[0])), (max(s0, door[1]), s1)) if seg[1] - seg[0] > 0.8]
+            for s0, s1 in segs:
+                for c, w in fill(s0, s1, maxw, gap, fixed):
+                    out.append({"side": side, "offset": num(c), "width": num(w), "height": num(height), "kind": "window", "sill": num(sill), "levels": [lv]})
+    return out
+
+
+def XP(id, type, x, z, rot=0, y=0, level=None):
+    """An exterior placement: outdoors (no room) or on the roof (a level's y above its floor)."""
+    p = {"id": id, "type": type, "x": num(x), "z": num(z)}
+    if y:
+        p["y"] = num(y)
+    if rot:
+        p["rot"] = rot
+    if level:
+        p["level"] = level
+    PLACEMENTS.append(p)
+    return p
+
+
+def exterior_placements():
+    face = 0.175 + exterior.FIN_D / 2 + 0.02
+    roof = 5.3  # L1 elevation 5 + roof plate top 0.3 above the storey
+    # fins on the operating floor: south (but the glass lantern), east and west, from the floor line to the roof
+    runs = [("s", "sw", BX0 + 0.4, -9.4), ("s", "se", 6.4, BX1 - 0.4), ("e", "e", BZ0 + 0.4, BZ1 - 0.4), ("w", "w", BZ0 + 0.4, BZ1 - 0.4)]
+    for side, run, a, b in runs:
+        n = int((b - a) // exterior.FIN_W)
+        start = a + ((b - a) - n * exterior.FIN_W) / 2 + exterior.FIN_W / 2
+        for k in range(n):
+            u = start + k * exterior.FIN_W
+            if side == "s":
+                XP(f"ext-fins-{run}-{k}", "sc-ext-fins", u, BZ1 + face, 0, 5)
+            elif side == "e":
+                XP(f"ext-fins-e-{k}", "sc-ext-fins", BX1 + face, u, 90, 5)
+            else:
+                XP(f"ext-fins-w-{k}", "sc-ext-fins", BX0 - face, u, 270, 5)
+    # arrival: canopy with its columns and letters, totem, bollards, planter benches
+    XP("ext-canopy", "sc-ext-canopy", 11, BZ1 + 0.175 + exterior.CAN_D / 2)
+    for i, x in enumerate((11 - 7.3, 11 + 7.3)):
+        XP(f"ext-canopy-column-{i}", "sc-ext-column", x, BZ1 + 0.175 + exterior.CAN_D - 0.45)
+    XP("ext-letters", "sc-ext-letters-impf", 11, BZ1 + 0.175 + exterior.CAN_D - 0.5, 0, 4.85)
+    XP("ext-walkway", "sc-ext-walkway-canopy", 11 - exterior.CAN_W / 2 - exterior.WALK_W / 2, BZ1 + 0.175 + exterior.WALK_D / 2)
+    XP("ext-totem", "sc-ext-totem", 21.0, 31.6)
+    for k, z in enumerate((33, 36.5, 40, 43.5)):
+        XP(f"ext-bollard-w-{k}", "sc-ext-bollard", 7.0, z)
+        XP(f"ext-bollard-e-{k}", "sc-ext-bollard", 15.0, z)
+    for k, x in enumerate((-29.5, -23.5, -17.5, -11.5, -5.5)):
+        XP(f"ext-bollard-d-{k}", "sc-ext-bollard", x, 30.75)
+    XP("ext-bench-1", "sc-ext-planter-bench", 24.5, 29.0, 180)
+    XP("ext-bench-2", "sc-ext-planter-bench", 29.5, 29.0, 180)
+    XP("ext-bench-3", "sc-ext-planter-bench", 27.0, 35.0)
+    XP("ext-bench-4", "sc-ext-planter-bench", 27.0, 39.5, 180)
+    # roof: helipad over the hybrid / ultra-clean wing, plant screen over the plant room, photovoltaics
+    XP("roof-helipad", "sc-ext-helipad", 21.5, -11.5, 0, roof, "L1")
+    XP("roof-plant-screen", "sc-ext-plant-screen", -22.0, -16.5, 0, roof, "L1")
+    XP("roof-garden-1", "sc-ext-roof-garden", -25.5, 15.0, 0, roof, "L1")
+    XP("roof-garden-2", "sc-ext-roof-garden", -13.6, 15.0, 0, roof, "L1")
+    for i, x in enumerate((-25.0, -15.5, -6.0)):
+        for j, z in enumerate((-6.0, -1.5, 3.0)):
+            XP(f"roof-pv-{i}{j}", "sc-ext-pv-array", x, z, 0, roof, "L1")
 
 
 def build():
+    exterior_placements()
     for issue in ISSUES:
         print("ISSUE", issue)
     for lv in ("L0", "L1"):
-        ps = [p for p in PLACEMENTS if _room_level[p["room"]] == lv]
+        ps = [p for p in PLACEMENTS if (p.get("level") or _room_level.get(p.get("room"), "L0")) == lv]
         for msg in fp.overlaps(ps, where=f"authored {lv}"):
             print("ISSUE", msg)
     return {
@@ -594,24 +698,35 @@ def build():
             "IMPF 外科医院：两层外科医院，按新加坡、欧洲、美国与日本规范中最严格的一项设计（各手术间设计目标：≥ 25 次/h 换气、≥ 4 次/h 新风；超净手术间手术区 ISO 5、浮游菌设计均值 ≤ 5 CFU/m³、使用中 ≤ 10 CFU/m³，3.2 × 3.2 m 单向流保护区覆盖手术台与器械台；相邻区域压差 15 ± 5 Pa；20–24 °C、35–60 % RH；末端 HEPA ≥ 99.97 %；净面积 ≥ 55.74 m²；≥ 36 个插座、IT 隔离电源与无影灯不间断电源；医用气体 400 ± 40 kPa、氧气终端 ≥ 60 NL/min）。手术团队与器械可交互：洗手护士按要求递器械，WHO 核查、清点与 RF 扫描、排烟与电刀、透视防护和消毒供应中心再处理都是有先后条件的操作。二层手术部按国际手术室规范设计：限制区/半限制区/非限制区三级流线（AORN、FGI），环形洁净走廊包围中央无菌核心区；8 间手术室——复合手术室（机器人血管造影）、机器人手术室、两间Ⅰ级超净层流手术室（心脏/移植、骨科关节/神经）、三间一体化数字手术室（含 24 小时急诊与产科手术间）和带缓冲间的负压隔离手术室；刷手间与无菌准备间成对位于手术室之间；麻醉后恢复室 8 床、术前准备区 5 床、换床间、男女更衣室（单向流线）、手术部控制台、卫星药房、麻醉准备间（卫星血库）、术中冰冻病理室和污物间。洁净电梯直通一层消毒供应中心的无菌物品存放区，污梯直通去污区。一层为入口大厅与入院登记、家属等候、日间手术、麻醉术前评估门诊、围术期检验室、输血科、消毒供应中心（去污 → 检查包装灭菌 → 无菌存放的单向流程）、外科技能与模拟中心和空调机房。",
             "IMPF Surgery Hospital: a two-storey surgical hospital designed to the strictest of the Singaporean, European, US and Japanese requirements (OR design targets: ≥ 25 air changes and ≥ 4 outdoor air changes per hour; ultra-clean ORs ISO 5 at the operating zone, design mean ≤ 5 and in use ≤ 10 CFU/m³, a 3.2 × 3.2 m unidirectional zone over the table and instrument tables; 15 ± 5 Pa between zones; 20–24 °C, 35–60 % RH; terminal HEPA ≥ 99.97 %; ≥ 55.74 m² clear; ≥ 36 receptacles, IT isolated power and an uninterruptible supply for the surgical lights; medical gases at 400 ± 40 kPa, oxygen ≥ 60 NL/min per terminal). The team and the instruments are interactive: the scrub nurse passes what you call for, and the WHO checklist, the counts with the RF scan, smoke evacuation and electrosurgery, radiation protection and CSSD reprocessing are operations with preconditions. The first-floor operating department follows international OR practice: restricted / semi-restricted / unrestricted zoning (AORN, FGI) with a ring of clean corridors round a central sterile core; eight ORs — a hybrid OR with robotic angiography, a robotic surgery OR, two Class I ultra-clean laminar-flow ORs (cardiac & transplant, arthroplasty & neuro), three integrated digital ORs (one held 24/7 for emergency and obstetric surgery) and a negative-pressure isolation OR behind its anteroom; paired scrub bays and sterile set-up rooms between the ORs; an 8-bay PACU, 5-bay pre-op holding, a patient transfer zone, one-way staff changing rooms, the theatre control desk, a theatre pharmacy, the anaesthesia workroom (satellite blood fridge), a frozen-section lab and a soiled utility. A clean lift links the sterile core to the CSSD sterile store below and a dirty lift returns used instruments to decontamination. Ground floor: main hall and admissions, family waiting, day surgery, pre-anaesthesia clinics, the perioperative lab, the blood bank, the CSSD (decontamination → packing & sterilisation → sterile store, one way), a surgical skills & simulation centre and the OR plant room."),
         "bounds": {"minX": -44, "maxX": 44, "minZ": -34, "maxZ": 46},
-        "spawn": {"x": 11, "z": 38, "yaw": 0},
-        "environment": {"sky": "#a8d5e0", "fog": {"color": "#b9d8d6", "near": 45, "far": 110}, "sunIntensity": 3.4},
+        "spawn": {"x": 11, "z": 43.5, "yaw": 0},
+        "environment": {"sky": "#9fcde6", "fog": {"color": "#c6dee8", "near": 60, "far": 140}, "sunIntensity": 3.6},
         "catalogs": ["materials", "core-furniture", "core-clinical", "core-diagnostics", "surgerycraft-or"],
         "terrain": {
             "ground": "grass",
+            # arrival: a granite forecourt along the whole front, the approach axis with dark granite bands, the
+            # drop-off lay-by to the west, a reflecting pool and a garden terrace to the east, the service yard north
             "paths": [
-                {"x": 11, "z": 27.5, "w": 18, "d": 11, "material": "stone"},
-                {"x": 11, "z": 38.5, "w": 4, "d": 11, "material": "path"},
-                {"x": -12, "z": 28, "w": 26, "d": 6, "material": "asphalt"},
-                {"x": 0, "z": -27, "w": 72, "d": 3, "material": "path"},
+                {"x": 0, "z": 26.25, "w": 70, "d": 8.5, "material": "sc-ext-paving"},
+                {"x": 0, "z": 30.7, "w": 70, "d": 0.4, "material": "sc-ext-paving-dark"},
+                {"x": 11, "z": 38.45, "w": 7, "d": 15.1, "material": "sc-ext-paving"},
+                {"x": 7.3, "z": 38.45, "w": 0.4, "d": 15.1, "material": "sc-ext-paving-dark"},
+                {"x": 14.7, "z": 38.45, "w": 0.4, "d": 15.1, "material": "sc-ext-paving-dark"},
+                {"x": -17, "z": 33.65, "w": 30, "d": 5.5, "material": "asphalt"},
+                {"x": 27, "z": 37.25, "w": 9, "d": 7.5, "material": "sc-ext-paving"},
+                {"x": 0, "z": -27, "w": 72, "d": 5, "material": "asphalt"},
             ],
+            "ponds": [{"x": 18.6, "z": 38.5, "w": 3.6, "d": 13}],
             "trees": [{"x": x, "z": z, "h": h} for x, z, h in (
-                (-38, -28, 5), (-26, -29, 6), (-12, -29, 5), (4, -29, 6), (18, -29, 5), (32, -29, 6), (39, -15, 5), (39, 0, 6),
-                (39, 15, 5), (-39, -15, 6), (-39, 0, 5), (-39, 15, 6), (-34, 33, 5), (-24, 38, 6), (28, 34, 5), (36, 40, 6), (24, 42, 5), (-2, 42, 6))],
-            "flowers": {"count": 60, "seed": 4242, "exclude": [
-                {"x": 0, "z": 0, "w": 66, "d": 46}, {"x": 11, "z": 30, "w": 20, "d": 16}, {"x": -12, "z": 28, "w": 28, "d": 8}, {"x": 0, "z": -27, "w": 74, "d": 5}]},
+                (3.5, 33.5, 6), (3.5, 37.5, 5), (3.5, 41.5, 6), (0.5, 35.5, 5), (0.5, 39.5, 6), (0.5, 43.5, 5),
+                (22.5, 43.5, 6), (27.0, 44.5, 5), (31.5, 43.5, 6), (34.5, 35.0, 5),
+                (-38, -28, 5), (-26, -30.5, 6), (-12, -30.5, 5), (4, -30.5, 6), (18, -30.5, 5), (32, -30.5, 6), (39, -15, 5), (39, 0, 6),
+                (39, 15, 5), (-39, -15, 6), (-39, 0, 5), (-39, 15, 6), (-36, 39, 5), (-26, 40, 6), (-16, 40.5, 5), (38, 41, 6))],
+            "flowers": {"count": 70, "seed": 4242, "exclude": [
+                {"x": 0, "z": 0, "w": 66, "d": 46}, {"x": 0, "z": 26.5, "w": 72, "d": 9}, {"x": 11, "z": 38.5, "w": 8, "d": 16},
+                {"x": -17, "z": 33.7, "w": 31, "d": 6.5}, {"x": 18.6, "z": 38.5, "w": 4.6, "d": 14}, {"x": 27, "z": 37.3, "w": 10, "d": 8.5},
+                {"x": 0, "z": -27, "w": 74, "d": 6}]},
             "horizon": {"count": 40, "radius": 85},
-            "clouds": 14,
+            "clouds": 6,
         },
         "levels": [
             {"id": "L0", "name": L("一层 · 入院、消毒供应与模拟中心", "Ground floor · admissions, CSSD & simulation"), "elevation": 0, "height": 5},
@@ -623,17 +738,16 @@ def build():
             "rect": {"x": 0, "z": 0, "w": 64, "d": 44},
             "levels": ["L0", "L1"],
             "floor": "floor",
-            "walls": {"height": 5, "base": "navy", "body": "white", "top": "steel", "thickness": 0.35},
-            "openings": OPENINGS,
-            "roof": {"material": "tile-white"},
-            "sign": {"text": L("IMPF 外科医院", "IMPF Surgery Hospital"), "side": "s", "color": "#2f7fd1"},
+            "walls": exterior.WALLS,
+            "openings": facade_openings(),
+            "roof": exterior.ROOF,
         }],
         "rooms": ROOMS,
         "placements": PLACEMENTS,
         "staff": STAFF,
         "signs": [
-            {"text": L("IMPF 外科医院 · 入口", "IMPF Surgery Hospital · Entrance"), "x": 16.8, "y": 2.6, "z": 31.5, "rot": 0, "width": 3.6, "color": "#2f7fd1", "post": True},
-            {"text": L("患者接送区", "Patient drop-off"), "x": -12, "y": 2.4, "z": 32.2, "rot": 0, "width": 2.6, "color": "#3f8f5a", "post": True},
+            {"text": L("IMPF 外科医院", "IMPF Surgery Hospital"), "x": 21.0, "y": 2.75, "z": 31.85, "rot": 0, "width": 1.05, "color": "#2a2f34"},
+            {"text": L("患者接送区 · 入口", "Patient drop-off · Entrance"), "x": -2.6, "y": 2.4, "z": 30.6, "rot": 0, "width": 2.6, "color": "#2a2f34", "post": True},
         ],
         "outdoorRegion": L("医院园区", "Hospital grounds"),
         "connectors": CONNECTORS,
