@@ -1,0 +1,61 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-preop-holding",
+  "name": {"zh-CN": "术前等候与准备区（5 床）", "en": "Pre-operative holding (5 bays)"},
+  "description": {"zh-CN": "术前等候与准备区：核对身份、手术部位标记与知情同意，建立静脉通路，超声引导神经阻滞；每床监护与中心供氧。经换床间（local 西门）接收病房患者，经北侧走廊送入手术室。", "en": "Pre-operative holding: identity, site-marking and consent checks, IV access and ultrasound-guided nerve blocks; each bay monitored with piped oxygen. Receives ward patients through the transfer zone (local west door) and sends them to the ORs along the corridor."},
+  "kind": "ward",
+  "size": {"w": 9, "d": 12},
+  "floor": "sc-pacu-floor",
+  "partitions": [
+    {"side": "n", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "w", "material": "white", "base": "sc-or-wall-base", "openings": [{"kind": "door", "offset": 4, "width": 1.6, "height": 2.6}]},
+    {"side": "e", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "s", "material": "white", "base": "sc-or-wall-base", "openings": [{"kind": "double-door", "offset": 0, "width": 2, "height": 3}]}
+  ],
+  "sign": {"text": {"zh-CN": "术前准备区", "en": "Pre-op holding"}, "color": "#6d9fba"},
+  "lights": [
+    {"x": -2.25, "z": -3},
+    {"x": 2.25, "z": -3},
+    {"x": -2.25, "z": 3},
+    {"x": 2.25, "z": 3}
+  ],
+  "placements": [
+    {"id": "bed-1", "type": "hospital-bed", "x": -3, "z": -4.425, "label": {"zh-CN": "术前床 1", "en": "Holding bay 1"}},
+    {"id": "monitor-1", "type": "patient-monitor", "x": -3.95, "z": -5.3, "label": {"zh-CN": "1 床监护仪", "en": "Bay 1 monitor"}},
+    {"id": "oxygen-1", "type": "oxygen-outlet", "x": -3, "z": -5.7},
+    {"id": "bed-2", "type": "hospital-bed", "x": 0, "z": -4.425, "label": {"zh-CN": "术前床 2", "en": "Holding bay 2"}},
+    {"id": "monitor-2", "type": "patient-monitor", "x": -0.95, "z": -5.3, "label": {"zh-CN": "2 床监护仪", "en": "Bay 2 monitor"}},
+    {"id": "oxygen-2", "type": "oxygen-outlet", "x": 0, "z": -5.7},
+    {"id": "bed-3", "type": "hospital-bed", "x": 3, "z": -4.425, "label": {"zh-CN": "术前床 3", "en": "Holding bay 3"}},
+    {"id": "monitor-3", "type": "patient-monitor", "x": 2.05, "z": -5.3, "label": {"zh-CN": "3 床监护仪", "en": "Bay 3 monitor"}},
+    {"id": "oxygen-3", "type": "oxygen-outlet", "x": 3, "z": -5.7},
+    {"id": "curtain-1", "type": "privacy-curtain", "x": -1.5, "z": -4.4, "rot": 90},
+    {"id": "curtain-2", "type": "privacy-curtain", "x": 1.5, "z": -4.4, "rot": 90},
+    {"id": "bed-4", "type": "hospital-bed", "x": 2.925, "z": -0.6, "rot": 270, "label": {"zh-CN": "术前床 4", "en": "Holding bay 4"}},
+    {"id": "monitor-4", "type": "patient-monitor", "x": 3.8, "z": -1.75, "label": {"zh-CN": "4 床监护仪", "en": "Bay 4 monitor"}},
+    {"id": "oxygen-4", "type": "oxygen-outlet", "x": 4.2, "z": -0.6, "rot": 270},
+    {"id": "bed-5", "type": "hospital-bed", "x": 2.925, "z": 2.6, "rot": 270, "label": {"zh-CN": "术前床 5", "en": "Holding bay 5"}},
+    {"id": "monitor-5", "type": "patient-monitor", "x": 3.8, "z": 1.45, "label": {"zh-CN": "5 床监护仪", "en": "Bay 5 monitor"}},
+    {"id": "oxygen-5", "type": "oxygen-outlet", "x": 4.2, "z": 2.6, "rot": 270},
+    {"id": "curtain-3", "type": "privacy-curtain", "x": 2.9, "z": 1},
+    {"id": "desk", "type": "desk", "x": -3.975, "z": -0.6, "rot": 90, "label": {"zh-CN": "核对台", "en": "Check-in desk"}},
+    {"id": "chair", "type": "office-chair", "x": -3, "z": -0.6},
+    {"id": "records", "type": "records-terminal", "x": -4.025, "z": 1, "label": {"zh-CN": "电子病历终端", "en": "EHR terminal"}},
+    {"id": "ultrasound", "type": "ultrasound-machine", "x": -1, "z": 2, "label": {"zh-CN": "超声（神经阻滞）", "en": "Ultrasound (nerve blocks)"}},
+    {"id": "iv-cart", "type": "treatment-cart", "x": -3, "z": 5.515, "rot": 180, "label": {"zh-CN": "静脉穿刺与治疗车", "en": "IV cannulation & treatment cart"}},
+    {"id": "sink", "type": "sink", "x": 2.6, "z": 5.55, "rot": 180, "label": {"zh-CN": "洗手池", "en": "Hand-wash sink"}},
+    {"id": "sanitizer", "type": "hand-sanitizer", "x": -1.6, "z": 5.625, "rot": 180, "label": {"zh-CN": "手消毒液", "en": "Hand rub"}}
+  ],
+  "patientSlots": [
+    {"id": "bay-1", "x": -3, "z": -4.425, "posture": "lying", "bed": "bed-1", "accepts": ["operating-room"], "monitor": "monitor-1"},
+    {"id": "bay-2", "x": 0, "z": -4.425, "posture": "lying", "bed": "bed-2", "accepts": ["operating-room"], "monitor": "monitor-2"},
+    {"id": "bay-3", "x": 3, "z": -4.425, "posture": "lying", "bed": "bed-3", "accepts": ["operating-room"], "monitor": "monitor-3"},
+    {"id": "bay-4", "x": 2.925, "z": -0.6, "rot": 270, "posture": "lying", "bed": "bed-4", "accepts": ["operating-room"], "monitor": "monitor-4"},
+    {"id": "bay-5", "x": 2.925, "z": 2.6, "rot": 270, "posture": "lying", "bed": "bed-5", "accepts": ["operating-room"], "monitor": "monitor-5"}
+  ],
+  "staff": [
+    {"id": "nurse", "role": "nurse", "name": {"zh-CN": "术前准备护士", "en": "Pre-op nurse"}, "x": -2.4, "z": 0.8, "rot": 90, "greeting": {"zh-CN": "先核对腕带、手术部位标记和知情同意，再送进手术室。", "en": "Wristband, site marking and consent are checked here before anyone goes in."}}
+  ],
+  "capabilities": ["cardiac-monitor", "capnography", "oxygen", "suction", "iv-access", "ultrasound", "records"],
+  "tags": ["preop", "perioperative"]
+}

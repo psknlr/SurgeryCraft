@@ -1,0 +1,57 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-or-ultraclean",
+  "name": {"zh-CN": "超净层流手术室（Ⅰ级洁净）", "en": "Ultra-clean laminar-flow OR (Class I)"},
+  "description": {"zh-CN": "9 × 9 m 超净手术室，用于关节置换、心脏与器官移植等植入物手术：3.2 × 3.2 m 单向流送风天花带玻璃导流裙边，手术台和器械台都在保护区内；移动 C 形臂、双器械台、双吊塔与 4K 显示。设计目标：GB 50333 Ⅰ级（手术区 ISO 5、浮游菌 ≤ 5 CFU/m³）、DIN 1946-4 Ⅰa（TAV）与 HTM 03-01 超净通风（≤ 10 CFU/m³）。", "en": "9 × 9 m ultra-clean OR for implant surgery (arthroplasty, cardiac, transplant): a 3.2 × 3.2 m unidirectional supply ceiling with glass skirts covering both the table and the instrument tables, a mobile C-arm, two back tables, both pendants and 4K displays. Design targets: GB 50333 Class I (ISO 5 at the operating zone, ≤ 5 CFU/m³), DIN 1946-4 class Ia (TAV) and HTM 03-01 ultra-clean ventilation (≤ 10 CFU/m³)."},
+  "kind": "operating-room",
+  "size": {"w": 9, "d": 9},
+  "floor": "sc-or-floor",
+  "partitions": [
+    {"side": "n", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 2.6, "width": 1.6, "height": 2.6}]},
+    {"side": "w", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 3.1, "width": 1.4, "height": 2.6}, {"kind": "sliding-door", "offset": -1.2, "width": 1.4, "height": 2.6}]},
+    {"side": "e", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 3.1, "width": 1.4, "height": 2.6}, {"kind": "sliding-door", "offset": -1.2, "width": 1.4, "height": 2.6}]},
+    {"side": "s", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": -2.2, "width": 2.4, "height": 3}]}
+  ],
+  "sign": {"text": {"zh-CN": "手术室 · Ⅰ级超净", "en": "OR · Class I ultra-clean"}, "color": "#2f7fd1"},
+  "lights": [
+    {"x": -3, "z": -3},
+    {"x": 3, "z": -3},
+    {"x": -3, "z": 3},
+    {"x": 3, "z": 3}
+  ],
+  "placements": [
+    {"id": "canopy", "type": "sc-laminar-canopy-xl", "x": 0.5, "z": 0.2, "label": {"zh-CN": "层流送风天花", "en": "Laminar-flow ceiling"}},
+    {"id": "table", "type": "operating-table", "x": 0.5, "z": 0.2, "rot": 90, "label": {"zh-CN": "手术床", "en": "Operating table"}},
+    {"id": "light", "type": "surgical-light", "x": 0.5, "z": 0.2, "label": {"zh-CN": "LED 无影灯", "en": "LED surgical light"}},
+    {"id": "anaesthesia", "type": "sc-anaesthesia-workstation", "x": -1.45, "z": -0.35, "rot": 90, "label": {"zh-CN": "麻醉工作站", "en": "Anaesthesia workstation"}},
+    {"id": "monitor", "type": "patient-monitor", "x": -1.45, "z": 0.85, "label": {"zh-CN": "麻醉监护仪", "en": "Anaesthesia monitor"}},
+    {"id": "anaes-pendant", "type": "sc-anaesthesia-pendant", "x": -1.45, "z": -1.65, "label": {"zh-CN": "麻醉吊塔", "en": "Anaesthesia pendant"}},
+    {"id": "surg-pendant", "type": "sc-surgical-pendant", "x": 2.35, "z": -1, "label": {"zh-CN": "外科吊塔（电刀/气腹机）", "en": "Surgical pendant (ESU / insufflator)"}},
+    {"id": "back-table", "type": "instrument-table", "x": 2.55, "z": 1.15, "label": {"zh-CN": "器械台", "en": "Back table"}},
+    {"id": "mayo", "type": "sc-mayo-stand", "x": 1.1, "z": 1.25, "label": {"zh-CN": "Mayo 托盘", "en": "Mayo stand"}},
+    {"id": "infusion-pump", "type": "infusion-pump", "x": -0.45, "z": 1.35, "label": {"zh-CN": "输液泵", "en": "Infusion pump"}},
+    {"id": "warmer", "type": "sc-forced-air-warmer", "x": 0.35, "z": 1.85, "label": {"zh-CN": "充气保温机", "en": "Forced-air warmer"}},
+    {"id": "drugs", "type": "medication-cabinet", "x": -3.6, "z": -3.975, "label": {"zh-CN": "麻醉药品柜", "en": "Anaesthetic drug cabinet"}},
+    {"id": "iv-cart", "type": "treatment-cart", "x": -2.5, "z": -4.015, "label": {"zh-CN": "静脉穿刺与治疗车", "en": "IV cannulation & treatment cart"}},
+    {"id": "records", "type": "records-terminal", "x": 2, "z": 4.025, "rot": 180, "label": {"zh-CN": "手术室电子病历终端", "en": "Theatre EHR terminal"}},
+    {"id": "pacs", "type": "sc-wall-display", "x": 4.265, "z": 1.2, "rot": 270, "label": {"zh-CN": "PACS / 一体化显示屏", "en": "PACS & integration display"}},
+    {"id": "control-panel", "type": "sc-or-control-panel", "x": 0.6, "z": 4.275, "rot": 180, "label": {"zh-CN": "环境控制面板", "en": "OR control panel"}},
+    {"id": "checklist", "type": "sc-who-checklist", "x": 3.3, "z": 4.285, "rot": 180, "label": {"zh-CN": "WHO 手术安全核查板", "en": "WHO Surgical Safety Checklist"}},
+    {"id": "grille-1", "type": "sc-return-grille", "x": 3.9, "z": -4.285},
+    {"id": "grille-2", "type": "sc-return-grille", "x": -3.9, "z": 4.285, "rot": 180},
+    {"id": "sanitizer", "type": "hand-sanitizer", "x": -0.6, "z": 4, "label": {"zh-CN": "手消毒液", "en": "Hand rub"}},
+    {"id": "c-arm", "type": "c-arm", "x": -3.95, "z": 1, "label": {"zh-CN": "移动 C 形臂", "en": "Mobile C-arm"}},
+    {"id": "back-table-2", "type": "instrument-table", "x": 0.5, "z": -1.35, "label": {"zh-CN": "器械台 2（层流保护区内）", "en": "Back table 2 (inside the clean zone)"}},
+    {"id": "airway", "type": "sc-difficult-airway-trolley", "x": -1.4, "z": -4.05, "label": {"zh-CN": "困难气道车", "en": "Difficult airway trolley"}},
+    {"id": "display-1", "type": "sc-ceiling-display", "x": 1.6, "z": 2.6, "rot": 180, "label": {"zh-CN": "吊臂显示器 1", "en": "Ceiling display 1"}},
+    {"id": "display-2", "type": "sc-ceiling-display", "x": -0.6, "z": -2.7, "label": {"zh-CN": "吊臂显示器 2", "en": "Ceiling display 2"}}
+  ],
+  "patientSlots": [
+    {"id": "slot", "x": 0, "z": -0.3, "rot": 90, "posture": "lying", "bed": "table", "accepts": ["operating-room"], "monitor": "monitor"}
+  ],
+  "zones": [
+    {"id": "sterile", "name": {"zh-CN": "手术间（限制区）", "en": "Operating room (restricted)"}, "rect": {"x": 0, "z": 0, "w": 9, "d": 9}, "roles": ["clinician", "attending", "nurse", "porter"]}
+  ],
+  "capabilities": ["surgery", "anesthesia", "airway", "ventilator", "capnography", "cardiac-monitor", "oxygen", "suction", "infusion-pump", "iv-access", "medications", "records", "fluoroscopy"],
+  "tags": ["surgery", "restricted", "ultraclean", "class-i"]
+}

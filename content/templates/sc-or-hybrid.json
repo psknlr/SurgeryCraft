@@ -1,0 +1,59 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-or-hybrid",
+  "name": {"zh-CN": "复合手术室（机器人血管造影）", "en": "Hybrid OR (robotic angiography)"},
+  "description": {"zh-CN": "11 × 9 m（99 m²）复合手术室：机器人落地式血管造影 C 形臂、可透 X 线的碳纤维浮动手术床、3.2 × 3.2 m Ⅰ级层流天花、吊顶铅屏风与床旁铅帘、高压注射器、体外循环机待命、经食道超声；西侧墙为带铅玻璃观察窗的控制室。适用于 TAVI、腔内修复（EVAR/TEVAR）、复合神经血管与创伤手术。防护按医学物理师的屏蔽计算（常见 1.5–3 mm 铅当量）。", "en": "11 × 9 m (99 m²) hybrid OR: robotic floor-mounted angiography C-arm, radiolucent carbon-fibre floating table, a 3.2 × 3.2 m Class I laminar ceiling, ceiling lead shield and table-side lead curtain, contrast injector, a heart-lung machine on standby and TOE ultrasound; the west wall is the control room's lead-glass window. For TAVI, EVAR/TEVAR, hybrid neurovascular and trauma surgery. Shielding follows the medical physicist's calculation (commonly 1.5–3 mm lead equivalent)."},
+  "kind": "operating-room",
+  "size": {"w": 11, "d": 9},
+  "floor": "sc-or-floor",
+  "partitions": [
+    {"side": "n", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 3.4, "width": 1.6, "height": 2.6}]},
+    {"side": "w", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "window", "offset": 0, "width": 3, "sill": 1, "height": 1.3}, {"kind": "sliding-door", "offset": 3, "width": 1.4, "height": 2.4}]},
+    {"side": "e", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 3.1, "width": 1.4, "height": 2.6}, {"kind": "sliding-door", "offset": -1.2, "width": 1.4, "height": 2.6}]},
+    {"side": "s", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": -2.4, "width": 2.4, "height": 3}]}
+  ],
+  "sign": {"text": {"zh-CN": "复合手术室 · 放射防护", "en": "Hybrid OR · radiation area"}, "color": "#d98a3d"},
+  "lights": [
+    {"x": -3.5, "z": -2.5},
+    {"x": 3.5, "z": -2.5},
+    {"x": -3.5, "z": 2.5},
+    {"x": 3.5, "z": 2.5}
+  ],
+  "placements": [
+    {"id": "canopy", "type": "sc-laminar-canopy-xl", "x": 0.6, "z": 0.2, "label": {"zh-CN": "Ⅰ级层流送风天花", "en": "Class I laminar-flow ceiling"}},
+    {"id": "table", "type": "sc-hybrid-table", "x": 0.6, "z": 0.2, "rot": 90, "label": {"zh-CN": "复合手术床", "en": "Hybrid OR table"}},
+    {"id": "light", "type": "surgical-light", "x": 0.6, "z": 0.2, "label": {"zh-CN": "LED 无影灯", "en": "LED surgical light"}},
+    {"id": "c-arm", "type": "sc-robotic-c-arm", "x": 1.2, "z": -2.3, "label": {"zh-CN": "机器人血管造影 C 形臂", "en": "Robotic angiography C-arm"}},
+    {"id": "shield", "type": "sc-lead-shield", "x": 1.4, "z": -0.75, "label": {"zh-CN": "铅屏风", "en": "Lead shield"}},
+    {"id": "injector", "type": "sc-contrast-injector", "x": 2.9, "z": -1.6, "label": {"zh-CN": "高压注射器", "en": "Contrast injector"}},
+    {"id": "anaesthesia", "type": "sc-anaesthesia-workstation", "x": -1.95, "z": -0.2, "rot": 90, "label": {"zh-CN": "麻醉工作站", "en": "Anaesthesia workstation"}},
+    {"id": "monitor", "type": "patient-monitor", "x": -1.95, "z": 1, "label": {"zh-CN": "麻醉监护仪", "en": "Anaesthesia monitor"}},
+    {"id": "anaes-pendant", "type": "sc-anaesthesia-pendant", "x": -1.95, "z": -1.5, "label": {"zh-CN": "麻醉吊塔", "en": "Anaesthesia pendant"}},
+    {"id": "ultrasound", "type": "ultrasound-machine", "x": -3, "z": -3.7, "label": {"zh-CN": "经食道超声", "en": "TOE ultrasound"}},
+    {"id": "hlm", "type": "sc-heart-lung-machine", "x": -1.6, "z": -3.85, "label": {"zh-CN": "体外循环机（待命）", "en": "Heart-lung machine (standby)"}},
+    {"id": "drugs", "type": "medication-cabinet", "x": -4.975, "z": -3.4, "rot": 90, "label": {"zh-CN": "麻醉药品柜", "en": "Anaesthetic drug cabinet"}},
+    {"id": "iv-cart", "type": "treatment-cart", "x": -5.015, "z": -2.2, "rot": 90, "label": {"zh-CN": "静脉穿刺与治疗车", "en": "IV cannulation & treatment cart"}},
+    {"id": "infusion-pump", "type": "infusion-pump", "x": -0.6, "z": 1.3, "label": {"zh-CN": "输液泵", "en": "Infusion pump"}},
+    {"id": "surg-pendant", "type": "sc-surgical-pendant", "x": 3, "z": 1.2, "label": {"zh-CN": "外科吊塔", "en": "Surgical pendant"}},
+    {"id": "back-table", "type": "instrument-table", "x": 0.8, "z": 2, "label": {"zh-CN": "器械台", "en": "Back table"}},
+    {"id": "mayo", "type": "sc-mayo-stand", "x": 1.8, "z": 1.25, "label": {"zh-CN": "Mayo 托盘", "en": "Mayo stand"}},
+    {"id": "display-1", "type": "sc-ceiling-display", "x": -0.4, "z": 2.7, "rot": 180, "label": {"zh-CN": "吊臂显示器（造影/导航）", "en": "Ceiling display (angiography / navigation)"}},
+    {"id": "display-2", "type": "sc-ceiling-display", "x": -0.6, "z": -2.4, "label": {"zh-CN": "吊臂显示器 2", "en": "Ceiling display 2"}},
+    {"id": "pacs", "type": "sc-wall-display", "x": 5.265, "z": -3.4, "rot": 270, "label": {"zh-CN": "PACS 显示屏", "en": "PACS display"}},
+    {"id": "control-panel", "type": "sc-or-control-panel", "x": 0.6, "z": 4.275, "rot": 180, "label": {"zh-CN": "环境控制面板", "en": "OR control panel"}},
+    {"id": "checklist", "type": "sc-who-checklist", "x": 2.6, "z": 4.285, "rot": 180, "label": {"zh-CN": "WHO 手术安全核查板", "en": "WHO Surgical Safety Checklist"}},
+    {"id": "aprons", "type": "sc-apron-rack", "x": -4.6, "z": 4.175, "rot": 180, "label": {"zh-CN": "铅衣架", "en": "Lead apron rack"}},
+    {"id": "records", "type": "records-terminal", "x": 4.6, "z": 4.025, "rot": 180, "label": {"zh-CN": "手术室电子病历终端", "en": "Theatre EHR terminal"}},
+    {"id": "grille-1", "type": "sc-return-grille", "x": 2, "z": -4.285},
+    {"id": "grille-2", "type": "sc-return-grille", "x": -4.6, "z": 4.285, "rot": 180},
+    {"id": "sanitizer", "type": "hand-sanitizer", "x": -0.6, "z": 4, "label": {"zh-CN": "手消毒液", "en": "Hand rub"}}
+  ],
+  "patientSlots": [
+    {"id": "slot", "x": 0.6, "z": 0.2, "rot": 90, "posture": "lying", "bed": "table", "accepts": ["operating-room"], "monitor": "monitor"}
+  ],
+  "zones": [
+    {"id": "sterile", "name": {"zh-CN": "复合手术室（限制区，放射防护）", "en": "Hybrid OR (restricted, radiation)"}, "rect": {"x": 0, "z": 0, "w": 11, "d": 9}, "roles": ["clinician", "attending", "nurse", "porter", "radiologist"]}
+  ],
+  "capabilities": ["surgery", "anesthesia", "airway", "ventilator", "capnography", "cardiac-monitor", "oxygen", "suction", "infusion-pump", "iv-access", "medications", "records", "fluoroscopy", "ultrasound", "echocardiography"],
+  "tags": ["surgery", "restricted", "hybrid", "class-i", "radiation"]
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-scrub-bay",
+  "name": {"zh-CN": "刷手间", "en": "Scrub bay"},
+  "description": {"zh-CN": "两间手术室之间的刷手间：双人感应刷手池、手消毒液和刷手计时器，向半限制区走廊敞开，两侧感应门直通手术室。", "en": "Scrub bay between two ORs: a twin sensor-operated scrub trough, surgical hand-rub and a scrub timer; open to the semi-restricted corridor, with sensor doors straight into the ORs on both sides."},
+  "kind": "corridor",
+  "size": {"w": 3, "d": 4},
+  "floor": "sc-or-floor",
+  "partitions": [
+    {"side": "n", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6},
+    {"side": "w", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 0.6, "width": 1.4, "height": 2.6}]},
+    {"side": "e", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "sliding-door", "offset": 0.6, "width": 1.4, "height": 2.6}]},
+    {"side": "s", "material": "sc-or-wall", "base": "sc-or-wall-base", "height": 4.6, "openings": [{"kind": "opening", "offset": 0, "width": 2.2, "height": 3}]}
+  ],
+  "sign": {"text": {"zh-CN": "刷手", "en": "Scrub"}, "color": "#3f8f5a"},
+  "lights": [
+    {"x": 0, "z": 0}
+  ],
+  "placements": [
+    {"id": "scrub", "type": "sc-scrub-trough", "x": 0, "z": -1.475, "label": {"zh-CN": "双人刷手池", "en": "Twin scrub trough"}},
+    {"id": "clock", "type": "wall-clock", "x": 0, "z": -1.775, "label": {"zh-CN": "刷手计时钟", "en": "Scrub clock"}},
+    {"id": "caps-masks", "type": "glove-dispenser", "x": 1.265, "z": -1, "rot": 270, "label": {"zh-CN": "帽子/口罩", "en": "Caps & masks"}}
+  ],
+  "capabilities": [],
+  "tags": ["scrub", "semi-restricted"]
+}

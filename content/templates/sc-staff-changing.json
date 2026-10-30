@@ -1,0 +1,38 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-staff-changing",
+  "name": {"zh-CN": "医护更衣室", "en": "Staff changing room"},
+  "description": {"zh-CN": "从非限制区进入（南门）：脱外出鞋与外衣存入外区更衣柜，跨过换鞋凳，在内区领取洗手衣、帽子和口罩，经北门进入半限制区走廊——单向流线。", "en": "Enter from the unrestricted side (south door): outdoor shoes and clothes go in the outer lockers, step over the bench, collect scrubs, cap and mask on the inner side and leave by the north door into the semi-restricted corridor — a one-way route."},
+  "kind": "restroom",
+  "size": {"w": 7, "d": 9},
+  "floor": "tile-white",
+  "partitions": [
+    {"side": "n", "material": "white", "base": "sc-or-wall-base", "openings": [{"kind": "door", "offset": 2.4, "width": 1.4, "height": 2.6}]},
+    {"side": "w", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "e", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "s", "material": "white", "base": "sc-or-wall-base", "openings": [{"kind": "door", "offset": -2.4, "width": 1.4, "height": 2.6}]}
+  ],
+  "sign": {"text": {"zh-CN": "更衣 · 外区 → 内区", "en": "Changing · outer → inner"}, "color": "#7fb0a6"},
+  "lights": [
+    {"x": 0, "z": -2.2},
+    {"x": 0, "z": 2.2}
+  ],
+  "placements": [
+    {"id": "locker-o1", "type": "locker", "x": -3.075, "z": 1.2, "rot": 90, "label": {"zh-CN": "外区更衣柜", "en": "Outer locker"}},
+    {"id": "locker-o2", "type": "locker", "x": -3.075, "z": 2.2, "rot": 90, "label": {"zh-CN": "外区更衣柜", "en": "Outer locker"}},
+    {"id": "locker-o3", "type": "locker", "x": -3.075, "z": 3.2, "rot": 90, "label": {"zh-CN": "外区更衣柜", "en": "Outer locker"}},
+    {"id": "locker-s1", "type": "locker", "x": -0.6, "z": 4.075, "rot": 180, "label": {"zh-CN": "外区更衣柜", "en": "Outer locker"}},
+    {"id": "locker-s2", "type": "locker", "x": 0.4, "z": 4.075, "rot": 180, "label": {"zh-CN": "外区更衣柜", "en": "Outer locker"}},
+    {"id": "locker-s3", "type": "locker", "x": 1.4, "z": 4.075, "rot": 180, "label": {"zh-CN": "外区更衣柜", "en": "Outer locker"}},
+    {"id": "locker-s4", "type": "locker", "x": 2.4, "z": 4.075, "rot": 180, "label": {"zh-CN": "外区更衣柜", "en": "Outer locker"}},
+    {"id": "bench", "type": "sc-step-over-bench", "x": -1.825, "z": 0, "label": {"zh-CN": "换鞋跨越凳", "en": "Step-over bench"}},
+    {"id": "scrubs", "type": "sc-scrubs-dispenser", "x": -2.6, "z": -3.925, "label": {"zh-CN": "洗手衣发放机", "en": "Scrub dispenser"}},
+    {"id": "sink", "type": "sink", "x": -1, "z": -4.05, "label": {"zh-CN": "洗手池", "en": "Hand-wash sink"}},
+    {"id": "caps-masks", "type": "glove-dispenser", "x": 0.4, "z": -4.265, "label": {"zh-CN": "帽子/口罩", "en": "Caps & masks"}},
+    {"id": "laundry", "type": "trash-bin", "x": 1, "z": -3.9, "label": {"zh-CN": "洗手衣回收", "en": "Scrubs return"}},
+    {"id": "locker-i1", "type": "locker", "x": 3.075, "z": -2.6, "rot": 270, "label": {"zh-CN": "内区鞋柜", "en": "Theatre-shoe locker"}},
+    {"id": "locker-i2", "type": "locker", "x": 3.075, "z": -1.6, "rot": 270, "label": {"zh-CN": "内区鞋柜", "en": "Theatre-shoe locker"}}
+  ],
+  "capabilities": [],
+  "tags": ["changing", "staff", "zoning"]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "clinicalcraft/room-template@1",
+  "id": "sc-anaesthesia-workroom",
+  "name": {"zh-CN": "麻醉准备间", "en": "Anaesthesia workroom"},
+  "description": {"zh-CN": "麻醉科准备间：备用麻醉工作站、困难气道车、除颤仪、神经阻滞超声，手术部卫星血库冰箱、床旁血气分析仪、麻醉药品柜与药品冰箱。", "en": "Anaesthesia workroom: spare anaesthesia workstation, difficult airway trolley, defibrillator and block ultrasound, the suite's satellite blood refrigerator, a point-of-care blood gas analyser, the anaesthetic drug cabinet and the drug fridge."},
+  "kind": "storage",
+  "size": {"w": 7, "d": 4.5},
+  "floor": "lino",
+  "partitions": [
+    {"side": "n", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "w", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "e", "material": "white", "base": "sc-or-wall-base"},
+    {"side": "s", "material": "white", "base": "sc-or-wall-base", "openings": [{"kind": "door", "offset": 2.2, "width": 1.4, "height": 2.6}]}
+  ],
+  "sign": {"text": {"zh-CN": "麻醉准备间", "en": "Anaesthesia workroom"}, "color": "#3f8f5a"},
+  "lights": [
+    {"x": -1.75, "z": 0},
+    {"x": 1.75, "z": 0}
+  ],
+  "placements": [
+    {"id": "blood-fridge", "type": "blood-bank-fridge", "x": -2.9, "z": -1.7, "label": {"zh-CN": "卫星血库冰箱", "en": "Satellite blood refrigerator"}},
+    {"id": "drug-fridge", "type": "medication-fridge", "x": -2, "z": -1.725, "label": {"zh-CN": "药品冰箱", "en": "Drug fridge"}},
+    {"id": "drugs", "type": "medication-cabinet", "x": -0.95, "z": -1.725, "label": {"zh-CN": "麻醉药品柜", "en": "Anaesthetic drug cabinet"}},
+    {"id": "blood-gas", "type": "blood-gas-analyzer", "x": 0.05, "z": -1.8, "label": {"zh-CN": "血气分析仪", "en": "Blood gas analyser"}},
+    {"id": "cabinet", "type": "cabinet", "x": 1, "z": -1.825, "label": {"zh-CN": "气道耗材柜", "en": "Airway supplies"}},
+    {"id": "sink", "type": "sink", "x": 2.2, "z": -1.8, "label": {"zh-CN": "洗手池", "en": "Sink"}},
+    {"id": "spare-machine", "type": "sc-anaesthesia-workstation", "x": -2.7, "z": 1.65, "rot": 180, "label": {"zh-CN": "备用麻醉工作站", "en": "Spare anaesthesia workstation"}},
+    {"id": "airway", "type": "sc-difficult-airway-trolley", "x": -1.6, "z": 1.8, "rot": 180, "label": {"zh-CN": "困难气道车", "en": "Difficult airway trolley"}},
+    {"id": "ultrasound", "type": "ultrasound-machine", "x": -0.6, "z": 1.65, "rot": 180, "label": {"zh-CN": "神经阻滞超声", "en": "Block ultrasound"}},
+    {"id": "defibrillator", "type": "defibrillator", "x": 0.4, "z": 1.8, "rot": 180, "label": {"zh-CN": "除颤仪", "en": "Defibrillator"}},
+    {"id": "records", "type": "records-terminal", "x": 3, "z": 1, "label": {"zh-CN": "电子病历终端", "en": "EHR terminal"}}
+  ],
+  "capabilities": ["anesthesia", "airway", "ventilator", "blood-bank", "medications", "lab-blood-gas", "defibrillator", "ultrasound", "records"],
+  "tags": ["anaesthesia", "storage"]
+}
