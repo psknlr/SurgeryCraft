@@ -1,5 +1,5 @@
 /**
- * SurgeryCraft surgical centre: navigation and zoning on the compiled facility, run with ClinicalCraft's own
+ * IMPF Surgery Hospital: navigation and zoning on the compiled facility, run with ClinicalCraft's own
  * world model. `tools/check.sh` copies this file into `<ClinicalCraft>/packages/world/src/` for the run and
  * removes it afterwards (ClinicalCraft's vitest only includes `packages/*\/src/**`).
  *
@@ -33,7 +33,7 @@ const templates: RoomTemplate[] = [CC, SC].flatMap((dir) =>
       return r.value;
     }),
 );
-const parsed = parseFacility(json(`${SC}facilities/surgical-centre.json`));
+const parsed = parseFacility(json(`${SC}facilities/impf-surgery-hospital.json`));
 if (!parsed.ok) throw new Error(JSON.stringify(parsed.issues));
 const compiled = compileFacility(parsed.value, templates);
 if (!compiled.ok) throw new Error(JSON.stringify(compiled.issues));
@@ -59,7 +59,7 @@ const ok = (p: NavPlan) => {
 const vias = (p: Extract<NavPlan, { ok: true }>) => p.path.filter((x) => x.via).map((x) => x.via);
 const w = world();
 
-describe("SurgeryCraft surgical centre", () => {
+describe("IMPF Surgery Hospital", () => {
   it("an operating-room case starts in OR 7 (emergency & obstetric), one storey up", () => {
     expect(F.patientSlots[0].id).toBe("or-7.slot");
     const p = ok(w.plan({ kind: "interact", id: "patient" }));

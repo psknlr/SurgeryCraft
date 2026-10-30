@@ -1,7 +1,7 @@
 """Clean zoning diagrams of the compiled surgical centre (docs figures).
 
 Usage: python3 diagram.py <compiled facility json> <output dir>
-(`clinicalcraft facilities compile surgical-centre --out compiled.json` with the pack in contentDirs.)
+(`clinicalcraft facilities compile impf-surgery-hospital --out compiled.json` with the pack in contentDirs.)
 Needs Pillow and a CJK font (WenQuanYi Zen Hei by default; set $CJK_FONT to override)."""
 import json
 import sys

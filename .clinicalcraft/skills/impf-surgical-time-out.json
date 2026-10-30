@@ -1,0 +1,118 @@
+{
+  "schema": "clinicalcraft/skill@1",
+  "id": "impf_surgical_time_out",
+  "name": {
+    "zh-CN": "WHO 麻醉前核查与切皮前暂停核查",
+    "en": "WHO sign-in and time-out"
+  },
+  "description": {
+    "zh-CN": "先到患者身旁（本手术间），完成 WHO 手术安全核查的前两步：Sign in（麻醉前），切皮前清点（洗手护士与巡回护士唱点），Time out（全员暂停）。之后才能切皮。",
+    "en": "From the patient's side in this OR, the first two steps of the WHO Surgical Safety Checklist: sign in (before induction), the baseline count (scrub and circulator aloud), the time-out (the whole team pauses). Only then may the skin be incised."
+  },
+  "params": {
+    "patient": {
+      "type": "entity",
+      "default": "$patient",
+      "description": {
+        "zh-CN": "患者（默认本次手术的患者）",
+        "en": "The patient (default: this operation's patient)"
+      }
+    }
+  },
+  "safety": "physical",
+  "steps": [
+    {
+      "id": "go",
+      "tool": "navigate_to",
+      "args": {
+        "target": "${patient}"
+      },
+      "when": {
+        "not": {
+          "actorNear": "${patient}",
+          "range": 3
+        }
+      }
+    },
+    {
+      "id": "checklist",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-who-checklist",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "board",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-count-board",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "sign_in",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.checklist.data.entities.0.id}",
+        "operation": "sign_in"
+      },
+      "when": {
+        "entityState": "${steps.checklist.data.entities.0.id}",
+        "state": [
+          "pending"
+        ]
+      }
+    },
+    {
+      "id": "count",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.board.data.entities.0.id}",
+        "operation": "baseline_count"
+      },
+      "when": {
+        "entityState": "${steps.board.data.entities.0.id}",
+        "state": [
+          "not-started"
+        ]
+      }
+    },
+    {
+      "id": "time_out",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.checklist.data.entities.0.id}",
+        "operation": "time_out"
+      },
+      "when": {
+        "entityState": "${steps.checklist.data.entities.0.id}",
+        "state": [
+          "signed-in"
+        ]
+      }
+    }
+  ],
+  "postconditions": [
+    {
+      "entityState": "${steps.checklist.data.entities.0.id}",
+      "state": [
+        "timed-out",
+        "signed-out"
+      ]
+    }
+  ],
+  "recovery": [
+    {
+      "on": [
+        "SPATIAL_REQUIREMENT_UNMET",
+        "NOT_IN_RANGE",
+        "NOT_VISIBLE",
+        "NO_INTERACTION_POINT"
+      ],
+      "strategy": "replan"
+    }
+  ]
+}

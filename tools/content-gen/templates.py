@@ -133,6 +133,44 @@ OR_CAPS = ["surgery", "anesthesia", "airway", "ventilator", "capnography", "card
 W9 = D9 = 9
 
 
+# The sterile set-up table's lay-out (table-local offsets, items on the drape at 0.9 m): the container set, counted
+# RFID swabs, gloves and gown at the back; the instruments for the first steps along the front edge.
+SETUP_ITEMS = [
+    ("set", "sc-instrument-set", -0.36, -0.14, L("基础剖腹器械盒", "Major laparotomy set")),
+    ("swabs", "sc-gauze-swabs", -0.06, -0.14, L("RFID 纱布", "RFID swabs")),
+    ("gloves", "sc-sterile-gloves", 0.13, -0.14, L("无菌手套", "Sterile gloves")),
+    ("gown", "sc-sterile-gown", 0.4, -0.14, L("无菌手术衣", "Sterile gown")),
+    ("scalpel", "sc-scalpel", -0.48, 0.16, L("手术刀", "Scalpel")),
+    ("needle-holder", "sc-needle-holder", -0.3, 0.16, L("持针器", "Needle holder")),
+    ("forceps", "sc-tissue-forceps", -0.12, 0.16, L("组织镊", "Tissue forceps")),
+    ("scissors", "sc-metzenbaum-scissors", 0.06, 0.16, L("解剖剪", "Dissecting scissors")),
+    ("artery-forceps", "sc-artery-forceps", 0.24, 0.16, L("止血钳", "Artery forceps")),
+    ("esu-pencil", "sc-esu-pencil", 0.44, 0.16, L("电刀笔", "ESU pencil")),
+]
+SETUP_TOP = 0.9
+
+
+def setup_layout(x, z, prefix=""):
+    """The handheld items laid out on a sterile set-up table standing at (x, z), rotation 0."""
+    return [P(f"{prefix}{id}", type, x + dx, z + dz, label=label, y=SETUP_TOP) for id, type, dx, dz, label in SETUP_ITEMS]
+
+
+def or_team(scrub, circulating, anaesthetist):
+    """The OR team at their posts (named per OR in the facility): scrub nurse at the set-up table, circulating
+    nurse, anaesthetist at the head of the table. The learner operates; they pass, count and anaesthetise."""
+    return [
+        {"id": "scrub-nurse", "role": "nurse", "name": L("洗手护士", "Scrub nurse"), "x": num(scrub[0]), "z": num(scrub[1]), "rot": scrub[2],
+         "greeting": L("器械台已按清单摆好，纱布已清点。要什么器械说一声，我递给您。", "The set-up is laid out to the tray list and the swabs are counted. Call for what you need and I'll pass it.")},
+        {"id": "circulating-nurse", "role": "nurse", "name": L("巡回护士", "Circulating nurse"), "x": num(circulating[0]), "z": num(circulating[1]), "rot": circulating[2],
+         "greeting": L("我负责核查和清点，开台前我们一起做 Sign in 和 Time out。", "I run the checklist and the counts — we'll do the sign-in and the time-out together before you start.")},
+        {"id": "anaesthetist", "role": "attending", "name": L("麻醉医生", "Anaesthetist"), "x": num(anaesthetist[0]), "z": num(anaesthetist[1]), "rot": anaesthetist[2],
+         "greeting": L("麻醉机已完成开机检查，监测按日本麻醉科学会指南：SpO₂、ETCO₂、心电、无创血压、体温和肌松监测。", "The machine check is done; monitoring follows the JSA guideline — SpO₂, capnography, ECG, NIBP, temperature and neuromuscular monitoring.")},
+    ]
+
+
+OR_TEAM_9 = or_team((2.55, 1.95, 180), (-0.3, 3.4, 180), (-2.4, 0.3, 90))
+
+
 def or_skeleton(canopy, light="surgical-light", table="operating-table"):
     """The clinical island (table, anaesthesia, pendants, back table) with ≥ 1.3 m clear round it: the world
     model plans on 0.5 m cells with colliders inflated by 0.38 m, so narrower aisles do not exist for walkers."""
@@ -146,8 +184,10 @@ def or_skeleton(canopy, light="surgical-light", table="operating-table"):
         P("monitor", "patient-monitor", -1.45, 0.85, label=L("麻醉监护仪", "Anaesthesia monitor")),
         P("anaes-pendant", "sc-anaesthesia-pendant", -1.45, -1.65, label=L("麻醉吊塔", "Anaesthesia pendant")),
         P("surg-pendant", "sc-surgical-pendant", 2.35, -1.0, label=L("外科吊塔（电刀/气腹机）", "Surgical pendant (ESU / insufflator)")),
-        P("back-table", "instrument-table", 2.55, 1.15, label=L("器械台", "Back table")),
+        P("back-table", "sc-sterile-setup-table", 2.55, 1.15, label=L("无菌器械台", "Sterile set-up table")),
+        *setup_layout(2.55, 1.15),
         P("mayo", "sc-mayo-stand", 1.1, 1.25, label=L("Mayo 托盘", "Mayo stand")),
+        P("smoke-evac", "sc-smoke-evacuator", 2.35, -1.62, label=L("烟雾排除器（吊塔旁）", "Smoke evacuator (by the pendant)")),
         P("infusion-pump", "infusion-pump", -0.45, 1.35, label=L("输液泵", "Infusion pump")),
         P("warmer", "sc-forced-air-warmer", 0.35, 1.85, label=L("充气保温机", "Forced-air warmer")),
         on_n("drugs", "medication-cabinet", -3.6, D, L("麻醉药品柜", "Anaesthetic drug cabinet")),
@@ -156,6 +196,8 @@ def or_skeleton(canopy, light="surgical-light", table="operating-table"):
         on_e("pacs", "sc-wall-display", 1.2, W, L("PACS / 一体化显示屏", "PACS & integration display")),
         on_s("control-panel", "sc-or-control-panel", 0.6, D, L("环境控制面板", "OR control panel")),
         on_s("checklist", "sc-who-checklist", 3.3, D, L("WHO 手术安全核查板", "WHO Surgical Safety Checklist")),
+        on_e("count-board", "sc-count-board", -3.0, W, L("手术清点板", "Surgical count board")),
+        P("rf-wand", "sc-rf-wand", W / 2 - 0.3, -3.4, 90, L("RF 纱布检测棒", "RF sponge-detection wand"), y=0.75),
         on_n("grille-1", "sc-return-grille", 3.9, D),
         on_s("grille-2", "sc-return-grille", -3.9, D),
         P("sanitizer", "hand-sanitizer", -0.6, 4.0, label=L("手消毒液", "Hand rub")),
@@ -194,6 +236,7 @@ template(
         P("display-2", "sc-ceiling-display", -0.6, -2.7, label=L("吊臂显示器 2", "Ceiling display 2")),
     ],
     slots=[slot("table", "monitor", 0, -0.3, 90)],
+    staff=OR_TEAM_9,
     zones=[zone("sterile", L("手术间（限制区）", "Operating room (restricted)"), W9, D9, OR_ROLES)],
     caps=OR_CAPS + ["ultrasound", "echocardiography"],
     tags=["surgery", "restricted", "integrated-or", "class-ii"],
@@ -216,6 +259,7 @@ template(
         P("display-2", "sc-ceiling-display", -0.6, -2.7, label=L("吊臂显示器 2", "Ceiling display 2")),
     ],
     slots=[slot("table", "monitor", 0, -0.3, 90)],
+    staff=OR_TEAM_9,
     zones=[zone("sterile", L("手术间（限制区）", "Operating room (restricted)"), W9, D9, OR_ROLES)],
     caps=OR_CAPS + ["fluoroscopy"],
     tags=["surgery", "restricted", "ultraclean", "class-i"],
@@ -238,6 +282,7 @@ template(
         P("display-2", "sc-ceiling-display", -0.6, -2.9, label=L("吊臂显示器 2", "Ceiling display 2")),
     ],
     slots=[slot("table", "monitor", 0, -0.3, 90)],
+    staff=OR_TEAM_9,
     zones=[zone("sterile", L("手术间（限制区）", "Operating room (restricted)"), W9, D9, OR_ROLES)],
     caps=OR_CAPS,
     tags=["surgery", "restricted", "robotic", "mis"],
@@ -263,6 +308,7 @@ template(
         P("sanitizer", "hand-sanitizer", -3.9, 3.6, label=L("手消毒液", "Hand rub")),
     ],
     slots=[slot("table", "monitor", 0, -0.3, 90)],
+    staff=OR_TEAM_9,
     zones=[zone("sterile", L("隔离手术间（限制区）", "Isolation OR (restricted)"), W9, D9, OR_ROLES)],
     caps=OR_CAPS + ["ultrasound", "echocardiography"],
     tags=["surgery", "restricted", "isolation", "negative-pressure"],
@@ -300,8 +346,14 @@ template(
         on_w("iv-cart", "treatment-cart", -2.2, WH, L("静脉穿刺与治疗车", "IV cannulation & treatment cart")),
         P("infusion-pump", "infusion-pump", -0.6, 1.3, label=L("输液泵", "Infusion pump")),
         P("surg-pendant", "sc-surgical-pendant", 3.0, 1.2, label=L("外科吊塔", "Surgical pendant")),
-        P("back-table", "instrument-table", 0.8, 2.0, label=L("器械台", "Back table")),
+        P("back-table", "sc-sterile-setup-table", 0.8, 2.0, label=L("无菌器械台", "Sterile set-up table")),
+        *setup_layout(0.8, 2.0),
         P("mayo", "sc-mayo-stand", 1.8, 1.25, label=L("Mayo 托盘", "Mayo stand")),
+        P("smoke-evac", "sc-smoke-evacuator", 3.0, 1.82, label=L("烟雾排除器（吊塔旁）", "Smoke evacuator (by the pendant)")),
+        on_e("count-board", "sc-count-board", 1.0, WH, L("手术清点板", "Surgical count board")),
+        P("rf-wand", "sc-rf-wand", WH / 2 - 0.3, 1.0, 90, L("RF 纱布检测棒", "RF sponge-detection wand"), y=0.75),
+        P("apron-1", "sc-lead-apron", -4.85, DH / 2 - 0.4, 0, L("铅衣", "Lead apron"), y=0.95),
+        P("apron-2", "sc-lead-apron", -4.3, DH / 2 - 0.4, 0, L("铅衣", "Lead apron"), y=0.95),
         P("display-1", "sc-ceiling-display", -0.4, 2.7, 180, L("吊臂显示器（造影/导航）", "Ceiling display (angiography / navigation)")),
         P("display-2", "sc-ceiling-display", -0.6, -2.4, label=L("吊臂显示器 2", "Ceiling display 2")),
         on_e("pacs", "sc-wall-display", -3.4, WH, L("PACS 显示屏", "PACS display")),
@@ -314,6 +366,7 @@ template(
         P("sanitizer", "hand-sanitizer", -0.6, 4.0, label=L("手消毒液", "Hand rub")),
     ],
     slots=[slot("table", "monitor", 0.6, 0.2, 90)],
+    staff=or_team((0.8, 2.85, 180), (2.4, 3.6, 180), (-2.85, 0.4, 90)),
     zones=[zone("sterile", L("复合手术室（限制区，放射防护）", "Hybrid OR (restricted, radiation)"), WH, DH, HYBRID_ROLES)],
     caps=OR_CAPS + ["fluoroscopy", "ultrasound", "echocardiography"],
     tags=["surgery", "restricted", "hybrid", "class-i", "radiation"],

@@ -1,9 +1,9 @@
-"""SurgeryCraft Surgical Centre: ground floor (admissions, CSSD, lab, simulation) + first-floor operating department."""
+"""IMPF Surgery Hospital: ground floor (admissions, CSSD, lab, simulation) + first-floor operating department."""
 from common import L, num
 import footprints as fp
 from templates import SEMI, OR_ROLES, CORE_ROLES, OR_WALL, CLEAN_WALL
 
-FACILITY_ID = "surgical-centre"
+FACILITY_ID = "impf-surgery-hospital"
 ISSUES = []
 
 ROOMS = []
@@ -294,36 +294,62 @@ def or_sign(zh, en, color):
     return {"text": L(zh, en), "color": color}
 
 
+# Each OR's team by name (template staff: scrub-nurse, circulating-nurse, anaesthetist) — an international team.
+OR_TEAMS = {
+    "or-7": (("林护士（洗手）", "Nurse Lim (scrub)"), ("阿伊莎护士（巡回）", "Nurse Aisyah (circulating)"), ("田中医生（麻醉）", "Dr Tanaka (anaesthesia)")),
+    "or-1": (("穆勒护士（洗手）", "Nurse Müller (scrub)"), ("皮莱护士（巡回）", "Nurse Pillai (circulating)"), ("佐藤医生（麻醉）", "Dr Sato (anaesthesia)")),
+    "or-2": (("陈护士（洗手）", "Nurse Tan (scrub)"), ("法蒂玛护士（巡回）", "Nurse Fatimah (circulating)"), ("安德森医生（麻醉）", "Dr Andersen (anaesthesia)")),
+    "or-3": (("山本护士（洗手）", "Nurse Yamamoto (scrub)"), ("洛朗护士（巡回）", "Nurse Laurent (circulating)"), ("库马尔医生（麻醉）", "Dr Kumar (anaesthesia)")),
+    "or-4": (("吴护士（洗手）", "Nurse Ng (scrub)"), ("罗西护士（巡回）", "Nurse Rossi (circulating)"), ("施密特医生（麻醉）", "Dr Schmidt (anaesthesia)")),
+    "or-5": (("黄护士（洗手）", "Nurse Wong (scrub)"), ("奥康纳护士（巡回）", "Nurse O'Connor (circulating)"), ("铃木医生（麻醉）", "Dr Suzuki (anaesthesia)")),
+    "or-6": (("拉曼护士（洗手）", "Nurse Rahman (scrub)"), ("范德贝格护士（巡回）", "Nurse van den Berg (circulating)"), ("李医生（麻醉）", "Dr Lee (anaesthesia)")),
+    "or-8": (("高桥护士（洗手）", "Nurse Takahashi (scrub)"), ("加西亚护士（巡回）", "Nurse García (circulating)"), ("梅农医生（麻醉）", "Dr Menon (anaesthesia)")),
+}
+
+
+def or_team_names(or_id):
+    scrub, circ, anaes = OR_TEAMS[or_id]
+    return {"staff": {"scrub-nurse": {"name": L(*scrub)}, "circulating-nurse": {"name": L(*circ)}, "anaesthetist": {"name": L(*anaes)}}}
+
+
 # OR 7 first: the first slot accepting the operating-room setting is where a case starts
 inst("or-7", "sc-or-integrated", 6.5, 2.5, 0, overrides={
+    **or_team_names("or-7"),
     "name": L("7 号手术间 · 急诊与产科（24 小时）", "OR 7 · Emergency & obstetric (24/7)"),
     "sign": or_sign("7 号 · 急诊/产科 · Ⅱ级", "OR 7 · Emergency & obstetric · Class II", "#c9473c"),
 })
 inst("or-1", "sc-or-hybrid", -20.5, -14.5, 180, overrides={
+    **or_team_names("or-1"),
     "name": L("1 号复合手术室（心血管/神经介入）", "OR 1 · Hybrid (cardiovascular & neuro-interventional)"),
     "sign": or_sign("1 号 · 复合手术室 · Ⅰ级 · 放射防护", "OR 1 · Hybrid · Class I · radiation", "#d98a3d"),
 })
 inst("or-2", "sc-or-robotic", -6.5, -14.5, 180, overrides={
+    **or_team_names("or-2"),
     "name": L("2 号手术间 · 机器人手术", "OR 2 · Robotic surgery"),
     "sign": or_sign("2 号 · 机器人手术 · Ⅱ级", "OR 2 · Robotic · Class II", "#2f7fd1"),
 })
 inst("or-3", "sc-or-ultraclean", 5.5, -14.5, 180, overrides={
+    **or_team_names("or-3"),
     "name": L("3 号手术间 · 心脏与移植（超净）", "OR 3 · Cardiac & transplant (ultra-clean)"),
     "sign": or_sign("3 号 · 心脏/移植 · Ⅰ级超净", "OR 3 · Cardiac & transplant · Class I", "#2f7fd1"),
 })
 inst("or-4", "sc-or-ultraclean", 17.5, -14.5, 180, overrides={
+    **or_team_names("or-4"),
     "name": L("4 号手术间 · 骨科关节与神经外科（超净）", "OR 4 · Orthopaedic & neurosurgery (ultra-clean)"),
     "sign": or_sign("4 号 · 关节/神经 · Ⅰ级超净", "OR 4 · Arthroplasty & neuro · Class I", "#2f7fd1"),
 })
 inst("or-5", "sc-or-integrated", -17.5, 2.5, 0, overrides={
+    **or_team_names("or-5"),
     "name": L("5 号手术间 · 普外与结直肠腔镜", "OR 5 · General & colorectal MIS"),
     "sign": or_sign("5 号 · 普外腔镜 · Ⅱ级", "OR 5 · General & colorectal MIS · Class II", SIGN_OR),
 })
 inst("or-6", "sc-or-integrated", -5.5, 2.5, 0, overrides={
+    **or_team_names("or-6"),
     "name": L("6 号手术间 · 泌尿/妇科/头颈腔镜", "OR 6 · Urology, gynaecology & head-and-neck MIS"),
     "sign": or_sign("6 号 · 腔镜 · Ⅱ级", "OR 6 · MIS · Class II", SIGN_OR),
 })
 inst("or-8", "sc-or-isolation", 21.5, 2.5, 0, overrides={
+    **or_team_names("or-8"),
     "name": L("8 号手术间 · 负压隔离", "OR 8 · Negative-pressure isolation"),
 })
 inst("preop", "sc-preop-holding", -13.5, 16, 180)
@@ -362,7 +388,7 @@ room("l0-corridor", L("一层主走廊", "Ground-floor main corridor"), "corrido
 room("l0-service-corridor", L("一层后勤走廊", "Ground-floor service corridor"), "corridor", L0, -12, -8, -22, 4, "lino", step=7)
 room("l0-hall", L("入口大厅与手术患者入院处", "Main hall & surgical admissions"), "reception", L0, -9, 16, 8, 22, "stone",
      [part("n", [door("opening", 14, 0, 3.2)]), part("w", [door("door", 1.6, 4, 2.6)]), part("e", [door("door", 1.6, 4, 2.6)])],
-     {"text": L("外科手术中心 · 入院登记", "Surgical Centre · admissions"), "side": "n", "color": "#2f7fd1"}, step=6)
+     {"text": L("IMPF 外科医院 · 入院登记", "IMPF Surgery Hospital · admissions"), "side": "n", "color": "#2f7fd1"}, step=6)
 room("l0-family", L("家属等候区", "Family waiting lounge"), "waiting", L0, -21, -9, 16, 22, "wood",
      [part("n"), part("w")], {"text": L("家属等候", "Family waiting")})
 room("l0-day-surgery", L("日间手术入院与出院区", "Day-surgery admission & discharge"), "ward", L0, -32, -21, 8, 22, "sc-pacu-floor",
@@ -503,6 +529,9 @@ inst("l0-observation", "teaching-room", -17, 0, 0, L0, {
 })
 inst("l0-sim-or", "sc-or-integrated", -16.5, -8.5, 90, L0, {
     "name": L("高仿真模拟手术室", "High-fidelity simulation OR"),
+    "staff": {"scrub-nurse": {"name": L("模拟教学护士（洗手）", "Sim faculty nurse (scrub)")},
+              "circulating-nurse": {"name": L("模拟教学护士（巡回）", "Sim faculty nurse (circulating)")},
+              "anaesthetist": {"name": L("模拟教学麻醉医生", "Sim faculty anaesthetist")}},
     "sign": {"text": L("模拟手术室", "Simulation OR"), "color": "#a397bc"},
     "omit": ["slot", "sterile"],
 })
@@ -560,10 +589,10 @@ def build():
     return {
         "schema": "clinicalcraft/facility@1",
         "id": FACILITY_ID,
-        "name": L("SurgeryCraft 外科手术中心", "SurgeryCraft Surgical Centre"),
+        "name": L("IMPF 外科医院", "IMPF Surgery Hospital"),
         "description": L(
-            "两层外科手术中心。二层手术部按国际手术室规范设计：限制区/半限制区/非限制区三级流线（AORN、FGI），环形洁净走廊包围中央无菌核心区；8 间手术室——复合手术室（机器人血管造影）、机器人手术室、两间Ⅰ级超净层流手术室（心脏/移植、骨科关节/神经）、三间一体化数字手术室（含 24 小时急诊与产科手术间）和带缓冲间的负压隔离手术室；刷手间与无菌准备间成对位于手术室之间；麻醉后恢复室 8 床、术前准备区 5 床、换床间、男女更衣室（单向流线）、手术部控制台、卫星药房、麻醉准备间（卫星血库）、术中冰冻病理室和污物间。洁净电梯直通一层消毒供应中心的无菌物品存放区，污梯直通去污区。一层为入口大厅与入院登记、家属等候、日间手术、麻醉术前评估门诊、围术期检验室、输血科、消毒供应中心（去污 → 检查包装灭菌 → 无菌存放的单向流程）、外科技能与模拟中心和空调机房。",
-            "A two-storey surgical centre. The first-floor operating department follows international OR practice: restricted / semi-restricted / unrestricted zoning (AORN, FGI) with a ring of clean corridors round a central sterile core; eight ORs — a hybrid OR with robotic angiography, a robotic surgery OR, two Class I ultra-clean laminar-flow ORs (cardiac & transplant, arthroplasty & neuro), three integrated digital ORs (one held 24/7 for emergency and obstetric surgery) and a negative-pressure isolation OR behind its anteroom; paired scrub bays and sterile set-up rooms between the ORs; an 8-bay PACU, 5-bay pre-op holding, a patient transfer zone, one-way staff changing rooms, the theatre control desk, a theatre pharmacy, the anaesthesia workroom (satellite blood fridge), a frozen-section lab and a soiled utility. A clean lift links the sterile core to the CSSD sterile store below and a dirty lift returns used instruments to decontamination. Ground floor: main hall and admissions, family waiting, day surgery, pre-anaesthesia clinics, the perioperative lab, the blood bank, the CSSD (decontamination → packing & sterilisation → sterile store, one way), a surgical skills & simulation centre and the OR plant room."),
+            "IMPF 外科医院：两层外科医院，按新加坡、欧洲、美国与日本规范中最严格的一项设计（各手术间设计目标：≥ 25 次/h 换气、≥ 4 次/h 新风；超净手术间手术区 ISO 5、浮游菌设计均值 ≤ 5 CFU/m³、使用中 ≤ 10 CFU/m³，3.2 × 3.2 m 单向流保护区覆盖手术台与器械台；相邻区域压差 15 ± 5 Pa；20–24 °C、35–60 % RH；末端 HEPA ≥ 99.97 %；净面积 ≥ 55.74 m²；≥ 36 个插座、IT 隔离电源与无影灯不间断电源；医用气体 400 ± 40 kPa、氧气终端 ≥ 60 NL/min）。手术团队与器械可交互：洗手护士按要求递器械，WHO 核查、清点与 RF 扫描、排烟与电刀、透视防护和消毒供应中心再处理都是有先后条件的操作。二层手术部按国际手术室规范设计：限制区/半限制区/非限制区三级流线（AORN、FGI），环形洁净走廊包围中央无菌核心区；8 间手术室——复合手术室（机器人血管造影）、机器人手术室、两间Ⅰ级超净层流手术室（心脏/移植、骨科关节/神经）、三间一体化数字手术室（含 24 小时急诊与产科手术间）和带缓冲间的负压隔离手术室；刷手间与无菌准备间成对位于手术室之间；麻醉后恢复室 8 床、术前准备区 5 床、换床间、男女更衣室（单向流线）、手术部控制台、卫星药房、麻醉准备间（卫星血库）、术中冰冻病理室和污物间。洁净电梯直通一层消毒供应中心的无菌物品存放区，污梯直通去污区。一层为入口大厅与入院登记、家属等候、日间手术、麻醉术前评估门诊、围术期检验室、输血科、消毒供应中心（去污 → 检查包装灭菌 → 无菌存放的单向流程）、外科技能与模拟中心和空调机房。",
+            "IMPF Surgery Hospital: a two-storey surgical hospital designed to the strictest of the Singaporean, European, US and Japanese requirements (OR design targets: ≥ 25 air changes and ≥ 4 outdoor air changes per hour; ultra-clean ORs ISO 5 at the operating zone, design mean ≤ 5 and in use ≤ 10 CFU/m³, a 3.2 × 3.2 m unidirectional zone over the table and instrument tables; 15 ± 5 Pa between zones; 20–24 °C, 35–60 % RH; terminal HEPA ≥ 99.97 %; ≥ 55.74 m² clear; ≥ 36 receptacles, IT isolated power and an uninterruptible supply for the surgical lights; medical gases at 400 ± 40 kPa, oxygen ≥ 60 NL/min per terminal). The team and the instruments are interactive: the scrub nurse passes what you call for, and the WHO checklist, the counts with the RF scan, smoke evacuation and electrosurgery, radiation protection and CSSD reprocessing are operations with preconditions. The first-floor operating department follows international OR practice: restricted / semi-restricted / unrestricted zoning (AORN, FGI) with a ring of clean corridors round a central sterile core; eight ORs — a hybrid OR with robotic angiography, a robotic surgery OR, two Class I ultra-clean laminar-flow ORs (cardiac & transplant, arthroplasty & neuro), three integrated digital ORs (one held 24/7 for emergency and obstetric surgery) and a negative-pressure isolation OR behind its anteroom; paired scrub bays and sterile set-up rooms between the ORs; an 8-bay PACU, 5-bay pre-op holding, a patient transfer zone, one-way staff changing rooms, the theatre control desk, a theatre pharmacy, the anaesthesia workroom (satellite blood fridge), a frozen-section lab and a soiled utility. A clean lift links the sterile core to the CSSD sterile store below and a dirty lift returns used instruments to decontamination. Ground floor: main hall and admissions, family waiting, day surgery, pre-anaesthesia clinics, the perioperative lab, the blood bank, the CSSD (decontamination → packing & sterilisation → sterile store, one way), a surgical skills & simulation centre and the OR plant room."),
         "bounds": {"minX": -44, "maxX": 44, "minZ": -34, "maxZ": 46},
         "spawn": {"x": 11, "z": 38, "yaw": 0},
         "environment": {"sky": "#a8d5e0", "fog": {"color": "#b9d8d6", "near": 45, "far": 110}, "sunIntensity": 3.4},
@@ -590,20 +619,20 @@ def build():
         ],
         "buildings": [{
             "id": "main",
-            "name": L("SurgeryCraft 外科手术中心", "SurgeryCraft Surgical Centre"),
+            "name": L("IMPF 外科医院", "IMPF Surgery Hospital"),
             "rect": {"x": 0, "z": 0, "w": 64, "d": 44},
             "levels": ["L0", "L1"],
             "floor": "floor",
             "walls": {"height": 5, "base": "navy", "body": "white", "top": "steel", "thickness": 0.35},
             "openings": OPENINGS,
             "roof": {"material": "tile-white"},
-            "sign": {"text": L("外科手术中心", "Surgical Centre"), "side": "s", "color": "#2f7fd1"},
+            "sign": {"text": L("IMPF 外科医院", "IMPF Surgery Hospital"), "side": "s", "color": "#2f7fd1"},
         }],
         "rooms": ROOMS,
         "placements": PLACEMENTS,
         "staff": STAFF,
         "signs": [
-            {"text": L("外科手术中心 · 入口", "Surgical Centre · Entrance"), "x": 16.8, "y": 2.6, "z": 31.5, "rot": 0, "width": 3.2, "color": "#2f7fd1", "post": True},
+            {"text": L("IMPF 外科医院 · 入口", "IMPF Surgery Hospital · Entrance"), "x": 16.8, "y": 2.6, "z": 31.5, "rot": 0, "width": 3.6, "color": "#2f7fd1", "post": True},
             {"text": L("患者接送区", "Patient drop-off"), "x": -12, "y": 2.4, "z": 32.2, "rot": 0, "width": 2.6, "color": "#3f8f5a", "post": True},
         ],
         "outdoorRegion": L("医院园区", "Hospital grounds"),

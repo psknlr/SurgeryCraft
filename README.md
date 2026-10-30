@@ -3,14 +3,17 @@
 SurgeryCraft builds surgical training content on the
 [ClinicalCraft](https://github.com/psknlr/ClinicalCraft) engine (the engine is archived here as
 `ClinicalCraft-main (1).zip`). This repository is a ClinicalCraft **content pack**: plain JSON
-that ClinicalCraft loads through its `contentDirs` setting, with no engine changes.
+that ClinicalCraft loads through its `contentDirs` setting, plus declarative skills. It needs a
+ClinicalCraft with the hands round ([psknlr/ClinicalCraft#7](https://github.com/psknlr/ClinicalCraft/pull/7)): hand-over, worn items, `nearbyState`
+and "pass me …".
 
-## The surgical floor · 手术部
+## IMPF Surgery Hospital · IMPF 外科医院
 
 ![Operating department zoning](docs/img/surgical-floor-L1-zoning.png)
 
-**SurgeryCraft Surgical Centre** (`surgical-centre`) is a two-storey facility whose first
-floor is a full operating department designed around international OR practice:
+**IMPF Surgery Hospital** (`impf-surgery-hospital`) is a two-storey hospital whose first
+floor is a full operating department, designed to the strictest of the Singaporean, European,
+US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.md)):
 
 * 8 ORs round a central sterile core: a **hybrid OR** with robotic angiography and its control
   room, a **robotic surgery** OR, two **Class I ultra-clean** laminar-flow ORs (cardiac &
@@ -22,27 +25,55 @@ floor is a full operating department designed around international OR practice:
   between the ORs, an 8-bay PACU and 5-bay pre-op holding;
 * clean and dirty lifts to the ground-floor CSSD, which runs one way from decontamination to
   the sterile store; plus admissions, day surgery, the perioperative lab, blood bank and a
-  surgical skills & simulation centre.
+  surgical skills & simulation centre;
+* **interactive people, instruments and devices**: an OR team in every OR who pass what you
+  call for ("Scalpel.", "把手术刀递给我"); instruments, gowns, gloves and lead aprons you pick up,
+  wear and hand over, each with a lifecycle (sterile → in use → used → CSSD); the WHO
+  checklist, count board with RF wand, smoke evacuator and generator, control panel,
+  laparoscopy tower, lead shield, contrast injector, washer-disinfectors and sterilisers as
+  state machines that gate each other ([docs/INTERACTIONS.md](docs/INTERACTIONS.md)).
 
-Design specification, standards basis, room schedule and screenshots:
-**[docs/SURGICAL_FLOOR.md](docs/SURGICAL_FLOOR.md)**.
+![In your hands](docs/img/hands-in-your-hands.jpg)
+
+Design specification, room schedule and screenshots:
+**[docs/SURGICAL_FLOOR.md](docs/SURGICAL_FLOOR.md)** · standards matrix:
+**[docs/STANDARDS.md](docs/STANDARDS.md)** · interactions:
+**[docs/INTERACTIONS.md](docs/INTERACTIONS.md)**.
 
 ## Layout
 
 ```
 content/
-  catalogs/surgerycraft-or.json      47 equipment types, 21 materials (bilingual)
+  catalogs/surgerycraft-or.json      62 equipment types (19 with behaviours), 21 materials (bilingual)
   templates/sc-*.json                15 room templates (ORs, scrub, set-up, PACU, pre-op, changing, …)
-  facilities/surgical-centre.json    the two-storey surgical centre
+  facilities/impf-surgery-hospital.json   IMPF Surgery Hospital
+.clinicalcraft/skills/impf-*.json    3 workflow skills (time-out, closing counts, CSSD cycle)
 docs/SURGICAL_FLOOR.md               design specification · docs/img/ figures
-tools/check.sh                       validate the pack + navigation/zoning test against ClinicalCraft
-tools/navcheck.test.ts               the navigation/zoning test (run by check.sh)
+docs/STANDARDS.md                    SG / EU / US / JP standards matrix and the targets chosen
+docs/INTERACTIONS.md                 people, instruments and devices: lifecycles, gates, skills, words
+tools/check.sh                       validate the pack and run the tests below against ClinicalCraft
+tools/navcheck.test.ts               navigation & zoning (run by check.sh)
+tools/orflow.test.ts                 the OR workflows on the world runtime (run by check.sh)
+tools/skills.test.ts                 the skills and "pass me" in a session (run by check.sh)
 tools/content-gen/                   Python generator that writes content/ (python3 build.py)
+dataset/                             150 CMCR surgical case-report archives (zip; source material)
 ```
 
 ## Use it with ClinicalCraft
 
-Point ClinicalCraft at the pack, e.g. in `ClinicalCraft/.clinicalcraft/settings.local.json`
+This repository is a ClinicalCraft project: its `.clinicalcraft/settings.json` adds the pack
+(`contentDirs`) and `.clinicalcraft/skills/` holds the skills. From a ClinicalCraft checkout next
+to it, run commands with `--cwd ../SurgeryCraft`; trust the project once so its skills load:
+
+```bash
+npm run cc -- trust --cwd ../SurgeryCraft
+```
+
+```bash
+npm run cc -- serve --cwd ../SurgeryCraft
+```
+
+Or point ClinicalCraft at the pack alone, e.g. in `ClinicalCraft/.clinicalcraft/settings.local.json`
 (git-ignored; a relative path resolves against the settings file's folder):
 
 ```json
@@ -56,15 +87,15 @@ npm run cc -- facilities validate --all
 ```
 
 ```bash
-npm run cc -- facilities compile surgical-centre
+npm run cc -- facilities compile impf-surgery-hospital
 ```
 
 ```bash
 npm run cc -- serve
 ```
 
-`serve` offers the pack to the web world (choose the *SurgeryCraft Surgical Centre*
-facility). An operating-room case such as `cmcr-1653406` starts in OR 7.
+`serve` offers the pack to the web world (choose *IMPF Surgery Hospital*). An
+operating-room case such as `cmcr-1653406` starts in OR 7.
 
 ## Check and regenerate
 

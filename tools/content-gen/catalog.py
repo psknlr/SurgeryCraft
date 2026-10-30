@@ -1008,3 +1008,6 @@ eq("sc-ahu", L("手术部专用空调机组", "Dedicated OR air-handling unit"),
        B("warning-yellow", 0, 2.4, 0.885, 4.9, 0.06, 0.02),
    ],
    prompt=L("E · 空调机组", "E · Air-handling unit"), screen="text", tags=["plant", "hvac"])
+
+
+import interactions  # noqa: E402,F401  (instruments, wearables and device behaviours — appends to EQUIPMENT)

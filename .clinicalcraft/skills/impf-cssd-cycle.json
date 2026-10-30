@@ -1,0 +1,124 @@
+{
+  "schema": "clinicalcraft/skill@1",
+  "id": "impf_cssd_cycle",
+  "name": {
+    "zh-CN": "消毒供应中心：清洗消毒与灭菌放行",
+    "en": "CSSD: wash-disinfect and release a sterilised load"
+  },
+  "description": {
+    "zh-CN": "在消毒供应中心运行最近的清洗消毒器（装载、程序）与压力蒸汽灭菌器（B-D 试验、134 °C 程序、核对指示物后放行）——用过的器械盒和器械随后可以在包装间再处理。",
+    "en": "In the CSSD, run the nearest washer-disinfector (load, cycle) and steam steriliser (Bowie-Dick test, 134 °C cycle, release after the indicators) — used sets and instruments can then be reprocessed in the packing room."
+  },
+  "safety": "physical",
+  "steps": [
+    {
+      "id": "washer",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-washer-disinfector",
+        "prefer_available": true,
+        "limit": 1
+      }
+    },
+    {
+      "id": "steriliser",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-steam-steriliser",
+        "prefer_available": true,
+        "limit": 1
+      }
+    },
+    {
+      "id": "load",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.washer.data.entities.0.id}",
+        "operation": "load"
+      },
+      "when": {
+        "entityState": "${steps.washer.data.entities.0.id}",
+        "state": [
+          "idle"
+        ]
+      }
+    },
+    {
+      "id": "wash",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.washer.data.entities.0.id}",
+        "operation": "run_cycle"
+      },
+      "when": {
+        "entityState": "${steps.washer.data.entities.0.id}",
+        "state": [
+          "loaded"
+        ]
+      }
+    },
+    {
+      "id": "bowie_dick",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.steriliser.data.entities.0.id}",
+        "operation": "bowie_dick"
+      },
+      "when": {
+        "entityState": "${steps.steriliser.data.entities.0.id}",
+        "state": [
+          "idle"
+        ]
+      }
+    },
+    {
+      "id": "sterilise",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.steriliser.data.entities.0.id}",
+        "operation": "run_cycle"
+      },
+      "when": {
+        "entityState": "${steps.steriliser.data.entities.0.id}",
+        "state": [
+          "tested"
+        ]
+      }
+    },
+    {
+      "id": "release",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.steriliser.data.entities.0.id}",
+        "operation": "release"
+      },
+      "when": {
+        "entityState": "${steps.steriliser.data.entities.0.id}",
+        "state": [
+          "cycle-complete"
+        ]
+      }
+    }
+  ],
+  "postconditions": [
+    {
+      "entityState": "${steps.washer.data.entities.0.id}",
+      "state": "complete"
+    },
+    {
+      "entityState": "${steps.steriliser.data.entities.0.id}",
+      "state": "released"
+    }
+  ],
+  "recovery": [
+    {
+      "on": [
+        "SPATIAL_REQUIREMENT_UNMET",
+        "NOT_IN_RANGE",
+        "NOT_VISIBLE",
+        "NO_INTERACTION_POINT"
+      ],
+      "strategy": "replan"
+    }
+  ]
+}
