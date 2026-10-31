@@ -1,19 +1,21 @@
 # Equipment models · 设备模型
 
-The operating department's most-seen equipment is drawn as real 3D models instead of
-voxel boxes: 19 types, 173 placements in the IMPF Surgery Hospital. Each model was built in
+All equipment in the IMPF Surgery Hospital is drawn as 3D models instead of voxel boxes:
+885 placements. That is the pack's 74 types (476 placements) and the 62 ClinicalCraft built-in types
+the hospital places (409), whose models ship with ClinicalCraft. Every model was built in
 Blender with ClinicalCraft's Blender bridge (ClinicalCraft
 [docs/BLENDER.md](https://github.com/psknlr/ClinicalCraft/blob/main/docs/BLENDER.md)), in its
 type's own frame, from the type's voxel parts. Working heights, screens and the surfaces
 things are put on stay where the world expects them, so every interaction works as before.
 The voxel parts remain the fallback, and the collider and aim box are still the footprint.
 
-> 手术部最常见的 19 种设备（IMPF 外科医院中 173 处摆放）改用真实三维模型绘制：每个模型都用
+> IMPF 外科医院中的全部设备（885 处摆放）都改用三维模型绘制：本内容包的 74 种设备（476 处）
+> 和医院用到的 62 种 ClinicalCraft 内置设备（409 处，模型随 ClinicalCraft 提供）。每个模型都用
 > ClinicalCraft 的 Blender 桥接，在该设备类型自身的坐标系中、依据其体素部件在 Blender 中制作，
 > 工作高度、屏幕位置和放置物品的台面都与原来一致，所有交互不变；体素部件仍是后备，碰撞体与
 > 瞄准框仍是占地范围。
 
-![The models](img/models-sheet.jpg)
+![The pack's 74 models](img/models-sheet.jpg)
 
 In the hospital, before (voxel parts) → after (models), in `clinicalcraft serve`:
 
@@ -22,55 +24,47 @@ In the hospital, before (voxel parts) → after (models), in `clinicalcraft serv
 Metzenbaum scissors (black rings), Kelly forceps, ESU pencil; the rigid container with its
 filter lid; the swabs; the drape over the table.*
 
+![OR 7](img/models-or7-table.jpg)
+*OR 7: the surgical light, laminar-flow canopy, anaesthesia workstation, monitors and pumps on
+their stands, the warmer, Mayo stand, trolleys and displays.*
+
 ![Anaesthesia](img/models-or7-anaesthesia.jpg)
 *The anaesthesia workstation: vaporisers on their rail, flowmeters, ventilator display, CO2
 absorber, breathing circuit, bag and mask. The patient monitor on top still shows the world's
 live vitals.*
 
-![Pendant and tower](img/models-or7-pendant-tower.jpg)
-*The surgical pendant (electrosurgical generator with its live screen, gas outlets), the
-laparoscopy tower and the smoke evacuator.*
-
-![Mayo stand and warmer](img/models-or7-mayo-warmer.jpg)
-*The Mayo stand and the forced-air warmer, under a ceiling-boom display.*
+![OR 2](img/models-or2-robotic.jpg)
+*OR 2 (robotic): the patient cart with its four arms, the vision cart, the surgical pendant.*
 
 ![OR 1](img/models-or1-hybrid.jpg)
-*OR 1 (hybrid): the hybrid table, the anaesthesia workstation and pendants, the back table.*
+*OR 1 (hybrid): the hybrid table, the surgical light's two domed heads, the robotic C-arm, the
+anaesthesia workstation and pendants, the back table.*
 
-## The models
+![PACU](img/models-pacu.jpg)
+*The PACU: beds, monitors, curtains, the nurses' station.*
 
-| type | | triangles | primitives | placements | portable | screen |
-|---|---|---:|---:|---:|---|---|
-| `sc-anaesthesia-pendant` | Anaesthesia pendant | 6,960 | 7 | 9 |  |  |
-| `sc-anaesthesia-workstation` | Advanced anaesthesia workstation | 9,612 | 5 | 10 |  | vitals |
-| `sc-artery-forceps` | Curved artery forceps (Kelly) | 1,976 | 1 | 9 | yes |  |
-| `sc-ceiling-display` | Ceiling-boom 4K surgical display | 1,884 | 3 | 18 |  | pacs |
-| `sc-difficult-airway-trolley` | Difficult airway trolley | 5,576 | 3 | 9 | yes | text |
-| `sc-esu-pencil` | Electrosurgical pencil | 692 | 3 | 9 | yes |  |
-| `sc-forced-air-warmer` | Forced-air warming unit | 7,488 | 4 | 12 | yes | text |
-| `sc-gauze-swabs` | X-ray-detectable RFID swabs | 848 | 1 | 9 | yes |  |
-| `sc-hybrid-table` | Hybrid OR table | 4,824 | 5 | 1 |  |  |
-| `sc-instrument-set` | Rigid sterile container | 1,932 | 4 | 9 | yes |  |
-| `sc-laparoscopy-tower` | 4K/3D laparoscopy tower | 5,592 | 5 | 6 | yes | pacs |
-| `sc-mayo-stand` | Mayo instrument stand | 4,740 | 3 | 9 |  |  |
-| `sc-metzenbaum-scissors` | Metzenbaum scissors | 1,608 | 2 | 9 | yes |  |
-| `sc-needle-holder` | Mayo-Hegar needle holder | 1,536 | 2 | 9 | yes |  |
-| `sc-scalpel` | Safety scalpel | 784 | 3 | 9 | yes |  |
-| `sc-smoke-evacuator` | Surgical smoke evacuator | 1,940 | 4 | 9 |  | text |
-| `sc-sterile-setup-table` | Sterile set-up table | 3,668 | 2 | 9 |  |  |
-| `sc-surgical-pendant` | Surgical equipment pendant | 5,660 | 6 | 9 |  | text |
-| `sc-tissue-forceps` | DeBakey tissue forceps | 1,044 | 1 | 9 | yes |  |
+## How they are made
 
-*Primitives* are draw calls per drawn copy. Static placements of one model are instanced (one
-draw call per primitive for all of them); portable ones are drawn one by one. In OR 7's wide
-view the models take the frame from 382 to 554 steady draw calls, and the shadow pass from 602
-to 789 (headless Chromium, 2026-10-31). The shadow pass runs only when the shadow map is
-refreshed. Instruments, swabs and the container cast no shadow.
+19 types have their own builder in `tools/blender/models.py`: the instruments, back table, Mayo
+stand, anaesthesia workstation, both pendants, laparoscopy tower, smoke evacuator, warmer,
+airway trolley, ceiling displays and the hybrid table. The other 55 are refined from their
+voxel parts by ClinicalCraft's `clinicalcraft_refine`:
+- boxes get rounded edges, and thin bars and poles become cylinders;
+- small floor cubes become casters or glides;
+- circles drawn in voxels (lamp heads, clock faces) become discs;
+- each screen gets a dark housing for the live display;
+- foliage becomes rounded blobs.
 
-Not modelled yet: the wall panels with behaviours (control panel, WHO checklist, count board),
-the robotic system, the C-arm and lead shield, CSSD machines, the exterior, and the core types
-the ORs also use (`operating-table`, `surgical-light`, `patient-monitor`; ClinicalCraft's own
-catalog).
+The pack's models total 130,624 triangles in 6.9 MB.
+
+Each model is one mesh with one material, plus one for glass where there is any. Colours are
+vertex colours; roughness, metalness and glow come from a small palette texture. Static
+placements of one model are drawn as instances per floor and 16 m square, and items under
+0.3 m cast no shadow. Measured in OR 7's wide view against the all-voxel world (headless
+Chromium, 2026-10-31):
+- steady draw calls: 382 → 637;
+- shadow pass: 602 → 1,118 (it runs only when the shadow map is refreshed);
+- triangles: 0.12 M → 0.75 M.
 
 ## Licence and provenance
 
@@ -86,8 +80,8 @@ ClinicalCraft's `assets/local/`, never here.
 
 ```
 tools/blender/
-  build.py      builds every model (or the ones named) and writes models.json
-  models.py     one builder per type, in the type's frame (ClinicalCraft's shape kit)
+  build.py      builds a model for every type of the catalog (or the ones named) and writes models.json
+  models.py     the bespoke builders, in each type's frame (ClinicalCraft's shape kit); other types are refined
   models.json   the catalog references (sha256, offset, licence, source, use), read by content-gen
   preview.py    Cycles previews of the built models (the sheet above)
 content/assets/models/<type>.glb   the models, served by `clinicalcraft serve` at /local-assets/models/
@@ -111,10 +105,11 @@ tools/check.sh ../ClinicalCraft
 `build.py` takes type ids to rebuild only those (`-- sc-mayo-stand` after `-P …` with
 `blender`). The content generator puts each reference into the catalog and refuses one whose
 file is missing. `check.sh` inspects every model against its reference: licence, use status,
-pinned hash, and size against the footprint. One warning is expected: `sc-ceiling-display`'s
-footprint (floor to ceiling, 0.6 m deep) is larger than the hanging display, as its voxel parts
-already are. Builds are reproducible: the same `models.py` and Blender version give the same
-bytes, so the pinned hashes change only when a model does.
+pinned hash, and size against the footprint. Warnings are expected for wall panels and the
+hanging display, whose footprints are deeper than the panel itself (as their voxel parts
+already are). Builds are reproducible: the same code and Blender version give the same bytes,
+so the pinned hashes change only when a model does. A new type in the catalog gets a refined
+model on the next build; give it a builder in `models.py` when refining is not enough.
 
 ### With Claude Code and blender-mcp
 
@@ -123,7 +118,8 @@ notes are in ClinicalCraft's docs/BLENDER.md (untick the add-on's "Allow Telemet
 Blender open and its server started, ask for example:
 
 > Load `sc-robotic-console` from content/ with the ClinicalCraft Blender bridge, show me its
-> blockout, and model it with the shape kit like the builders in tools/blender/models.py.
+> blockout and its refined model, then model it better with the shape kit, like the builders
+> in tools/blender/models.py.
 
 When it looks right, turn it into a builder in `models.py`, so that the model is rebuilt from
 code like the others, then build, regenerate and check as above.

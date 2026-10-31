@@ -1,8 +1,9 @@
 """
-SurgeryCraft equipment models, written in each type's own frame (ClinicalCraft's
+SurgeryCraft's bespoke equipment models, written in each type's own frame (ClinicalCraft's
 scripts/blender/clinicalcraft_shapes.py: metres, x right, y up, z front, origin at the
 footprint centre on the floor) from its voxel parts: working heights, screens and the
-surfaces things are put on stay where the world expects them. `build.py` runs them.
+surfaces things are put on stay where the world expects them. Every other type of the pack
+is refined from its voxel parts (`clinicalcraft_refine`). `build.py` runs them.
 """
 from __future__ import annotations
 

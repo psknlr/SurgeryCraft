@@ -8,8 +8,9 @@ ClinicalCraft with the hands round ([psknlr/ClinicalCraft#7](https://github.com/
 and "pass me …" — and with window frame and mullion materials
 ([psknlr/ClinicalCraft#8](https://github.com/psknlr/ClinicalCraft/pull/8)) for the exterior. The equipment models need a ClinicalCraft that serves a content
 pack's own `assets/` and keeps screens live over models (the Blender round,
-[psknlr/ClinicalCraft#10](https://github.com/psknlr/ClinicalCraft/pull/10)); with an older one
-they are not found and the voxel parts are drawn.
+[psknlr/ClinicalCraft#10](https://github.com/psknlr/ClinicalCraft/pull/10)), and one that ships
+the built-in types' models for the rest (the models round); with an older one those are not
+found and the voxel parts are drawn.
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 
@@ -36,10 +37,11 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
   checklist, count board with RF wand, smoke evacuator and generator, control panel,
   laparoscopy tower, lead shield, contrast injector, washer-disinfectors and sterilisers as
   state machines that gate each other ([docs/INTERACTIONS.md](docs/INTERACTIONS.md));
-* **real 3D equipment**: the anaesthesia workstation, pendants, laparoscopy tower, hybrid table,
-  back table, Mayo stand and the instruments on it, and 11 more types, drawn as models built
-  in Blender from their voxel parts. Screens stay live and interactions are unchanged
-  ([docs/MODELS.md](docs/MODELS.md)).
+* **real 3D equipment everywhere**: every piece of equipment in the hospital (885 placements: the
+  pack's 74 types and ClinicalCraft's built-in ones) is drawn as a model built in Blender from
+  its voxel parts: the instruments, anaesthesia workstation, pendants and surgical lights,
+  robotic system, PACU beds, sterilisers, the exterior. Screens stay live and interactions are
+  unchanged ([docs/MODELS.md](docs/MODELS.md)).
 
 ![Back table, before and after](docs/img/models-or7-instruments.jpg)
 
@@ -62,10 +64,10 @@ Design specification, room schedule and screenshots:
 
 ```
 content/
-  catalogs/surgerycraft-or.json      62 equipment types (19 with behaviours), 21 materials (bilingual)
+  catalogs/surgerycraft-or.json      74 equipment types (19 with behaviours), 35 materials (bilingual)
   templates/sc-*.json                15 room templates (ORs, scrub, set-up, PACU, pre-op, changing, …)
   facilities/impf-surgery-hospital.json   IMPF Surgery Hospital
-  assets/models/sc-*.glb             19 equipment models (Blender; MIT), served at /local-assets/models/
+  assets/models/sc-*.glb             74 equipment models (Blender; MIT), served at /local-assets/models/
 .clinicalcraft/skills/impf-*.json    3 workflow skills (time-out, closing counts, CSSD cycle)
 docs/SURGICAL_FLOOR.md               design specification · docs/img/ figures
 docs/STANDARDS.md                    SG / EU / US / JP standards matrix and the targets chosen
