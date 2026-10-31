@@ -1,4 +1,5 @@
 """Write the SurgeryCraft content pack JSON (catalog, room templates, facility)."""
+import json
 import os
 import sys
 
@@ -15,6 +16,17 @@ def write(path, text):
         f.write(text)
     print("wrote", full)
 
+
+# equipment models: tools/blender/build.py writes the GLBs (content/assets/models/) and their catalog references
+MODELS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "blender", "models.json")
+if os.path.exists(MODELS):
+    with open(MODELS, encoding="utf-8") as f:
+        refs = json.load(f)
+    types = {e["id"]: e for e in catalog.EQUIPMENT}
+    for type_id, ref in refs.items():
+        assert type_id in types, ("model of an unknown type", type_id)
+        assert os.path.exists(os.path.join(OUT, "assets", ref["uri"])), ("model file missing: run tools/blender/build.py", ref["uri"])
+        types[type_id]["model"] = ref
 
 cat = {
     "schema": "clinicalcraft/equipment-catalog@1",
