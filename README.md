@@ -6,7 +6,9 @@ SurgeryCraft builds surgical training content on the
 that ClinicalCraft loads through its `contentDirs` setting, plus declarative skills. It needs a
 ClinicalCraft with the hands round ([psknlr/ClinicalCraft#7](https://github.com/psknlr/ClinicalCraft/pull/7)): hand-over, worn items, `nearbyState`
 and "pass me …" — and with window frame and mullion materials
-([psknlr/ClinicalCraft#8](https://github.com/psknlr/ClinicalCraft/pull/8)) for the exterior.
+([psknlr/ClinicalCraft#8](https://github.com/psknlr/ClinicalCraft/pull/8)) for the exterior. The equipment models need a ClinicalCraft that serves a content
+pack's own `assets/` and keeps screens live over models (the Blender round, ClinicalCraft
+docs/BLENDER.md); with an older one they are not found and the voxel parts are drawn.
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 
@@ -32,7 +34,13 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
   wear and hand over, each with a lifecycle (sterile → in use → used → CSSD); the WHO
   checklist, count board with RF wand, smoke evacuator and generator, control panel,
   laparoscopy tower, lead shield, contrast injector, washer-disinfectors and sterilisers as
-  state machines that gate each other ([docs/INTERACTIONS.md](docs/INTERACTIONS.md)).
+  state machines that gate each other ([docs/INTERACTIONS.md](docs/INTERACTIONS.md));
+* **real 3D equipment**: the anaesthesia workstation, pendants, laparoscopy tower, hybrid table,
+  back table, Mayo stand and the instruments on it, and 11 more types, drawn as models built
+  in Blender from their voxel parts. Screens stay live and interactions are unchanged
+  ([docs/MODELS.md](docs/MODELS.md)).
+
+![Back table, before and after](docs/img/models-or7-instruments.jpg)
 
 ![In your hands](docs/img/hands-in-your-hands.jpg)
 
@@ -56,16 +64,20 @@ content/
   catalogs/surgerycraft-or.json      62 equipment types (19 with behaviours), 21 materials (bilingual)
   templates/sc-*.json                15 room templates (ORs, scrub, set-up, PACU, pre-op, changing, …)
   facilities/impf-surgery-hospital.json   IMPF Surgery Hospital
+  assets/models/sc-*.glb             19 equipment models (Blender; MIT), served at /local-assets/models/
 .clinicalcraft/skills/impf-*.json    3 workflow skills (time-out, closing counts, CSSD cycle)
 docs/SURGICAL_FLOOR.md               design specification · docs/img/ figures
 docs/STANDARDS.md                    SG / EU / US / JP standards matrix and the targets chosen
 docs/INTERACTIONS.md                 people, instruments and devices: lifecycles, gates, skills, words
 docs/EXTERIOR.md                     the exterior: envelope, arrival, landscape, roof
+docs/MODELS.md                       the equipment models: how they are built, licensed and checked
 tools/check.sh                       validate the pack and run the tests below against ClinicalCraft
 tools/navcheck.test.ts               navigation & zoning (run by check.sh)
 tools/orflow.test.ts                 the OR workflows on the world runtime (run by check.sh)
 tools/skills.test.ts                 the skills and "pass me" in a session (run by check.sh)
 tools/content-gen/                   Python generator that writes content/ (python3 build.py; exterior.py: the exterior)
+tools/blender/                       Blender builds of the models (build.py, models.py, models.json, preview.py)
+.mcp.json                            blender-mcp for Claude Code (telemetry off)
 dataset/                             150 CMCR surgical case-report archives (zip; source material)
 ```
 
@@ -118,4 +130,10 @@ python3 tools/content-gen/build.py
 ```
 
 The generator reads ClinicalCraft's built-in catalogs from `../ClinicalCraft` (or
-`$CLINICALCRAFT_DIR`) for footprint checks and rewrites `content/` byte-for-byte.
+`$CLINICALCRAFT_DIR`) for footprint checks and rewrites `content/` byte-for-byte, with the
+model references from `tools/blender/models.json`. To rebuild the models first (Blender 4.1+,
+or a Python 3.11 with the `bpy` module; [docs/MODELS.md](docs/MODELS.md)):
+
+```bash
+blender -b -P tools/blender/build.py
+```
