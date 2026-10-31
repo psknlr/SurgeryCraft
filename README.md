@@ -7,8 +7,9 @@ that ClinicalCraft loads through its `contentDirs` setting, plus declarative ski
 ClinicalCraft with the hands round ([psknlr/ClinicalCraft#7](https://github.com/psknlr/ClinicalCraft/pull/7)): hand-over, worn items, `nearbyState`
 and "pass me …" — and with window frame and mullion materials
 ([psknlr/ClinicalCraft#8](https://github.com/psknlr/ClinicalCraft/pull/8)) for the exterior. The equipment models need a ClinicalCraft that serves a content
-pack's own `assets/` and keeps screens live over models (the Blender round, ClinicalCraft
-docs/BLENDER.md); with an older one they are not found and the voxel parts are drawn.
+pack's own `assets/` and keeps screens live over models (the Blender round,
+[psknlr/ClinicalCraft#10](https://github.com/psknlr/ClinicalCraft/pull/10)); with an older one
+they are not found and the voxel parts are drawn.
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 
