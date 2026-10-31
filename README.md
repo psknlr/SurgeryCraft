@@ -1,5 +1,13 @@
 # SurgeryCraft
 
+## Case 126 · 三维手术样例 v3
+
+The latest playable case and editable Blender handoff are in
+**[dataset/case-126-v3](dataset/case-126-v3/README.md)**. Download its `index.html`
+for the anatomy/hospital demo, or the ZIP for the source, models and validation records.
+This is adapted reference anatomy and a teaching animation; clinical review and
+integration of anatomy actions into clinical scoring remain future work.
+
 SurgeryCraft builds surgical training content on the
 [ClinicalCraft](https://github.com/psknlr/ClinicalCraft) engine (the engine is archived here as
 `ClinicalCraft-main (1).zip`). This repository is a ClinicalCraft **content pack**: plain JSON

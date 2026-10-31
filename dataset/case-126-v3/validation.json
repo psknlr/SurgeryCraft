@@ -1,0 +1,28 @@
+{
+  "htmlSha256": "4008e1fbabd06e8978b05de66ff3b8a8e94dd0105226bc65ebf0f307371f68e9",
+  "modelSha256": "a77d31814c3179cb2ed049a924d8dcecf6ff01ab181ba3ecd99cf838f38e9e43",
+  "stateTests": {
+    "passed": 8,
+    "failed": 0
+  },
+  "staticBuild": "passed",
+  "referenceOrgans": [
+    "liver",
+    "stomach",
+    "gallbladder",
+    "duodenum",
+    "pancreas"
+  ],
+  "polygons": 238904,
+  "browser": "in-app browser, local HTTP preview",
+  "fileProtocolExecuted": false,
+  "clinicalValidation": false,
+  "browserChecks": {
+    "organPicking": "passed",
+    "gate": "passed",
+    "laparoscopicView": "passed",
+    "specimenRemoved": true,
+    "commonBileDuctPreserved": true,
+    "consoleErrors": 0
+  }
+}

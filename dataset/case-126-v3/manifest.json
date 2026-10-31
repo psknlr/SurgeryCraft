@@ -1,0 +1,58 @@
+{
+  "schema": "surgerycraft/surgical-demo@3",
+  "caseId": "cmcr-1654623",
+  "builtAt": "2026-10-31T04:00:54.045Z",
+  "entry": "index.html",
+  "htmlBytes": 25861034,
+  "htmlSha256": "4008e1fbabd06e8978b05de66ff3b8a8e94dd0105226bc65ebf0f307371f68e9",
+  "offline": true,
+  "geometry": "BodyParts3D adapted reference organ surfaces + authored schematic ducts; not patient-derived",
+  "clinicalScoreConnected": false,
+  "clinicianReviewed": false,
+  "referenceIncluded": true,
+  "sourceMediaIncluded": false,
+  "model": {
+    "schema": "surgerycraft/anatomy-asset@1",
+    "caseId": "cmcr-1654623",
+    "blender": "4.5.3 LTS",
+    "glb": "cmcr-1654623-mirror-abdomen.glb",
+    "sha256": "a77d31814c3179cb2ed049a924d8dcecf6ff01ab181ba3ecd99cf838f38e9e43",
+    "blend": "cmcr-1654623-mirror-abdomen.blend",
+    "axes": "Blender: +X patient left, -Y anterior, +Z cranial; glTF: +X patient left, +Y cranial, +Z anterior",
+    "license": "BodyParts3D organ surfaces CC BY 4.0; original code and schematic additions MIT",
+    "geometry": "adapted reference anatomy; not patient-specific",
+    "sourceFacts": [
+      "Source CT describes liver/gallbladder on patient left and stomach/spleen on patient right"
+    ],
+    "authored": [
+      "mirror adaptation, surface processing and materials",
+      "duct/vessel topology and calibre",
+      "instrument and clip geometry"
+    ],
+    "referenceOrgans": [
+      "liver",
+      "gallbladder",
+      "stomach",
+      "duodenum",
+      "pancreas"
+    ],
+    "sourceAttribution": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+    "animation": "Editable teaching keyframes in .blend; web uses the same authored trajectory with a learning pause",
+    "meshes": 48,
+    "polygons": 238904
+  },
+  "publishedAt": "2026-10-31",
+  "snapshotBaseCommit": "334eaf085e349f093a7de5f2335d70f15c82080b",
+  "publicationBaseCommit": "a75b29acaec76e2e81b5e1332032c471edec1b81",
+  "archive": {
+    "file": "SurgeryCraft_病例126_三维手术样例_v3.zip",
+    "bytes": 36151346,
+    "sha256": "ad50273257e1192701cacdfc4151c7ff4da22614ae184ae1d2399023e9759bb4",
+    "files": 88
+  },
+  "packaging": {
+    "excludedCacheFiles": 10,
+    "demoUnchanged": true,
+    "modelUnchanged": true
+  }
+}

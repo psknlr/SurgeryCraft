@@ -1,0 +1,5 @@
+# Preserve the validated self-contained bundle byte-for-byte across platforms.
+* -text
+index.html binary
+*.zip binary
+*.png binary
