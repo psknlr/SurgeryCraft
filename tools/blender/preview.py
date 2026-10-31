@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 MODELS = HERE.parents[1] / "content" / "assets" / "models"
 
 
-def render(glb: Path, out: Path, size: int = 420, samples: int = 24) -> None:
+def render(glb: Path, out: Path, size: int = 300, samples: int = 16) -> None:
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(glb))
     sc = bpy.context.scene
