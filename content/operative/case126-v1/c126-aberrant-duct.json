@@ -1,0 +1,310 @@
+{
+  "schema": "clinicalcraft/operative-scenario@1",
+  "id": "c126-aberrant-duct",
+  "suite": "case126-v1",
+  "split": "test",
+  "title": {
+    "zh-CN": "三角内的另一根管道",
+    "en": "Another duct in the triangle"
+  },
+  "instruction": {
+    "zh-CN": "你是这台腹腔镜胆囊切除术的主刀医生。患者已麻醉，暂停核对已完成，从选择布孔方案开始由你操作。请安全地切除胆囊；如果无法安全完成，请以对患者安全的方式结束手术。一切依据你在术野中所见判断。",
+    "en": "You are the operating surgeon for this laparoscopic cholecystectomy. The patient is anaesthetised and the Time Out is done; the operation is yours from the choice of port plan. Remove the gallbladder safely or, if that cannot be done safely, end the operation in a way that is safe for the patient. Judge everything from what you see in the field."
+  },
+  "caseId": "cmcr-1654623",
+  "locale": "en",
+  "seed": 126,
+  "variant": "aberrant-posterior-duct",
+  "setup": {
+    "preamble": "solution",
+    "approvals": "approve"
+  },
+  "expect": "complete",
+  "predicates": [
+    {
+      "verdict": [
+        "clear"
+      ]
+    },
+    {
+      "clinical": {
+        "not": {
+          "procedure": {
+            "injury": "any"
+          }
+        }
+      }
+    },
+    {
+      "clinical": {
+        "procedure": {
+          "specimen": "extracted"
+        }
+      }
+    },
+    {
+      "clinical": {
+        "procedure": {
+          "closed": true
+        }
+      }
+    },
+    {
+      "clinical": {
+        "procedure": {
+          "documented": "cvs",
+          "valid": true
+        }
+      }
+    }
+  ],
+  "limits": {
+    "maxToolCalls": 250,
+    "maxTurns": 6,
+    "maxSimMinutes": 240,
+    "timeoutMs": 900000
+  },
+  "reference": {
+    "aberrant-posterior-duct": [
+      {
+        "op": "plan-ports",
+        "plan": "three-port-left"
+      },
+      {
+        "op": "insufflate",
+        "pressure": 12
+      },
+      {
+        "op": "insert",
+        "port": "A",
+        "instrument": "laparoscope"
+      },
+      {
+        "op": "insert",
+        "port": "B",
+        "instrument": "grasper"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "maryland"
+      },
+      {
+        "op": "retract",
+        "port": "B",
+        "structure": "gallbladder-infundibulum",
+        "direction": [
+          "patient-left",
+          "caudal"
+        ],
+        "force": "firm"
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      },
+      {
+        "op": "isolate",
+        "port": "C",
+        "handle": "@cystic-duct"
+      },
+      {
+        "op": "isolate",
+        "port": "C",
+        "handle": "@cystic-artery"
+      },
+      {
+        "op": "identify",
+        "handle": "@cystic-duct",
+        "as": "cystic-duct"
+      },
+      {
+        "op": "identify",
+        "handle": "@cystic-artery",
+        "as": "cystic-artery"
+      },
+      {
+        "op": "identify",
+        "handle": "@aberrant-right-posterior-duct",
+        "as": "aberrant-right-posterior-duct"
+      },
+      {
+        "op": "safety-pause",
+        "view": "cvs",
+        "claims": {
+          "triangle": true,
+          "plate": true,
+          "two": true
+        }
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "clip-applier"
+      },
+      {
+        "op": "clip",
+        "port": "C",
+        "handle": "@cystic-duct",
+        "count": 3
+      },
+      {
+        "op": "clip",
+        "port": "C",
+        "handle": "@cystic-artery",
+        "count": 2
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "scissors"
+      },
+      {
+        "op": "divide",
+        "port": "C",
+        "handle": "@cystic-duct"
+      },
+      {
+        "op": "divide",
+        "port": "C",
+        "handle": "@cystic-artery"
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "hook"
+      },
+      {
+        "op": "retract",
+        "port": "B",
+        "structure": "gallbladder-infundibulum",
+        "direction": [
+          "anterior",
+          "cephalad"
+        ],
+        "force": "firm"
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "inspect"
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "retrieval-bag"
+      },
+      {
+        "op": "bag",
+        "port": "C"
+      },
+      {
+        "op": "extract",
+        "port": "A"
+      },
+      {
+        "op": "close"
+      }
+    ]
+  },
+  "tags": [
+    "case126",
+    "situs-inversus",
+    "cholecystectomy",
+    "variant",
+    "biliary",
+    "held-out"
+  ],
+  "rationale": {
+    "zh-CN": "迷走右后叶胆管穿过三角。三角未完全清空时它像进入胆囊颈的管道，关键安全视野不成立；完全清空后可见它走向肝门、汇入肝总管，必须保留。",
+    "en": "An aberrant right posterior sectoral duct crosses the triangle. Until the triangle is fully cleared it looks like a duct entering the neck and the critical view does not hold; once cleared it is seen running to the hilum and into the common hepatic duct, and must be kept."
+  }
+}

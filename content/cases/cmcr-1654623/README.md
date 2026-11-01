@@ -123,6 +123,36 @@ the score.
 
 The rubric checks an authored workflow. It is not a validated score and not GOALS.
 
+## Anatomical variants (counterfactual)
+
+The source found no vascular variation. Five counterfactual anatomies are authored on the reference
+geometry for teaching and the operative benchmark:
+
+- `double-cystic-artery`;
+- `caterpillar-hump`;
+- `aberrant-posterior-duct`;
+- `hostile-triangle` (a frozen triangle);
+- `subvesical-duct`.
+
+A facilitator can start a session in one of them (`start {variant}`). The learner is not told which:
+the field shows only what a surgeon would see. Each variant has its own rubric item, scored only in
+that variant.
+
+| variant | expert path | the reported anatomy's routine, replayed blind |
+|---|---|---|
+| double cystic artery | 100 % | 50 %, safety-critical (no true view; posterior branch torn) |
+| caterpillar hump | 100 % | 40 %, safety-critical (right hepatic artery clipped) |
+| aberrant posterior duct | 100 % | 40 %, safety-critical (bile duct injury) |
+| frozen triangle | 100 % (subtotal) | 40 %, safety-critical (common bile duct torn) |
+| subvesical duct | 100 % | 50 %, safety-critical (bile leak, unrecognised) |
+
+**Debrief prompts for a variant:**
+- what in the field told you the anatomy was not the textbook's?
+- did your safety pause claim what the field showed?
+- in the frozen triangle, when did you stop, and why was that the safe choice?
+
+The operative benchmark suite is `content/operative/case126-v1`; see docs/CASE_126.md.
+
 ## Facilitator notes
 
 - **Reactions:** where did the mirror image catch you out: the port plan, which hand, which way to
@@ -176,6 +206,9 @@ not recorded. The generator is `tools/case-gen/build_case_1654623.py` (on top of
 ## Changelog
 
 - 2026-10-31, 1.0.0: first bounded bilingual case (the v3 demo's case).
+- 2026-11-01, 2.1.0: five counterfactual anatomical variants (hidden from the operator), one rubric item each
+  (scored only in its variant), the evidence ledger's `counterfactual` list, and the operative benchmark
+  suite `content/operative/case126-v1`.
 - 2026-11-01, 2.0.0:
   - the operation is performed (procedure model);
   - Tokyo Guidelines diagnostic decision;
@@ -192,13 +225,16 @@ not recorded. The generator is `tools/case-gen/build_case_1654623.py` (on top of
 tools/check.sh ../ClinicalCraft
 ```
 
-It runs `cases validate --strict`, `cases verify`, `verify_anatomy_1654623.py` and
-`tools/case126.test.ts`.
+It runs `cases validate --strict`, `cases verify`, `verify_anatomy_1654623.py`,
+`tools/case126.test.ts` and the operative suite (generator up to date; reference and scripted-llm
+agents at 100 %).
 
 ## 中文摘要
 
 第126例 v4：学员（或智能体）在同一个会话里完成整个诊疗过程。依次是问诊、查体、资料核对、诊断（东京指南：疑似而非确诊的急性胆囊炎）、侧别与计划、围术期风险评估和WHO安全核对，然后在病例相关的参考解剖上亲手完成腹腔镜胆囊切除，最后是恢复室交接和原报告记录的回看。
 
 关键安全视野依据术野判定，不靠勾选。误把胆总管当作胆囊管夹闭或离断属于安全关键失败，分数封顶40%。在不确定时选择求助、胆道影像、胆囊次全切除或中转开腹，都可以得到认可。
+
+2.1.0 新增五种假设性解剖变异：双胆囊动脉、肝右动脉“毛虫驼峰”、迷走右后叶胆管、致密纤维化的“冰冻”三角、胆囊床内的胆囊下胆管。它们对操作者隐藏，只能从术野判断。另有手术基准测试集 `content/operative/case126-v1`，供智能体在解剖未知的情况下操作并评测。
 
 三维解剖不是患者CT重建，术中生命体征为模拟值，本病例尚未经临床专家审核。

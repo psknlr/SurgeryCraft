@@ -1,7 +1,7 @@
 {
   "schema": "surgerycraft/evidence-ledger@2",
   "caseId": "cmcr-1654623",
-  "caseVersion": "2.0.0",
+  "caseVersion": "2.1.0",
   "sourceArchive": "dataset/126_1654623_内脏完全反位腹腔镜胆囊切除术一例.zip",
   "sourcePages": [
     180,
@@ -416,12 +416,70 @@
       }
     }
   ],
+  "counterfactual": [
+    {
+      "variant": "double-cystic-artery",
+      "provenance": "authored",
+      "patientSpecific": false,
+      "contradictsSource": true,
+      "note": "Authored on the reference geometry for teaching and the operative benchmark; never the default anatomy.",
+      "references": [
+        "Andall RG, Matusz P, du Plessis M, Ward R, Tubbs RS, Loukas M. The clinical anatomy of cystic artery variations: a review of over 9800 cases. Surg Radiol Anat. 2016;38(5):529-539.",
+        "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855."
+      ]
+    },
+    {
+      "variant": "caterpillar-hump",
+      "provenance": "authored",
+      "patientSpecific": false,
+      "contradictsSource": true,
+      "note": "Authored on the reference geometry for teaching and the operative benchmark; never the default anatomy.",
+      "references": [
+        "Marano L, Bartoli A, Polom K, et al. The unwanted third wheel in the Calot's triangle: incidence and surgical significance of caterpillar hump of right hepatic artery with a systematic review of the literature. J Minim Access Surg. 2019;15(3):185-191.",
+        "Andall RG, Matusz P, du Plessis M, Ward R, Tubbs RS, Loukas M. The clinical anatomy of cystic artery variations: a review of over 9800 cases. Surg Radiol Anat. 2016;38(5):529-539."
+      ]
+    },
+    {
+      "variant": "aberrant-posterior-duct",
+      "provenance": "authored",
+      "patientSpecific": false,
+      "contradictsSource": true,
+      "note": "Authored on the reference geometry for teaching and the operative benchmark; never the default anatomy.",
+      "references": [
+        "Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125.",
+        "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855."
+      ]
+    },
+    {
+      "variant": "hostile-triangle",
+      "provenance": "authored",
+      "patientSpecific": false,
+      "contradictsSource": true,
+      "note": "Authored on the reference geometry for teaching and the operative benchmark; never the default anatomy.",
+      "references": [
+        "Wakabayashi G, Iwashita Y, Hibi T, et al. Tokyo Guidelines 2018: surgical management of acute cholecystitis: safe steps in laparoscopic cholecystectomy for acute cholecystitis (with videos). J Hepatobiliary Pancreat Sci. 2018;25(1):73-86.",
+        "Strasberg SM, Pucci MJ, Brunt LM, Deziel DJ. Subtotal cholecystectomy - \"fenestrating\" vs \"reconstituting\" subtypes and the prevention of bile duct injury: definition of the optimal procedure in difficult operative conditions. J Am Coll Surg. 2016;222(1):89-96.",
+        "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855."
+      ]
+    },
+    {
+      "variant": "subvesical-duct",
+      "provenance": "authored",
+      "patientSpecific": false,
+      "contradictsSource": true,
+      "note": "Authored on the reference geometry for teaching and the operative benchmark; never the default anatomy.",
+      "references": [
+        "Schnelldorfer T, Sarr MG, Adams DB. What is the duct of Luschka? A systematic review. J Gastrointest Surg. 2012;16(3):656-662."
+      ]
+    }
+  ],
   "authored": [
     "pseudonym, persona and hospital placement",
     "questions, phases, tasks, distractors and scoring",
     "WHO/SAGES/Tokyo-based decisions and checklist steps",
     "port plans other than the report's",
-    "synthetic intra-operative physiology"
+    "synthetic intra-operative physiology",
+    "the five anatomical variants (procedure.variants) and the operative benchmark suite (content/operative/case126-v1)"
   ],
   "limits": [
     "No DICOM or patient-specific mesh",

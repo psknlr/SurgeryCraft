@@ -8,8 +8,11 @@
 #   4. every equipment model (content/assets/models) against its catalog reference: `clinicalcraft assets inspect --type`
 #      (licence, use status, pinned hash, size against the footprint; docs/MODELS.md);
 #   5. Case 126 (content/cases/cmcr-1654623): `cases validate --strict`, `cases verify` (reference path, utterance corpus),
-#      the anatomy asset (tools/blender/verify_anatomy_1654623.py) and the case's fidelity and safety scenarios
-#      (tools/case126.test.ts; docs/CASE_126.md).
+#      the anatomy asset (tools/blender/verify_anatomy_1654623.py), the case's fidelity, safety and variant scenarios
+#      (tools/case126.test.ts; docs/CASE_126.md);
+#   6. the operative benchmark suite of Case 126 (content/operative/case126-v1): generated files up to date
+#      (tools/operative/build_suite_case126.py --check), then `clinicalcraft bench operative` with the reference and
+#      scripted-llm agents, both at 100 % with no hidden-state leak.
 # Usage: tools/check.sh [path/to/ClinicalCraft]   (default: ../ClinicalCraft next to this repository)
 # Nothing is left behind in the ClinicalCraft checkout.
 set -euo pipefail
@@ -55,3 +58,11 @@ echo "== Case 126: validate, verify, anatomy, fidelity and safety scenarios"
 python3 "$HERE/blender/verify_anatomy_1654623.py"
 cp "$HERE/case126.test.ts" "$CASE126"
 (cd "$CC" && SURGERYCRAFT_CONTENT="$PACK" npx vitest run "packages/core/src/zz-surgerycraft-case126.test.ts")
+
+echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
+python3 "$HERE/operative/build_suite_case126.py" --check
+OUT="$(mktemp -d)"
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126"' EXIT
+for agent in reference scripted-llm; do
+  (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
+done
