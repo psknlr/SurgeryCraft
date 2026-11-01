@@ -1,12 +1,29 @@
 # SurgeryCraft
 
-## Case 126 · 三维手术样例 v3
+## Case 126 v4 · 全内脏反位腹腔镜胆囊切除术（可操作）
 
-The latest playable case and editable Blender handoff are in
-**[dataset/case-126-v3](dataset/case-126-v3/README.md)**. Download its `index.html`
-for the anatomy/hospital demo, or the ZIP for the source, models and validation records.
-This is adapted reference anatomy and a teaching animation; clinical review and
-integration of anatomy actions into clinical scoring remain future work.
+**Case 126 (`cmcr-1654623`) is now a case you operate.** It is in the content pack
+(`content/cases/cmcr-1654623`) and runs as one session in the IMPF Surgery Hospital:
+
+- history, examination and records;
+- a diagnosis framed by the Tokyo Guidelines 2018;
+- perioperative risk (age 84, COPD, previous stroke);
+- the WHO checklist;
+- the laparoscopic cholecystectomy itself: ports, traction, dissection, the critical view of safety
+  judged on the field, clips, division, bail-outs and complications that follow from what you do;
+- recovery, then the report's own course.
+
+One rubric and one set of safety gates score it all. See [docs/CASE_126.md](docs/CASE_126.md) for
+what is implemented, its sources and the validation still owed.
+
+The anatomy is case-informed **reference** anatomy, not a CT reconstruction:
+
+- BodyParts3D organ surfaces, mirrored;
+- the Layered Human (MIT) hepatobiliary tree, mirrored once and registered.
+
+Intra-operative vital signs are simulated. The case is **not clinician-reviewed**. The v3
+demonstration and its editable Blender handoff stay in
+**[dataset/case-126-v3](dataset/case-126-v3/README.md)** as the historical baseline.
 
 SurgeryCraft builds surgical training content on the
 [ClinicalCraft](https://github.com/psknlr/ClinicalCraft) engine (the engine is archived here as

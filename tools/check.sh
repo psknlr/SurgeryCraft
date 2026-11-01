@@ -6,7 +6,10 @@
 #      (tools/orflow.test.ts) on ClinicalCraft's world model;
 #   3. the project skills (.clinicalcraft/skills) and "pass me …" in an embodied session (tools/skills.test.ts);
 #   4. every equipment model (content/assets/models) against its catalog reference: `clinicalcraft assets inspect --type`
-#      (licence, use status, pinned hash, size against the footprint; docs/MODELS.md).
+#      (licence, use status, pinned hash, size against the footprint; docs/MODELS.md);
+#   5. Case 126 (content/cases/cmcr-1654623): `cases validate --strict`, `cases verify` (reference path, utterance corpus),
+#      the anatomy asset (tools/blender/verify_anatomy_1654623.py) and the case's fidelity and safety scenarios
+#      (tools/case126.test.ts; docs/CASE_126.md).
 # Usage: tools/check.sh [path/to/ClinicalCraft]   (default: ../ClinicalCraft next to this repository)
 # Nothing is left behind in the ClinicalCraft checkout.
 set -euo pipefail
@@ -16,9 +19,10 @@ CC="$(cd "${1:-$HERE/../../ClinicalCraft}" && pwd)"
 TEST="$CC/packages/world/src/zz-surgerycraft-nav.test.ts"
 FLOW="$CC/packages/world/src/zz-surgerycraft-orflow.test.ts"
 SKILLS="$CC/packages/agent/src/zz-surgerycraft-skills.test.ts"
+CASE126="$CC/packages/core/src/zz-surgerycraft-case126.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
 
 echo "== facilities validate (ClinicalCraft at $CC)"
@@ -44,3 +48,10 @@ for i in r["issues"]:
     if i["severity"] != "info":
         print("    %s %s: %s" % (i["severity"], i["code"], i["message"]))'
 done
+
+echo "== Case 126: validate, verify, anatomy, fidelity and safety scenarios"
+(cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- cases validate "$PACK/cases/cmcr-1654623/case.json" --strict)
+(cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- cases verify cmcr-1654623)
+python3 "$HERE/blender/verify_anatomy_1654623.py"
+cp "$HERE/case126.test.ts" "$CASE126"
+(cd "$CC" && SURGERYCRAFT_CONTENT="$PACK" npx vitest run "packages/core/src/zz-surgerycraft-case126.test.ts")

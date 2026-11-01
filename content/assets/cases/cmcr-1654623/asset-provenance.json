@@ -1,0 +1,306 @@
+{
+ "schema": "surgerycraft/asset-provenance@1",
+ "caseId": "cmcr-1654623",
+ "asset": "content/assets/cases/cmcr-1654623/anatomy.glb",
+ "sha256": "0ade38ce517c67df002f5860899f8e400cc18da9fb1c16fcf6622279f923a36c",
+ "bytes": 4306804,
+ "triangles": 181675,
+ "builtWith": {
+  "blender": "5.0.1",
+  "script": "tools/blender/build_anatomy_1654623.py"
+ },
+ "clinicianReviewed": false,
+ "patientSpecific": false,
+ "sources": [
+  {
+   "id": "bodyparts3d",
+   "provenance": "reference",
+   "name": "BodyParts3D 4.0 (PART-OF, 99 % reduction)",
+   "holder": "The Database Center for Life Science (DBCLS)",
+   "licence": "CC BY 4.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
+   "licenceEvidence": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html",
+   "attribution": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+   "noticeFile": "content/assets/cases/cmcr-1654623/LICENSES.md",
+   "files": "tools/blender/sources/bodyparts3d (sources.json: archive entries, sizes, SHA-256)",
+   "meshes": [
+    {
+     "id": "FJ2816",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2816.obj",
+     "bytes": 317280,
+     "sha256": "81c86ccdd356c27a960f957f49b4ea883d22d7e75fef29aa794e154d4f5da51e"
+    },
+    {
+     "id": "FJ2818",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2818.obj",
+     "bytes": 936399,
+     "sha256": "773b11b267fd680f399e0dbc71217aef981c6f8ee2a2273723481edc5864ee8a"
+    },
+    {
+     "id": "FJ2819",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2819.obj",
+     "bytes": 677766,
+     "sha256": "ba7174ecd641887a57116848661d56c2c377659cc3aca4235132e8f548bbd8b9"
+    },
+    {
+     "id": "FJ2820",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2820.obj",
+     "bytes": 1296049,
+     "sha256": "af49d0747496fb3008b7b33be23ea1c169bb4667ccfad0fa0208d42390737c22"
+    },
+    {
+     "id": "FJ2821",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2821.obj",
+     "bytes": 793791,
+     "sha256": "13886d9c2d473e121e27083fa03218fe22e4a75aab3402dcf53754a1375948f9"
+    },
+    {
+     "id": "FJ2822",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2822.obj",
+     "bytes": 1282107,
+     "sha256": "8f64d0c177586089610214a5a32a189a6a659ca2770b15d193c9255667c8afd2"
+    },
+    {
+     "id": "FJ2409",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2409.obj",
+     "bytes": 596947,
+     "sha256": "4662aac785711a9b0ca91b860720d018f4e61e8457e919722b68ce814bc27e84"
+    },
+    {
+     "id": "FJ2823",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2823.obj",
+     "bytes": 1284704,
+     "sha256": "a89dd2a52ffee337e9777376d1235330463577331fc7f18a40ccf8bc6c99a8d0"
+    },
+    {
+     "id": "FJ2824",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2824.obj",
+     "bytes": 1456324,
+     "sha256": "2f5e34fceea6c8b718bd3f50a125bf24c434ae7eb3d925b9795b0585272c1349"
+    },
+    {
+     "id": "FJ2564",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2564.obj",
+     "bytes": 106977,
+     "sha256": "cb78c3f2214fd21a16fa6c9f2389b9aa874e9d3ce624c42b34d4563c31554c67"
+    },
+    {
+     "id": "FJ2817",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2817.obj",
+     "bytes": 144863,
+     "sha256": "625af13ef374a4df98eb5e51f9c2201a1436ca33168ce4deb277ce811c3fb8c8"
+    },
+    {
+     "id": "FJ2573",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2573.obj",
+     "bytes": 112677,
+     "sha256": "d549d9857ced73b198cdde3ad2494e897b620884364588f8644d7f6fd74ae1cb"
+    },
+    {
+     "id": "FJ1895",
+     "archiveEntry": "partof_BP3D_4.0_obj_99/FJ1895.obj",
+     "bytes": 307898,
+     "sha256": "fea8a371ac940fb8c5c13e9d459af6c2bd50e1b499f8989c63883a7db0f149ae"
+    },
+    {
+     "id": "FJ2561",
+     "missing": true
+    }
+   ],
+   "licenceNote": "the comment header inside each OBJ still names CC BY-SA 2.1 JP; the CC BY 4.0 statement is the DBCLS licence page as recorded by the v3 handoff; not re-checked offline",
+   "usedFor": [
+    "liver",
+    "gallbladder",
+    "gallbladder-fundus",
+    "gallbladder-body",
+    "gallbladder-infundibulum",
+    "stomach",
+    "duodenum",
+    "pancreas"
+   ]
+  },
+  {
+   "id": "layered-human",
+   "provenance": "reference",
+   "name": "Layered Human / AnatomyExplorer, app/micro/hepatobiliary.py",
+   "holder": "Ethan Prince",
+   "licence": "MIT",
+   "copyright": "Copyright (c) 2026 Ethan Prince",
+   "url": "https://github.com/ethanprince4/AnatomyExplorer",
+   "commit": "d5f522fa51d6919b6a3fe28a9e075b531320a92a",
+   "fileSha256": "f0dabd45df71e0a7f1809d3dfcdfc2ea42695683b0cf8eec36a7d5fe94788aab",
+   "notice": "MIT License, Copyright (c) 2026 Ethan Prince; the full permission notice is reproduced in LICENSES.md and in the header of lh_hepatobiliary.py",
+   "port": "tools/blender/anatomy_1654623/lh_hepatobiliary.py (values copied unchanged, read with ast; module never executed)",
+   "usedFor": [
+    "right-hepatic-duct",
+    "left-hepatic-duct",
+    "common-hepatic-duct",
+    "cystic-duct",
+    "common-bile-duct",
+    "common-hepatic-artery",
+    "proper-hepatic-artery",
+    "right-hepatic-artery",
+    "left-hepatic-artery",
+    "cystic-artery",
+    "gastroduodenal-artery",
+    "portal-vein"
+   ]
+  },
+  {
+   "id": "surgerycraft-authored",
+   "provenance": "authored",
+   "name": "SurgeryCraft authored teaching geometry",
+   "licence": "MIT",
+   "holder": "SurgeryCraft contributors",
+   "notice": "MIT License, Copyright (c) 2026 SurgeryCraft contributors (full text in LICENSES.md)",
+   "usedFor": [
+    "spleen",
+    "cystic-plate",
+    "gallbladder neck connector",
+    "cystic-artery distal landing",
+    "abdominal wall model",
+    "landmarks",
+    "ports",
+    "regions",
+    "materials and vertex colours"
+   ]
+  }
+ ],
+ "evaluatedNotUsed": [
+  {
+   "name": "OrganUI gallbladder-3d",
+   "basis": "BodyParts3D 4.3",
+   "licence": "CC BY-SA 2.1 JP",
+   "reason": "share-alike licence; not used"
+  },
+  {
+   "name": "BodyVista (Z-Anatomy based)",
+   "licence": "CC BY-SA 4.0, with NC / research-only labels on parts",
+   "reason": "share-alike and unverified non-commercial/research-only labels; no code or models copied"
+  }
+ ],
+ "transformationHistory": [
+  "BodyParts3D OBJ (mm, normal situs) -> X reflected once, face winding reversed, 0.001 m/mm, offset [0.02357, 0.11538, -0.99441] m (Blender axes) = the v3 transform re-expressed in metres",
+  "liver: segments FJ2816/2818-2824/2409 pushed 2.45 mm along normals, 1.75 mm voxel remesh (union), Smooth 0.70 x 9, subdivision 1, collapse-decimated to 100000 triangles",
+  "gallbladder, stomach, duodenum, pancreas: subdivision 1 (pancreas decimated to the budget if needed)",
+  "gallbladder cut into fundus/body/infundibulum normal to its PCA long axis at 0.2/0.66",
+  "Layered Human centrelines: p = M.p + T with M = diag(-0.1, 0.1, 0.1) (mirror once, metres), T = [0.02593, 0.08565, 0.00486] m (fit, see anatomy.json portedCentrelineTransform); tubes swept along the source's Catmull-Rom spline with its radius profiles (x 0.1 m)",
+  "cystic artery (authored adjustments): points 1-2 lifted 1.5 mm out of the liver capsule; points 3-4 of the main course and 1-2 of the second branch landed on the free gallbladder serosa (+1 mm); origin on the RHA unchanged",
+  "authored: spleen ellipsoid, cystic plate patch, neck connector, wall model, landmarks, ports, regions",
+  "glTF export (Blender exporter, +Y up), no animation, no instruments"
+ ],
+ "needsClinicalVerification": [
+  "cystic artery course and branching (single artery from the right hepatic artery inside the hepatocystic triangle; distal landing authored; variants such as a double cystic artery or a low-lying origin not modelled)",
+  "ductal confluence position and the cystic-duct insertion (side, length, angle; low or medial insertion and parallel course not modelled)",
+  "tortuous gallbladder neck / Hartmann pouch not modelled specifically (authored straight neck connector)",
+  "right hepatic artery relation to the common hepatic duct (Layered Human course; caterpillar hump not modelled)",
+  "portal vein and left-sided branches ending at the liver surface (they stop within a few millimetres of the capsule)",
+  "laterality of every structure in situs inversus (mirrored reference anatomy, not the patient's imaging)",
+  "gallbladder size and orientation (BodyParts3D atlas body, ~6 cm long axis)",
+  "spleen size and position (authored ellipsoid)",
+  "abdominal wall, costal margins, umbilicus, xiphoid and port positions (authored estimates)",
+  "cystic plate extent (authored patch under the lower third)"
+ ],
+ "knownLimitations": [
+  "the v3 liver processing (2.45 mm seam-closure push, remesh, smoothing) inflates the capsule by about 2 mm: 32 % of the gallbladder vertices lie inside the exported liver (the hepatic surface of the gallbladder is embedded in its bed, as in v3)",
+  "the Layered Human and BodyParts3D gallbladders differ by 18.8 deg in long-axis direction and 16 mm in length; one translation cannot match both the gallbladder and the porta (fit residuals in anatomy.json)",
+  "left portal vein, left hepatic duct and left hepatic artery end at the liver capsule rather than deep in the umbilical fissure (signed gaps in anatomy.json topology.enters)",
+  "the gallbladder parts are closed by flat caps at the cutting planes"
+ ],
+ "geometryChecks": {
+  "centrelineFractionInside": {
+   "right-hepatic-duct": {
+    "liver": 0.778,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "left-hepatic-duct": {
+    "liver": 0.182,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "common-hepatic-duct": {
+    "liver": 0.0,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "cystic-duct": {
+    "liver": 0.0,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "common-bile-duct": {
+    "liver": 0.0,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.133,
+    "pancreas": 0.4
+   },
+   "common-hepatic-artery": {
+    "liver": 0.0,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "proper-hepatic-artery": {
+    "liver": 0.0,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "right-hepatic-artery": {
+    "liver": 0.667,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "left-hepatic-artery": {
+    "liver": 0.333,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "cystic-artery": {
+    "liver": 0.1,
+    "gallbladder": 0.1,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.0
+   },
+   "gastroduodenal-artery": {
+    "liver": 0.0,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.293
+   },
+   "portal-vein": {
+    "liver": 0.167,
+    "gallbladder": 0.0,
+    "stomach": 0.0,
+    "duodenum": 0.0,
+    "pancreas": 0.117
+   }
+  },
+  "gallbladderVerticesInsideLiver": 0.318,
+  "fitResidualsM": {
+   "gallbladder-centroid": 0.01803,
+   "gallbladder-neck": 0.00456,
+   "hepatic-duct-confluence": 0.01381
+  },
+  "plateContactDistanceM": 0.0015,
+  "gallbladderBedDistanceM": 0.003
+ }
+}

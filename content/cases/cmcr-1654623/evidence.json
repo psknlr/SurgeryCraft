@@ -1,0 +1,433 @@
+{
+  "schema": "surgerycraft/evidence-ledger@2",
+  "caseId": "cmcr-1654623",
+  "caseVersion": "2.0.0",
+  "sourceArchive": "dataset/126_1654623_内脏完全反位腹腔镜胆囊切除术一例.zip",
+  "sourcePages": [
+    180,
+    181
+  ],
+  "categories": {
+    "published-case": "Stated in the source report.",
+    "guideline": "A guideline or textbook principle (cited in the debrief).",
+    "synthetic": "A simulation assumption with no source, labelled in the case.",
+    "reference": "Reference anatomy adapted to the case.",
+    "unknown": "Not recorded; the case answers that it is unrecorded."
+  },
+  "facts": [
+    {
+      "id": "presentation",
+      "section": "history",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "pmh",
+      "section": "history",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "family",
+      "section": "history",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "allergies",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "medications",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "psh",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "fasting",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "weight",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "smoking",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "alcohol",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "pain-score",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "vomiting",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "jaundice",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "functional",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "expectations",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "antithrombotic",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "copd-status",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "stroke-deficit",
+      "section": "history",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "entry-vitals",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "apex",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "palpation",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "murphy",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "bowel",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "percussion",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "inspection",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "nodes",
+      "section": "exam",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "ultrasound-record",
+      "section": "investigations",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "ct-record",
+      "section": "investigations",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "laboratory-record",
+      "section": "investigations",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "operation-record",
+      "section": "investigations",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "pathology-record",
+      "section": "investigations",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "followup-record",
+      "section": "investigations",
+      "provenance": "published-case",
+      "locator": "p.180 Case / p.181 Discussion"
+    },
+    {
+      "id": "ecg-record",
+      "section": "investigations",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "pft-record",
+      "section": "investigations",
+      "provenance": "unknown",
+      "locator": null
+    },
+    {
+      "id": "cxr-record",
+      "section": "investigations",
+      "provenance": "unknown",
+      "locator": null
+    }
+  ],
+  "values": [
+    {
+      "fact": "age",
+      "value": 84,
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "admission",
+      "value": "2023-02-02",
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "operation_date",
+      "value": "2023-02-06",
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "temperature_c",
+      "value": 36.6,
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "pulse_per_min",
+      "value": 78,
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "respiratory_rate_per_min",
+      "value": 19,
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "blood_pressure_mmHg",
+      "value": "128/78",
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "apex_beat",
+      "value": "right 5th intercostal space",
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "gallbladder_size_cm",
+      "value": "6 x 4 x 3",
+      "provenance": "published-case",
+      "locator": "p.180 (at operation)"
+    },
+    {
+      "fact": "gallbladder_wall_cm",
+      "value": 0.4,
+      "provenance": "published-case",
+      "locator": "p.180 (at operation)"
+    },
+    {
+      "fact": "ports",
+      "value": "A 10 mm infraumbilical; B 5 mm subxiphoid slightly left; C 5 mm left midclavicular 2 cm below costal margin (main)",
+      "provenance": "published-case",
+      "locator": "p.180, Fig. 3"
+    },
+    {
+      "fact": "operation_minutes",
+      "value": 30,
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "discharge_day",
+      "value": 5,
+      "provenance": "published-case",
+      "locator": "p.180"
+    },
+    {
+      "fact": "baseline_spo2",
+      "value": null,
+      "provenance": "unknown",
+      "simulationOverride": {
+        "enabled": true,
+        "value": 95,
+        "classification": "synthetic",
+        "requiresClinicalReview": true
+      }
+    },
+    {
+      "fact": "intraoperative_ev-ventilated",
+      "value": null,
+      "provenance": "unknown",
+      "simulationOverride": {
+        "enabled": true,
+        "value": {
+          "rr": 12,
+          "etco2": 36,
+          "spo2": 97
+        },
+        "classification": "synthetic",
+        "requiresClinicalReview": true
+      }
+    },
+    {
+      "fact": "intraoperative_ev-pneumo",
+      "value": null,
+      "provenance": "unknown",
+      "simulationOverride": {
+        "enabled": true,
+        "value": {
+          "etco2": 40
+        },
+        "classification": "synthetic",
+        "requiresClinicalReview": true
+      }
+    },
+    {
+      "fact": "intraoperative_ev-high-pressure",
+      "value": null,
+      "provenance": "unknown",
+      "simulationOverride": {
+        "enabled": true,
+        "value": {
+          "etco2": 48,
+          "spo2": 92,
+          "sbp": 110,
+          "dbp": 66
+        },
+        "classification": "synthetic",
+        "requiresClinicalReview": true
+      }
+    },
+    {
+      "fact": "intraoperative_ev-major-bleeding",
+      "value": null,
+      "provenance": "unknown",
+      "simulationOverride": {
+        "enabled": true,
+        "value": {
+          "hr": 114,
+          "sbp": 92,
+          "dbp": 56
+        },
+        "classification": "synthetic",
+        "requiresClinicalReview": true
+      }
+    },
+    {
+      "fact": "intraoperative_ev-closed",
+      "value": null,
+      "provenance": "unknown",
+      "simulationOverride": {
+        "enabled": true,
+        "value": {
+          "etco2": 37,
+          "spo2": 96
+        },
+        "classification": "synthetic",
+        "requiresClinicalReview": true
+      }
+    },
+    {
+      "fact": "insufflation_pressure_mmHg",
+      "value": null,
+      "provenance": "unknown",
+      "simulationOverride": {
+        "enabled": true,
+        "value": {
+          "usual": 12,
+          "max": 15
+        },
+        "classification": "synthetic",
+        "requiresClinicalReview": true
+      }
+    },
+    {
+      "fact": "biliary_and_arterial_course",
+      "value": null,
+      "provenance": "unknown",
+      "note": "Source: no vascular variation found at operation. Geometry is reference anatomy.",
+      "simulationOverride": {
+        "enabled": true,
+        "value": "assets/cases/cmcr-1654623/anatomy.json",
+        "classification": "reference",
+        "requiresClinicalReview": true
+      }
+    }
+  ],
+  "authored": [
+    "pseudonym, persona and hospital placement",
+    "questions, phases, tasks, distractors and scoring",
+    "WHO/SAGES/Tokyo-based decisions and checklist steps",
+    "port plans other than the report's",
+    "synthetic intra-operative physiology"
+  ],
+  "limits": [
+    "No DICOM or patient-specific mesh",
+    "Synthetic physiology uncalibrated",
+    "No clinician review",
+    "No measured live-model performance"
+  ],
+  "sourceArchiveSha256": "a32808f3595b7238c7e31660b0db166efaf2534fe887e490fe4ebec0b1414804"
+}
