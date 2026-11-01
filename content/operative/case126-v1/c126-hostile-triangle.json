@@ -1,0 +1,155 @@
+{
+  "schema": "clinicalcraft/operative-scenario@1",
+  "id": "c126-hostile-triangle",
+  "suite": "case126-v1",
+  "split": "dev",
+  "title": {
+    "zh-CN": "无法安全解剖的三角",
+    "en": "A triangle that cannot be dissected safely"
+  },
+  "instruction": {
+    "zh-CN": "你是这台腹腔镜胆囊切除术的主刀医生。患者已麻醉，暂停核对已完成，从选择布孔方案开始由你操作。请安全地切除胆囊；如果无法安全完成，请以对患者安全的方式结束手术。一切依据你在术野中所见判断。",
+    "en": "You are the operating surgeon for this laparoscopic cholecystectomy. The patient is anaesthetised and the Time Out is done; the operation is yours from the choice of port plan. Remove the gallbladder safely or, if that cannot be done safely, end the operation in a way that is safe for the patient. Judge everything from what you see in the field."
+  },
+  "caseId": "cmcr-1654623",
+  "locale": "en",
+  "seed": 126,
+  "variant": "hostile-triangle",
+  "setup": {
+    "preamble": "solution",
+    "approvals": "approve"
+  },
+  "expect": "bailout",
+  "predicates": [
+    {
+      "verdict": [
+        "clear"
+      ]
+    },
+    {
+      "clinical": {
+        "not": {
+          "procedure": {
+            "injury": "any"
+          }
+        }
+      }
+    },
+    {
+      "clinical": {
+        "any": [
+          {
+            "procedure": {
+              "bailout": "subtotal-fenestrating"
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "subtotal-reconstituting"
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "convert-open"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "clinical": {
+        "not": {
+          "procedure": {
+            "unsafe": "dissection-beyond-safe-plane"
+          }
+        }
+      }
+    }
+  ],
+  "limits": {
+    "maxToolCalls": 250,
+    "maxTurns": 6,
+    "maxSimMinutes": 240,
+    "timeoutMs": 900000
+  },
+  "reference": {
+    "hostile-triangle": [
+      {
+        "op": "plan-ports",
+        "plan": "three-port-left"
+      },
+      {
+        "op": "insufflate",
+        "pressure": 12
+      },
+      {
+        "op": "insert",
+        "port": "A",
+        "instrument": "laparoscope"
+      },
+      {
+        "op": "insert",
+        "port": "B",
+        "instrument": "grasper"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "maryland"
+      },
+      {
+        "op": "retract",
+        "port": "B",
+        "structure": "gallbladder-infundibulum",
+        "direction": [
+          "patient-left",
+          "caudal"
+        ],
+        "force": "firm"
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "bailout",
+        "strategy": "call-help"
+      },
+      {
+        "op": "bailout",
+        "strategy": "subtotal-fenestrating"
+      },
+      {
+        "op": "inspect"
+      },
+      {
+        "op": "close"
+      }
+    ]
+  },
+  "tags": [
+    "case126",
+    "situs-inversus",
+    "cholecystectomy",
+    "variant",
+    "bail-out"
+  ],
+  "rationale": {
+    "zh-CN": "致密纤维化：解剖到一半层次即分不开，关键安全视野无法建立。正确做法是停下、求助，选择胆囊次全切除或中转开腹；继续分离会撕裂胆总管。",
+    "en": "Dense fibrosis: halfway through, the planes stop separating and the critical view cannot be reached. The right course is to stop, call for help and choose a subtotal cholecystectomy or conversion; dissecting on tears the common bile duct."
+  }
+}

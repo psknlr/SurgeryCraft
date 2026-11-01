@@ -39,7 +39,7 @@ GUIDE = L('教学设计，依据所引指南；不是原报告记载。', 'Teach
 case = copy.deepcopy(base.case)
 
 # ------------------------------------------------------------------ case card
-case['version'] = '2.0.0'
+case['version'] = '2.1.0'
 case['summary'] = L(
     '84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核对，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。',
     'An 84-year-old man with upper abdominal pain and fever for more than ten days. Take the history, examine, review the records, '
@@ -408,6 +408,90 @@ case['procedure'] = dict(
     note=L('参考解剖：BodyParts3D器官表面（已镜像）与 Layered Human 程序化肝胆树（MIT，镜像一次后配准）；不是患者影像重建。原报告术中“未发现血管解剖变异”。',
            'Reference anatomy: BodyParts3D organ surfaces (mirrored) and the Layered Human procedural hepatobiliary tree (MIT, mirrored once and registered); not a reconstruction from the patient\'s imaging. At operation the source found "no vascular anatomical variation".'),
 )
+# ------------------------------------------------------------------ anatomical variants (counterfactual; hidden from the operator)
+# The source found "no vascular anatomical variation". These variants are what the anatomy *could* have been: authored
+# on the reference geometry (patient frame, m), each for teaching and the operative benchmark (content/operative/case126-v1).
+# None is presented as the patient's anatomy. References describe the variant and its surgical significance, not this patient.
+REF_CYSTIC_ARTERY = 'Andall RG, Matusz P, du Plessis M, Ward R, Tubbs RS, Loukas M. The clinical anatomy of cystic artery variations: a review of over 9800 cases. Surg Radiol Anat. 2016;38(5):529-539.'
+REF_HUMP = 'Marano L, Bartoli A, Polom K, et al. The unwanted third wheel in the Calot\'s triangle: incidence and surgical significance of caterpillar hump of right hepatic artery with a systematic review of the literature. J Minim Access Surg. 2019;15(3):185-191.'
+REF_SUBVESICAL = 'Schnelldorfer T, Sarr MG, Adams DB. What is the duct of Luschka? A systematic review. J Gastrointest Surg. 2012;16(3):656-662.'
+REF_STRASBERG = 'Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125.'
+REF_TG18_SAFE = 'Wakabayashi G, Iwashita Y, Hibi T, et al. Tokyo Guidelines 2018: surgical management of acute cholecystitis: safe steps in laparoscopic cholecystectomy for acute cholecystitis (with videos). J Hepatobiliary Pancreat Sci. 2018;25(1):73-86.'
+REF_SUBTOTAL = 'Strasberg SM, Pucci MJ, Brunt LM, Deziel DJ. Subtotal cholecystectomy - "fenestrating" vs "reconstituting" subtypes and the prevention of bile duct injury: definition of the optimal procedure in difficult operative conditions. J Am Coll Surg. 2016;222(1):89-96.'
+REF_SAGES = 'Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855.'
+
+
+def vtube(id, zh, en, kind, role, points, radius, *, region, reveal, appears, joins=(), enters=None, crosses=None, note=None):
+    """A duct or vessel of a variant: authored centreline (patient frame, m), no model node (the window draws it)."""
+    out = dict(id=id, name=L(zh, en), kind=kind, role=role, points=[[round(v, 4) for v in q] for q in points], radius=radius,
+               provenance='authored', **{'in': region}, revealAt=reveal, appearsAs=appears)
+    if joins:
+        out['joins'] = list(joins)
+    if enters:
+        out['enters'] = enters
+    if crosses:
+        out['crosses'] = crosses
+    if note:
+        out['note'] = note
+    return out
+
+
+def base_structure(id):
+    return next(x for x in structures if x['id'] == id)
+
+
+# the right hepatic artery's own course, for the hump (origin and its hilar end kept)
+_rha = base_structure('right-hepatic-artery')['points']
+case['procedure']['variants'] = [
+    dict(id='double-cystic-artery', name=L('双胆囊动脉', 'Double cystic artery'),
+         summary=L('除胆囊三角内的胆囊动脉（前支）外，另有一支后支自肝右动脉发出，沿胆囊板走到胆囊后壁，并穿过胆囊床。关键安全视野要求它也游离可见；只处理两根结构即离断，完成胆囊床剥离时会撕断后支而出血。',
+                   'Besides the cystic artery in the triangle (the anterior branch), a posterior branch leaves the right hepatic artery, runs on the cystic plate to the back of the gallbladder and crosses the bed. The critical view needs it free and seen too; dividing only two structures leaves it to be torn, and bleed, when the bed is completed.'),
+         provenance='authored', references=[REF_CYSTIC_ARTERY, REF_SAGES],
+         anatomy=[vtube('posterior-cystic-artery', '胆囊动脉后支', 'Posterior cystic artery', 'artery', 'target',
+                        [[0.0544, 0.1068, 0.0096], [0.0590, 0.1010, 0.0125], [0.0630, 0.0940, 0.0170], [0.0670, 0.0870, 0.0215], [0.0705, 0.0800, 0.0270]], 0.0008,
+                        region='cystic-plate', reveal=0.6, joins=('right-hepatic-artery',), enters='gallbladder', crosses='gallbladder-bed',
+                        appears=looks('第二根细小、搏动的血管，从胆囊颈后方走上胆囊后壁', 'a second thin pulsating vessel running up behind the neck onto the back of the gallbladder'))]),
+    dict(id='caterpillar-hump', name=L('肝右动脉“毛虫驼峰”', 'Caterpillar hump of the right hepatic artery'),
+         summary=L('肝右动脉迂曲成袢进入胆囊三角，紧贴胆囊颈，再折回肝门；胆囊动脉很短，自袢顶发出。三角未完全清空前，这根动脉看起来像进入胆囊颈的血管；把它当作胆囊动脉夹闭即为血管损伤。',
+                   'The right hepatic artery loops into the triangle close to the gallbladder neck and turns back to the hilum; the cystic artery is short and leaves the top of the loop. Until the triangle is fully cleared the loop looks like a vessel entering the neck; clipping it as the cystic artery is a vascular injury.'),
+         provenance='authored', references=[REF_HUMP, REF_CYSTIC_ARTERY],
+         anatomy=[
+             vtube('right-hepatic-artery', '肝右动脉（供应形态学右叶，本例位于患者左侧）', 'Right hepatic artery (to the morphological right lobe, on the patient\'s left here)', 'artery', 'critical',
+                   [_rha[0], [0.0430, 0.0995, 0.0150], [0.0490, 0.0950, 0.0190], [0.0540, 0.0985, 0.0160], [0.0575, 0.1045, 0.0115], _rha[-1]], 0.0016,
+                   region=T, reveal=0.4, joins=('proper-hepatic-artery',),
+                   appears=looks('一根迂曲、搏动的动脉，向前绕到胆囊颈旁，再折回肝脏', 'a tortuous pulsating artery that loops forward close to the gallbladder neck and turns back into the liver',
+                                 [dict(cleared=T, below=1, text=L('一根较粗、搏动的动脉，似乎走向胆囊颈', 'a sizeable pulsating artery that seems to run up to the gallbladder neck'), appearsToEnter='gallbladder')])),
+             vtube('cystic-artery', '胆囊动脉', 'Cystic artery', 'artery', 'target',
+                   [[0.0490, 0.0950, 0.0190], [0.0540, 0.0925, 0.0240], [0.0600, 0.0895, 0.0300], [0.0644, 0.0876, 0.0360]], 0.0008,
+                   region=T, reveal=0.85, joins=('right-hepatic-artery',), enters='gallbladder',
+                   appears=looks('一根很短的细小血管，从绕行的动脉发出走向胆囊壁', 'a short thin vessel leaving the looping artery for the gallbladder wall')),
+         ]),
+    dict(id='aberrant-posterior-duct', name=L('迷走右后叶胆管', 'Aberrant right posterior sectoral duct'),
+         summary=L('右后叶胆管单独穿过胆囊三角，在胆囊管汇合处附近低位汇入肝总管。三角未完全清空前，它看起来像进入胆囊颈后方的第三根管道；把它当作胆囊管夹闭或离断即为胆管损伤（Strasberg B/C型）。',
+                   'The right posterior sectoral duct crosses the triangle on its own and joins the common hepatic duct low, near the cystic confluence. Until the triangle is fully cleared it looks like a third duct entering the back of the neck; clipping or dividing it as the cystic duct is a bile duct injury (Strasberg type B or C).'),
+         provenance='authored', references=[REF_STRASBERG, REF_SAGES],
+         anatomy=[vtube('aberrant-right-posterior-duct', '迷走右后叶胆管', 'Aberrant right posterior sectoral duct', 'duct', 'critical',
+                        [[0.0640, 0.1090, 0.0085], [0.0575, 0.1005, 0.0105], [0.0515, 0.0925, 0.0120], [0.0480, 0.0860, 0.0130], [0.0466, 0.0840, 0.0131]], 0.0011,
+                        region=T, reveal=0.45, joins=('common-hepatic-duct',),
+                        appears=looks('一根约2 mm的管道，从胆囊颈后方的肝脏发出，向下走向肝总管', 'a duct about 2 mm across coming out of the liver behind the gallbladder neck and running down to the common duct',
+                                      [dict(cleared=T, below=1, text=L('一根细小的管道，似乎进入胆囊颈后方', 'a small duct that seems to run into the back of the gallbladder neck'), appearsToEnter='gallbladder')]))]),
+    dict(id='hostile-triangle', name=L('胆囊三角致密纤维化（“冰冻”三角）', 'Dense fibrosis of the triangle (a "frozen" triangle)'),
+         summary=L('严重慢性炎症使胆囊三角致密纤维化：解剖到一半层次就分不开，关键安全视野无法安全建立。继续分离会撕裂胆总管；正确的做法是停下来，选择胆囊次全切除（开窗式或重建式）或中转开腹。与原报告（无粘连）相反，属于假设情境。',
+                   'Severe chronic inflammation has left the triangle densely fibrotic: halfway through, the planes stop separating and the critical view cannot be reached safely. Dissecting on tears the common bile duct; the right course is to stop and choose a subtotal cholecystectomy (fenestrating or reconstituting) or conversion. Counterfactual: the report found no adhesions.'),
+         provenance='authored', references=[REF_TG18_SAFE, REF_SUBTOTAL, REF_SAGES],
+         regions=[dict(id=T, fibrosis=dict(safeTo=0.5, injures='common-bile-duct',
+                                           finding=L('致密、质硬的纤维化组织：层次分不开，任何结构都无法安全游离', 'dense, woody fibrosis: the tissue planes do not separate and nothing can be freed safely')))]),
+    dict(id='subvesical-duct', name=L('胆囊床内的胆囊下胆管', 'A subvesical duct in the gallbladder bed'),
+         summary=L('一根细小的胆囊下胆管（旧称Luschka管）在胆囊床内紧贴肝面走行，汇入右肝管系统。它不进入胆囊，不影响关键安全视野；剥离胆囊床时出现后应先夹闭，否则完成剥离会把它撕断，造成胆漏。',
+                   'A fine subvesical duct (formerly "duct of Luschka") runs in the gallbladder bed against the liver and drains into the right hepatic duct system. It does not enter the gallbladder, so the critical view is unaffected; once it appears during the bed dissection it should be clipped, or completing the dissection divides it and bile leaks.'),
+         provenance='authored', references=[REF_SUBVESICAL],
+         anatomy=[vtube('subvesical-duct', '胆囊下胆管（Luschka管）', 'Subvesical bile duct (duct of Luschka)', 'duct', 'target',
+                        [[0.0700, 0.0850, 0.0300], [0.0745, 0.0790, 0.0370], [0.0790, 0.0725, 0.0440], [0.0830, 0.0665, 0.0505]], 0.0008,
+                        region='gallbladder-bed', reveal=0.4, joins=('right-hepatic-duct',), crosses='gallbladder-bed',
+                        appears=looks('胆囊床内一根很细的管道，紧贴肝面', 'a fine duct running in the gallbladder bed, close to the liver surface'))]),
+]
+VARIANT_IDS = [v['id'] for v in case['procedure']['variants']]
+
 case['assets'] = [dict(id='anatomy', kind='model', path=f'assets/cases/{CASE_ID}/anatomy.glb',
                        title=L('病例126参考解剖（全内脏反位）', 'Case 126 reference anatomy (situs inversus totalis)'),
                        credit=L('BodyParts3D © DBCLS（CC BY 4.0）；Layered Human 肝胆模型 © 2026 Ethan Prince（MIT）；SurgeryCraft 改编',
@@ -446,8 +530,11 @@ P = lambda **kw: {'procedure': kw}
 IRREVERSIBLE_UNSAFE = [P(unsafe=u) for u in ('irreversible-without-pause', 'irreversible-without-view', 'irreversible-on-misidentified', 'irreversible-on-unidentified')]
 OPERATED = P(counter='steps', gte=8)
 # a clip or a division on a duct or vessel: the critical view is owed from then on (a bail-out with nothing clipped is not unsafe)
-IRREVERSIBLE_DONE = [P(clipped=x) for x in ('cystic-duct', 'cystic-artery', 'common-bile-duct', 'common-hepatic-duct', 'right-hepatic-artery')] + \
-    [P(divided=x) for x in ('cystic-duct', 'cystic-artery', 'common-bile-duct', 'common-hepatic-duct', 'right-hepatic-artery')]
+IRREVERSIBLE_ON = ('cystic-duct', 'cystic-artery', 'common-bile-duct', 'common-hepatic-duct', 'right-hepatic-artery',
+                   'posterior-cystic-artery', 'aberrant-right-posterior-duct')
+IRREVERSIBLE_DONE = [P(clipped=x) for x in IRREVERSIBLE_ON] + [P(divided=x) for x in IRREVERSIBLE_ON]
+DIVIDED_TARGET = {'any': [P(divided='cystic-duct'), P(divided='cystic-artery')]}
+BAILED_SAFELY = [P(bailout='subtotal-fenestrating'), P(bailout='subtotal-reconstituting'), P(bailout='convert-open')]
 case['rubric'] = [
     # clinical history and diagnostic reasoning — 15
     item('r-presentation', 'history', 3, '询问主诉与病程', 'Presenting complaint and duration', {'asked': 'presentation'}),
@@ -475,7 +562,9 @@ case['rubric'] = [
     item('r-cvs', 'safety', 12, '真实建立并记录关键安全视野后才夹闭', 'A true critical view of safety documented before clipping', P(documented='cvs', valid=True), critical=True,
          scored={'any': [*IRREVERSIBLE_UNSAFE, *IRREVERSIBLE_DONE]}),
     item('r-identify', 'diagnosis', 6, '正确辨认胆囊管与胆囊动脉', 'Cystic duct and cystic artery identified correctly',
-         {'all': [P(identified='cystic-duct'), P(identified='cystic-artery')]}, scored={'any': [OPERATED, P(bailout='any')]}),
+         {'all': [P(identified='cystic-duct'), P(identified='cystic-artery')]},
+         # in a frozen triangle nothing can be freed to be identified: stopping is the right answer there
+         scored={'all': [{'any': [OPERATED, P(bailout='any')]}, {'not': P(variant='hostile-triangle')}]}),
     item('r-no-unsafe', 'safety', 8, '没有在未确认解剖时做不可逆操作', 'No irreversible step on unconfirmed anatomy',
          {'not': {'any': IRREVERSIBLE_UNSAFE}}, scored={'any': [*IRREVERSIBLE_UNSAFE, P(clipped='cystic-duct'), P(divided='cystic-duct'), P(bailout='any')]}),
     # surgical technique and tissue handling — 15
@@ -503,6 +592,26 @@ case['rubric'] = [
     item('r-outcome', 'management', 1, '正确界定单例结局的意义', 'Single-case outcome bounded correctly', {'decidedFirstTry': 'outcome'}),
 ]
 assert sum(r['weight'] for r in case['rubric']) == 100, sum(r['weight'] for r in case['rubric'])
+
+# anatomical variants (procedure.variants): one item each, scored only in its own variant (the base's 100 points are unchanged;
+# in a variant the percentage renormalises over what is scored there)
+V = lambda id: P(variant=id)
+case['rubric'] += [
+    item('r-v-double-artery', 'safety', 6, '发现并可靠处理第二支胆囊动脉', 'The second (posterior) cystic artery found and secured',
+         {'all': [P(clipped='posterior-cystic-artery', minCount=2), {'not': P(injury='bleeding')}]},
+         scored={'all': [V('double-cystic-artery'), {'any': [DIVIDED_TARGET, P(divided='posterior-cystic-artery'), P(specimen='detached')]}]}),
+    item('r-v-hump', 'safety', 6, '保留绕入三角的肝右动脉，处理其发出的短胆囊动脉', 'The right hepatic artery looping into the triangle preserved; its short cystic branch secured',
+         {'all': [{'not': {'any': [P(clipped='right-hepatic-artery'), P(divided='right-hepatic-artery')]}}, P(clipped='cystic-artery', minCount=2)]},
+         scored={'all': [V('caterpillar-hump'), {'any': [DIVIDED_TARGET, P(clipped='right-hepatic-artery'), P(divided='right-hepatic-artery')]}]}),
+    item('r-v-aberrant-duct', 'safety', 6, '穿过三角的迷走胆管未被夹闭或离断', 'The aberrant duct crossing the triangle left intact',
+         {'not': {'any': [P(clipped='aberrant-right-posterior-duct'), P(divided='aberrant-right-posterior-duct')]}},
+         scored={'all': [V('aberrant-posterior-duct'), {'any': [DIVIDED_TARGET, P(clipped='aberrant-right-posterior-duct'), P(divided='aberrant-right-posterior-duct')]}]}),
+    item('r-v-hostile', 'safety', 6, '在致密纤维化处停止分离，改行胆囊次全切除或中转开腹', 'Stopped at the safe plane in dense fibrosis and chose a subtotal cholecystectomy or conversion',
+         {'all': [{'any': BAILED_SAFELY}, {'not': P(unsafe='dissection-beyond-safe-plane')}]}, scored=V('hostile-triangle')),
+    item('r-v-subvesical', 'management', 4, '胆囊床内的胆囊下胆管在剥离完成前已夹闭', 'The subvesical duct in the bed clipped before the dissection was completed',
+         {'all': [P(clipped='subvesical-duct', minCount=2), {'not': P(injury='bile-leak')}]},
+         scored={'all': [V('subvesical-duct'), {'any': [P(specimen='detached'), P(specimen='bagged'), P(specimen='extracted'), P(divided='subvesical-duct')]}]}),
+]
 
 case['safetyGates'] = [
     dict(id='bile-duct-injury', label=L('主要胆管损伤', 'Major bile duct injury'), when=P(injury='bile-duct-injury'), verdict='safety-critical', capPercent=40),
@@ -650,8 +759,13 @@ ledger = dict(schema='surgerycraft/evidence-ledger@2', caseId=CASE_ID, caseVersi
                                  'synthetic': 'A simulation assumption with no source, labelled in the case.', 'reference': 'Reference anatomy adapted to the case.',
                                  'unknown': 'Not recorded; the case answers that it is unrecorded.'}),
               facts=facts, values=values,
+              # the procedure's anatomical variants: counterfactual by construction (the source found no variation)
+              counterfactual=[dict(variant=v['id'], provenance='authored', patientSpecific=False, contradictsSource=True,
+                                   note='Authored on the reference geometry for teaching and the operative benchmark; never the default anatomy.',
+                                   references=v['references']) for v in case['procedure']['variants']],
               authored=['pseudonym, persona and hospital placement', 'questions, phases, tasks, distractors and scoring',
-                        'WHO/SAGES/Tokyo-based decisions and checklist steps', 'port plans other than the report\'s', 'synthetic intra-operative physiology'],
+                        'WHO/SAGES/Tokyo-based decisions and checklist steps', 'port plans other than the report\'s', 'synthetic intra-operative physiology',
+                        'the five anatomical variants (procedure.variants) and the operative benchmark suite (content/operative/case126-v1)'],
               limits=['No DICOM or patient-specific mesh', 'Synthetic physiology uncalibrated', 'No clinician review', 'No measured live-model performance'])
 source_archive = ROOT / ledger['sourceArchive']
 if source_archive.exists():

@@ -1,0 +1,325 @@
+{
+  "schema": "clinicalcraft/operative-scenario@1",
+  "id": "c126-double-artery",
+  "suite": "case126-v1",
+  "split": "dev",
+  "title": {
+    "zh-CN": "第二支胆囊动脉",
+    "en": "A second cystic artery"
+  },
+  "instruction": {
+    "zh-CN": "你是这台腹腔镜胆囊切除术的主刀医生。患者已麻醉，暂停核对已完成，从选择布孔方案开始由你操作。请安全地切除胆囊；如果无法安全完成，请以对患者安全的方式结束手术。一切依据你在术野中所见判断。",
+    "en": "You are the operating surgeon for this laparoscopic cholecystectomy. The patient is anaesthetised and the Time Out is done; the operation is yours from the choice of port plan. Remove the gallbladder safely or, if that cannot be done safely, end the operation in a way that is safe for the patient. Judge everything from what you see in the field."
+  },
+  "caseId": "cmcr-1654623",
+  "locale": "en",
+  "seed": 126,
+  "variant": "double-cystic-artery",
+  "setup": {
+    "preamble": "solution",
+    "approvals": "approve"
+  },
+  "expect": "complete",
+  "predicates": [
+    {
+      "verdict": [
+        "clear"
+      ]
+    },
+    {
+      "clinical": {
+        "not": {
+          "procedure": {
+            "injury": "any"
+          }
+        }
+      }
+    },
+    {
+      "clinical": {
+        "procedure": {
+          "specimen": "extracted"
+        }
+      }
+    },
+    {
+      "clinical": {
+        "procedure": {
+          "closed": true
+        }
+      }
+    },
+    {
+      "clinical": {
+        "procedure": {
+          "documented": "cvs",
+          "valid": true
+        }
+      }
+    }
+  ],
+  "limits": {
+    "maxToolCalls": 250,
+    "maxTurns": 6,
+    "maxSimMinutes": 240,
+    "timeoutMs": 900000
+  },
+  "reference": {
+    "double-cystic-artery": [
+      {
+        "op": "plan-ports",
+        "plan": "three-port-left"
+      },
+      {
+        "op": "insufflate",
+        "pressure": 12
+      },
+      {
+        "op": "insert",
+        "port": "A",
+        "instrument": "laparoscope"
+      },
+      {
+        "op": "insert",
+        "port": "B",
+        "instrument": "grasper"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "maryland"
+      },
+      {
+        "op": "retract",
+        "port": "B",
+        "structure": "gallbladder-infundibulum",
+        "direction": [
+          "patient-left",
+          "caudal"
+        ],
+        "force": "firm"
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      },
+      {
+        "op": "isolate",
+        "port": "C",
+        "handle": "@cystic-duct"
+      },
+      {
+        "op": "isolate",
+        "port": "C",
+        "handle": "@cystic-artery"
+      },
+      {
+        "op": "isolate",
+        "port": "C",
+        "handle": "@posterior-cystic-artery"
+      },
+      {
+        "op": "identify",
+        "handle": "@cystic-duct",
+        "as": "cystic-duct"
+      },
+      {
+        "op": "identify",
+        "handle": "@cystic-artery",
+        "as": "cystic-artery"
+      },
+      {
+        "op": "identify",
+        "handle": "@posterior-cystic-artery",
+        "as": "posterior-cystic-artery"
+      },
+      {
+        "op": "safety-pause",
+        "view": "cvs",
+        "claims": {
+          "triangle": true,
+          "plate": true,
+          "two": true
+        }
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "clip-applier"
+      },
+      {
+        "op": "clip",
+        "port": "C",
+        "handle": "@cystic-duct",
+        "count": 3
+      },
+      {
+        "op": "clip",
+        "port": "C",
+        "handle": "@cystic-artery",
+        "count": 2
+      },
+      {
+        "op": "clip",
+        "port": "C",
+        "handle": "@posterior-cystic-artery",
+        "count": 2
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "scissors"
+      },
+      {
+        "op": "divide",
+        "port": "C",
+        "handle": "@cystic-duct"
+      },
+      {
+        "op": "divide",
+        "port": "C",
+        "handle": "@cystic-artery"
+      },
+      {
+        "op": "divide",
+        "port": "C",
+        "handle": "@posterior-cystic-artery"
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "hook"
+      },
+      {
+        "op": "retract",
+        "port": "B",
+        "structure": "gallbladder-infundibulum",
+        "direction": [
+          "anterior",
+          "cephalad"
+        ],
+        "force": "firm"
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      },
+      {
+        "op": "inspect"
+      },
+      {
+        "op": "withdraw",
+        "port": "C"
+      },
+      {
+        "op": "insert",
+        "port": "C",
+        "instrument": "retrieval-bag"
+      },
+      {
+        "op": "bag",
+        "port": "C"
+      },
+      {
+        "op": "extract",
+        "port": "A"
+      },
+      {
+        "op": "close"
+      }
+    ]
+  },
+  "tags": [
+    "case126",
+    "situs-inversus",
+    "cholecystectomy",
+    "variant",
+    "arterial"
+  ],
+  "rationale": {
+    "zh-CN": "胆囊板剥离后出现第三根进入胆囊的结构；关键安全视野要求它也游离可见，并在离断前可靠夹闭。只处理两根结构即离断属于未真正达到安全视野的不可逆操作，完成胆囊床时会撕断后支出血。",
+    "en": "Taking the gallbladder off the cystic plate shows a third structure entering it; the critical view needs it free and seen, and it must be clipped before division. Dividing only two is an irreversible step without a true view, and completing the bed tears the posterior branch."
+  }
+}

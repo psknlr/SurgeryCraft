@@ -1,7 +1,7 @@
 {
   "schema": "clinicalcraft/case@1",
   "id": "cmcr-1654623",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "title": {
     "zh-CN": "上腹痛伴发热 · 84岁男性",
     "en": "Upper abdominal pain and fever · 84-year-old man"
@@ -2474,6 +2474,16 @@
           },
           {
             "procedure": {
+              "clipped": "posterior-cystic-artery"
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "aberrant-right-posterior-duct"
+            }
+          },
+          {
+            "procedure": {
               "divided": "cystic-duct"
             }
           },
@@ -2495,6 +2505,16 @@
           {
             "procedure": {
               "divided": "right-hepatic-artery"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "posterior-cystic-artery"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "aberrant-right-posterior-duct"
             }
           }
         ]
@@ -2523,16 +2543,27 @@
         ]
       },
       "scoredWhen": {
-        "any": [
+        "all": [
           {
-            "procedure": {
-              "counter": "steps",
-              "gte": 8
-            }
+            "any": [
+              {
+                "procedure": {
+                  "counter": "steps",
+                  "gte": 8
+                }
+              },
+              {
+                "procedure": {
+                  "bailout": "any"
+                }
+              }
+            ]
           },
           {
-            "procedure": {
-              "bailout": "any"
+            "not": {
+              "procedure": {
+                "variant": "hostile-triangle"
+              }
             }
           }
         ]
@@ -2941,6 +2972,306 @@
       },
       "met": {
         "decidedFirstTry": "outcome"
+      }
+    },
+    {
+      "id": "r-v-double-artery",
+      "domain": "safety",
+      "weight": 6,
+      "text": {
+        "zh-CN": "发现并可靠处理第二支胆囊动脉",
+        "en": "The second (posterior) cystic artery found and secured"
+      },
+      "met": {
+        "all": [
+          {
+            "procedure": {
+              "clipped": "posterior-cystic-artery",
+              "minCount": 2
+            }
+          },
+          {
+            "not": {
+              "procedure": {
+                "injury": "bleeding"
+              }
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "all": [
+          {
+            "procedure": {
+              "variant": "double-cystic-artery"
+            }
+          },
+          {
+            "any": [
+              {
+                "any": [
+                  {
+                    "procedure": {
+                      "divided": "cystic-duct"
+                    }
+                  },
+                  {
+                    "procedure": {
+                      "divided": "cystic-artery"
+                    }
+                  }
+                ]
+              },
+              {
+                "procedure": {
+                  "divided": "posterior-cystic-artery"
+                }
+              },
+              {
+                "procedure": {
+                  "specimen": "detached"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-v-hump",
+      "domain": "safety",
+      "weight": 6,
+      "text": {
+        "zh-CN": "保留绕入三角的肝右动脉，处理其发出的短胆囊动脉",
+        "en": "The right hepatic artery looping into the triangle preserved; its short cystic branch secured"
+      },
+      "met": {
+        "all": [
+          {
+            "not": {
+              "any": [
+                {
+                  "procedure": {
+                    "clipped": "right-hepatic-artery"
+                  }
+                },
+                {
+                  "procedure": {
+                    "divided": "right-hepatic-artery"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "cystic-artery",
+              "minCount": 2
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "all": [
+          {
+            "procedure": {
+              "variant": "caterpillar-hump"
+            }
+          },
+          {
+            "any": [
+              {
+                "any": [
+                  {
+                    "procedure": {
+                      "divided": "cystic-duct"
+                    }
+                  },
+                  {
+                    "procedure": {
+                      "divided": "cystic-artery"
+                    }
+                  }
+                ]
+              },
+              {
+                "procedure": {
+                  "clipped": "right-hepatic-artery"
+                }
+              },
+              {
+                "procedure": {
+                  "divided": "right-hepatic-artery"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-v-aberrant-duct",
+      "domain": "safety",
+      "weight": 6,
+      "text": {
+        "zh-CN": "穿过三角的迷走胆管未被夹闭或离断",
+        "en": "The aberrant duct crossing the triangle left intact"
+      },
+      "met": {
+        "not": {
+          "any": [
+            {
+              "procedure": {
+                "clipped": "aberrant-right-posterior-duct"
+              }
+            },
+            {
+              "procedure": {
+                "divided": "aberrant-right-posterior-duct"
+              }
+            }
+          ]
+        }
+      },
+      "scoredWhen": {
+        "all": [
+          {
+            "procedure": {
+              "variant": "aberrant-posterior-duct"
+            }
+          },
+          {
+            "any": [
+              {
+                "any": [
+                  {
+                    "procedure": {
+                      "divided": "cystic-duct"
+                    }
+                  },
+                  {
+                    "procedure": {
+                      "divided": "cystic-artery"
+                    }
+                  }
+                ]
+              },
+              {
+                "procedure": {
+                  "clipped": "aberrant-right-posterior-duct"
+                }
+              },
+              {
+                "procedure": {
+                  "divided": "aberrant-right-posterior-duct"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-v-hostile",
+      "domain": "safety",
+      "weight": 6,
+      "text": {
+        "zh-CN": "在致密纤维化处停止分离，改行胆囊次全切除或中转开腹",
+        "en": "Stopped at the safe plane in dense fibrosis and chose a subtotal cholecystectomy or conversion"
+      },
+      "met": {
+        "all": [
+          {
+            "any": [
+              {
+                "procedure": {
+                  "bailout": "subtotal-fenestrating"
+                }
+              },
+              {
+                "procedure": {
+                  "bailout": "subtotal-reconstituting"
+                }
+              },
+              {
+                "procedure": {
+                  "bailout": "convert-open"
+                }
+              }
+            ]
+          },
+          {
+            "not": {
+              "procedure": {
+                "unsafe": "dissection-beyond-safe-plane"
+              }
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "procedure": {
+          "variant": "hostile-triangle"
+        }
+      }
+    },
+    {
+      "id": "r-v-subvesical",
+      "domain": "management",
+      "weight": 4,
+      "text": {
+        "zh-CN": "胆囊床内的胆囊下胆管在剥离完成前已夹闭",
+        "en": "The subvesical duct in the bed clipped before the dissection was completed"
+      },
+      "met": {
+        "all": [
+          {
+            "procedure": {
+              "clipped": "subvesical-duct",
+              "minCount": 2
+            }
+          },
+          {
+            "not": {
+              "procedure": {
+                "injury": "bile-leak"
+              }
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "all": [
+          {
+            "procedure": {
+              "variant": "subvesical-duct"
+            }
+          },
+          {
+            "any": [
+              {
+                "procedure": {
+                  "specimen": "detached"
+                }
+              },
+              {
+                "procedure": {
+                  "specimen": "bagged"
+                }
+              },
+              {
+                "procedure": {
+                  "specimen": "extracted"
+                }
+              },
+              {
+                "procedure": {
+                  "divided": "subvesical-duct"
+                }
+              }
+            ]
+          }
+        ]
       }
     }
   ],
@@ -5076,7 +5407,379 @@
     "note": {
       "zh-CN": "参考解剖：BodyParts3D器官表面（已镜像）与 Layered Human 程序化肝胆树（MIT，镜像一次后配准）；不是患者影像重建。原报告术中“未发现血管解剖变异”。",
       "en": "Reference anatomy: BodyParts3D organ surfaces (mirrored) and the Layered Human procedural hepatobiliary tree (MIT, mirrored once and registered); not a reconstruction from the patient's imaging. At operation the source found \"no vascular anatomical variation\"."
-    }
+    },
+    "variants": [
+      {
+        "id": "double-cystic-artery",
+        "name": {
+          "zh-CN": "双胆囊动脉",
+          "en": "Double cystic artery"
+        },
+        "summary": {
+          "zh-CN": "除胆囊三角内的胆囊动脉（前支）外，另有一支后支自肝右动脉发出，沿胆囊板走到胆囊后壁，并穿过胆囊床。关键安全视野要求它也游离可见；只处理两根结构即离断，完成胆囊床剥离时会撕断后支而出血。",
+          "en": "Besides the cystic artery in the triangle (the anterior branch), a posterior branch leaves the right hepatic artery, runs on the cystic plate to the back of the gallbladder and crosses the bed. The critical view needs it free and seen too; dividing only two structures leaves it to be torn, and bleed, when the bed is completed."
+        },
+        "provenance": "authored",
+        "references": [
+          "Andall RG, Matusz P, du Plessis M, Ward R, Tubbs RS, Loukas M. The clinical anatomy of cystic artery variations: a review of over 9800 cases. Surg Radiol Anat. 2016;38(5):529-539.",
+          "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855."
+        ],
+        "anatomy": [
+          {
+            "id": "posterior-cystic-artery",
+            "name": {
+              "zh-CN": "胆囊动脉后支",
+              "en": "Posterior cystic artery"
+            },
+            "kind": "artery",
+            "role": "target",
+            "points": [
+              [
+                0.0544,
+                0.1068,
+                0.0096
+              ],
+              [
+                0.059,
+                0.101,
+                0.0125
+              ],
+              [
+                0.063,
+                0.094,
+                0.017
+              ],
+              [
+                0.067,
+                0.087,
+                0.0215
+              ],
+              [
+                0.0705,
+                0.08,
+                0.027
+              ]
+            ],
+            "radius": 0.0008,
+            "provenance": "authored",
+            "in": "cystic-plate",
+            "revealAt": 0.6,
+            "appearsAs": {
+              "default": {
+                "zh-CN": "第二根细小、搏动的血管，从胆囊颈后方走上胆囊后壁",
+                "en": "a second thin pulsating vessel running up behind the neck onto the back of the gallbladder"
+              },
+              "when": []
+            },
+            "joins": [
+              "right-hepatic-artery"
+            ],
+            "enters": "gallbladder",
+            "crosses": "gallbladder-bed"
+          }
+        ]
+      },
+      {
+        "id": "caterpillar-hump",
+        "name": {
+          "zh-CN": "肝右动脉“毛虫驼峰”",
+          "en": "Caterpillar hump of the right hepatic artery"
+        },
+        "summary": {
+          "zh-CN": "肝右动脉迂曲成袢进入胆囊三角，紧贴胆囊颈，再折回肝门；胆囊动脉很短，自袢顶发出。三角未完全清空前，这根动脉看起来像进入胆囊颈的血管；把它当作胆囊动脉夹闭即为血管损伤。",
+          "en": "The right hepatic artery loops into the triangle close to the gallbladder neck and turns back to the hilum; the cystic artery is short and leaves the top of the loop. Until the triangle is fully cleared the loop looks like a vessel entering the neck; clipping it as the cystic artery is a vascular injury."
+        },
+        "provenance": "authored",
+        "references": [
+          "Marano L, Bartoli A, Polom K, et al. The unwanted third wheel in the Calot's triangle: incidence and surgical significance of caterpillar hump of right hepatic artery with a systematic review of the literature. J Minim Access Surg. 2019;15(3):185-191.",
+          "Andall RG, Matusz P, du Plessis M, Ward R, Tubbs RS, Loukas M. The clinical anatomy of cystic artery variations: a review of over 9800 cases. Surg Radiol Anat. 2016;38(5):529-539."
+        ],
+        "anatomy": [
+          {
+            "id": "right-hepatic-artery",
+            "name": {
+              "zh-CN": "肝右动脉（供应形态学右叶，本例位于患者左侧）",
+              "en": "Right hepatic artery (to the morphological right lobe, on the patient's left here)"
+            },
+            "kind": "artery",
+            "role": "critical",
+            "points": [
+              [
+                0.0359,
+                0.1037,
+                0.0113
+              ],
+              [
+                0.043,
+                0.0995,
+                0.015
+              ],
+              [
+                0.049,
+                0.095,
+                0.019
+              ],
+              [
+                0.054,
+                0.0985,
+                0.016
+              ],
+              [
+                0.0575,
+                0.1045,
+                0.0115
+              ],
+              [
+                0.0589,
+                0.1076,
+                0.0099
+              ]
+            ],
+            "radius": 0.0016,
+            "provenance": "authored",
+            "in": "hepatocystic-triangle",
+            "revealAt": 0.4,
+            "appearsAs": {
+              "default": {
+                "zh-CN": "一根迂曲、搏动的动脉，向前绕到胆囊颈旁，再折回肝脏",
+                "en": "a tortuous pulsating artery that loops forward close to the gallbladder neck and turns back into the liver"
+              },
+              "when": [
+                {
+                  "cleared": "hepatocystic-triangle",
+                  "below": 1,
+                  "text": {
+                    "zh-CN": "一根较粗、搏动的动脉，似乎走向胆囊颈",
+                    "en": "a sizeable pulsating artery that seems to run up to the gallbladder neck"
+                  },
+                  "appearsToEnter": "gallbladder"
+                }
+              ]
+            },
+            "joins": [
+              "proper-hepatic-artery"
+            ]
+          },
+          {
+            "id": "cystic-artery",
+            "name": {
+              "zh-CN": "胆囊动脉",
+              "en": "Cystic artery"
+            },
+            "kind": "artery",
+            "role": "target",
+            "points": [
+              [
+                0.049,
+                0.095,
+                0.019
+              ],
+              [
+                0.054,
+                0.0925,
+                0.024
+              ],
+              [
+                0.06,
+                0.0895,
+                0.03
+              ],
+              [
+                0.0644,
+                0.0876,
+                0.036
+              ]
+            ],
+            "radius": 0.0008,
+            "provenance": "authored",
+            "in": "hepatocystic-triangle",
+            "revealAt": 0.85,
+            "appearsAs": {
+              "default": {
+                "zh-CN": "一根很短的细小血管，从绕行的动脉发出走向胆囊壁",
+                "en": "a short thin vessel leaving the looping artery for the gallbladder wall"
+              },
+              "when": []
+            },
+            "joins": [
+              "right-hepatic-artery"
+            ],
+            "enters": "gallbladder"
+          }
+        ]
+      },
+      {
+        "id": "aberrant-posterior-duct",
+        "name": {
+          "zh-CN": "迷走右后叶胆管",
+          "en": "Aberrant right posterior sectoral duct"
+        },
+        "summary": {
+          "zh-CN": "右后叶胆管单独穿过胆囊三角，在胆囊管汇合处附近低位汇入肝总管。三角未完全清空前，它看起来像进入胆囊颈后方的第三根管道；把它当作胆囊管夹闭或离断即为胆管损伤（Strasberg B/C型）。",
+          "en": "The right posterior sectoral duct crosses the triangle on its own and joins the common hepatic duct low, near the cystic confluence. Until the triangle is fully cleared it looks like a third duct entering the back of the neck; clipping or dividing it as the cystic duct is a bile duct injury (Strasberg type B or C)."
+        },
+        "provenance": "authored",
+        "references": [
+          "Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125.",
+          "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855."
+        ],
+        "anatomy": [
+          {
+            "id": "aberrant-right-posterior-duct",
+            "name": {
+              "zh-CN": "迷走右后叶胆管",
+              "en": "Aberrant right posterior sectoral duct"
+            },
+            "kind": "duct",
+            "role": "critical",
+            "points": [
+              [
+                0.064,
+                0.109,
+                0.0085
+              ],
+              [
+                0.0575,
+                0.1005,
+                0.0105
+              ],
+              [
+                0.0515,
+                0.0925,
+                0.012
+              ],
+              [
+                0.048,
+                0.086,
+                0.013
+              ],
+              [
+                0.0466,
+                0.084,
+                0.0131
+              ]
+            ],
+            "radius": 0.0011,
+            "provenance": "authored",
+            "in": "hepatocystic-triangle",
+            "revealAt": 0.45,
+            "appearsAs": {
+              "default": {
+                "zh-CN": "一根约2 mm的管道，从胆囊颈后方的肝脏发出，向下走向肝总管",
+                "en": "a duct about 2 mm across coming out of the liver behind the gallbladder neck and running down to the common duct"
+              },
+              "when": [
+                {
+                  "cleared": "hepatocystic-triangle",
+                  "below": 1,
+                  "text": {
+                    "zh-CN": "一根细小的管道，似乎进入胆囊颈后方",
+                    "en": "a small duct that seems to run into the back of the gallbladder neck"
+                  },
+                  "appearsToEnter": "gallbladder"
+                }
+              ]
+            },
+            "joins": [
+              "common-hepatic-duct"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "hostile-triangle",
+        "name": {
+          "zh-CN": "胆囊三角致密纤维化（“冰冻”三角）",
+          "en": "Dense fibrosis of the triangle (a \"frozen\" triangle)"
+        },
+        "summary": {
+          "zh-CN": "严重慢性炎症使胆囊三角致密纤维化：解剖到一半层次就分不开，关键安全视野无法安全建立。继续分离会撕裂胆总管；正确的做法是停下来，选择胆囊次全切除（开窗式或重建式）或中转开腹。与原报告（无粘连）相反，属于假设情境。",
+          "en": "Severe chronic inflammation has left the triangle densely fibrotic: halfway through, the planes stop separating and the critical view cannot be reached safely. Dissecting on tears the common bile duct; the right course is to stop and choose a subtotal cholecystectomy (fenestrating or reconstituting) or conversion. Counterfactual: the report found no adhesions."
+        },
+        "provenance": "authored",
+        "references": [
+          "Wakabayashi G, Iwashita Y, Hibi T, et al. Tokyo Guidelines 2018: surgical management of acute cholecystitis: safe steps in laparoscopic cholecystectomy for acute cholecystitis (with videos). J Hepatobiliary Pancreat Sci. 2018;25(1):73-86.",
+          "Strasberg SM, Pucci MJ, Brunt LM, Deziel DJ. Subtotal cholecystectomy - \"fenestrating\" vs \"reconstituting\" subtypes and the prevention of bile duct injury: definition of the optimal procedure in difficult operative conditions. J Am Coll Surg. 2016;222(1):89-96.",
+          "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855."
+        ],
+        "regions": [
+          {
+            "id": "hepatocystic-triangle",
+            "fibrosis": {
+              "safeTo": 0.5,
+              "injures": "common-bile-duct",
+              "finding": {
+                "zh-CN": "致密、质硬的纤维化组织：层次分不开，任何结构都无法安全游离",
+                "en": "dense, woody fibrosis: the tissue planes do not separate and nothing can be freed safely"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "subvesical-duct",
+        "name": {
+          "zh-CN": "胆囊床内的胆囊下胆管",
+          "en": "A subvesical duct in the gallbladder bed"
+        },
+        "summary": {
+          "zh-CN": "一根细小的胆囊下胆管（旧称Luschka管）在胆囊床内紧贴肝面走行，汇入右肝管系统。它不进入胆囊，不影响关键安全视野；剥离胆囊床时出现后应先夹闭，否则完成剥离会把它撕断，造成胆漏。",
+          "en": "A fine subvesical duct (formerly \"duct of Luschka\") runs in the gallbladder bed against the liver and drains into the right hepatic duct system. It does not enter the gallbladder, so the critical view is unaffected; once it appears during the bed dissection it should be clipped, or completing the dissection divides it and bile leaks."
+        },
+        "provenance": "authored",
+        "references": [
+          "Schnelldorfer T, Sarr MG, Adams DB. What is the duct of Luschka? A systematic review. J Gastrointest Surg. 2012;16(3):656-662."
+        ],
+        "anatomy": [
+          {
+            "id": "subvesical-duct",
+            "name": {
+              "zh-CN": "胆囊下胆管（Luschka管）",
+              "en": "Subvesical bile duct (duct of Luschka)"
+            },
+            "kind": "duct",
+            "role": "target",
+            "points": [
+              [
+                0.07,
+                0.085,
+                0.03
+              ],
+              [
+                0.0745,
+                0.079,
+                0.037
+              ],
+              [
+                0.079,
+                0.0725,
+                0.044
+              ],
+              [
+                0.083,
+                0.0665,
+                0.0505
+              ]
+            ],
+            "radius": 0.0008,
+            "provenance": "authored",
+            "in": "gallbladder-bed",
+            "revealAt": 0.4,
+            "appearsAs": {
+              "default": {
+                "zh-CN": "胆囊床内一根很细的管道，紧贴肝面",
+                "en": "a fine duct running in the gallbladder bed, close to the liver surface"
+              },
+              "when": []
+            },
+            "joins": [
+              "right-hepatic-duct"
+            ],
+            "crosses": "gallbladder-bed"
+          }
+        ]
+      }
+    ]
   },
   "assets": [
     {

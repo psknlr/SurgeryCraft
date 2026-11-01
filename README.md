@@ -16,6 +16,20 @@
 One rubric and one set of safety gates score it all. See [docs/CASE_126.md](docs/CASE_126.md) for
 what is implemented, its sources and the validation still owed.
 
+**Anatomical variants and an operative benchmark.** The case has five counterfactual anatomies, each
+labelled authored, never the default:
+
+- a double cystic artery;
+- a caterpillar hump of the right hepatic artery;
+- an aberrant right posterior duct;
+- a frozen triangle;
+- a subvesical duct.
+
+A session can be started in any of them, and the variant stays hidden from the operator. The suite
+`content/operative/case126-v1` (8 scenarios, dev and held-out test) runs agents with
+`clinicalcraft bench operative`, with the anatomy hidden. Each anatomy has an expert trajectory that
+scores 100 %. The reported anatomy's routine, replayed blind, is safety-critical in every variant.
+
 The anatomy is case-informed **reference** anatomy, not a CT reconstruction:
 
 - BodyParts3D organ surfaces, mirrored;
@@ -35,7 +49,9 @@ and "pass me …" — and with window frame and mullion materials
 pack's own `assets/` and keeps screens live over models (the Blender round,
 [psknlr/ClinicalCraft#10](https://github.com/psknlr/ClinicalCraft/pull/10)), and one that ships
 the built-in types' models for the rest (the models round); with an older one those are not
-found and the voxel parts are drawn.
+found and the voxel parts are drawn. Case 126 needs a ClinicalCraft with the operative field
+([psknlr/ClinicalCraft#13](https://github.com/psknlr/ClinicalCraft/pull/13)). Its variants and
+operative suite also need procedure variants and `bench operative` (the variants round).
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 
