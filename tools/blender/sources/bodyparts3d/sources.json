@@ -1,0 +1,91 @@
+{
+  "source": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_BP3D_4.0_obj_99.zip",
+  "version": "BodyParts3D 4.0 PART-OF, 99% reduction",
+  "attribution": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "licenseEvidence": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html",
+  "meshes": [
+    {
+      "id": "FJ2816",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2816.obj",
+      "bytes": 317280,
+      "sha256": "81c86ccdd356c27a960f957f49b4ea883d22d7e75fef29aa794e154d4f5da51e"
+    },
+    {
+      "id": "FJ2818",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2818.obj",
+      "bytes": 936399,
+      "sha256": "773b11b267fd680f399e0dbc71217aef981c6f8ee2a2273723481edc5864ee8a"
+    },
+    {
+      "id": "FJ2819",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2819.obj",
+      "bytes": 677766,
+      "sha256": "ba7174ecd641887a57116848661d56c2c377659cc3aca4235132e8f548bbd8b9"
+    },
+    {
+      "id": "FJ2820",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2820.obj",
+      "bytes": 1296049,
+      "sha256": "af49d0747496fb3008b7b33be23ea1c169bb4667ccfad0fa0208d42390737c22"
+    },
+    {
+      "id": "FJ2821",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2821.obj",
+      "bytes": 793791,
+      "sha256": "13886d9c2d473e121e27083fa03218fe22e4a75aab3402dcf53754a1375948f9"
+    },
+    {
+      "id": "FJ2822",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2822.obj",
+      "bytes": 1282107,
+      "sha256": "8f64d0c177586089610214a5a32a189a6a659ca2770b15d193c9255667c8afd2"
+    },
+    {
+      "id": "FJ2409",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2409.obj",
+      "bytes": 596947,
+      "sha256": "4662aac785711a9b0ca91b860720d018f4e61e8457e919722b68ce814bc27e84"
+    },
+    {
+      "id": "FJ2823",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2823.obj",
+      "bytes": 1284704,
+      "sha256": "a89dd2a52ffee337e9777376d1235330463577331fc7f18a40ccf8bc6c99a8d0"
+    },
+    {
+      "id": "FJ2824",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2824.obj",
+      "bytes": 1456324,
+      "sha256": "2f5e34fceea6c8b718bd3f50a125bf24c434ae7eb3d925b9795b0585272c1349"
+    },
+    {
+      "id": "FJ2564",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2564.obj",
+      "bytes": 106977,
+      "sha256": "cb78c3f2214fd21a16fa6c9f2389b9aa874e9d3ce624c42b34d4563c31554c67"
+    },
+    {
+      "id": "FJ2817",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2817.obj",
+      "bytes": 144863,
+      "sha256": "625af13ef374a4df98eb5e51f9c2201a1436ca33168ce4deb277ce811c3fb8c8"
+    },
+    {
+      "id": "FJ2573",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ2573.obj",
+      "bytes": 112677,
+      "sha256": "d549d9857ced73b198cdde3ad2494e897b620884364588f8644d7f6fd74ae1cb"
+    },
+    {
+      "id": "FJ1895",
+      "archiveEntry": "partof_BP3D_4.0_obj_99/FJ1895.obj",
+      "bytes": 307898,
+      "sha256": "fea8a371ac940fb8c5c13e9d459af6c2bd50e1b499f8989c63883a7db0f149ae"
+    },
+    {
+      "id": "FJ2561",
+      "missing": true
+    }
+  ]
+}

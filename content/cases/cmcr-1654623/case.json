@@ -1,0 +1,5365 @@
+{
+  "schema": "clinicalcraft/case@1",
+  "id": "cmcr-1654623",
+  "version": "2.0.0",
+  "title": {
+    "zh-CN": "上腹痛伴发热 · 84岁男性",
+    "en": "Upper abdominal pain and fever · 84-year-old man"
+  },
+  "summary": {
+    "zh-CN": "84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核对，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。",
+    "en": "An 84-year-old man with upper abdominal pain and fever for more than ten days. Take the history, examine, review the records, assess perioperative risk, run the surgical safety checklist and perform the laparoscopic operation yourself on case-informed reference anatomy, then review the operation and follow-up the source reports."
+  },
+  "specialty": [
+    "general-surgery"
+  ],
+  "difficulty": 3,
+  "setting": "operating-room",
+  "facility": "impf-surgery-hospital",
+  "locales": [
+    "zh-CN",
+    "en"
+  ],
+  "estimatedMinutes": 45,
+  "tags": [
+    "critical-view-of-safety",
+    "historical-review",
+    "laparoscopy",
+    "operative-simulation",
+    "situs-inversus",
+    "surgerycraft-pilot"
+  ],
+  "learningOutcomes": [
+    {
+      "zh-CN": "从CT报告准确识别并记录反位的左右位置。",
+      "en": "Identify and document inverted organ laterality from the CT report."
+    },
+    {
+      "zh-CN": "区分记录明确的事实、未记录信息和教学流程设定。",
+      "en": "Distinguish documented facts, missing information and authored workflow settings."
+    },
+    {
+      "zh-CN": "提出尊重解剖变异和患者合并症的团队术前讨论计划。",
+      "en": "Formulate a team discussion plan addressing anatomical variation and comorbidities."
+    },
+    {
+      "zh-CN": "应用术前核查与解剖辨认原则，并限定单例结局的外推范围。",
+      "en": "Apply verification and anatomical-identification principles and bound inference from one case."
+    },
+    {
+      "zh-CN": "依据东京指南2018区分胆囊结石、疑似与确诊急性胆囊炎，不把不完整证据当作确诊。",
+      "en": "Distinguish gallstone disease from suspected and confirmed acute cholecystitis (Tokyo Guidelines 2018) without treating incomplete evidence as a diagnosis."
+    },
+    {
+      "zh-CN": "在镜像解剖中选择并论证布孔、站位和牵拉方向。",
+      "en": "Choose and justify ports, stance and traction directions in mirror-image anatomy."
+    },
+    {
+      "zh-CN": "只有在关键安全视野的三项条件真实建立后才进行不可逆操作；无法建立时选择安全的替代策略。",
+      "en": "Perform irreversible steps only once the three criteria of the critical view of safety truly hold; choose a safe alternative when they cannot."
+    },
+    {
+      "zh-CN": "识别并处理术中出血、胆汁或结石溢出与胆管损伤，及时说出问题并求助。",
+      "en": "Recognise and manage bleeding, bile or stone spillage and bile duct injury, say so aloud and call for help."
+    }
+  ],
+  "provenance": {
+    "kind": "adapted",
+    "authors": [
+      "张少博",
+      "余仁斌"
+    ],
+    "citation": "张少博, 余仁斌. 内脏完全反位腹腔镜胆囊切除术一例. 肝胆胰外科杂志. 2024;36(3):180-181.",
+    "license": "Educational adaptation; source publication and images retain their original rights.",
+    "notes": {
+      "zh-CN": "依据dataset第126例PDF改编。v4增加：东京指南框架的诊断决策、围术期风险评估、WHO安全核对、在参考解剖上的交互式手术（关键安全视野由术野状态判定），以及标注为模拟值的术中生理。化名、医院场景、参考解剖和术中生理为教学设定；原报告的事实未改动。",
+      "en": "Adapted from dataset item 126. v4 adds a Tokyo-Guidelines diagnostic decision, perioperative risk assessment, the WHO checklist, an interactive operation on reference anatomy (the critical view of safety is judged on the field) and intra-operative physiology labelled as simulated. Pseudonym, hospital, reference anatomy and physiology are authored; no source fact is changed."
+    },
+    "review": {
+      "status": "editorial",
+      "reviewedAt": "2026-10-31",
+      "reviewers": [
+        "AI-assisted technical/editorial review"
+      ],
+      "guidelines": [
+        "WHO Surgical Safety Checklist implementation manual, 2009",
+        "SAGES Safe Cholecystectomy Multi-Society Practice Guideline, 2020"
+      ],
+      "notes": {
+        "zh-CN": "已做原文与所引安全原则的编辑核对；尚未经过执业外科及麻醉医生审核，不构成已验证的临床能力评测。",
+        "en": "Source and cited safety principles checked editorially; not reviewed by licensed surgical/anaesthetic clinicians and not a validated clinical competency assessment."
+      }
+    }
+  },
+  "disclaimer": {
+    "zh-CN": "教学病例，依据已发表病例改编，不构成医疗建议。三维解剖为病例相关的参考解剖，不是患者CT重建；术中生命体征为模拟值；未经临床专家审核。",
+    "en": "Teaching case adapted from a published report — not medical advice. The 3D anatomy is case-informed reference anatomy, not a reconstruction from the patient's CT; intra-operative vital signs are simulated; not reviewed by clinicians."
+  },
+  "patient": {
+    "displayName": {
+      "zh-CN": "林先生（化名）",
+      "en": "Mr Lin (pseudonym)"
+    },
+    "age": 84,
+    "sex": "male",
+    "chiefComplaint": {
+      "zh-CN": "上腹痛、发热十多天",
+      "en": "Upper abdominal pain and fever for more than ten days"
+    },
+    "triageNote": {
+      "zh-CN": "84岁男性，因上腹痛、发热十多天住院。本场景是术前资料核对与历史病例回看，不模拟实时急救或麻醉。",
+      "en": "84-year-old man admitted with upper abdominal pain and fever for more than ten days. This scene reviews preoperative evidence and a historical case, without real-time resuscitation or anaesthesia."
+    },
+    "posture": "lying",
+    "appearance": {
+      "gown": true,
+      "hairStyle": "short",
+      "hair": "#b8b8b8"
+    },
+    "persona": {
+      "personality": {
+        "zh-CN": "教学人物设定：配合、回答简短。",
+        "en": "Authored persona: cooperative and concise."
+      },
+      "speechStyle": {
+        "zh-CN": "简短口语，仅复述有依据的资料；缺失项明确说未记录。",
+        "en": "Brief lay speech grounded in available facts; missing items explicitly remain unrecorded."
+      },
+      "healthLiteracy": "medium",
+      "affect": "calm",
+      "openingLine": {
+        "zh-CN": "我上腹痛、发热十多天了。",
+        "en": "I have had upper abdominal pain and fever for more than ten days."
+      },
+      "fallbackUnknown": {
+        "zh-CN": "这份病例没有记录，不能替我补写。",
+        "en": "That is not recorded in this case; please do not fill it in."
+      }
+    }
+  },
+  "phases": [
+    {
+      "id": "assessment",
+      "label": {
+        "zh-CN": "术前资料核对",
+        "en": "Preoperative evidence review"
+      }
+    },
+    {
+      "id": "preop",
+      "label": {
+        "zh-CN": "术前评估与计划",
+        "en": "Preoperative assessment and planning"
+      },
+      "learnerSwitchable": false,
+      "enterWhen": {
+        "objective": "plan"
+      }
+    },
+    {
+      "id": "theatre",
+      "label": {
+        "zh-CN": "手术室：安全核对与麻醉",
+        "en": "Theatre: safety checks and anaesthesia"
+      },
+      "learnerSwitchable": false,
+      "enterWhen": {
+        "decided": "risk"
+      }
+    },
+    {
+      "id": "operation",
+      "label": {
+        "zh-CN": "腹腔镜胆囊切除",
+        "en": "Laparoscopic cholecystectomy"
+      },
+      "learnerSwitchable": false,
+      "enterWhen": {
+        "intervened": "time-out"
+      }
+    },
+    {
+      "id": "recovery",
+      "label": {
+        "zh-CN": "麻醉后恢复与术后",
+        "en": "Recovery and postoperative care"
+      },
+      "learnerSwitchable": false,
+      "enterWhen": {
+        "intervened": "sign-out"
+      }
+    },
+    {
+      "id": "review",
+      "label": {
+        "zh-CN": "原报告手术与随访回看",
+        "en": "Review of the reported operation and follow-up"
+      },
+      "learnerSwitchable": false,
+      "enterWhen": {
+        "intervened": "open-historical-review"
+      }
+    }
+  ],
+  "initialPhase": "assessment",
+  "clock": {
+    "mode": "simulated",
+    "startTime": "08:00",
+    "actionCosts": {
+      "ask": 1,
+      "examine": 1,
+      "order": 1,
+      "read": 1,
+      "intervene": 2,
+      "answer": 0
+    }
+  },
+  "history": [
+    {
+      "id": "presentation",
+      "topic": "presenting-complaint",
+      "question": {
+        "zh-CN": "哪里不舒服，持续多久了？",
+        "en": "What brought you in and for how long?"
+      },
+      "answer": {
+        "zh-CN": "上腹痛、发热十多天了。",
+        "en": "Upper abdominal pain and fever for more than ten days."
+      },
+      "keywords": {
+        "zh-CN": [
+          "哪里不舒服，持续多久了",
+          "上腹疼和发烧有多少天了"
+        ],
+        "en": [
+          "What brought you in and for how long",
+          "Tell me about the abdominal pain and fever"
+        ]
+      },
+      "disclosure": "volunteer",
+      "required": true,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      }
+    },
+    {
+      "id": "pmh",
+      "topic": "pmh",
+      "question": {
+        "zh-CN": "以前诊断过哪些疾病？",
+        "en": "What medical conditions have you had?"
+      },
+      "answer": {
+        "zh-CN": "病历记载有慢阻肺和脑梗死病史，具体时间没有记录。",
+        "en": "The record lists COPD and a previous cerebral infarction; dates are not recorded."
+      },
+      "keywords": {
+        "zh-CN": [
+          "以前诊断过哪些疾病",
+          "说一下您的既往病史。"
+        ],
+        "en": [
+          "What medical conditions have you had",
+          "Tell me your past medical history"
+        ]
+      },
+      "disclosure": "on-ask",
+      "required": true,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      }
+    },
+    {
+      "id": "family",
+      "topic": "family",
+      "question": {
+        "zh-CN": "家族里有相似的先天情况吗？",
+        "en": "Any similar congenital condition in the family?"
+      },
+      "answer": {
+        "zh-CN": "原报告未发现相关家族史，其他家族病史没有记录。",
+        "en": "No related family history was found in the report; other family history is not recorded."
+      },
+      "keywords": {
+        "zh-CN": [
+          "家族里有相似的先天情况吗",
+          "家里人有同样的先天异常吗"
+        ],
+        "en": [
+          "Any similar congenital condition in the family",
+          "Does this congenital condition run in the family"
+        ]
+      },
+      "disclosure": "on-ask",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      }
+    },
+    {
+      "id": "allergies",
+      "topic": "allergies",
+      "question": {
+        "zh-CN": "有没有药物过敏？",
+        "en": "Do you have any drug allergies?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "有没有药物过敏",
+          "吃药会不会过敏"
+        ],
+        "en": [
+          "Do you have any drug allergies",
+          "Any medication allergies"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": true,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "medications",
+      "topic": "medications",
+      "question": {
+        "zh-CN": "平时服用哪些药？",
+        "en": "Which medicines do you take?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "平时服用哪些药",
+          "每天吃的药有哪些"
+        ],
+        "en": [
+          "Which medicines do you take",
+          "List your regular medicines"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "psh",
+      "topic": "psh",
+      "question": {
+        "zh-CN": "以前做过哪些手术？",
+        "en": "What operations have you had?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "以前做过哪些手术",
+          "有没有既往手术史"
+        ],
+        "en": [
+          "surgicalhistory",
+          "previous surgery",
+          "past operations",
+          "Any previous surgery"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "fasting",
+      "topic": "other",
+      "question": {
+        "zh-CN": "最后一次进食是什么时候？",
+        "en": "When did you last eat?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "最后一次进食是什么时候",
+          "术前禁食多久了"
+        ],
+        "en": [
+          "When did you last eat",
+          "How long have you been fasting"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "weight",
+      "topic": "other",
+      "question": {
+        "zh-CN": "目前体重是多少？",
+        "en": "What is your current weight?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "目前体重是多少",
+          "请问体重多少公斤"
+        ],
+        "en": [
+          "What is your current weight",
+          "How many kilograms do you weigh"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "smoking",
+      "topic": "social",
+      "question": {
+        "zh-CN": "现在或以前吸烟吗？",
+        "en": "Do you smoke or have you smoked?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "现在或以前吸烟吗",
+          "您抽不抽烟"
+        ],
+        "en": [
+          "Do you smoke or have you smoked",
+          "Any tobacco use"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "alcohol",
+      "topic": "social",
+      "question": {
+        "zh-CN": "平时饮酒吗？",
+        "en": "Do you drink alcohol?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "平时饮酒吗",
+          "喝不喝酒"
+        ],
+        "en": [
+          "Do you drink alcohol",
+          "Any alcohol intake"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "pain-score",
+      "topic": "pain",
+      "question": {
+        "zh-CN": "疼痛从零到十分是几分？",
+        "en": "What is your pain score out of ten?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "疼痛从零到十分是几分",
+          "给疼痛打个分。"
+        ],
+        "en": [
+          "What is your pain score out of ten",
+          "Rate the pain severity"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "vomiting",
+      "topic": "associated-symptoms",
+      "question": {
+        "zh-CN": "有恶心或呕吐吗？",
+        "en": "Have you had nausea or vomiting?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "有恶心或呕吐吗",
+          "最近吐过没有"
+        ],
+        "en": [
+          "Have you had nausea or vomiting",
+          "Any episodes of emesis"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "jaundice",
+      "topic": "associated-symptoms",
+      "question": {
+        "zh-CN": "眼睛或皮肤变黄了吗？",
+        "en": "Have your eyes or skin turned yellow?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "眼睛或皮肤变黄了吗",
+          "有没有黄疸表现"
+        ],
+        "en": [
+          "Have your eyes or skin turned yellow",
+          "Any yellow discolouration"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "functional",
+      "topic": "functional",
+      "question": {
+        "zh-CN": "平时活动和生活自理情况怎样？",
+        "en": "How is your usual mobility and independence?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "平时活动和生活自理情况怎样",
+          "日常能自己走路和照顾自己吗"
+        ],
+        "en": [
+          "How is your usual mobility and independence",
+          "Can you manage daily activities independently"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "expectations",
+      "topic": "ice",
+      "question": {
+        "zh-CN": "您最希望我们帮助什么？",
+        "en": "What are you hoping we can help with?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录这项信息，需要另行核实。",
+        "en": "This information is not recorded and needs separate verification."
+      },
+      "keywords": {
+        "zh-CN": [
+          "您最希望我们帮助什么",
+          "这次就诊最想解决什么"
+        ],
+        "en": [
+          "What are you hoping we can help with",
+          "What matters most to you in this visit"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "antithrombotic",
+      "topic": "medications",
+      "question": {
+        "zh-CN": "脑梗死后在吃阿司匹林、氯吡格雷或抗凝药吗？",
+        "en": "Since the stroke, do you take aspirin, clopidogrel or a blood thinner?"
+      },
+      "answer": {
+        "zh-CN": "这份病例没有记录用药，包括抗血小板或抗凝药，不能替我补写。",
+        "en": "The case does not record medicines, including antiplatelets or anticoagulants; please do not fill it in."
+      },
+      "keywords": {
+        "zh-CN": [
+          "阿司匹林",
+          "氯吡格雷",
+          "抗凝药",
+          "抗血小板",
+          "吃的抗栓药"
+        ],
+        "en": [
+          "aspirin",
+          "clopidogrel",
+          "bloodthinner",
+          "anticoagulant",
+          "antiplatelet"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": true,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "copd-status",
+      "topic": "pmh",
+      "question": {
+        "zh-CN": "慢阻肺平时喘得厉害吗？用吸入药吗？最近有没有加重？",
+        "en": "How is the COPD — breathless day to day, inhalers, any recent flare-ups?"
+      },
+      "answer": {
+        "zh-CN": "原报告只写了有慢阻肺病史，没有记录症状、吸入药、加重或肺功能。",
+        "en": "The source records only a history of COPD — no symptoms, inhalers, exacerbations or lung function."
+      },
+      "keywords": {
+        "zh-CN": [
+          "慢阻肺平时",
+          "吸入药",
+          "喘得厉害",
+          "慢阻肺加重",
+          "肺功能"
+        ],
+        "en": [
+          "inhaler",
+          "copdflare",
+          "breathlessdaytoday",
+          "lungfunction",
+          "copdcontrol"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": true,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "stroke-deficit",
+      "topic": "pmh",
+      "question": {
+        "zh-CN": "脑梗死后留下手脚无力、说话或吞咽问题了吗？",
+        "en": "Did the stroke leave weakness, speech or swallowing problems?"
+      },
+      "answer": {
+        "zh-CN": "原报告只写了既往脑梗死，没有记录后遗症、时间或吞咽情况。",
+        "en": "The source records only a previous cerebral infarction — not its date, residual deficits or swallowing."
+      },
+      "keywords": {
+        "zh-CN": [
+          "脑梗后遗症",
+          "手脚无力",
+          "吞咽",
+          "说话不清",
+          "脑梗死后"
+        ],
+        "en": [
+          "strokeleftweakness",
+          "swallowing",
+          "residualdeficit",
+          "speechproblems",
+          "aftertheastroke"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    }
+  ],
+  "exam": [
+    {
+      "id": "entry-vitals",
+      "system": "vitals",
+      "maneuver": {
+        "zh-CN": "查看入院生命体征记录",
+        "en": "Review admission vital signs"
+      },
+      "finding": {
+        "zh-CN": "体温36.6 ℃，脉搏78次/min，呼吸19次/min，血压128/78 mmHg。",
+        "en": "Temperature 36.6 °C, pulse 78/min, respiratory rate 19/min, BP 128/78 mmHg."
+      },
+      "keywords": {
+        "zh-CN": [
+          "查看入院生命体征记录"
+        ],
+        "en": [
+          "Review admission vital signs"
+        ]
+      },
+      "requires": [],
+      "abnormal": false,
+      "required": true,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    },
+    {
+      "id": "apex",
+      "system": "cardiovascular",
+      "maneuver": {
+        "zh-CN": "检查心尖搏动位置",
+        "en": "Locate the apex beat"
+      },
+      "finding": {
+        "zh-CN": "心尖搏动位于右侧第5肋间隙，心率78次/min。",
+        "en": "Apex beat in the right fifth intercostal space; heart rate 78/min."
+      },
+      "keywords": {
+        "zh-CN": [
+          "检查心尖搏动位置"
+        ],
+        "en": [
+          "Locate the apex beat"
+        ]
+      },
+      "requires": [],
+      "abnormal": true,
+      "required": true,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    },
+    {
+      "id": "palpation",
+      "system": "abdomen",
+      "maneuver": {
+        "zh-CN": "腹部触诊",
+        "en": "Palpate the abdomen"
+      },
+      "finding": {
+        "zh-CN": "腹软，上腹部压痛，无反跳痛；肝脾肋下未触及，全腹未及包块。",
+        "en": "Soft abdomen with upper abdominal tenderness and no rebound; liver and spleen not palpable below the costal margins; no mass."
+      },
+      "keywords": {
+        "zh-CN": [
+          "腹部触诊"
+        ],
+        "en": [
+          "Palpate the abdomen"
+        ]
+      },
+      "requires": [],
+      "abnormal": true,
+      "required": true,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    },
+    {
+      "id": "murphy",
+      "system": "abdomen",
+      "maneuver": {
+        "zh-CN": "检查Murphy征",
+        "en": "Assess Murphy sign"
+      },
+      "finding": {
+        "zh-CN": "Murphy征阴性。",
+        "en": "Murphy sign negative."
+      },
+      "keywords": {
+        "zh-CN": [
+          "检查Murphy征"
+        ],
+        "en": [
+          "Assess Murphy sign"
+        ]
+      },
+      "requires": [],
+      "abnormal": false,
+      "required": false,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    },
+    {
+      "id": "bowel",
+      "system": "abdomen",
+      "maneuver": {
+        "zh-CN": "听诊肠鸣音",
+        "en": "Auscultate bowel sounds"
+      },
+      "finding": {
+        "zh-CN": "肠鸣音3–4次/min，无气过水音。",
+        "en": "Bowel sounds 3–4/min; no succussion splash."
+      },
+      "keywords": {
+        "zh-CN": [
+          "听诊肠鸣音"
+        ],
+        "en": [
+          "Auscultate bowel sounds"
+        ]
+      },
+      "requires": [],
+      "abnormal": false,
+      "required": false,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    },
+    {
+      "id": "percussion",
+      "system": "abdomen",
+      "maneuver": {
+        "zh-CN": "腹部叩诊",
+        "en": "Percuss the abdomen"
+      },
+      "finding": {
+        "zh-CN": "腹部叩诊呈鼓音，肝浊音界存在，无移动性浊音；肝肾区叩痛阴性。",
+        "en": "Tympanic percussion with liver dullness present, no shifting dullness and no hepatic or renal percussion tenderness."
+      },
+      "keywords": {
+        "zh-CN": [
+          "腹部叩诊"
+        ],
+        "en": [
+          "Percuss the abdomen"
+        ]
+      },
+      "requires": [],
+      "abnormal": false,
+      "required": false,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    },
+    {
+      "id": "inspection",
+      "system": "abdomen",
+      "maneuver": {
+        "zh-CN": "视诊腹部",
+        "en": "Inspect the abdomen"
+      },
+      "finding": {
+        "zh-CN": "腹平坦，无胃肠型、蠕动波或腹壁静脉曲张。",
+        "en": "Flat abdomen, no visible bowel outline, peristaltic waves or abdominal wall varices."
+      },
+      "keywords": {
+        "zh-CN": [
+          "视诊腹部"
+        ],
+        "en": [
+          "Inspect the abdomen"
+        ]
+      },
+      "requires": [],
+      "abnormal": false,
+      "required": false,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    },
+    {
+      "id": "nodes",
+      "system": "lymphatic",
+      "maneuver": {
+        "zh-CN": "检查浅表淋巴结",
+        "en": "Examine superficial lymph nodes"
+      },
+      "finding": {
+        "zh-CN": "原报告记载浅表淋巴结未见异常。",
+        "en": "No superficial lymph-node abnormality reported."
+      },
+      "keywords": {
+        "zh-CN": [
+          "检查浅表淋巴结"
+        ],
+        "en": [
+          "Examine superficial lymph nodes"
+        ]
+      },
+      "requires": [],
+      "abnormal": false,
+      "required": false,
+      "source": {
+        "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+        "en": "Source report p. 180, Case; limited to recorded information."
+      },
+      "phases": [
+        "assessment"
+      ]
+    }
+  ],
+  "examNotRecorded": {
+    "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+    "en": "Not recorded in the source; this does not establish normality or absence."
+  },
+  "investigations": [
+    {
+      "id": "ultrasound-record",
+      "name": {
+        "zh-CN": "查阅腹部超声报告",
+        "en": "Review abdominal ultrasound report"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅腹部超声报告"
+        ],
+        "en": [
+          "Review abdominal ultrasound report"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "assessment": {
+          "text": {
+            "zh-CN": "内脏反置；胆囊泥沙样结石。",
+            "en": "Visceral inversion and sludge-like gallstones."
+          },
+          "source": {
+            "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+            "en": "Source report p. 180, Case; limited to recorded information."
+          }
+        }
+      }
+    },
+    {
+      "id": "ct-record",
+      "name": {
+        "zh-CN": "查阅腹部CT报告",
+        "en": "Review abdominal CT report"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅腹部CT报告"
+        ],
+        "en": [
+          "Review abdominal CT report"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "essential",
+      "results": {
+        "assessment": {
+          "text": {
+            "zh-CN": "横断位：全内脏反位，肝脏和胆囊在腹腔左侧，脾脏和胃在右侧；胆囊结石，颈管迂曲。冠状位：左心室在胸腔右侧，心尖指向右侧。原始DICOM序列未提供。",
+            "en": "Axial CT: situs inversus totalis; liver and gallbladder on the left, spleen and stomach on the right; gallstones and a tortuous gallbladder neck/duct region. Coronal CT: left ventricle in the right chest with a right-pointing apex. No original DICOM series is supplied."
+          },
+          "source": {
+            "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+            "en": "Source report p. 180, Case; limited to recorded information."
+          }
+        }
+      }
+    },
+    {
+      "id": "laboratory-record",
+      "name": {
+        "zh-CN": "查阅术前实验室报告",
+        "en": "Review preoperative laboratory report"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅术前实验室报告"
+        ],
+        "en": [
+          "Review preoperative laboratory report"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "assessment": {
+          "text": {
+            "zh-CN": "原文概述血常规、血生化和血凝指标正常；未提供具体项目、数值、单位、参考范围及采样时间。不得自行补写。",
+            "en": "The report summarises blood count, biochemistry and coagulation as normal; individual tests, numbers, units, reference ranges and sampling times are not supplied. Do not fill these in."
+          },
+          "source": {
+            "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+            "en": "Source report p. 180, Case; limited to recorded information."
+          }
+        }
+      }
+    },
+    {
+      "id": "operation-record",
+      "name": {
+        "zh-CN": "查阅既往手术记录",
+        "en": "Review the recorded operation"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅既往手术记录"
+        ],
+        "en": [
+          "Review the recorded operation"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "review": {
+          "text": {
+            "zh-CN": "历史记录：全身麻醉下完成腹腔镜胆囊切除。术中确认腹腔脏器镜像反位；原文记录主刀与助手在患者左侧、采用三孔法。手术30 min，出血量描述为少量，无精确数值。该记录不是本模拟器实施手术后的预测结果。",
+            "en": "Historical record: laparoscopic cholecystectomy under general anaesthesia, with mirror-image abdominal anatomy confirmed. The authors describe the surgeon and assistant on the patient's left and three ports. Duration 30 min; blood loss described as small, without a number. This is a published outcome, not a prediction produced by the simulator."
+          },
+          "source": {
+            "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+            "en": "Source report p. 180, Case; limited to recorded information."
+          }
+        }
+      }
+    },
+    {
+      "id": "pathology-record",
+      "name": {
+        "zh-CN": "查阅术后病理记录",
+        "en": "Review postoperative histology"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅术后病理记录"
+        ],
+        "en": [
+          "Review postoperative histology"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "review": {
+          "text": {
+            "zh-CN": "慢性胆囊炎，胆囊结石。",
+            "en": "Chronic cholecystitis with gallstones."
+          },
+          "source": {
+            "zh-CN": "原报告第180页“病例”；以原文记载为限。",
+            "en": "Source report p. 180, Case; limited to recorded information."
+          }
+        }
+      }
+    },
+    {
+      "id": "followup-record",
+      "name": {
+        "zh-CN": "查阅出院和随访记录",
+        "en": "Review discharge and follow-up"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅出院和随访记录"
+        ],
+        "en": [
+          "Review discharge and follow-up"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "review": {
+          "text": {
+            "zh-CN": "术后第2天恢复肛门排气；第4天复查相关实验室指标未见明显异常；第5天出院。1个月门诊复查恢复良好，无明显不适及并发症。未提供长期结局。",
+            "en": "Flatus on postoperative day 2; repeat laboratory indices without a reported significant abnormality on day 4; discharged on day 5. At one month he was recovering well without reported significant discomfort or complications. Long-term outcome is not supplied."
+          },
+          "source": {
+            "zh-CN": "原报告第180页病例结局。",
+            "en": "Source report p. 180, outcome."
+          }
+        }
+      }
+    },
+    {
+      "id": "ecg-record",
+      "name": {
+        "zh-CN": "查阅心电图",
+        "en": "Review the ECG"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅心电图"
+        ],
+        "en": [
+          "Review the ECG"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "preop": {
+          "available": false,
+          "text": {
+            "zh-CN": "病历中没有心电图记录。右位心时需按镜像位置放置胸导联，结果才可解读。",
+            "en": "No ECG is recorded. With dextrocardia the chest leads must be placed in mirror positions for a readable tracing."
+          },
+          "source": {
+            "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+            "en": "Not recorded in the source; this does not establish normality or absence."
+          }
+        }
+      }
+    },
+    {
+      "id": "pft-record",
+      "name": {
+        "zh-CN": "查阅肺功能",
+        "en": "Review lung function tests"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅肺功能"
+        ],
+        "en": [
+          "Review lung function tests"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "preop": {
+          "available": false,
+          "text": {
+            "zh-CN": "病历中没有肺功能或血气记录。",
+            "en": "No lung function tests or blood gases are recorded."
+          },
+          "source": {
+            "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+            "en": "Not recorded in the source; this does not establish normality or absence."
+          }
+        }
+      }
+    },
+    {
+      "id": "cxr-record",
+      "name": {
+        "zh-CN": "查阅胸片",
+        "en": "Review the chest X-ray"
+      },
+      "category": "record",
+      "aliases": {
+        "zh-CN": [
+          "查阅胸片"
+        ],
+        "en": [
+          "Review the chest X-ray"
+        ]
+      },
+      "requires": [
+        "records"
+      ],
+      "performedAt": "records",
+      "risk": "none",
+      "value": "useful",
+      "results": {
+        "preop": {
+          "available": false,
+          "text": {
+            "zh-CN": "病历中没有胸片记录；心胸位置见CT冠状位。",
+            "en": "No chest X-ray is recorded; cardiothoracic position is shown on the coronal CT."
+          },
+          "source": {
+            "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+            "en": "Not recorded in the source; this does not establish normality or absence."
+          }
+        }
+      }
+    }
+  ],
+  "interventions": [
+    {
+      "id": "sign-in",
+      "name": {
+        "zh-CN": "WHO 麻醉前核对（Sign In）并连接监护",
+        "en": "WHO Sign In before induction, monitoring attached"
+      },
+      "kind": "monitoring",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位），右位心——心电图导联和除颤电极按镜像放置；过敏、气道与误吸风险、预计失血尚未记录，需当场确认。监护已连接。",
+        "en": "Identity, procedure, consent and site checked: the gallbladder is on the patient's LEFT (situs inversus totalis); dextrocardia — ECG leads and defibrillator pads placed in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded and are confirmed now. Monitoring attached."
+      },
+      "indicatedWhen": {
+        "phase": "theatre"
+      }
+    },
+    {
+      "id": "induction",
+      "name": {
+        "zh-CN": "全身麻醉诱导与气管插管",
+        "en": "Induce general anaesthesia and intubate"
+      },
+      "kind": "airway",
+      "requires": [],
+      "risk": "high",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "麻醉诱导完成，气管插管，机械通气。（教学步骤：不涉及药物剂量。）",
+        "en": "Anaesthesia induced; intubated and ventilated. (Teaching step: no drug doses are modelled.)"
+      },
+      "indicatedWhen": {
+        "intervened": "sign-in"
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "intervened": "sign-in"
+        }
+      },
+      "harm": {
+        "zh-CN": "未完成麻醉前核对就诱导：过敏、气道和部位风险未经团队确认。",
+        "en": "Induction before the Sign In: allergy, airway and site risks were not confirmed by the team."
+      }
+    },
+    {
+      "id": "time-out",
+      "name": {
+        "zh-CN": "WHO 切皮前暂停核对（Time Out）",
+        "en": "WHO Time Out before incision"
+      },
+      "kind": "consult",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。",
+        "en": "The team confirms the patient, a laparoscopic cholecystectomy and the left-sided pathology; the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach."
+      },
+      "indicatedWhen": {
+        "intervened": "induction"
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "intervened": "induction"
+        }
+      },
+      "harm": {
+        "zh-CN": "麻醉诱导前就进行切皮前核对，顺序不对。",
+        "en": "A Time Out before anaesthesia is out of order."
+      }
+    },
+    {
+      "id": "sign-out",
+      "name": {
+        "zh-CN": "WHO 离开手术室前核对（Sign Out）",
+        "en": "WHO Sign Out before leaving theatre"
+      },
+      "kind": "consult",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "确认实施的手术、器械与纱布清点、标本标记、需关注的问题（包括任何术中并发症）并交接恢复室。",
+        "en": "The procedure performed, instrument and swab counts, specimen labelling and concerns for recovery (including any intra-operative complication) are confirmed and handed over."
+      },
+      "indicatedWhen": {
+        "any": [
+          {
+            "procedure": {
+              "closed": true
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "convert-open"
+            }
+          }
+        ]
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "any": [
+            {
+              "procedure": {
+                "closed": true
+              }
+            },
+            {
+              "procedure": {
+                "bailout": "convert-open"
+              }
+            }
+          ]
+        }
+      },
+      "harm": {
+        "zh-CN": "手术尚未结束就做离室核对。",
+        "en": "Sign Out before the operation has ended."
+      }
+    },
+    {
+      "id": "pacu-handover",
+      "name": {
+        "zh-CN": "恢复室交接",
+        "en": "Hand over in the recovery room"
+      },
+      "kind": "monitoring",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；需观察的问题。",
+        "en": "Handover: 84 years, COPD, previous stroke, situs inversus totalis; the operation done and anything that happened; what to watch."
+      },
+      "indicatedWhen": {
+        "phase": "recovery"
+      }
+    },
+    {
+      "id": "open-historical-review",
+      "name": {
+        "zh-CN": "结束模拟，打开原报告的手术、病理与随访记录",
+        "en": "End the simulation and open the reported operation, histology and follow-up"
+      },
+      "kind": "consult",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "以下为原报告记载的真实经过；模拟中的操作不改变它。",
+        "en": "What follows is what the source reports; nothing done in the simulation changes it."
+      },
+      "indicatedWhen": {
+        "decided": "postop"
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "decided": "postop"
+        }
+      },
+      "harm": {
+        "zh-CN": "术后观察要点尚未讨论。",
+        "en": "Postoperative priorities have not been discussed yet."
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "id": "history",
+      "title": {
+        "zh-CN": "核实症状、合并症与关键缺失资料",
+        "en": "Review presentation, comorbidities and key missing data"
+      },
+      "hint": {
+        "zh-CN": "询问主诉、既往病史及过敏资料，保留未记录项。",
+        "en": "Ask about the presentation, medical history and allergies; preserve missing information."
+      },
+      "guidance": {
+        "zh-CN": "询问主诉、既往病史及过敏资料，保留未记录项。",
+        "en": "Ask about the presentation, medical history and allergies; preserve missing information."
+      },
+      "completeWhen": {
+        "all": [
+          {
+            "asked": "presentation"
+          },
+          {
+            "asked": "pmh"
+          },
+          {
+            "asked": "allergies"
+          }
+        ]
+      },
+      "waypoints": [
+        {
+          "target": "patient"
+        }
+      ]
+    },
+    {
+      "id": "evidence",
+      "title": {
+        "zh-CN": "完成检查与影像资料核对",
+        "en": "Review examination and imaging evidence"
+      },
+      "hint": {
+        "zh-CN": "核对查体记录与现有报告，再作判断。",
+        "en": "Review examination and existing reports before deciding."
+      },
+      "guidance": {
+        "zh-CN": "核对查体记录与现有报告，再作判断。",
+        "en": "Review examination and existing reports before deciding."
+      },
+      "completeWhen": {
+        "all": [
+          {
+            "examined": "apex"
+          },
+          {
+            "examined": "palpation"
+          },
+          {
+            "read": "ct-record"
+          },
+          {
+            "read": "ultrasound-record"
+          },
+          {
+            "read": "laboratory-record"
+          }
+        ]
+      },
+      "waypoints": [
+        {
+          "target": "patient"
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": {
+        "zh-CN": "诊断、解剖与计划",
+        "en": "Diagnosis, anatomy and plan"
+      },
+      "hint": {
+        "zh-CN": "先说清楚证据支持什么诊断、器官在哪一侧，再定个体化计划。",
+        "en": "State what diagnosis the evidence supports and which side the organs are on, then make an individualised plan."
+      },
+      "completeWhen": {
+        "all": [
+          {
+            "decided": "diagnosis"
+          },
+          {
+            "decided": "anatomy"
+          },
+          {
+            "decided": "planning"
+          },
+          {
+            "decided": "safety"
+          }
+        ]
+      },
+      "waypoints": [
+        {
+          "target": "board"
+        }
+      ]
+    },
+    {
+      "id": "periop",
+      "title": {
+        "zh-CN": "术前评估与安全核对",
+        "en": "Perioperative assessment and checks"
+      },
+      "hint": {
+        "zh-CN": "弄清楚高龄、慢阻肺与卒中带来的风险，再做麻醉前核对、诱导和切皮前暂停核对。",
+        "en": "Clarify the risks of age, COPD and stroke, then the Sign In, induction and the Time Out."
+      },
+      "completeWhen": {
+        "all": [
+          {
+            "decided": "risk"
+          },
+          {
+            "intervened": "sign-in"
+          },
+          {
+            "intervened": "induction"
+          },
+          {
+            "intervened": "time-out"
+          }
+        ]
+      },
+      "waypoints": [
+        {
+          "target": "board"
+        }
+      ]
+    },
+    {
+      "id": "operate",
+      "title": {
+        "zh-CN": "完成手术",
+        "en": "Perform the operation"
+      },
+      "hint": {
+        "zh-CN": "布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后离室核对。",
+        "en": "Ports, traction, dissection to a true critical view of safety, then clips and division — or a safe alternative if it cannot be reached. Then the Sign Out."
+      },
+      "completeWhen": {
+        "all": [
+          {
+            "any": [
+              {
+                "procedure": {
+                  "closed": true
+                }
+              },
+              {
+                "procedure": {
+                  "bailout": "convert-open"
+                }
+              }
+            ]
+          },
+          {
+            "intervened": "sign-out"
+          }
+        ]
+      },
+      "waypoints": [
+        {
+          "target": "patient"
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "title": {
+        "zh-CN": "术后与原报告回看",
+        "en": "Recovery and the reported course"
+      },
+      "hint": {
+        "zh-CN": "交接恢复室、定观察重点，再回看原报告的手术、病理和随访。",
+        "en": "Hand over in recovery, set what to watch, then review the reported operation, histology and follow-up."
+      },
+      "completeWhen": {
+        "all": [
+          {
+            "decided": "postop"
+          },
+          {
+            "read": "operation-record"
+          },
+          {
+            "read": "pathology-record"
+          },
+          {
+            "read": "followup-record"
+          },
+          {
+            "decided": "outcome"
+          }
+        ]
+      },
+      "waypoints": [
+        {
+          "target": "records"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "diagnosis",
+      "kind": "single",
+      "prompt": {
+        "zh-CN": "依据现有资料，最站得住的诊断表述是什么？",
+        "en": "On the evidence available, which diagnostic statement holds best?"
+      },
+      "requires": {
+        "all": [
+          {
+            "read": "ultrasound-record"
+          },
+          {
+            "read": "laboratory-record"
+          },
+          {
+            "examined": "murphy"
+          }
+        ]
+      },
+      "need": {
+        "zh-CN": "先查阅超声、化验并检查Murphy征。",
+        "en": "Review the ultrasound and laboratory records and check Murphy's sign first."
+      },
+      "options": [
+        {
+          "id": "suspected",
+          "text": {
+            "zh-CN": "胆囊结石，伴疑似（未确诊）急性胆囊炎",
+            "en": "Gallstone disease with suspected, not confirmed, acute cholecystitis"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "正确。东京指南2018：有上腹压痛和发热病史，但查体体温正常、Murphy征阴性、化验概述正常，超声只记载泥沙样结石，局部、全身和影像三项不能同时成立——是胆囊结石伴疑似急性胆囊炎，证据不完整。",
+            "en": "Correct. Tokyo Guidelines 2018: upper abdominal tenderness and a reported fever, but a normal temperature at examination, a negative Murphy sign, laboratory results summarised as normal and an ultrasound that records only sludge-like stones — the local, systemic and imaging criteria do not all hold. Gallstone disease with suspected acute cholecystitis; the evidence is incomplete."
+          }
+        },
+        {
+          "id": "confirmed",
+          "text": {
+            "zh-CN": "确诊急性胆囊炎",
+            "en": "Confirmed acute cholecystitis"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "确诊需要局部征象、全身炎症表现和典型影像同时存在；本例影像未记载胆囊壁增厚等炎症征象，化验概述正常。",
+            "en": "A definite diagnosis needs local signs, systemic inflammation and characteristic imaging together; here the imaging records no inflammatory signs and the laboratory summary is normal."
+          }
+        },
+        {
+          "id": "cbd-stone",
+          "text": {
+            "zh-CN": "胆总管结石",
+            "en": "Common bile duct stones"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "没有胆管扩张、黄疸或肝功能异常的记载；术中所见胆总管不扩张属于后来的记录。不能据此诊断胆总管结石。",
+            "en": "No dilated duct, jaundice or abnormal liver tests is recorded (the undilated common bile duct at operation is a later record); a common bile duct stone is not supported."
+          }
+        },
+        {
+          "id": "gastric",
+          "text": {
+            "zh-CN": "胃病，无需关注胆囊",
+            "en": "Gastric disease; the gallbladder is incidental"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "内脏反位的胆道疾病常以左上腹痛就诊而被误认为胃病；本例影像已显示结石。",
+            "en": "Biliary disease in situs inversus often presents as left upper abdominal pain mistaken for gastric disease; here imaging shows the stones."
+          }
+        }
+      ]
+    },
+    {
+      "id": "anatomy",
+      "prompt": {
+        "zh-CN": "根据已取得的影像资料，应如何记录脏器位置？",
+        "en": "How should the documented organ positions be recorded?"
+      },
+      "kind": "single",
+      "requires": {
+        "read": "ct-record"
+      },
+      "need": {
+        "zh-CN": "先取得并阅读影像资料。",
+        "en": "Obtain and read the imaging record first."
+      },
+      "options": [
+        {
+          "id": "mirror",
+          "text": {
+            "zh-CN": "肝胆左侧、胃脾右侧，并明确记录解剖反位。",
+            "en": "Liver/gallbladder left, stomach/spleen right; explicitly document inversion."
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "与CT记录一致。必须按患者的解剖位置进行核对。",
+            "en": "Matches the CT record; confirm the patient-specific anatomy."
+          }
+        },
+        {
+          "id": "usual",
+          "text": {
+            "zh-CN": "按通常位置记录肝胆在右侧。",
+            "en": "Record the usual right-sided liver and gallbladder."
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "忽略了本例已经提供的影像证据。",
+            "en": "This disregards the supplied imaging evidence."
+          }
+        },
+        {
+          "id": "unknown",
+          "text": {
+            "zh-CN": "已经阅读CT，但仍记录为完全未知。",
+            "en": "Record all positions as unknown despite reading CT."
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "对于原文明确记录的左右位置，应准确记录；未知仅适用于未记载事项。",
+            "en": "Explicitly recorded laterality is known; reserve unknown for unrecorded facts."
+          }
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "prompt": {
+        "zh-CN": "准备术前团队讨论时，哪一种计划最符合本例证据边界？",
+        "en": "Which plan respects the evidence boundaries for the preoperative team discussion?"
+      },
+      "kind": "single",
+      "requires": {
+        "all": [
+          {
+            "decided": "anatomy"
+          },
+          {
+            "asked": "pmh"
+          },
+          {
+            "asked": "allergies"
+          }
+        ]
+      },
+      "need": {
+        "zh-CN": "先核实既往病史、过敏资料和影像位置。",
+        "en": "Review comorbidities, allergy information and imaging first."
+      },
+      "options": [
+        {
+          "id": "individualised",
+          "text": {
+            "zh-CN": "提示高龄、合并症及反位；由团队结合影像、术者经验确定站位和布局，补核缺失资料。",
+            "en": "Flag age, comorbidities and inversion; the team individualises positioning/layout using imaging and experience, and verifies missing information."
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "原报告讨论承认站位与布孔并无唯一模式；本样例不把作者采用的布孔方式当作唯一标准。",
+            "en": "The source discusses more than one positioning/port approach; its particular choice is not the sole accepted standard."
+          }
+        },
+        {
+          "id": "fixed",
+          "text": {
+            "zh-CN": "对所有反位患者强制采用一个固定站位和布孔方案。",
+            "en": "Require one fixed positioning and port layout for every patient with inversion."
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "将个案做法推广为普遍规则，超出了原文支持范围。",
+            "en": "Generalising one report into a universal rule exceeds the evidence."
+          }
+        },
+        {
+          "id": "assume",
+          "text": {
+            "zh-CN": "未记录的过敏和用药一律补成无异常。",
+            "en": "Fill unrecorded allergies and medicines in as normal or absent."
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "缺失信息不等于阴性结果，需要另行核实。",
+            "en": "Missing information is not a negative finding and needs verification."
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "prompt": {
+        "zh-CN": "进入历史手术记录回看前，应采用哪项安全原则？",
+        "en": "Which safety principle should precede the historical operation review?"
+      },
+      "kind": "single",
+      "requires": {
+        "all": [
+          {
+            "decided": "planning"
+          },
+          {
+            "read": "laboratory-record"
+          }
+        ]
+      },
+      "need": {
+        "zh-CN": "先完成团队计划并查阅现有术前资料。",
+        "en": "Complete the team plan and review available preoperative records first."
+      },
+      "options": [
+        {
+          "id": "verify",
+          "text": {
+            "zh-CN": "核对患者、拟行操作和解剖侧别；不因镜像经验而省略结构辨认，不确定时暂停并寻求协助。",
+            "en": "Confirm patient, planned procedure and anatomical laterality; identify structures and pause for help when uncertain."
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "WHO要求团队暂停核对患者、操作及部位；SAGES强调解剖辨认与不确定时的安全策略。本项为教学规则，非原报告已执行事项。",
+            "en": "WHO calls for team verification; SAGES emphasises anatomical identification and safe responses to uncertainty. This is an authored teaching rule, not a claim about what the report documents."
+          }
+        },
+        {
+          "id": "blind",
+          "text": {
+            "zh-CN": "只凭通常位置和外观直接处理管状结构。",
+            "en": "Act on tubular structures using usual position and appearance alone."
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "既不尊重反位证据，也未完成解剖辨认。",
+            "en": "This ignores inversion and omits anatomical identification."
+          }
+        },
+        {
+          "id": "clearance",
+          "text": {
+            "zh-CN": "因原文概述检验正常，就宣布已经完成全部麻醉风险评估。",
+            "en": "Treat the normal laboratory summary as completed anaesthetic clearance."
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "原文未给出完整麻醉评估、禁食、气道及用药资料。",
+            "en": "A full anaesthetic assessment, fasting, airway and medication record are not supplied."
+          }
+        }
+      ]
+    },
+    {
+      "id": "outcome",
+      "prompt": {
+        "zh-CN": "这份病例的结局能支持怎样的表述？",
+        "en": "What outcome statement is supported by this report?"
+      },
+      "kind": "single",
+      "requires": {
+        "all": [
+          {
+            "read": "pathology-record"
+          },
+          {
+            "read": "followup-record"
+          }
+        ]
+      },
+      "need": {
+        "zh-CN": "进入回看阶段后阅读病理与随访记录。",
+        "en": "Read histology and follow-up in the review phase."
+      },
+      "options": [
+        {
+          "id": "bounded",
+          "text": {
+            "zh-CN": "本例1个月随访恢复良好；不能据此估计长期结局或普遍手术成功率。",
+            "en": "Recovery was good at one month in this case; long-term outcome and population success rates cannot be inferred."
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "保持个案结局、随访时长和外推边界。",
+            "en": "Preserve the case-level outcome, follow-up duration and limits of inference."
+          }
+        },
+        {
+          "id": "guarantee",
+          "text": {
+            "zh-CN": "本模拟器证明同类患者手术都能成功。",
+            "en": "The simulator proves surgery succeeds in all similar patients."
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "单例报告与脚本执行均不能证明普遍疗效。",
+            "en": "Neither a single report nor a scripted simulation establishes general efficacy."
+          }
+        }
+      ]
+    },
+    {
+      "id": "risk",
+      "kind": "multiple",
+      "prompt": {
+        "zh-CN": "麻醉和手术前，哪些问题必须先弄清楚或做好准备？（多选）",
+        "en": "Before anaesthesia and surgery, what must be clarified or prepared? (select all that apply)"
+      },
+      "requires": {
+        "all": [
+          {
+            "asked": "pmh"
+          },
+          {
+            "decided": "planning"
+          }
+        ]
+      },
+      "need": {
+        "zh-CN": "先了解既往病史并完成个体化计划。",
+        "en": "Take the medical history and make the individualised plan first."
+      },
+      "options": [
+        {
+          "id": "copd",
+          "text": {
+            "zh-CN": "慢阻肺的现状与通气风险",
+            "en": "COPD status and ventilatory risk"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "84岁慢阻肺患者要评估呼吸症状、用药、近期加重；气腹和全麻会加重通气负担。",
+            "en": "An 84-year-old with COPD needs symptoms, medication and recent exacerbations assessed; pneumoperitoneum and general anaesthesia add to the ventilatory load."
+          }
+        },
+        {
+          "id": "antithrombotic",
+          "text": {
+            "zh-CN": "抗血小板/抗凝药",
+            "en": "Antiplatelet or anticoagulant therapy"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "脑梗死后可能在用抗血小板或抗凝药；病例未记录，须核实并按出血/血栓风险决定是否停用。",
+            "en": "After a stroke he may take antiplatelets or anticoagulants; the case does not say — verify and decide on interruption by bleeding and thrombotic risk."
+          }
+        },
+        {
+          "id": "function",
+          "text": {
+            "zh-CN": "神经功能后遗症、吞咽与活动能力",
+            "en": "Residual neurological deficit, swallowing and mobility"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "既往卒中后的后遗症、吞咽与活动能力影响误吸风险和术后康复。",
+            "en": "Residual stroke deficits, swallowing and mobility affect aspiration risk and recovery."
+          }
+        },
+        {
+          "id": "dextrocardia",
+          "text": {
+            "zh-CN": "右位心对监护和除颤的影响",
+            "en": "What dextrocardia means for monitoring and defibrillation"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "右位心：心电图胸导联与除颤电极要按镜像位置放置。",
+            "en": "Dextrocardia: ECG chest leads and defibrillator pads go in mirror positions."
+          }
+        },
+        {
+          "id": "asa",
+          "text": {
+            "zh-CN": "根据现有记录直接定ASA分级",
+            "en": "Assign an ASA class from the record as it stands"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "病例没有ASA分级、肺功能或心功能资料，不能凭年龄和诊断名称补出分级。",
+            "en": "The case gives no ASA class, lung or cardiac function; a class cannot be filled in from age and diagnoses."
+          }
+        },
+        {
+          "id": "no-lap",
+          "text": {
+            "zh-CN": "慢阻肺禁止腹腔镜手术",
+            "en": "COPD rules out laparoscopy"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "慢阻肺不是腹腔镜手术的绝对禁忌；需要的是评估和较低气腹压等调整。",
+            "en": "COPD does not rule out laparoscopy; it calls for assessment and adjustments such as lower insufflation pressure."
+          }
+        }
+      ]
+    },
+    {
+      "id": "postop",
+      "kind": "multiple",
+      "prompt": {
+        "zh-CN": "转入恢复室后，本例最需要重点观察什么？（多选）",
+        "en": "In recovery, what matters most to watch in this patient? (select all that apply)"
+      },
+      "requires": {
+        "intervened": "pacu-handover"
+      },
+      "need": {
+        "zh-CN": "先完成恢复室交接。",
+        "en": "Complete the recovery-room handover first."
+      },
+      "options": [
+        {
+          "id": "resp",
+          "text": {
+            "zh-CN": "呼吸与氧合",
+            "en": "Breathing and oxygenation"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "高龄慢阻肺：氧合、呼吸频率、二氧化碳潴留与咳痰能力。",
+            "en": "Old age and COPD: oxygenation, respiratory rate, CO₂ retention and ability to cough."
+          }
+        },
+        {
+          "id": "neuro",
+          "text": {
+            "zh-CN": "意识与新发神经体征",
+            "en": "Consciousness and new neurological signs"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "既往卒中：术后谵妄与新发神经功能缺损要及时识别。",
+            "en": "Previous stroke: recognise delirium and any new neurological deficit early."
+          }
+        },
+        {
+          "id": "bile",
+          "text": {
+            "zh-CN": "胆漏与胆管损伤的征象",
+            "en": "Signs of bile leak or bile duct injury"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "胆漏或胆管损伤可在术后才表现：腹痛加重、发热、黄疸、引流或伤口胆汁。",
+            "en": "A bile leak or duct injury may show only after surgery: worsening pain, fever, jaundice, bile in a drain or wound."
+          }
+        },
+        {
+          "id": "bleed",
+          "text": {
+            "zh-CN": "出血征象",
+            "en": "Signs of bleeding"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "心率加快、血压下降、腹胀提示出血。",
+            "en": "A rising heart rate, falling blood pressure or distension suggest bleeding."
+          }
+        },
+        {
+          "id": "discharge-same-day",
+          "text": {
+            "zh-CN": "常规当日出院",
+            "en": "Routine same-day discharge"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "高龄合并症患者，原报告术后第5天出院；不能把当日出院当成常规。",
+            "en": "An elderly patient with comorbidity; the source reports discharge on day 5 — same-day discharge is not the default here."
+          }
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "r-presentation",
+      "domain": "history",
+      "weight": 3,
+      "text": {
+        "zh-CN": "询问主诉与病程",
+        "en": "Presenting complaint and duration"
+      },
+      "met": {
+        "asked": "presentation"
+      }
+    },
+    {
+      "id": "r-pmh",
+      "domain": "history",
+      "weight": 3,
+      "text": {
+        "zh-CN": "询问既往病史",
+        "en": "Past medical history"
+      },
+      "met": {
+        "asked": "pmh"
+      }
+    },
+    {
+      "id": "r-allergy",
+      "domain": "safety",
+      "weight": 2,
+      "text": {
+        "zh-CN": "询问过敏史（未记录即为未知）",
+        "en": "Allergies (unrecorded means unknown)"
+      },
+      "met": {
+        "asked": "allergies"
+      }
+    },
+    {
+      "id": "r-exam",
+      "domain": "examination",
+      "weight": 2,
+      "text": {
+        "zh-CN": "查心尖搏动与腹部",
+        "en": "Apex beat and abdomen examined"
+      },
+      "met": {
+        "all": [
+          {
+            "examined": "apex"
+          },
+          {
+            "examined": "palpation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-diagnosis",
+      "domain": "diagnosis",
+      "weight": 5,
+      "text": {
+        "zh-CN": "诊断表述与证据相符（疑似而非确诊）",
+        "en": "Diagnosis matches the evidence (suspected, not confirmed)"
+      },
+      "met": {
+        "decidedFirstTry": "diagnosis"
+      }
+    },
+    {
+      "id": "r-ct",
+      "domain": "investigations",
+      "weight": 2,
+      "text": {
+        "zh-CN": "查阅CT",
+        "en": "CT reviewed"
+      },
+      "met": {
+        "read": "ct-record"
+      }
+    },
+    {
+      "id": "r-us",
+      "domain": "investigations",
+      "weight": 1,
+      "text": {
+        "zh-CN": "查阅超声",
+        "en": "Ultrasound reviewed"
+      },
+      "met": {
+        "read": "ultrasound-record"
+      }
+    },
+    {
+      "id": "r-lab",
+      "domain": "investigations",
+      "weight": 1,
+      "text": {
+        "zh-CN": "查阅化验",
+        "en": "Laboratory record reviewed"
+      },
+      "met": {
+        "read": "laboratory-record"
+      }
+    },
+    {
+      "id": "r-plan",
+      "domain": "management",
+      "weight": 3,
+      "text": {
+        "zh-CN": "个体化计划",
+        "en": "Individualised plan"
+      },
+      "met": {
+        "decidedFirstTry": "planning"
+      }
+    },
+    {
+      "id": "r-risk",
+      "domain": "safety",
+      "weight": 3,
+      "text": {
+        "zh-CN": "围术期风险问题找全",
+        "en": "Perioperative risks identified"
+      },
+      "met": {
+        "decidedFirstTry": "risk"
+      }
+    },
+    {
+      "id": "r-anatomy",
+      "domain": "diagnosis",
+      "weight": 6,
+      "text": {
+        "zh-CN": "正确判断器官侧别",
+        "en": "Laterality identified correctly"
+      },
+      "met": {
+        "decidedFirstTry": "anatomy"
+      },
+      "critical": true
+    },
+    {
+      "id": "r-signin",
+      "domain": "safety",
+      "weight": 2,
+      "text": {
+        "zh-CN": "诱导前完成麻醉前核对",
+        "en": "Sign In before induction"
+      },
+      "met": {
+        "all": [
+          {
+            "intervened": "sign-in"
+          },
+          {
+            "intervened": "induction"
+          }
+        ]
+      },
+      "scoredWhen": {
+        "intervened": "induction"
+      }
+    },
+    {
+      "id": "r-timeout",
+      "domain": "safety",
+      "weight": 2,
+      "text": {
+        "zh-CN": "切皮前暂停核对",
+        "en": "Time Out before incision"
+      },
+      "met": {
+        "intervened": "time-out"
+      }
+    },
+    {
+      "id": "r-ports",
+      "domain": "management",
+      "weight": 2,
+      "text": {
+        "zh-CN": "选择能到达左侧胆囊三角的布孔",
+        "en": "A port plan that works the left-sided triangle"
+      },
+      "met": {
+        "any": [
+          {
+            "procedure": {
+              "plan": "three-port-left"
+            }
+          },
+          {
+            "procedure": {
+              "plan": "mirror-four-port"
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "plan": "three-port-left"
+            }
+          },
+          {
+            "procedure": {
+              "plan": "mirror-four-port"
+            }
+          },
+          {
+            "procedure": {
+              "plan": "habitual"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-traction",
+      "domain": "management",
+      "weight": 3,
+      "text": {
+        "zh-CN": "向患者左侧（外侧）牵拉胆囊颈，打开三角",
+        "en": "Neck retracted towards the patient's left to open the triangle"
+      },
+      "met": {
+        "procedure": {
+          "dissectedExposed": "hepatocystic-triangle",
+          "atLeast": 0.8
+        }
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "dissectedExposed": "hepatocystic-triangle",
+              "atLeast": 0.01
+            }
+          },
+          {
+            "procedure": {
+              "counter": "steps",
+              "gte": 8
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-safety",
+      "domain": "safety",
+      "weight": 4,
+      "text": {
+        "zh-CN": "坚持先核实再离断的原则",
+        "en": "Verify-before-dividing principle"
+      },
+      "met": {
+        "decidedFirstTry": "safety"
+      },
+      "critical": true
+    },
+    {
+      "id": "r-cvs",
+      "domain": "safety",
+      "weight": 12,
+      "text": {
+        "zh-CN": "真实建立并记录关键安全视野后才夹闭",
+        "en": "A true critical view of safety documented before clipping"
+      },
+      "met": {
+        "procedure": {
+          "documented": "cvs",
+          "valid": true
+        }
+      },
+      "critical": true,
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "unsafe": "irreversible-without-pause"
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "irreversible-without-view"
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "irreversible-on-misidentified"
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "irreversible-on-unidentified"
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "cystic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "cystic-artery"
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "common-bile-duct"
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "common-hepatic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "right-hepatic-artery"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "cystic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "cystic-artery"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "common-bile-duct"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "common-hepatic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "right-hepatic-artery"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-identify",
+      "domain": "diagnosis",
+      "weight": 6,
+      "text": {
+        "zh-CN": "正确辨认胆囊管与胆囊动脉",
+        "en": "Cystic duct and cystic artery identified correctly"
+      },
+      "met": {
+        "all": [
+          {
+            "procedure": {
+              "identified": "cystic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "identified": "cystic-artery"
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "counter": "steps",
+              "gte": 8
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-no-unsafe",
+      "domain": "safety",
+      "weight": 8,
+      "text": {
+        "zh-CN": "没有在未确认解剖时做不可逆操作",
+        "en": "No irreversible step on unconfirmed anatomy"
+      },
+      "met": {
+        "not": {
+          "any": [
+            {
+              "procedure": {
+                "unsafe": "irreversible-without-pause"
+              }
+            },
+            {
+              "procedure": {
+                "unsafe": "irreversible-without-view"
+              }
+            },
+            {
+              "procedure": {
+                "unsafe": "irreversible-on-misidentified"
+              }
+            },
+            {
+              "procedure": {
+                "unsafe": "irreversible-on-unidentified"
+              }
+            }
+          ]
+        }
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "unsafe": "irreversible-without-pause"
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "irreversible-without-view"
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "irreversible-on-misidentified"
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "irreversible-on-unidentified"
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "cystic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "cystic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-energy",
+      "domain": "safety",
+      "weight": 4,
+      "text": {
+        "zh-CN": "能量器械未在显露不足处靠近隐藏结构",
+        "en": "No energy near hidden structures in a poorly exposed field"
+      },
+      "met": {
+        "not": {
+          "any": [
+            {
+              "procedure": {
+                "unsafe": "energy-near-hidden-hazard"
+              }
+            },
+            {
+              "procedure": {
+                "injury": "thermal-injury"
+              }
+            }
+          ]
+        }
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "counter": "steps",
+              "gte": 8
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "energy-near-hidden-hazard"
+            }
+          },
+          {
+            "procedure": {
+              "injury": "thermal-injury"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-handling",
+      "domain": "management",
+      "weight": 3,
+      "text": {
+        "zh-CN": "牵拉力度适当，胆囊未撕破",
+        "en": "Gentle traction, gallbladder not torn"
+      },
+      "met": {
+        "not": {
+          "any": [
+            {
+              "procedure": {
+                "unsafe": "excessive-traction"
+              }
+            },
+            {
+              "procedure": {
+                "injury": "perforation"
+              }
+            }
+          ]
+        }
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "counter": "steps",
+              "gte": 8
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "excessive-traction"
+            }
+          },
+          {
+            "procedure": {
+              "injury": "perforation"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-clips",
+      "domain": "management",
+      "weight": 3,
+      "text": {
+        "zh-CN": "胆囊管与胆囊动脉可靠夹闭后再离断",
+        "en": "Cystic duct and artery secured before division"
+      },
+      "met": {
+        "all": [
+          {
+            "procedure": {
+              "clipped": "cystic-duct",
+              "minCount": 2
+            }
+          },
+          {
+            "procedure": {
+              "clipped": "cystic-artery",
+              "minCount": 2
+            }
+          },
+          {
+            "not": {
+              "procedure": {
+                "injury": "bleeding"
+              }
+            }
+          },
+          {
+            "not": {
+              "procedure": {
+                "injury": "bile-leak"
+              }
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "divided": "cystic-duct"
+            }
+          },
+          {
+            "procedure": {
+              "divided": "cystic-artery"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-specimen",
+      "domain": "management",
+      "weight": 3,
+      "text": {
+        "zh-CN": "标本装袋经脐孔取出，或选择了替代方式",
+        "en": "Specimen bagged and removed, or an alternative chosen"
+      },
+      "met": {
+        "any": [
+          {
+            "procedure": {
+              "specimen": "extracted"
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "subtotal-fenestrating"
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "subtotal-reconstituting"
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "convert-open"
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "counter": "steps",
+              "gte": 8
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-efficiency",
+      "domain": "efficiency",
+      "weight": 2,
+      "text": {
+        "zh-CN": "器械很少相互碰撞",
+        "en": "Few instrument clashes"
+      },
+      "met": {
+        "procedure": {
+          "counter": "clashes",
+          "lte": 2
+        }
+      },
+      "scoredWhen": {
+        "procedure": {
+          "counter": "steps",
+          "gte": 8
+        }
+      }
+    },
+    {
+      "id": "r-recognise",
+      "domain": "safety",
+      "weight": 6,
+      "text": {
+        "zh-CN": "发生的损伤被及时说出",
+        "en": "Any injury recognised aloud"
+      },
+      "met": {
+        "not": {
+          "procedure": {
+            "injury": "any",
+            "recognised": false
+          }
+        }
+      },
+      "scoredWhen": {
+        "procedure": {
+          "injury": "any"
+        }
+      }
+    },
+    {
+      "id": "r-bleeding",
+      "domain": "management",
+      "weight": 2,
+      "text": {
+        "zh-CN": "出血得到控制",
+        "en": "Bleeding controlled"
+      },
+      "met": {
+        "not": {
+          "procedure": {
+            "bleeding": "any",
+            "controlled": false
+          }
+        }
+      },
+      "scoredWhen": {
+        "procedure": {
+          "bleeding": "any"
+        }
+      }
+    },
+    {
+      "id": "r-spill",
+      "domain": "management",
+      "weight": 2,
+      "text": {
+        "zh-CN": "溢出的胆汁和结石已吸净",
+        "en": "Spilled bile and stones cleared"
+      },
+      "met": {
+        "procedure": {
+          "spillage": "bile",
+          "cleared": true
+        }
+      },
+      "scoredWhen": {
+        "procedure": {
+          "spillage": "bile"
+        }
+      }
+    },
+    {
+      "id": "r-signout",
+      "domain": "safety",
+      "weight": 1,
+      "text": {
+        "zh-CN": "离室前核对",
+        "en": "Sign Out"
+      },
+      "met": {
+        "intervened": "sign-out"
+      }
+    },
+    {
+      "id": "r-postop",
+      "domain": "management",
+      "weight": 2,
+      "text": {
+        "zh-CN": "术后观察重点",
+        "en": "Postoperative priorities"
+      },
+      "met": {
+        "decidedFirstTry": "postop"
+      }
+    },
+    {
+      "id": "r-records",
+      "domain": "investigations",
+      "weight": 1,
+      "text": {
+        "zh-CN": "回看手术与病理记录",
+        "en": "Operation and histology records reviewed"
+      },
+      "met": {
+        "all": [
+          {
+            "read": "operation-record"
+          },
+          {
+            "read": "pathology-record"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-outcome",
+      "domain": "management",
+      "weight": 1,
+      "text": {
+        "zh-CN": "正确界定单例结局的意义",
+        "en": "Single-case outcome bounded correctly"
+      },
+      "met": {
+        "decidedFirstTry": "outcome"
+      }
+    }
+  ],
+  "npcs": [
+    {
+      "role": "nurse",
+      "knowledge": {
+        "zh-CN": "协助核对现有记录；未记录的过敏、禁食和用药不能补写。",
+        "en": "Help review available records; do not invent allergy, fasting or medication information."
+      }
+    },
+    {
+      "role": "radiologist",
+      "knowledge": {
+        "zh-CN": "只解释学员已经阅读的影像报告；没有原始DICOM，不能声称完成患者级三维重建。",
+        "en": "Interpret only imaging reports already read; without original DICOM, do not claim patient-specific 3D reconstruction."
+      },
+      "interprets": [
+        "ct-record",
+        "ultrasound-record"
+      ]
+    },
+    {
+      "role": "attending",
+      "knowledge": {
+        "zh-CN": "引导学员区分来源事实与教学规则，并说明证据局限。",
+        "en": "Guide the learner to distinguish source facts from teaching rules and explain evidence limits."
+      }
+    },
+    {
+      "role": "consultant",
+      "name": {
+        "zh-CN": "麻醉医生",
+        "en": "Anaesthetist"
+      },
+      "knowledge": {
+        "zh-CN": "负责麻醉前核对、诱导、通气与监护。知道慢阻肺患者在气腹下易有二氧化碳潴留，常用较低气腹压；病例未记录肺功能、ASA分级与用药，需当场核实。不解释手术解剖。",
+        "en": "Runs the Sign In, induction, ventilation and monitoring. Knows that COPD patients retain CO₂ under pneumoperitoneum and that lower pressures are often used; the case records no lung function, ASA class or medicines — these are verified now. Does not interpret surgical anatomy."
+      }
+    }
+  ],
+  "debrief": {
+    "title": {
+      "zh-CN": "病例复盘",
+      "en": "Case debrief"
+    },
+    "conclusion": {
+      "zh-CN": "全内脏反位合并胆囊结石：现有证据支持胆囊结石伴疑似急性胆囊炎（东京指南2018），手术在镜像解剖中完成。模拟中的手术在参考解剖上进行，只有真实建立关键安全视野才算安全；原报告的结局不由模拟决定。",
+      "en": "Situs inversus totalis with gallstones: the evidence supports gallstone disease with suspected acute cholecystitis (Tokyo Guidelines 2018), operated on in mirror-image anatomy. The simulated operation runs on reference anatomy and counts as safe only with a true critical view of safety; the reported outcome is not decided by the simulation."
+    },
+    "keyReasoning": [
+      {
+        "zh-CN": "诊断以证据为限：发热史、压痛与结石不等于确诊急性胆囊炎。",
+        "en": "Diagnosis stays within the evidence: a history of fever, tenderness and stones are not a confirmed acute cholecystitis."
+      },
+      {
+        "zh-CN": "CT明确记载左右位置；原文未记载的事项保持未知。",
+        "en": "CT explicitly records laterality; unrecorded items remain unknown."
+      },
+      {
+        "zh-CN": "作者采用的站位和三孔法不是所有患者的唯一标准。",
+        "en": "The authors' positioning and three-port approach are not the sole standard for all patients."
+      },
+      {
+        "zh-CN": "术后资料仅在完成前置阶段后开放；结局来自报告，而非干预效果模型。",
+        "en": "Later records open after prerequisites; outcomes come from the report, not a treatment-effect model."
+      },
+      {
+        "zh-CN": "镜像解剖中，三角的显露靠把胆囊颈向患者左侧牵拉；沿用常规（向右）牵拉会关闭三角，并让胆总管看起来像汇入胆囊颈。",
+        "en": "In mirror-image anatomy the triangle opens by pulling the neck towards the patient's left; the habitual pull to the right closes it and makes the common bile duct look as if it runs into the gallbladder neck."
+      },
+      {
+        "zh-CN": "关键安全视野由术野判定，而非勾选：三角清空、胆囊板可见、只有两根结构进入胆囊。",
+        "en": "The critical view of safety is judged on the field, not by ticking: triangle cleared, cystic plate seen, two and only two structures entering the gallbladder."
+      }
+    ],
+    "boundaries": {
+      "zh-CN": "三维解剖为参考解剖（BodyParts3D与Layered Human程序化模型），不是患者CT重建；组织力学为状态模型，未经标定；术中生命体征为模拟值，未经临床标定；评分为教学流程检查，未经效度验证，也不是GOALS评分；未经外科、麻醉或影像专家审核。",
+      "en": "The 3D anatomy is reference anatomy (BodyParts3D and the Layered Human procedural model), not a CT reconstruction of the patient; tissue behaviour is a state model, not calibrated mechanics; intra-operative vital signs are simulated and uncalibrated; the score checks an authored workflow — it is not validated and is not a GOALS score; no surgical, anaesthetic or radiological expert has reviewed it."
+    },
+    "teachingPoints": [
+      {
+        "zh-CN": "WHO 2009：切皮前团队共同核对患者、操作及部位。",
+        "en": "WHO 2009: the team verifies patient, procedure and site before incision."
+      },
+      {
+        "zh-CN": "SAGES 2020：重视解剖辨认；解剖不确定时采用安全策略并寻求协助。",
+        "en": "SAGES 2020: prioritise anatomical identification and safe strategies/help when anatomy is uncertain."
+      },
+      {
+        "zh-CN": "缺失资料不能补成阴性；病历中的概述正常不能变成虚构数值。",
+        "en": "Missing data are not negative findings; a normal summary does not supply numerical results."
+      },
+      {
+        "zh-CN": "单例短期良好结局不等于普遍成功率。",
+        "en": "A favourable short-term outcome in one case is not a population success rate."
+      },
+      {
+        "zh-CN": "SAGES 2020：建立关键安全视野；无法建立时采用暂停、求助、术中胆道影像、胆囊次全切除或中转开腹等策略。",
+        "en": "SAGES 2020: achieve the critical view of safety; when it cannot be achieved, stop, call for help, image the bile ducts, or choose a subtotal cholecystectomy or conversion."
+      },
+      {
+        "zh-CN": "东京指南2018：确诊急性胆囊炎需要局部征象、全身炎症和影像三者兼备。",
+        "en": "Tokyo Guidelines 2018: a definite acute cholecystitis needs local signs, systemic inflammation and imaging together."
+      }
+    ],
+    "references": [
+      "张少博, 余仁斌. 内脏完全反位腹腔镜胆囊切除术一例. 肝胆胰外科杂志. 2024;36(3):180-181.",
+      "World Health Organization. Implementation manual WHO surgical safety checklist 2009. Geneva: WHO; 2009. https://www.who.int/publications/i/item/9789241598590",
+      "SAGES. Safe Cholecystectomy Multi-Society Practice Guideline. 2020. https://www.sages.org/publications/guidelines/safe-cholecystectomy-multi-society-practice-guideline/",
+      "Yokoe M, Hata J, Takada T, et al. Tokyo Guidelines 2018: diagnostic criteria and severity grading of acute cholecystitis (with videos). J Hepatobiliary Pancreat Sci. 2018;25(1):41-54.",
+      "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855.",
+      "Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125."
+    ],
+    "notice": {
+      "zh-CN": "技术样例的流程评分，非已验证的医疗能力评分；真实模型性能尚未测量。",
+      "en": "Technical demonstration workflow score, not validated clinical competence; live-model performance has not been measured."
+    }
+  },
+  "unknowns": [
+    {
+      "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+      "en": "Not recorded in the source; this does not establish normality or absence."
+    },
+    {
+      "zh-CN": "体重、SpO₂、药物、剂量、过敏、禁食、气道评估、详细检验数值及长期随访未记录。",
+      "en": "Weight, SpO₂, medicines, doses, allergies, fasting, airway assessment, detailed laboratory values and long-term follow-up are not recorded."
+    },
+    {
+      "zh-CN": "患者个体的胆管与血管走行：原报告只写“未发现血管解剖变异”，未给出胆囊管汇入方式或胆囊动脉来源。",
+      "en": "The patient's own ductal and arterial anatomy: the source says only that no vascular variation was found; it does not give the cystic duct's insertion or the cystic artery's origin."
+    },
+    {
+      "zh-CN": "ASA分级、肺功能、血气、心电图、用药（含抗血小板/抗凝药）、气道评估、麻醉方式细节。",
+      "en": "ASA class, lung function, blood gases, ECG, medicines (including antiplatelets or anticoagulants), airway assessment and anaesthetic details."
+    },
+    {
+      "zh-CN": "标本取出方式、器械规格（除报告的Trocar尺寸外）、气腹压力、出血量的具体数值。",
+      "en": "How the specimen was removed, instrument sizes beyond the reported trocars, insufflation pressure and a measured blood loss."
+    }
+  ],
+  "extensions": {
+    "collection": "surgerycraft-pilot",
+    "sourceArticleId": "1654623",
+    "historicalReview": true,
+    "testUtterances": [
+      {
+        "text": "上腹疼和发烧有多少天了？",
+        "locale": "zh-CN",
+        "expect": [
+          "presentation"
+        ]
+      },
+      {
+        "text": "Tell me about the abdominal pain and fever.",
+        "locale": "en",
+        "expect": [
+          "presentation"
+        ]
+      },
+      {
+        "text": "说一下您的既往病史。",
+        "locale": "zh-CN",
+        "expect": [
+          "pmh"
+        ]
+      },
+      {
+        "text": "Tell me your past medical history.",
+        "locale": "en",
+        "expect": [
+          "pmh"
+        ]
+      },
+      {
+        "text": "家里人有同样的先天异常吗？",
+        "locale": "zh-CN",
+        "expect": [
+          "family"
+        ]
+      },
+      {
+        "text": "Does this congenital condition run in the family?",
+        "locale": "en",
+        "expect": [
+          "family"
+        ]
+      },
+      {
+        "text": "吃药会不会过敏？",
+        "locale": "zh-CN",
+        "expect": [
+          "allergies"
+        ]
+      },
+      {
+        "text": "Any medication allergies?",
+        "locale": "en",
+        "expect": [
+          "allergies"
+        ]
+      },
+      {
+        "text": "每天吃的药有哪些？",
+        "locale": "zh-CN",
+        "expect": [
+          "medications"
+        ]
+      },
+      {
+        "text": "List your regular medicines.",
+        "locale": "en",
+        "expect": [
+          "medications"
+        ]
+      },
+      {
+        "text": "有没有既往手术史？",
+        "locale": "zh-CN",
+        "expect": [
+          "psh"
+        ]
+      },
+      {
+        "text": "Any previous surgery?",
+        "locale": "en",
+        "expect": [
+          "psh"
+        ]
+      },
+      {
+        "text": "术前禁食多久了？",
+        "locale": "zh-CN",
+        "expect": [
+          "fasting"
+        ]
+      },
+      {
+        "text": "How long have you been fasting?",
+        "locale": "en",
+        "expect": [
+          "fasting"
+        ]
+      },
+      {
+        "text": "请问体重多少公斤？",
+        "locale": "zh-CN",
+        "expect": [
+          "weight"
+        ]
+      },
+      {
+        "text": "How many kilograms do you weigh?",
+        "locale": "en",
+        "expect": [
+          "weight"
+        ]
+      },
+      {
+        "text": "您抽不抽烟？",
+        "locale": "zh-CN",
+        "expect": [
+          "smoking"
+        ]
+      },
+      {
+        "text": "Any tobacco use?",
+        "locale": "en",
+        "expect": [
+          "smoking"
+        ]
+      },
+      {
+        "text": "喝不喝酒？",
+        "locale": "zh-CN",
+        "expect": [
+          "alcohol"
+        ]
+      },
+      {
+        "text": "Any alcohol intake?",
+        "locale": "en",
+        "expect": [
+          "alcohol"
+        ]
+      },
+      {
+        "text": "给疼痛打个分。",
+        "locale": "zh-CN",
+        "expect": [
+          "pain-score"
+        ]
+      },
+      {
+        "text": "Rate the pain severity.",
+        "locale": "en",
+        "expect": [
+          "pain-score"
+        ]
+      },
+      {
+        "text": "最近吐过没有？",
+        "locale": "zh-CN",
+        "expect": [
+          "vomiting"
+        ]
+      },
+      {
+        "text": "Any episodes of emesis?",
+        "locale": "en",
+        "expect": [
+          "vomiting"
+        ]
+      },
+      {
+        "text": "有没有黄疸表现？",
+        "locale": "zh-CN",
+        "expect": [
+          "jaundice"
+        ]
+      },
+      {
+        "text": "Any yellow discolouration?",
+        "locale": "en",
+        "expect": [
+          "jaundice"
+        ]
+      },
+      {
+        "text": "日常能自己走路和照顾自己吗？",
+        "locale": "zh-CN",
+        "expect": [
+          "functional"
+        ]
+      },
+      {
+        "text": "Can you manage daily activities independently?",
+        "locale": "en",
+        "expect": [
+          "functional"
+        ]
+      },
+      {
+        "text": "这次就诊最想解决什么？",
+        "locale": "zh-CN",
+        "expect": [
+          "expectations"
+        ]
+      },
+      {
+        "text": "What matters most to you in this visit?",
+        "locale": "en",
+        "expect": [
+          "expectations"
+        ]
+      },
+      {
+        "text": "今天外面的天气怎么样？",
+        "locale": "zh-CN",
+        "expect": []
+      },
+      {
+        "text": "What is the weather outside?",
+        "locale": "en",
+        "expect": []
+      },
+      {
+        "text": "您现在吃抗凝药或阿司匹林吗？",
+        "locale": "zh-CN",
+        "expect": [
+          "antithrombotic"
+        ]
+      },
+      {
+        "text": "Are you on any blood thinners or aspirin?",
+        "locale": "en",
+        "expect": [
+          "antithrombotic"
+        ]
+      },
+      {
+        "text": "慢阻肺用什么吸入药？",
+        "locale": "zh-CN",
+        "expect": [
+          "copd-status"
+        ]
+      },
+      {
+        "text": "Which inhalers do you use for the COPD?",
+        "locale": "en",
+        "expect": [
+          "copd-status"
+        ]
+      },
+      {
+        "text": "脑梗以后吞咽有问题吗？",
+        "locale": "zh-CN",
+        "expect": [
+          "stroke-deficit"
+        ]
+      },
+      {
+        "text": "Any swallowing problems since the stroke?",
+        "locale": "en",
+        "expect": [
+          "stroke-deficit"
+        ]
+      }
+    ],
+    "version4": {
+      "anatomy": "assets/cases/cmcr-1654623/anatomy.json",
+      "scoringDomains": {
+        "history-and-diagnosis": 15,
+        "preoperative-assessment": 10,
+        "orientation-and-setup": 15,
+        "identification-and-safety": 30,
+        "technique-and-handling": 15,
+        "complications": 10,
+        "postoperative-and-documentation": 5
+      },
+      "renormalisation": "Items whose scoredWhen does not hold (a complication that did not occur) count neither as earned nor as possible; the percentage is earned / possible.",
+      "dataset": "dataset/case-126-v3 is kept unchanged as the historical reference and regression baseline."
+    }
+  },
+  "solution": [
+    {
+      "type": "start"
+    },
+    {
+      "type": "ask",
+      "itemId": "presentation"
+    },
+    {
+      "type": "ask",
+      "itemId": "pmh"
+    },
+    {
+      "type": "ask",
+      "itemId": "allergies"
+    },
+    {
+      "type": "examine",
+      "findingId": "entry-vitals"
+    },
+    {
+      "type": "examine",
+      "findingId": "apex"
+    },
+    {
+      "type": "examine",
+      "findingId": "palpation"
+    },
+    {
+      "type": "order",
+      "investigationId": "ultrasound-record"
+    },
+    {
+      "type": "read",
+      "investigationId": "ultrasound-record"
+    },
+    {
+      "type": "order",
+      "investigationId": "ct-record"
+    },
+    {
+      "type": "read",
+      "investigationId": "ct-record"
+    },
+    {
+      "type": "order",
+      "investigationId": "laboratory-record"
+    },
+    {
+      "type": "read",
+      "investigationId": "laboratory-record"
+    },
+    {
+      "type": "examine",
+      "findingId": "murphy"
+    },
+    {
+      "type": "answer",
+      "decisionId": "diagnosis",
+      "optionIds": [
+        "suspected"
+      ]
+    },
+    {
+      "type": "answer",
+      "decisionId": "anatomy",
+      "optionIds": [
+        "mirror"
+      ]
+    },
+    {
+      "type": "answer",
+      "decisionId": "planning",
+      "optionIds": [
+        "individualised"
+      ]
+    },
+    {
+      "type": "answer",
+      "decisionId": "safety",
+      "optionIds": [
+        "verify"
+      ]
+    },
+    {
+      "type": "ask",
+      "itemId": "antithrombotic"
+    },
+    {
+      "type": "ask",
+      "itemId": "copd-status"
+    },
+    {
+      "type": "answer",
+      "decisionId": "risk",
+      "optionIds": [
+        "copd",
+        "antithrombotic",
+        "function",
+        "dextrocardia"
+      ]
+    },
+    {
+      "type": "intervene",
+      "interventionId": "sign-in"
+    },
+    {
+      "type": "intervene",
+      "interventionId": "induction"
+    },
+    {
+      "type": "intervene",
+      "interventionId": "time-out"
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "plan-ports",
+        "plan": "three-port-left"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insufflate",
+        "pressure": 12
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insert",
+        "port": "A",
+        "instrument": "laparoscope"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insert",
+        "port": "B",
+        "instrument": "grasper"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insert",
+        "port": "C",
+        "instrument": "maryland"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "retract",
+        "port": "B",
+        "structure": "gallbladder-infundibulum",
+        "direction": [
+          "patient-left",
+          "caudal"
+        ],
+        "force": "firm"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "hepatocystic-triangle",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "cystic-plate",
+        "energy": false
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "isolate",
+        "port": "C",
+        "handle": "T2"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "isolate",
+        "port": "C",
+        "handle": "T3"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "identify",
+        "handle": "T2",
+        "as": "cystic-duct"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "identify",
+        "handle": "T3",
+        "as": "cystic-artery"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "safety-pause",
+        "view": "cvs",
+        "claims": {
+          "triangle": true,
+          "plate": true,
+          "two": true
+        }
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "withdraw",
+        "port": "C"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insert",
+        "port": "C",
+        "instrument": "clip-applier"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "clip",
+        "port": "C",
+        "handle": "T2",
+        "count": 3
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "clip",
+        "port": "C",
+        "handle": "T3",
+        "count": 2
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "withdraw",
+        "port": "C"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insert",
+        "port": "C",
+        "instrument": "scissors"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "divide",
+        "port": "C",
+        "handle": "T2"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "divide",
+        "port": "C",
+        "handle": "T3"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "withdraw",
+        "port": "C"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insert",
+        "port": "C",
+        "instrument": "hook"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "retract",
+        "port": "B",
+        "structure": "gallbladder-infundibulum",
+        "direction": [
+          "anterior",
+          "cephalad"
+        ],
+        "force": "firm"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "dissect",
+        "port": "C",
+        "region": "gallbladder-bed",
+        "energy": true
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "inspect"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "withdraw",
+        "port": "C"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "insert",
+        "port": "C",
+        "instrument": "retrieval-bag"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "bag",
+        "port": "C"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "extract",
+        "port": "A"
+      }
+    },
+    {
+      "type": "operate",
+      "op": {
+        "op": "close"
+      }
+    },
+    {
+      "type": "intervene",
+      "interventionId": "sign-out"
+    },
+    {
+      "type": "intervene",
+      "interventionId": "pacu-handover"
+    },
+    {
+      "type": "answer",
+      "decisionId": "postop",
+      "optionIds": [
+        "resp",
+        "neuro",
+        "bile",
+        "bleed"
+      ]
+    },
+    {
+      "type": "intervene",
+      "interventionId": "open-historical-review"
+    },
+    {
+      "type": "order",
+      "investigationId": "operation-record"
+    },
+    {
+      "type": "read",
+      "investigationId": "operation-record"
+    },
+    {
+      "type": "order",
+      "investigationId": "pathology-record"
+    },
+    {
+      "type": "read",
+      "investigationId": "pathology-record"
+    },
+    {
+      "type": "order",
+      "investigationId": "followup-record"
+    },
+    {
+      "type": "read",
+      "investigationId": "followup-record"
+    },
+    {
+      "type": "answer",
+      "decisionId": "outcome",
+      "optionIds": [
+        "bounded"
+      ]
+    },
+    {
+      "type": "finish"
+    }
+  ],
+  "procedure": {
+    "id": "lap-chole-sit",
+    "name": {
+      "zh-CN": "全内脏反位腹腔镜胆囊切除术",
+      "en": "Laparoscopic cholecystectomy in situs inversus totalis"
+    },
+    "phases": [
+      "operation"
+    ],
+    "specimen": "gallbladder",
+    "stones": true,
+    "target": [
+      0.05,
+      0.0948,
+      0.0164
+    ],
+    "anatomy": [
+      {
+        "id": "liver",
+        "name": {
+          "zh-CN": "肝脏（位于患者左上腹）",
+          "en": "Liver (in the patient's left upper abdomen)"
+        },
+        "kind": "organ",
+        "role": "organ",
+        "points": [
+          [
+            0.0675,
+            0.1294,
+            0.0159
+          ],
+          [
+            0.0392,
+            0.1123,
+            0.0249
+          ],
+          [
+            0.077,
+            0.0748,
+            0.046
+          ]
+        ],
+        "radius": 0.1415,
+        "provenance": "reference",
+        "mesh": "liver"
+      },
+      {
+        "id": "gallbladder",
+        "name": {
+          "zh-CN": "胆囊",
+          "en": "Gallbladder"
+        },
+        "kind": "organ",
+        "role": "specimen",
+        "points": [
+          [
+            0.073,
+            0.0733,
+            0.0398
+          ],
+          [
+            0.0777,
+            0.0596,
+            0.0585
+          ],
+          [
+            0.0655,
+            0.0862,
+            0.0233
+          ],
+          [
+            0.0519,
+            0.0961,
+            0.0209
+          ]
+        ],
+        "radius": 0.0375,
+        "provenance": "reference",
+        "mesh": "gallbladder"
+      },
+      {
+        "id": "gallbladder-fundus",
+        "name": {
+          "zh-CN": "胆囊底",
+          "en": "Fundus of the gallbladder"
+        },
+        "kind": "organ",
+        "role": "specimen",
+        "points": [
+          [
+            0.0765,
+            0.0644,
+            0.0533
+          ],
+          [
+            0.0777,
+            0.0596,
+            0.0585
+          ]
+        ],
+        "radius": 0.0185,
+        "provenance": "reference",
+        "parent": "gallbladder"
+      },
+      {
+        "id": "gallbladder-body",
+        "name": {
+          "zh-CN": "胆囊体",
+          "en": "Body of the gallbladder"
+        },
+        "kind": "organ",
+        "role": "specimen",
+        "points": [
+          [
+            0.0735,
+            0.0735,
+            0.0387
+          ]
+        ],
+        "radius": 0.0231,
+        "provenance": "reference",
+        "parent": "gallbladder"
+      },
+      {
+        "id": "gallbladder-infundibulum",
+        "name": {
+          "zh-CN": "胆囊颈（漏斗部）",
+          "en": "Neck (infundibulum) of the gallbladder"
+        },
+        "kind": "organ",
+        "role": "specimen",
+        "points": [
+          [
+            0.0655,
+            0.0862,
+            0.0233
+          ],
+          [
+            0.0519,
+            0.0961,
+            0.0209
+          ]
+        ],
+        "radius": 0.0168,
+        "provenance": "reference",
+        "parent": "gallbladder"
+      },
+      {
+        "id": "cystic-plate",
+        "name": {
+          "zh-CN": "胆囊板",
+          "en": "Cystic plate"
+        },
+        "kind": "plate",
+        "role": "landmark",
+        "points": [
+          [
+            0.0658,
+            0.0878,
+            0.0232
+          ]
+        ],
+        "radius": 0.0164,
+        "provenance": "authored",
+        "in": "cystic-plate",
+        "revealAt": 0.5,
+        "mesh": "cystic-plate"
+      },
+      {
+        "id": "duodenum",
+        "name": {
+          "zh-CN": "十二指肠",
+          "en": "Duodenum"
+        },
+        "kind": "organ",
+        "role": "organ",
+        "points": [
+          [
+            0.0544,
+            0.0334,
+            0.013
+          ]
+        ],
+        "radius": 0.0641,
+        "provenance": "reference",
+        "mesh": "duodenum"
+      },
+      {
+        "id": "stomach",
+        "name": {
+          "zh-CN": "胃（位于患者右侧）",
+          "en": "Stomach (on the patient's right)"
+        },
+        "kind": "organ",
+        "role": "organ",
+        "points": [
+          [
+            -0.0302,
+            0.1051,
+            0.0259
+          ]
+        ],
+        "radius": 0.0914,
+        "provenance": "reference",
+        "mesh": "stomach"
+      },
+      {
+        "id": "spleen",
+        "name": {
+          "zh-CN": "脾（位于患者右上腹）",
+          "en": "Spleen (in the patient's right upper abdomen)"
+        },
+        "kind": "organ",
+        "role": "organ",
+        "points": [
+          [
+            -0.0698,
+            0.1172,
+            -0.0649
+          ],
+          [
+            -0.0522,
+            0.1424,
+            -0.1105
+          ],
+          [
+            -0.0907,
+            0.0928,
+            -0.0202
+          ]
+        ],
+        "radius": 0.0552,
+        "provenance": "authored",
+        "mesh": "spleen"
+      },
+      {
+        "id": "cystic-duct",
+        "name": {
+          "zh-CN": "胆囊管",
+          "en": "Cystic duct"
+        },
+        "kind": "duct",
+        "role": "target",
+        "points": [
+          [
+            0.0537,
+            0.0931,
+            0.0179
+          ],
+          [
+            0.0544,
+            0.0887,
+            0.0167
+          ],
+          [
+            0.0531,
+            0.0837,
+            0.0153
+          ],
+          [
+            0.0504,
+            0.0811,
+            0.0139
+          ],
+          [
+            0.0474,
+            0.0817,
+            0.0132
+          ]
+        ],
+        "radius": 0.0024,
+        "provenance": "reference",
+        "in": "hepatocystic-triangle",
+        "revealAt": 0.5,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "一根约3 mm的管道，从胆囊颈发出，走向肝十二指肠韧带",
+            "en": "a duct about 3 mm across leaving the gallbladder neck towards the hepatoduodenal ligament"
+          },
+          "when": []
+        },
+        "joins": [
+          "common-hepatic-duct",
+          "common-bile-duct"
+        ],
+        "enters": "gallbladder-infundibulum",
+        "mesh": "cystic-duct"
+      },
+      {
+        "id": "cystic-artery",
+        "name": {
+          "zh-CN": "胆囊动脉",
+          "en": "Cystic artery"
+        },
+        "kind": "artery",
+        "role": "target",
+        "points": [
+          [
+            0.0499,
+            0.1061,
+            0.0094
+          ],
+          [
+            0.0519,
+            0.1007,
+            0.0139
+          ],
+          [
+            0.0549,
+            0.097,
+            0.019
+          ],
+          [
+            0.0568,
+            0.0912,
+            0.0265
+          ],
+          [
+            0.0644,
+            0.0876,
+            0.036
+          ]
+        ],
+        "radius": 0.0009,
+        "provenance": "reference",
+        "in": "hepatocystic-triangle",
+        "revealAt": 0.6,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "一根细小、搏动的血管，向上走到胆囊颈和胆囊壁",
+            "en": "a thin pulsating vessel running up onto the gallbladder neck and wall"
+          },
+          "when": []
+        },
+        "joins": [
+          "right-hepatic-artery"
+        ],
+        "enters": "gallbladder",
+        "mesh": "cystic-artery"
+      },
+      {
+        "id": "common-bile-duct",
+        "name": {
+          "zh-CN": "胆总管",
+          "en": "Common bile duct"
+        },
+        "kind": "duct",
+        "role": "critical",
+        "points": [
+          [
+            0.047,
+            0.0822,
+            0.0131
+          ],
+          [
+            0.0477,
+            0.0756,
+            0.0114
+          ],
+          [
+            0.0489,
+            0.0687,
+            0.0084
+          ],
+          [
+            0.0514,
+            0.0597,
+            0.0019
+          ],
+          [
+            0.0569,
+            0.0486,
+            -0.0041
+          ],
+          [
+            0.0629,
+            0.0406,
+            -0.0068
+          ],
+          [
+            0.0674,
+            0.0367,
+            -0.0065
+          ],
+          [
+            0.0702,
+            0.0352,
+            -0.0051
+          ]
+        ],
+        "radius": 0.0031,
+        "provenance": "reference",
+        "in": "hepatocystic-triangle",
+        "revealAt": 0.2,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "一根较粗的管道，在肝十二指肠韧带内向下走行",
+            "en": "a wider duct running down in the hepatoduodenal ligament"
+          },
+          "when": [
+            {
+              "exposure": "hepatocystic-triangle",
+              "below": 0.5,
+              "text": {
+                "zh-CN": "一根似乎直接汇入胆囊颈的管道",
+                "en": "a duct that seems to run straight into the gallbladder neck"
+              },
+              "appearsToEnter": "gallbladder"
+            }
+          ]
+        },
+        "joins": [
+          "common-hepatic-duct",
+          "cystic-duct"
+        ],
+        "mesh": "common-bile-duct"
+      },
+      {
+        "id": "common-hepatic-duct",
+        "name": {
+          "zh-CN": "肝总管",
+          "en": "Common hepatic duct"
+        },
+        "kind": "duct",
+        "role": "critical",
+        "points": [
+          [
+            0.0429,
+            0.1056,
+            0.0149
+          ],
+          [
+            0.0444,
+            0.0966,
+            0.0149
+          ],
+          [
+            0.0459,
+            0.0887,
+            0.0139
+          ],
+          [
+            0.047,
+            0.0822,
+            0.0131
+          ]
+        ],
+        "radius": 0.0027,
+        "provenance": "reference",
+        "in": "hepatocystic-triangle",
+        "revealAt": 0.9,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "一根从肝门向下走行的管道",
+            "en": "a duct coming down from the liver hilum"
+          },
+          "when": []
+        },
+        "joins": [
+          "right-hepatic-duct",
+          "left-hepatic-duct",
+          "common-bile-duct"
+        ],
+        "mesh": "common-hepatic-duct"
+      },
+      {
+        "id": "right-hepatic-artery",
+        "name": {
+          "zh-CN": "肝右动脉（供应形态学右叶，本例位于患者左侧）",
+          "en": "Right hepatic artery (to the morphological right lobe, on the patient's left here)"
+        },
+        "kind": "artery",
+        "role": "critical",
+        "points": [
+          [
+            0.0359,
+            0.1037,
+            0.0113
+          ],
+          [
+            0.0419,
+            0.1051,
+            0.0099
+          ],
+          [
+            0.0499,
+            0.1061,
+            0.0094
+          ],
+          [
+            0.0589,
+            0.1076,
+            0.0099
+          ]
+        ],
+        "radius": 0.0015,
+        "provenance": "reference",
+        "in": "hepatocystic-triangle",
+        "revealAt": 1.0,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "一根在深部走向肝脏的动脉",
+            "en": "an artery running deep towards the liver"
+          },
+          "when": []
+        },
+        "joins": [
+          "proper-hepatic-artery"
+        ],
+        "mesh": "right-hepatic-artery"
+      },
+      {
+        "id": "proper-hepatic-artery",
+        "name": {
+          "zh-CN": "肝固有动脉",
+          "en": "Proper hepatic artery"
+        },
+        "kind": "artery",
+        "role": "critical",
+        "points": [
+          [
+            0.0379,
+            0.0806,
+            0.0099
+          ],
+          [
+            0.0381,
+            0.0896,
+            0.0109
+          ],
+          [
+            0.0371,
+            0.0987,
+            0.0111
+          ],
+          [
+            0.0359,
+            0.1037,
+            0.0113
+          ]
+        ],
+        "radius": 0.002,
+        "provenance": "reference",
+        "in": "hepatoduodenal-ligament",
+        "revealAt": 0.5,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "肝十二指肠韧带内一根搏动的动脉",
+            "en": "a pulsating artery in the hepatoduodenal ligament"
+          },
+          "when": []
+        },
+        "joins": [
+          "common-hepatic-artery"
+        ],
+        "mesh": "proper-hepatic-artery"
+      },
+      {
+        "id": "portal-vein",
+        "name": {
+          "zh-CN": "门静脉",
+          "en": "Portal vein"
+        },
+        "kind": "vein",
+        "role": "critical",
+        "points": [
+          [
+            0.0269,
+            0.0587,
+            0.0164
+          ],
+          [
+            0.0319,
+            0.0736,
+            0.0099
+          ],
+          [
+            0.0369,
+            0.0887,
+            0.0054
+          ],
+          [
+            0.0399,
+            0.0997,
+            0.0049
+          ],
+          [
+            0.0409,
+            0.1047,
+            0.0059
+          ]
+        ],
+        "radius": 0.0066,
+        "provenance": "reference",
+        "in": "hepatoduodenal-ligament",
+        "revealAt": 1.0,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "韧带后方一根粗大、发蓝的静脉",
+            "en": "a large bluish vein behind the ligament"
+          },
+          "when": []
+        },
+        "mesh": "portal-vein"
+      },
+      {
+        "id": "common-hepatic-artery",
+        "name": {
+          "zh-CN": "肝总动脉",
+          "en": "Common hepatic artery"
+        },
+        "kind": "artery",
+        "role": "critical",
+        "points": [
+          [
+            0.0179,
+            0.0887,
+            -0.0051
+          ],
+          [
+            0.0269,
+            0.0857,
+            0.0019
+          ],
+          [
+            0.0339,
+            0.0827,
+            0.0069
+          ],
+          [
+            0.0379,
+            0.0806,
+            0.0099
+          ]
+        ],
+        "radius": 0.0025,
+        "provenance": "reference",
+        "in": "hepatoduodenal-ligament",
+        "revealAt": 1.0,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "韧带下方深处一根搏动的动脉",
+            "en": "a pulsating artery deep below the ligament"
+          },
+          "when": []
+        },
+        "mesh": "common-hepatic-artery"
+      },
+      {
+        "id": "gastroduodenal-artery",
+        "name": {
+          "zh-CN": "胃十二指肠动脉",
+          "en": "Gastroduodenal artery"
+        },
+        "kind": "artery",
+        "role": "critical",
+        "points": [
+          [
+            0.0379,
+            0.0806,
+            0.0099
+          ],
+          [
+            0.0384,
+            0.0717,
+            0.0139
+          ],
+          [
+            0.0389,
+            0.0607,
+            0.0204
+          ],
+          [
+            0.0399,
+            0.0476,
+            0.0264
+          ],
+          [
+            0.0429,
+            0.0386,
+            0.0284
+          ]
+        ],
+        "radius": 0.0016,
+        "provenance": "reference",
+        "in": "hepatoduodenal-ligament",
+        "revealAt": 1.0,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "向十二指肠后方走行的一根动脉",
+            "en": "an artery running down behind the duodenum"
+          },
+          "when": []
+        },
+        "joins": [
+          "common-hepatic-artery"
+        ],
+        "mesh": "gastroduodenal-artery"
+      },
+      {
+        "id": "right-hepatic-duct",
+        "name": {
+          "zh-CN": "右肝管（形态学右叶，本例位于患者左侧）",
+          "en": "Right hepatic duct (morphological right lobe, on the patient's left here)"
+        },
+        "kind": "duct",
+        "role": "critical",
+        "points": [
+          [
+            0.0599,
+            0.1106,
+            0.0149
+          ],
+          [
+            0.0519,
+            0.1076,
+            0.0149
+          ],
+          [
+            0.0429,
+            0.1056,
+            0.0149
+          ]
+        ],
+        "radius": 0.0021,
+        "provenance": "reference",
+        "in": "hepatoduodenal-ligament",
+        "revealAt": 1.0,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "肝门处的一根胆管分支",
+            "en": "a bile duct branch at the hilum"
+          },
+          "when": []
+        },
+        "mesh": "right-hepatic-duct"
+      },
+      {
+        "id": "left-hepatic-duct",
+        "name": {
+          "zh-CN": "左肝管",
+          "en": "Left hepatic duct"
+        },
+        "kind": "duct",
+        "role": "critical",
+        "points": [
+          [
+            0.0219,
+            0.1076,
+            0.0189
+          ],
+          [
+            0.0309,
+            0.1066,
+            0.0169
+          ],
+          [
+            0.0429,
+            0.1056,
+            0.0149
+          ]
+        ],
+        "radius": 0.0021,
+        "provenance": "reference",
+        "in": "hepatoduodenal-ligament",
+        "revealAt": 1.0,
+        "appearsAs": {
+          "default": {
+            "zh-CN": "肝门处的另一根胆管分支",
+            "en": "another bile duct branch at the hilum"
+          },
+          "when": []
+        },
+        "mesh": "left-hepatic-duct"
+      }
+    ],
+    "regions": [
+      {
+        "id": "hepatocystic-triangle",
+        "name": {
+          "zh-CN": "胆囊三角（肝胆囊三角）",
+          "en": "Hepatocystic triangle"
+        },
+        "units": 6,
+        "centre": [
+          0.05,
+          0.0948,
+          0.0164
+        ],
+        "radius": 0.0137,
+        "exposure": [
+          {
+            "structure": "gallbladder-infundibulum",
+            "direction": [
+              "patient-left",
+              "caudal"
+            ]
+          }
+        ],
+        "hazards": [
+          "common-bile-duct",
+          "common-hepatic-duct",
+          "right-hepatic-artery"
+        ]
+      },
+      {
+        "id": "cystic-plate",
+        "name": {
+          "zh-CN": "胆囊下三分之一与胆囊板之间",
+          "en": "Lower third of the gallbladder off the cystic plate"
+        },
+        "units": 3,
+        "centre": [
+          0.0658,
+          0.0878,
+          0.0232
+        ],
+        "radius": 0.016,
+        "after": [
+          "hepatocystic-triangle"
+        ],
+        "exposure": [
+          {
+            "structure": "gallbladder-infundibulum",
+            "direction": [
+              "patient-left",
+              "anterior"
+            ],
+            "full": 0.6
+          }
+        ]
+      },
+      {
+        "id": "gallbladder-bed",
+        "name": {
+          "zh-CN": "胆囊床（其余部分）",
+          "en": "Rest of the gallbladder bed"
+        },
+        "units": 5,
+        "centre": [
+          0.077,
+          0.0748,
+          0.046
+        ],
+        "radius": 0.0287,
+        "after": [
+          "cystic-plate"
+        ],
+        "bed": true,
+        "exposure": [
+          {
+            "structure": "gallbladder-infundibulum",
+            "direction": [
+              "anterior",
+              "cephalad"
+            ],
+            "full": 0.6
+          }
+        ]
+      },
+      {
+        "id": "hepatoduodenal-ligament",
+        "name": {
+          "zh-CN": "肝十二指肠韧带",
+          "en": "Hepatoduodenal ligament"
+        },
+        "units": 4,
+        "centre": [
+          0.0541,
+          0.0579,
+          0.0024
+        ],
+        "radius": 0.02,
+        "hazards": [
+          "common-bile-duct",
+          "proper-hepatic-artery",
+          "portal-vein"
+        ]
+      }
+    ],
+    "portSites": [
+      {
+        "id": "A",
+        "name": {
+          "zh-CN": "脐下缘1 cm（观察孔）",
+          "en": "1 cm below the umbilicus (camera port)"
+        },
+        "at": [
+          0.0236,
+          -0.0143,
+          0.1142
+        ],
+        "normal": [
+          0.0,
+          -0.1644,
+          0.9864
+        ]
+      },
+      {
+        "id": "B",
+        "name": {
+          "zh-CN": "剑突下偏左",
+          "en": "Below the xiphoid, slightly left"
+        },
+        "at": [
+          0.0336,
+          0.1557,
+          0.1182
+        ],
+        "normal": [
+          0.0447,
+          0.1158,
+          0.9923
+        ]
+      },
+      {
+        "id": "C",
+        "name": {
+          "zh-CN": "左锁骨中线肋缘下2 cm",
+          "en": "Left midclavicular line, 2 cm below the costal margin"
+        },
+        "at": [
+          0.1186,
+          0.055,
+          0.0996
+        ],
+        "normal": [
+          0.4576,
+          -0.0454,
+          0.888
+        ]
+      },
+      {
+        "id": "D",
+        "name": {
+          "zh-CN": "左腋前线肋缘下",
+          "en": "Left anterior axillary line, below the costal margin"
+        },
+        "at": [
+          0.1586,
+          0.025,
+          0.0685
+        ],
+        "normal": [
+          0.705,
+          -0.0713,
+          0.7056
+        ]
+      },
+      {
+        "id": "E",
+        "name": {
+          "zh-CN": "剑突下偏右",
+          "en": "Below the xiphoid, slightly right"
+        },
+        "at": [
+          0.0086,
+          0.1257,
+          0.1207
+        ],
+        "normal": [
+          -0.0674,
+          0.0664,
+          0.9955
+        ]
+      },
+      {
+        "id": "G",
+        "name": {
+          "zh-CN": "右锁骨中线肋缘下2 cm",
+          "en": "Right midclavicular line, 2 cm below the costal margin"
+        },
+        "at": [
+          -0.0714,
+          0.055,
+          0.0996
+        ],
+        "normal": [
+          -0.4576,
+          -0.0454,
+          0.888
+        ]
+      },
+      {
+        "id": "H",
+        "name": {
+          "zh-CN": "右腋前线肋缘下",
+          "en": "Right anterior axillary line, below the costal margin"
+        },
+        "at": [
+          -0.1114,
+          0.025,
+          0.0685
+        ],
+        "normal": [
+          -0.705,
+          -0.0713,
+          0.7056
+        ]
+      }
+    ],
+    "portPlans": [
+      {
+        "id": "three-port-left",
+        "name": {
+          "zh-CN": "原报告的三孔法：术者与助手位于患者左侧",
+          "en": "The report's three ports: surgeon and assistant on the patient's left"
+        },
+        "surgeonSide": "left",
+        "provenance": "published-case",
+        "note": {
+          "zh-CN": "原文：A孔脐下缘1 cm置10 mm Trocar（观察孔）；B孔剑突下偏左、C孔左锁骨中线肋下2 cm（主操作孔），均为5 mm。术者在体外交叉双手操作。",
+          "en": "Source: port A 1 cm below the umbilicus, 10 mm (camera); B below the xiphoid slightly left and C at the left midclavicular line 2 cm below the costal margin (main port), both 5 mm. The surgeon worked with crossed hands."
+        },
+        "ports": [
+          {
+            "site": "A",
+            "role": "camera",
+            "sizeMm": 10
+          },
+          {
+            "site": "B",
+            "role": "working",
+            "sizeMm": 5,
+            "hand": "left"
+          },
+          {
+            "site": "C",
+            "role": "working",
+            "sizeMm": 5,
+            "hand": "right"
+          }
+        ]
+      },
+      {
+        "id": "mirror-four-port",
+        "name": {
+          "zh-CN": "镜像四孔法：术者位于患者右侧",
+          "en": "Mirrored four ports: surgeon on the patient's right"
+        },
+        "surgeonSide": "right",
+        "provenance": "authored",
+        "note": {
+          "zh-CN": "常规四孔布局的镜像，作为对照方案；不是原报告的做法。",
+          "en": "The usual four-port layout mirrored, as a comparison; not what the report did."
+        },
+        "ports": [
+          {
+            "site": "A",
+            "role": "camera",
+            "sizeMm": 10
+          },
+          {
+            "site": "B",
+            "role": "working",
+            "sizeMm": 5,
+            "hand": "left"
+          },
+          {
+            "site": "C",
+            "role": "working",
+            "sizeMm": 5,
+            "hand": "right"
+          },
+          {
+            "site": "D",
+            "role": "assist",
+            "sizeMm": 5
+          }
+        ]
+      },
+      {
+        "id": "habitual",
+        "name": {
+          "zh-CN": "按常规解剖布孔（未考虑反位）",
+          "en": "Ports placed for usual anatomy (situs not considered)"
+        },
+        "surgeonSide": "left",
+        "provenance": "authored",
+        "note": {
+          "zh-CN": "常见错误：沿用右侧胆囊的布孔。",
+          "en": "A common error: the ports used for a right-sided gallbladder."
+        },
+        "ports": [
+          {
+            "site": "A",
+            "role": "camera",
+            "sizeMm": 10
+          },
+          {
+            "site": "E",
+            "role": "working",
+            "sizeMm": 5,
+            "hand": "right"
+          },
+          {
+            "site": "G",
+            "role": "working",
+            "sizeMm": 5,
+            "hand": "left"
+          },
+          {
+            "site": "H",
+            "role": "assist",
+            "sizeMm": 5
+          }
+        ]
+      }
+    ],
+    "instruments": [
+      {
+        "id": "laparoscope"
+      },
+      {
+        "id": "grasper"
+      },
+      {
+        "id": "maryland"
+      },
+      {
+        "id": "hook"
+      },
+      {
+        "id": "scissors"
+      },
+      {
+        "id": "clip-applier"
+      },
+      {
+        "id": "suction"
+      },
+      {
+        "id": "retrieval-bag",
+        "diameterMm": 5
+      },
+      {
+        "id": "cholangiocatheter"
+      }
+    ],
+    "views": [
+      {
+        "id": "cvs",
+        "name": {
+          "zh-CN": "关键安全视野",
+          "en": "Critical view of safety"
+        },
+        "criteria": [
+          {
+            "id": "triangle",
+            "name": {
+              "zh-CN": "胆囊三角内脂肪和纤维组织已清除",
+              "en": "Hepatocystic triangle cleared of fat and fibrous tissue"
+            },
+            "test": {
+              "cleared": "hepatocystic-triangle",
+              "atLeast": 1
+            }
+          },
+          {
+            "id": "plate",
+            "name": {
+              "zh-CN": "胆囊下三分之一已与肝床分离，可见胆囊板",
+              "en": "Lower third of the gallbladder separated from the liver, cystic plate seen"
+            },
+            "test": {
+              "cleared": "cystic-plate",
+              "atLeast": 1
+            }
+          },
+          {
+            "id": "two",
+            "name": {
+              "zh-CN": "只有两根结构进入胆囊",
+              "en": "Two and only two structures entering the gallbladder"
+            },
+            "test": {
+              "onlyEntering": "gallbladder"
+            }
+          }
+        ]
+      }
+    ],
+    "bailouts": [
+      "call-help",
+      "subtotal-fenestrating",
+      "subtotal-reconstituting",
+      "convert-open"
+    ],
+    "insufflation": {
+      "usual": 12,
+      "max": 15
+    },
+    "note": {
+      "zh-CN": "参考解剖：BodyParts3D器官表面（已镜像）与 Layered Human 程序化肝胆树（MIT，镜像一次后配准）；不是患者影像重建。原报告术中“未发现血管解剖变异”。",
+      "en": "Reference anatomy: BodyParts3D organ surfaces (mirrored) and the Layered Human procedural hepatobiliary tree (MIT, mirrored once and registered); not a reconstruction from the patient's imaging. At operation the source found \"no vascular anatomical variation\"."
+    }
+  },
+  "assets": [
+    {
+      "id": "anatomy",
+      "kind": "model",
+      "path": "assets/cases/cmcr-1654623/anatomy.glb",
+      "title": {
+        "zh-CN": "病例126参考解剖（全内脏反位）",
+        "en": "Case 126 reference anatomy (situs inversus totalis)"
+      },
+      "credit": {
+        "zh-CN": "BodyParts3D © DBCLS（CC BY 4.0）；Layered Human 肝胆模型 © 2026 Ethan Prince（MIT）；SurgeryCraft 改编",
+        "en": "BodyParts3D © DBCLS (CC BY 4.0); Layered Human hepatobiliary model © 2026 Ethan Prince (MIT); adapted by SurgeryCraft"
+      },
+      "license": "CC-BY-4.0 AND MIT"
+    }
+  ],
+  "physiology": {
+    "baseline": {
+      "hr": 78,
+      "sbp": 128,
+      "dbp": 78,
+      "rr": 19,
+      "spo2": 95,
+      "temp": 36.6
+    },
+    "noise": 1,
+    "monitor": {
+      "attachedWhen": {
+        "intervened": "sign-in"
+      },
+      "spotChecks": [
+        "hr",
+        "sbp",
+        "dbp",
+        "rr",
+        "temp"
+      ]
+    },
+    "events": [
+      {
+        "id": "ev-ventilated",
+        "when": {
+          "intervened": "induction"
+        },
+        "setVitals": {
+          "rr": 12,
+          "etco2": 36,
+          "spo2": 97
+        },
+        "severity": "info",
+        "speaker": "narrator",
+        "message": {
+          "zh-CN": "麻醉医生：已插管并机械通气，呼末二氧化碳36 mmHg（模拟值）",
+          "en": "Anaesthetist: intubated and ventilated, end-tidal CO₂ 36 mmHg (simulated value)"
+        }
+      },
+      {
+        "id": "ev-pneumo",
+        "when": {
+          "procedure": {
+            "insufflated": true
+          }
+        },
+        "setVitals": {
+          "etco2": 40
+        },
+        "severity": "info",
+        "speaker": "narrator",
+        "message": {
+          "zh-CN": "麻醉医生：气腹建立后呼末二氧化碳升至40 mmHg（模拟值）",
+          "en": "Anaesthetist: end-tidal CO₂ up to 40 mmHg with the pneumoperitoneum (simulated value)"
+        }
+      },
+      {
+        "id": "ev-high-pressure",
+        "when": {
+          "procedure": {
+            "insufflated": true,
+            "pressure": {
+              "gte": 15
+            }
+          }
+        },
+        "setVitals": {
+          "etco2": 48,
+          "spo2": 92,
+          "sbp": 110,
+          "dbp": 66
+        },
+        "severity": "warning",
+        "speaker": "narrator",
+        "message": {
+          "zh-CN": "麻醉医生：气腹压力高，慢阻肺患者呼末二氧化碳48 mmHg、血氧92%——能否降低气腹压力？（模拟值）",
+          "en": "Anaesthetist: high insufflation pressure in a COPD patient — end-tidal CO₂ 48 mmHg, SpO₂ 92%. Can we lower the pressure? (simulated value)"
+        }
+      },
+      {
+        "id": "ev-major-bleeding",
+        "when": {
+          "procedure": {
+            "bleeding": "major"
+          }
+        },
+        "setVitals": {
+          "hr": 114,
+          "sbp": 92,
+          "dbp": 56
+        },
+        "severity": "critical",
+        "speaker": "narrator",
+        "message": {
+          "zh-CN": "麻醉医生：心率114次/min，血压92/56 mmHg——出血多少？（模拟值）",
+          "en": "Anaesthetist: heart rate 114, BP 92/56 — how much bleeding? (simulated value)"
+        }
+      },
+      {
+        "id": "ev-closed",
+        "when": {
+          "procedure": {
+            "closed": true
+          }
+        },
+        "setVitals": {
+          "etco2": 37,
+          "spo2": 96
+        },
+        "severity": "info",
+        "speaker": "narrator",
+        "message": {
+          "zh-CN": "麻醉医生：气腹已放，呼末二氧化碳回到37 mmHg（模拟值）",
+          "en": "Anaesthetist: pneumoperitoneum released, end-tidal CO₂ back to 37 mmHg (simulated value)"
+        }
+      }
+    ]
+  },
+  "safetyGates": [
+    {
+      "id": "bile-duct-injury",
+      "label": {
+        "zh-CN": "主要胆管损伤",
+        "en": "Major bile duct injury"
+      },
+      "when": {
+        "procedure": {
+          "injury": "bile-duct-injury"
+        }
+      },
+      "verdict": "safety-critical",
+      "capPercent": 40
+    },
+    {
+      "id": "vascular-injury",
+      "label": {
+        "zh-CN": "主要血管损伤",
+        "en": "Major vascular injury"
+      },
+      "when": {
+        "procedure": {
+          "injury": "vascular-injury"
+        }
+      },
+      "verdict": "safety-critical",
+      "capPercent": 40
+    },
+    {
+      "id": "irreversible-unverified",
+      "label": {
+        "zh-CN": "未真实建立关键安全视野即做不可逆操作",
+        "en": "Irreversible step without a true critical view of safety"
+      },
+      "when": {
+        "any": [
+          {
+            "procedure": {
+              "unsafe": "irreversible-without-pause"
+            }
+          },
+          {
+            "procedure": {
+              "unsafe": "irreversible-without-view"
+            }
+          }
+        ]
+      },
+      "verdict": "safety-critical",
+      "capPercent": 50
+    },
+    {
+      "id": "misidentified",
+      "label": {
+        "zh-CN": "对辨认错误的结构做不可逆操作",
+        "en": "Irreversible step on a misidentified structure"
+      },
+      "when": {
+        "procedure": {
+          "unsafe": "irreversible-on-misidentified"
+        }
+      },
+      "verdict": "safety-critical",
+      "capPercent": 40
+    },
+    {
+      "id": "unrecognised-injury",
+      "label": {
+        "zh-CN": "损伤未被识别",
+        "en": "An injury not recognised"
+      },
+      "when": {
+        "procedure": {
+          "injury": "any",
+          "recognised": false
+        }
+      },
+      "verdict": "safety-critical",
+      "capPercent": 50
+    },
+    {
+      "id": "continued-after-injury",
+      "label": {
+        "zh-CN": "发现损伤后仍继续推进",
+        "en": "Carried on after a visible injury"
+      },
+      "when": {
+        "procedure": {
+          "unsafe": "continued-after-injury"
+        }
+      },
+      "verdict": "safety-critical",
+      "capPercent": 50
+    },
+    {
+      "id": "thermal",
+      "label": {
+        "zh-CN": "热损伤（可能术后才表现）",
+        "en": "Thermal injury (may present after surgery)"
+      },
+      "when": {
+        "procedure": {
+          "injury": "thermal-injury"
+        }
+      },
+      "verdict": "safety-critical",
+      "capPercent": 50
+    },
+    {
+      "id": "perforation",
+      "label": {
+        "zh-CN": "胆囊破裂、胆汁或结石溢出",
+        "en": "Gallbladder perforation, bile or stone spillage"
+      },
+      "when": {
+        "procedure": {
+          "injury": "perforation"
+        }
+      },
+      "verdict": "complication"
+    },
+    {
+      "id": "bleeding",
+      "label": {
+        "zh-CN": "术中出血",
+        "en": "Intra-operative bleeding"
+      },
+      "when": {
+        "procedure": {
+          "injury": "bleeding"
+        }
+      },
+      "verdict": "complication"
+    },
+    {
+      "id": "bile-leak",
+      "label": {
+        "zh-CN": "胆囊管残端漏",
+        "en": "Cystic stump leak"
+      },
+      "when": {
+        "procedure": {
+          "injury": "bile-leak"
+        }
+      },
+      "verdict": "complication"
+    }
+  ]
+}
