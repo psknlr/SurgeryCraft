@@ -26,6 +26,11 @@ and the operation together.
 The v3 demonstration (`dataset/case-126-v3/`) is kept unchanged as the historical reference and
 regression baseline. Its eight-stage animation remains a teaching resource there.
 
+![The laparoscopic surgery window on Case 126: the report's three ports, the hepatocystic triangle dissected with the neck pulled towards the patient's left, ducts and vessels labelled T1–T5 only](img/case126-v4-surgery-window.jpg)
+
+The window runs in ClinicalCraft under `clinicalcraft serve` with this pack, in OR 7 of the IMPF
+hospital. The screenshot shows the reference path after the triangle has been dissected.
+
 ## Files
 
 | file | what |
