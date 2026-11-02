@@ -198,6 +198,48 @@ Publish held-out numbers only with the digest they were measured on. These resul
 inside a rule-based simulation of one case. They are not evidence that a model can operate on a
 patient.
 
+## The care team of OR 7 (ClinicalCraft docs/TEAM.md)
+
+In in-world mode, during the operation, OR 7's staff work on their own. Nobody tells them each step:
+- **Nurse Aisyah (circulating)** notices what is needed, asks the colleague whose duty it is, checks the read-back,
+  and sees for herself that the surgeon holds it;
+- **Nurse Lim (scrub)** reads the request back, finds the instrument she can see, and hands it over.
+
+Once the specimen is out, Nurse Lim counts the five swabs on the Mayo tray (single X-ray-detectable swabs,
+`sc-gauze-swab`, placements `or-7-swab-1` to `or-7-swab-5`). If the count is short:
+1. Nurse Aisyah asks the surgeon to hold closure and check the wound, and the surgeon reads it back.
+2. She searches the floor round the Mayo stand, then the back table, then the laparoscopy tower. The places are the
+   same whatever happened.
+3. She asks for a recount.
+4. If it is still short, she escalates for an X-ray.
+
+The learner answers as the surgeon (the Team panel: Read back, Wound checked; "Check the wound" searches the wound) or
+watches a simulated surgeon (Observe).
+
+Team scenarios (`team.scenarios`, chosen at `start {team}`, hidden; authored teaching material, not the case
+report):
+
+| scenario | set-up | expected |
+|---|---|---|
+| `needle-holder` | the surgeon needs a needle holder | delivered and verified |
+| `scrub-on-break` | the same; Nurse Lim on a break, Nurse Rahman (OR 6) relieves by phone and walks in | delivered and verified |
+| `needle-holder-moved` | the needle holder is on the Mayo stand, not the back table | delivered and verified |
+| `needle-holder-missing` | OR 7's needle holder is in OR 6 | escalated with the reason ("Nurse Lim can't find one in the room") |
+| `count-correct` | every swab there (the control) | count correct, no hold |
+| `swab-on-floor` | swab 5 under the Mayo stand, hidden | hold, found by the room search, recount correct |
+| `swab-in-wound` | swab 5 in the wound | hold, found only by the surgeon's check of the wound, recount correct |
+| `swab-gone` | swab 5 left the room (in OR 6) | still short after the search and the recount: escalated for an X-ray |
+
+`tools/case126-team.test.ts` (13 tests) runs them, and so does `clinicalcraft bench team --case cmcr-1654623`:
+8 / 8, every act exactly once. The tests add:
+- the surgeon away from the table;
+- two requests for one needle holder (one owner);
+- save and restore mid-handoff (one hand-over);
+- every count ending in learner and observer mode;
+- closing on a hold.
+
+`tools/check.sh` runs both.
+
 ## Validation still required (not done)
 
 - **Clinical review.** Two hepatobiliary or experienced laparoscopic surgeons, one anaesthetist and
@@ -211,5 +253,11 @@ patient.
   - the expert trajectories of the operative suite.
 - **Physiology calibration.** The intra-operative values are illustrative, not calibrated.
 - **Simulation validity.** Face, content and construct validity, inter-rater reliability.
+- **Team behaviour review.** Perioperative nurses should review:
+  - the check-back wording;
+  - the order the circulating nurse searches in;
+  - the count's hold and escalation.
+
+  The policies are rules, and not any institution's count policy.
 - **Browser testing of the surgery window** on the target hardware, with Chrome and Edge over local
   HTTP. The single-file `file://` demo of v3 is not part of v4.

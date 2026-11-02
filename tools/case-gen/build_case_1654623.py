@@ -39,7 +39,7 @@ GUIDE = L('教学设计，依据所引指南；不是原报告记载。', 'Teach
 case = copy.deepcopy(base.case)
 
 # ------------------------------------------------------------------ case card
-case['version'] = '2.1.0'
+case['version'] = '2.2.0'
 case['summary'] = L(
     '84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核对，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。',
     'An 84-year-old man with upper abdominal pain and fever for more than ten days. Take the history, examine, review the records, '
@@ -498,6 +498,61 @@ case['procedure']['variants'] = [
                         appears=looks('胆囊床内一根很细的管道，紧贴肝面', 'a fine duct running in the gallbladder bed, close to the liver surface'))]),
 ]
 VARIANT_IDS = [v['id'] for v in case['procedure']['variants']]
+
+# ------------------------------------------------------------------ the care team of OR 7 (docs/TEAM.md in ClinicalCraft)
+# Two named nurses work on their own during the operation: the circulating nurse notices what is needed, asks the
+# right colleague and checks the result with her own eyes; the scrub nurse reads a request back, finds the
+# instrument, brings it and hands it over. A scenario sets up only the conditions (a need, a colleague on a break,
+# an instrument somewhere else) and never the steps; it is chosen at start (`start {team}`) and hidden from the team.
+NEEDLE_HOLDER = dict(id='needle-holder', item='sc-needle-holder', **{'for': 'surgeon'}, name=L('持针器', 'needle holder'))
+case['team'] = dict(
+    room='or-7', phases=['operation'], waitRounds=3,
+    # the closing count, item by item: due once the specimen is out; the circulating nurse searches the same places
+    # whatever happened (nothing points to where a swab is): the floor round the Mayo stand, the back table and the
+    # laparoscopy tower
+    count=dict(item='sc-gauze-swab', name=L('纱布', 'swabs'), when={'procedure': {'specimen': 'extracted'}},
+               searchPlaces=['or-7.mayo', 'or-7.back-table', 'or-7.lap-tower']),
+    members=[dict(staff='or-7.circulating-nurse', duties=['circulate']),
+             dict(staff='or-7.scrub-nurse', duties=['instruments', 'count']),
+             dict(staff='surgeon', duties=['surgeon'])],
+    note=L('团队情境是教学材料（编写），不是原病例报告的内容；它们只设定初始条件，不规定步骤。',
+           'Team scenarios are teaching material (authored), not part of the case report; they set initial conditions only, never the steps.'),
+    scenarios=[
+        dict(id='needle-holder', name=L('术者需要持针器', 'The surgeon needs a needle holder'),
+             summary=L('关闭脐部筋膜时术者需要持针器。巡回护士听到后要决定请谁去拿、核对复述，并亲眼确认持针器到了术者手里；洗手护士要找到持针器、拿起、走到术者旁边递交。没有人告诉她们怎么做。',
+                       'To close the fascia at the umbilical port the surgeon needs a needle holder. The circulating nurse has to decide whom to ask, check the read-back and see for herself that the surgeon holds it; the scrub nurse has to find it, pick it up, reach the surgeon and hand it over. Nobody tells them how.'),
+             provenance='authored', needs=[NEEDLE_HOLDER], expect=dict(delivered=True)),
+        dict(id='scrub-on-break', name=L('洗手护士休息，隔壁同事顶班', 'Scrub nurse on a break, a colleague from next door'),
+             summary=L('同样需要持针器，但林护士正在休息。巡回护士应改请可以顶班的同事——6号手术间的拉曼护士（电话联系）；她要先走进7号手术间，再找持针器并递交。',
+                       'The same need, but Nurse Lim is on a break. The circulating nurse should turn to the colleague who can relieve — Nurse Rahman from OR 6 (by phone), who has to walk into OR 7, find the needle holder and hand it over.'),
+             provenance='authored', needs=[NEEDLE_HOLDER], absent=['or-7.scrub-nurse'], relief=[dict(staff='or-6.scrub-nurse', duties=['instruments'])], expect=dict(delivered=True)),
+        dict(id='needle-holder-moved', name=L('持针器不在器械台上', 'The needle holder is not on the back table'),
+             summary=L('持针器被留在了 Mayo 托盘上，而不是无菌器械台。洗手护士要凭自己看到的找到它，而不是去它通常放的地方。',
+                       'The needle holder was left on the Mayo stand, not on the back table. The scrub nurse has to find it by what she sees, not where it is usually kept.'),
+             provenance='authored', needs=[NEEDLE_HOLDER], items=[dict(placement='or-7.needle-holder', beside='or-7.mayo')], expect=dict(delivered=True)),
+        dict(id='needle-holder-missing', name=L('手术间里没有持针器', 'No needle holder in the room'),
+             summary=L('7号手术间的持针器被拿到了6号手术间。洗手护士在本间找不到，应说明原因；巡回护士没有别人可派时，应向术者说明情况，而不是假装已经解决。',
+                       'OR 7\'s needle holder went to OR 6. The scrub nurse cannot find one in the room and should say so; with nobody else to send, the circulating nurse should tell the surgeon, not pretend it is solved.'),
+             provenance='authored', needs=[NEEDLE_HOLDER], items=[dict(placement='or-7.needle-holder', beside='or-6.back-table')], expect=dict(delivered=False)),
+        # the closing count (one swab of five unaccounted for, or none: the control)
+        dict(id='count-correct', name=L('关闭前清点：全部在位（对照）', 'Closing count: every swab accounted for (control)'),
+             summary=L('五块纱布都在 Mayo 托盘上。清点应一次无误，不应要求暂停关闭（衡量“误停”）。',
+                       'All five swabs are on the Mayo tray. The count should be correct the first time, with no hold on closure (it measures false holds).'),
+             provenance='authored', expect=dict(count='correct')),
+        dict(id='swab-on-floor', name=L('一块纱布掉在 Mayo 托盘下', 'A swab dropped under the Mayo stand'),
+             summary=L('第五块纱布掉到 Mayo 托盘下的地上，被布单边遮住。清点发现少一块：请术者暂停关闭并检查术野（需复述确认），巡回护士按固定顺序在手术间里找，找到后复点无误，可以关闭。',
+                       'The fifth swab fell to the floor under the Mayo stand, hidden by the drape\'s edge. The count finds one short: the surgeon is asked to hold closure and check the wound (read back), the circulating nurse searches the room in her fixed order, finds it, and the recount is correct: closure may go ahead.'),
+             provenance='authored', items=[dict(placement='or-7-swab-5', beside='or-7.mayo', concealed=True)], expect=dict(count='reconciled')),
+        dict(id='swab-in-wound', name=L('一块纱布留在术野里', 'A swab left in the wound'),
+             summary=L('第五块纱布留在患者腹腔内（肝下间隙）。巡回护士在手术间里找不到；只有术者检查术野才能找到。找到后复点无误。',
+                       'The fifth swab is still in the abdomen (under the liver). The circulating nurse will not find it in the room; only the surgeon\'s check of the wound does. Once it is out, the recount is correct.'),
+             provenance='authored', items=[dict(placement='or-7-swab-5', beside='patient', inside=True)], expect=dict(count='reconciled')),
+        dict(id='swab-gone', name=L('一块纱布找不到', 'A swab that cannot be found'),
+             summary=L('第五块纱布已随布类离开手术间（在 6 号手术间）。全面查找和复点后仍少一块：应向术者说明，患者离开前拍 X 线片——不能假装已经解决。',
+                       'The fifth swab left the room with the linen (it is in OR 6). After the search and the recount it is still one short: the surgeon should be told and an X-ray taken before the patient leaves — not pretended solved.'),
+             provenance='authored', items=[dict(placement='or-7-swab-5', beside='or-6.back-table', concealed=True)], expect=dict(count='unresolved')),
+    ],
+)
 
 case['assets'] = [dict(id='anatomy', kind='model', path=f'assets/cases/{CASE_ID}/anatomy.glb',
                        title=L('病例126参考解剖（全内脏反位）', 'Case 126 reference anatomy (situs inversus totalis)'),

@@ -1815,6 +1815,27 @@
       "model": {"uri": "models/sc-gauze-swabs.glb", "sha256": "b9cb94fd2801cd49cca09b5eaec830835a6fad3ae1e7cad5faf5844ac4f71c1d", "scale": 1, "offset": [0.0005, 0.0002, -0.0004], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
+      "id": "sc-gauze-swab",
+      "name": {"zh-CN": "X 线可显影 RFID 纱布（单块）", "en": "X-ray-detectable RFID gauze swab (single)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "单块腹部纱布垫，带 X 线显影线与 RFID 标签；逐块清点：关闭体腔前洗手护士清点看得到的每一块，与切皮前的基数核对。",
+        "en": "One abdominal swab with an X-ray-detectable thread and an RFID tag, counted one by one: before closure the scrub nurse counts every one she can see against the count before incision."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.1, "d": 0.1, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 纱布", "en": "E · Swab"}},
+      "screen": "none",
+      "tags": ["or", "count", "rfid"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "parts": [
+        {"m": "white", "p": [0, 0.008, 0], "s": [0.1, 0.015, 0.1]},
+        {"m": "blue", "p": [0.03, 0.017, 0.03], "s": [0.02, 0.003, 0.02]}
+      ]
+    },
+    {
       "id": "sc-instrument-set",
       "name": {"zh-CN": "硬质无菌器械盒（基础剖腹器械包）", "en": "Rigid sterile container (major laparotomy set)"},
       "category": "surgery",

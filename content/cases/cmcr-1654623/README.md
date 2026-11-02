@@ -174,6 +174,29 @@ The operative benchmark suite is `content/operative/case126-v1`; see docs/CASE_1
 - treating unrecorded medicines as none;
 - reading the outcome records first.
 
+## The care team (in-world mode)
+
+During the operation, OR 7's circulating and scrub nurses work on their own (docs/CASE_126.md; ClinicalCraft
+docs/TEAM.md):
+- an instrument handoff with read-back, verified by sight;
+- the closing count swab by swab, once the specimen is out.
+
+To teach with it, start the encounter with a team scenario (`start {team}`):
+- the needle holder needed;
+- the scrub nurse on a break;
+- the needle holder moved or missing;
+- the count correct (the control);
+- a swab under the Mayo stand, in the wound, or gone from the room.
+
+The learner answers as the surgeon on the **Team** panel, or chooses **Observe** to watch.
+
+**Debrief questions:**
+- when the count was short, what did you say back, and did you hold closure until it was reconciled?
+- who searched where, and why does the circulating nurse search the same places whatever happened?
+- when the swab could not be found, why is an X-ray before the patient leaves the right ending, and what would
+  "pretending it is solved" have cost?
+- in the handoff, what did the read-back protect against?
+
 ## Fidelity limits
 
 - No DICOM: the anatomy is BodyParts3D organ surfaces (mirrored) plus the Layered Human procedural
@@ -206,6 +229,10 @@ not recorded. The generator is `tools/case-gen/build_case_1654623.py` (on top of
 ## Changelog
 
 - 2026-10-31, 1.0.0: first bounded bilingual case (the v3 demo's case).
+- 2026-11-02, 2.2.0:
+  - the care team of OR 7 (`team`): circulating and scrub nurses working on their own, with check-back;
+  - the closing count swab by swab (five single swabs on the Mayo tray, `sc-gauze-swab`);
+  - eight authored team scenarios, scored by `clinicalcraft bench team`.
 - 2026-11-01, 2.1.0: five counterfactual anatomical variants (hidden from the operator), one rubric item each
   (scored only in its variant), the evidence ledger's `counterfactual` list, and the operative benchmark
   suite `content/operative/case126-v1`.
@@ -226,8 +253,9 @@ tools/check.sh ../ClinicalCraft
 ```
 
 It runs `cases validate --strict`, `cases verify`, `verify_anatomy_1654623.py`,
-`tools/case126.test.ts` and the operative suite (generator up to date; reference and scripted-llm
-agents at 100 %).
+`tools/case126.test.ts`, the theatre and team tests (`tools/case126-theatre.test.ts`,
+`tools/case126-team.test.ts`), the operative suite (generator up to date; reference and scripted-llm
+agents at 100 %) and the team benchmark (every scenario passes).
 
 ## 中文摘要
 
@@ -236,5 +264,7 @@ agents at 100 %).
 关键安全视野依据术野判定，不靠勾选。误把胆总管当作胆囊管夹闭或离断属于安全关键失败，分数封顶40%。在不确定时选择求助、胆道影像、胆囊次全切除或中转开腹，都可以得到认可。
 
 2.1.0 新增五种假设性解剖变异：双胆囊动脉、肝右动脉“毛虫驼峰”、迷走右后叶胆管、致密纤维化的“冰冻”三角、胆囊床内的胆囊下胆管。它们对操作者隐藏，只能从术野判断。另有手术基准测试集 `content/operative/case126-v1`，供智能体在解剖未知的情况下操作并评测。
+
+2.2.0 新增7号手术间的手术团队：巡回护士与洗手护士在手术阶段自主协作——器械传递先复述确认、再亲眼核实；取出标本后逐块清点纱布，不符时请术者暂停关闭并检查术野，巡回护士按固定顺序在手术间里查找，然后复点，仍找不到就上报并拍 X 线片。共8个编写的团队情境（含一个全部在位的对照），可用 `clinicalcraft bench team` 评测。
 
 三维解剖不是患者CT重建，术中生命体征为模拟值，本病例尚未经临床专家审核。

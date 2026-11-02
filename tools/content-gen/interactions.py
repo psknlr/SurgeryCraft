@@ -179,6 +179,15 @@ eq("sc-gauze-swabs", L("X 线可显影 RFID 纱布（10 块）", "X-ray-detectab
                  "retrieve": op("取回并计数", "Retrieve and count", ["in-use"], "retrieved", [IN_HAND], SCRUB, 20),
              }})
 
+# one swab: the count is kept item by item (the scrub nurse counts what she sees; the circulating nurse searches)
+eq("sc-gauze-swab", L("X 线可显影 RFID 纱布（单块）", "X-ray-detectable RFID gauze swab (single)"), "surgery",
+   L("单块腹部纱布垫，带 X 线显影线与 RFID 标签；逐块清点：关闭体腔前洗手护士清点看得到的每一块，与切皮前的基数核对。",
+     "One abdominal swab with an X-ray-detectable thread and an RFID tag, counted one by one: before closure the scrub nurse counts every one she can see against the count before incision."),
+   (0.1, 0.1, 0.02),
+   [thin("white", 0, 0.008, 0, 0.1, 0.015, 0.1), thin("blue", 0.03, 0.017, 0.03, 0.02, 0.003, 0.02)],
+   interaction="device", solid=False, portable="handheld", reach=1.2, prompt=L("E · 纱布", "E · Swab"),
+   tags=["or", "count", "rfid"])
+
 eq("sc-instrument-set", L("硬质无菌器械盒（基础剖腹器械包）", "Rigid sterile container (major laparotomy set)"), "surgery",
    L("带过滤器与一次性封签的硬质灭菌容器（EN 868-8:2018），内放化学指示物（ISO 11140-1 第 5 类）与器械清单；开包前核对封签、外部指示物和有效期，开包后核对内部指示物。",
      "Rigid sterilisation container with filters and tamper-evident seals (EN 868-8:2018), a class 5 chemical integrator (ISO 11140-1) and the tray list inside; check seal, external indicator and expiry before opening and the internal integrator after."),
