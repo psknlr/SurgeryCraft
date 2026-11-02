@@ -5,7 +5,7 @@
 | Setting / facility | Operating department, IMPF Surgery Hospital (OR 7) |
 | Difficulty / duration | 3/5 / about 45 minutes |
 | Specialty / languages | General surgery / zh-CN + en |
-| Review | AI-assisted editorial review, 2026-11-01. **Not clinician-reviewed.** |
+| Review | AI-assisted editorial review, 2026-11-02 (2.3.0 audit repairs). **Not clinician-reviewed.** |
 | Scope | Whole encounter: presentation, records, diagnosis, perioperative risk, WHO checklist, the operation itself, recovery, then review of the reported course |
 | Source | Dataset item 126; published case report, pp. 180–181 (citation below) |
 
@@ -61,8 +61,8 @@ laboratory tests on day 4, discharge on day 5, well at one month.
 |---|---|---|
 | `assessment` | start | history, examination, records; decisions `diagnosis`, `anatomy`, `planning` and `safety` |
 | `preop` | objective `plan` | perioperative history; the unrecorded items answer that they are unrecorded: antithrombotics, COPD status, stroke deficits; records not in the source: ECG, lung function, chest X-ray; decision `risk` |
-| `theatre` | decision `risk` | Sign In (monitoring attached; dextrocardia: mirror ECG leads and defibrillator pads); induction, contraindicated before the Sign In; Time Out |
-| `operation` | the Time Out | the operation (`operate`): ports, pneumoperitoneum, instruments, traction, dissection, identification, safety pause, clips, division, bed dissection, inspection, bag, extraction, closure; or a bail-out |
+| `theatre` | decision `risk` | attach the monitor (its own task; dextrocardia: mirror ECG leads and defibrillator pads); Sign In, valid only after its checks (monitor on, allergies and fasting asked); induction, contraindicated before the Sign In and refused while an anaesthesia hold stands; Time Out, valid only after a valid Sign In and induction |
+| `operation` | the Time Out | the operation (`operate`): ports, pneumoperitoneum, instruments, traction, dissection, identification, safety pause, clips, division, bed dissection, inspection, bag, extraction, closure; or a bail-out; then decision `emergence` (extubation apart from oral intake) |
 | `recovery` | the Sign Out | recovery handover; decision `postop` |
 | `review` | historical review opened | the report's operation, histology and follow-up; decision `outcome` |
 
@@ -107,14 +107,14 @@ The safety pause records the operator's claims against what the field shows.
 
 ## Decisions and assessment
 
-There are 7 decisions and 31 rubric items, weighted by domain (15/10/15/30/15/10/5). Complication
+There are 8 decisions and 33 rubric items (plus one per anatomical variant), weighted by domain (15/10/15/30/15/10/5). Complication
 items are scored only when a complication occurs; the percentage is earned divided by possible.
 Critical items are laterality, verify-before-dividing and the true critical view. Safety gates cap
 the score.
 
 | Path | Score | Verdict |
 |---|---|---|
-| Reference (`solution`, 77 steps) | 100 % (90/90; complication items not scored) | clear |
+| Reference (`solution`, 80 steps) | 100 % (90/90; complication items not scored) | clear |
 | Start and finish only | 0 % (finish refused: objectives open) | — |
 | Habitual traction; the common bile duct taken for the cystic duct, clipped and divided, then recognised and converted | 40 % (uncapped 67 %) | safety-critical: bile duct injury, irreversible step without a true view, misidentification |
 | The reference without the safety pause | 50 % (uncapped 78 %) | safety-critical: irreversible step without a true view |
@@ -167,11 +167,26 @@ The operative benchmark suite is `content/operative/case126-v1`; see docs/CASE_1
 - **Summary:** separate the record, guideline principles, the simulation's assumptions (reference
   anatomy, synthetic physiology) and the single-case outcome.
 
+**Holds and corrections (2.3.0).** The attending and the anaesthetist record a withheld clearance as a hold
+(`place_hold`, with the reason) and release it only after a reassessment (`release_hold`); induction is refused
+while it stands, whatever anyone claims. Missing information (antithrombotics, COPD control) is a reason to ask
+and to document a decision, not a universal prohibition. Both colleagues correct, every time:
+- little or no hypnotic before the neuromuscular blocker (the hypnotic goes first, to unconsciousness; never
+  paralysis without it);
+- end-tidal CO₂ as the measure of preoxygenation (it is end-tidal **oxygen**; capnography confirms the tube);
+- a swallow test or VFSS before extubation (extubation and oral intake are two decisions);
+- "reversing" left and right because of situs inversus (left and right are the patient's own: the gallbladder is
+  on the patient's left).
+
+The nurse corrects a teaching "what if" retold as the family's report: no family member has been interviewed.
+
 **Common errors:**
 - pulling the neck to the patient's right;
 - clipping before the critical view, or on the strength of a claim;
 - dissecting with the hook in a poorly exposed triangle;
-- treating unrecorded medicines as none;
+- treating unrecorded medicines as none — or a teaching hypothetical as history;
+- taking a count or the insufflator for the operation (the operation is done on the field, step by step);
+- claiming the attending's approval while a hold stands;
 - reading the outcome records first.
 
 ## The care team (in-world mode)
@@ -228,6 +243,16 @@ not recorded. The generator is `tools/case-gen/build_case_1654623.py` (on top of
 
 ## Changelog
 
+- 2026-11-02, 2.3.0 (the audit of a 2.1.0 save; needs ClinicalCraft's audit round):
+  - attaching the monitor is its own task (`attach-monitor`); the Sign In is valid only after its checks; the
+    Time Out needs a valid Sign In and induction;
+  - explicit anaesthesia holds (who, why, who released them after which reassessment);
+  - decision `emergence` (extubation apart from oral intake), rubric `r-emergence`; closure credited from the field
+    (`r-closed`); the operation's outcome items scored once it opens;
+  - authored corrections on the attending, the anaesthetist and the nurse; patient-relative laterality wording;
+    unverified items (`prior-treatment`, `pain-meals`) answer "not recorded";
+  - `clock.worldTime: "actual"` (a device's minute is a clinical minute);
+  - tests: the theatre regressions (13) and the release acceptance run end to end.
 - 2026-10-31, 1.0.0: first bounded bilingual case (the v3 demo's case).
 - 2026-11-02, 2.2.0:
   - the care team of OR 7 (`team`): circulating and scrub nurses working on their own, with check-back;
@@ -253,8 +278,8 @@ tools/check.sh ../ClinicalCraft
 ```
 
 It runs `cases validate --strict`, `cases verify`, `verify_anatomy_1654623.py`,
-`tools/case126.test.ts`, the theatre and team tests (`tools/case126-theatre.test.ts`,
-`tools/case126-team.test.ts`), the operative suite (generator up to date; reference and scripted-llm
+`tools/case126.test.ts`, the theatre, acceptance and team tests (`tools/case126-theatre.test.ts`,
+`tools/case126-acceptance.test.ts`, `tools/case126-team.test.ts`), the operative suite (generator up to date; reference and scripted-llm
 agents at 100 %) and the team benchmark (every scenario passes).
 
 ## 中文摘要
@@ -266,5 +291,7 @@ agents at 100 %) and the team benchmark (every scenario passes).
 2.1.0 新增五种假设性解剖变异：双胆囊动脉、肝右动脉“毛虫驼峰”、迷走右后叶胆管、致密纤维化的“冰冻”三角、胆囊床内的胆囊下胆管。它们对操作者隐藏，只能从术野判断。另有手术基准测试集 `content/operative/case126-v1`，供智能体在解剖未知的情况下操作并评测。
 
 2.2.0 新增7号手术间的手术团队：巡回护士与洗手护士在手术阶段自主协作——器械传递先复述确认、再亲眼核实；取出标本后逐块清点纱布，不符时请术者暂停关闭并检查术野，巡回护士按固定顺序在手术间里查找，然后复点，仍找不到就上报并拍 X 线片。共8个编写的团队情境（含一个全部在位的对照），可用 `clinicalcraft bench team` 评测。
+
+2.3.0 根据一次 2.1.0 存档的审查做了修订：连接监护仪是单独的任务，不再等于完成麻醉前核查；麻醉前核查要在监护、过敏和禁食都落实后才有效，切皮前暂停核查要在有效的麻醉前核查和诱导之后；上级医师或麻醉医生不同意诱导时会记录“暂缓”及理由，只有本人重新评估并记录后才能解除；新增拔管与经口进食分开决定的决策；术中结果（取出标本、关腹）只按术野计分，清点和气腹机不能代替手术；上级医师、麻醉医生和护士会纠正快速顺序诱导、预充氧判断、拔管前吞咽试验、“把左右再反过来”以及把教学假设当成家属陈述等错误。另有一条从问诊到恢复室交接的端到端验收测试。
 
 三维解剖不是患者CT重建，术中生命体征为模拟值，本病例尚未经临床专家审核。

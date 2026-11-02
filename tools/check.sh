@@ -10,7 +10,9 @@
 #   5. Case 126 (content/cases/cmcr-1654623): `cases validate --strict`, `cases verify` (reference path, utterance corpus),
 #      the anatomy asset (tools/blender/verify_anatomy_1654623.py), the case's fidelity, safety and variant scenarios
 #      (tools/case126.test.ts; docs/CASE_126.md) and, embodied in OR 7, the operating-site check and the WHO board
-#      as a view of the case record (tools/case126-theatre.test.ts), and the care team working on its own — the
+#      as a view of the case record, holds, the way into the operation, navigation, carts, roles and teaching corrections
+#      (tools/case126-theatre.test.ts), the release acceptance run end to end (tools/case126-acceptance.test.ts), and the
+#      care team working on its own — the
 #      two-nurse needle-holder handoff and its perturbations, save/restore mid-handoff (tools/case126-team.test.ts);
 #   6. the operative benchmark suite of Case 126 (content/operative/case126-v1): generated files up to date
 #      (tools/operative/build_suite_case126.py --check), then `clinicalcraft bench operative` with the reference and
@@ -28,9 +30,10 @@ SKILLS="$CC/packages/agent/src/zz-surgerycraft-skills.test.ts"
 CASE126="$CC/packages/core/src/zz-surgerycraft-case126.test.ts"
 THEATRE="$CC/packages/agent/src/zz-surgerycraft-case126-theatre.test.ts"
 TEAM="$CC/packages/agent/src/zz-surgerycraft-case126-team.test.ts"
+ACCEPT="$CC/packages/agent/src/zz-surgerycraft-case126-acceptance.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$ACCEPT"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
 
 echo "== facilities validate (ClinicalCraft at $CC)"
@@ -66,6 +69,10 @@ cp "$HERE/case126.test.ts" "$CASE126"
 # in OR 7, embodied: the operation only at the table (re-checked after an approval wait), the WHO board = the record
 cp "$HERE/case126-theatre.test.ts" "$THEATRE"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-theatre.test.ts")
+# release acceptance, end to end in OR 7: history → monitor → hold → Sign In → release → induction → reload → the board's
+# Time Out → the field → counts → the board's Sign Out → recovery handover; record, board and score agree
+cp "$HERE/case126-acceptance.test.ts" "$ACCEPT"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-acceptance.test.ts")
 # the care team of OR 7 on its own (ClinicalCraft docs/TEAM.md): request → read-back → find → hand over → verify
 cp "$HERE/case126-team.test.ts" "$TEAM"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-team.test.ts")
@@ -73,7 +80,7 @@ cp "$HERE/case126-team.test.ts" "$TEAM"
 echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
 python3 "$HERE/operative/build_suite_case126.py" --check
 OUT="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM"' EXIT
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$ACCEPT"' EXIT
 for agent in reference scripted-llm; do
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
 done
