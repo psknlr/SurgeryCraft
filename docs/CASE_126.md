@@ -56,10 +56,10 @@ hospital. The screenshot shows the reference path after the triangle has been di
 | §5 imaging reconstruction | no DICOM exists for this patient: **case-informed reference anatomy, not a patient-specific CT reconstruction** (stated in the disclaimer, procedure note, asset provenance and README) | §Anatomy below |
 | §6 preoperative workflow | history, examination, records (unrecorded ones answer "not recorded"), a diagnosis decision; nothing reveals the diagnosis | phase `assessment` |
 | §7 elderly perioperative risk | unrecorded items kept unknown (antithrombotics, COPD status, stroke deficits, ECG, lung function); decision `risk` (rejects assigning an ASA class from the record); anaesthetist; synthetic pneumoperitoneum and COPD physiology, labelled; dextrocardia handled in the Sign In (mirror lead and pad positions) | phases `preop`, `theatre` |
-| §8 operating room, WHO checklist | Sign In before induction (gated), Time Out opens the operation, Sign Out after closing; OR 7 of the IMPF hospital and its devices and staff (in-world mode) | interventions `sign-in`, `induction`, `time-out`, `sign-out` |
+| §8 operating room, WHO checklist | Sign In before induction, a valid Time Out (after induction) opens the operation, Sign Out after closing; the steps are checklist steps: an out-of-order attempt is logged as invalid, leaves the operation locked and can be repeated in order; the order is scored by committed sequence and a reversed induction shows in the verdict (gate `induction-before-sign-in`); OR 7's WHO board shows the case record and its operations are the case's own steps; the operation is done only at the table (the operator and the patient checked again after an approval wait) | interventions `sign-in`, `induction`, `time-out`, `sign-out`; `tools/case126-theatre.test.ts` |
 | §9 ergonomics, configurable ports | three plans: the report's three ports (surgeon on the left, hands cross, as reported), a mirrored four-port plan, and the habitual right-sided plan (its shafts fence). Port metrics include reach, manipulation angle, crossing and in-line warnings; trocar-pivot reach and shaft clashes are enforced | `procedure.portPlans`, `portReport` |
 | §10 interactive surgery | every step is an `operate` action: insert or withdraw instruments, retract (named directions in patient terms), dissect (with or without energy), isolate, identify, clip, divide, coagulate, suction, irrigate, cholangiography, inspect, recognise, bag, extract, bail out, close. Impossible steps are refused; unsafe ones are carried out and recorded | ClinicalCraft `docs/PROCEDURE.md` §3 |
-| §11 critical view of safety | three criteria evaluated on the field: triangle cleared, lower third off the cystic plate, two and only two structures entering the gallbladder (a common bile duct tented by habitual traction appears to enter). The safety pause records claims against the field; ticking is never verification | `procedure.views[cvs]`, rubric `r-cvs` |
+| §11 critical view of safety | three criteria evaluated on the field: triangle cleared, lower third off the cystic plate, and the structures entering the gallbladder (a common bile duct tented by habitual traction appears to enter). For the last one the operator reports how many structures they see (usually two); only the true number is credited, so with a second cystic artery the right report is three. The safety pause records claims against the field; ticking is never verification. The counting criterion needs review by hepatobiliary surgeons | `procedure.views[cvs]`, rubric `r-cvs` |
 | §11.3 safe alternatives | call for help, cholangiography, subtotal cholecystectomy (fenestrating or reconstituting), conversion; all accepted and scored as legitimate | `procedure.bailouts` |
 | §12 complications | bile duct injury (clipped: occlusion, seen on imaging; divided: bile in the field), vascular injury, cystic artery bleeding (field obscured until suction, then control), stump leak, perforation with bile and stone spillage, thermal injury from energy near hidden structures, pneumoperitoneum hypercapnia (synthetic). None occurs on a sound operation | ClinicalCraft `docs/PROCEDURE.md` §5 |
 | §13–14 decision-making, state machine | phases gated by conditions (assessment → preop → theatre → operation → recovery → review); multiple defensible strategies accepted (two port plans, completion or bail-out) | `phases`, `objectives` |
@@ -198,6 +198,48 @@ Publish held-out numbers only with the digest they were measured on. These resul
 inside a rule-based simulation of one case. They are not evidence that a model can operate on a
 patient.
 
+## The care team of OR 7 (ClinicalCraft docs/TEAM.md)
+
+In in-world mode, during the operation, OR 7's staff work on their own. Nobody tells them each step:
+- **Nurse Aisyah (circulating)** notices what is needed, asks the colleague whose duty it is, checks the read-back,
+  and sees for herself that the surgeon holds it;
+- **Nurse Lim (scrub)** reads the request back, finds the instrument she can see, and hands it over.
+
+Once the specimen is out, Nurse Lim counts the five swabs on the Mayo tray (single X-ray-detectable swabs,
+`sc-gauze-swab`, placements `or-7-swab-1` to `or-7-swab-5`). If the count is short:
+1. Nurse Aisyah asks the surgeon to hold closure and check the wound, and the surgeon reads it back.
+2. She searches the floor round the Mayo stand, then the back table, then the laparoscopy tower. The places are the
+   same whatever happened.
+3. She asks for a recount.
+4. If it is still short, she escalates for an X-ray.
+
+The learner answers as the surgeon (the Team panel: Read back, Wound checked; "Check the wound" searches the wound) or
+watches a simulated surgeon (Observe).
+
+Team scenarios (`team.scenarios`, chosen at `start {team}`, hidden; authored teaching material, not the case
+report):
+
+| scenario | set-up | expected |
+|---|---|---|
+| `needle-holder` | the surgeon needs a needle holder | delivered and verified |
+| `scrub-on-break` | the same; Nurse Lim on a break, Nurse Rahman (OR 6) relieves by phone and walks in | delivered and verified |
+| `needle-holder-moved` | the needle holder is on the Mayo stand, not the back table | delivered and verified |
+| `needle-holder-missing` | OR 7's needle holder is in OR 6 | escalated with the reason ("Nurse Lim can't find one in the room") |
+| `count-correct` | every swab there (the control) | count correct, no hold |
+| `swab-on-floor` | swab 5 under the Mayo stand, hidden | hold, found by the room search, recount correct |
+| `swab-in-wound` | swab 5 in the wound | hold, found only by the surgeon's check of the wound, recount correct |
+| `swab-gone` | swab 5 left the room (in OR 6) | still short after the search and the recount: escalated for an X-ray |
+
+`tools/case126-team.test.ts` (13 tests) runs them, and so does `clinicalcraft bench team --case cmcr-1654623`:
+8 / 8, every act exactly once. The tests add:
+- the surgeon away from the table;
+- two requests for one needle holder (one owner);
+- save and restore mid-handoff (one hand-over);
+- every count ending in learner and observer mode;
+- closing on a hold.
+
+`tools/check.sh` runs both.
+
 ## Validation still required (not done)
 
 - **Clinical review.** Two hepatobiliary or experienced laparoscopic surgeons, one anaesthetist and
@@ -211,5 +253,11 @@ patient.
   - the expert trajectories of the operative suite.
 - **Physiology calibration.** The intra-operative values are illustrative, not calibrated.
 - **Simulation validity.** Face, content and construct validity, inter-rater reliability.
+- **Team behaviour review.** Perioperative nurses should review:
+  - the check-back wording;
+  - the order the circulating nurse searches in;
+  - the count's hold and escalation.
+
+  The policies are rules, and not any institution's count policy.
 - **Browser testing of the surgery window** on the target hardware, with Chrome and Edge over local
   HTTP. The single-file `file://` demo of v3 is not part of v4.

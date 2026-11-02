@@ -179,7 +179,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 2
         }
       },
       {

@@ -1,7 +1,7 @@
 {
   "schema": "clinicalcraft/case@1",
   "id": "cmcr-1654623",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "title": {
     "zh-CN": "上腹痛伴发热 · 84岁男性",
     "en": "Upper abdominal pain and fever · 84-year-old man"
@@ -175,7 +175,8 @@
       },
       "learnerSwitchable": false,
       "enterWhen": {
-        "intervened": "time-out"
+        "intervened": "time-out",
+        "valid": true
       }
     },
     {
@@ -186,7 +187,8 @@
       },
       "learnerSwitchable": false,
       "enterWhen": {
-        "intervened": "sign-out"
+        "intervened": "sign-out",
+        "valid": true
       }
     },
     {
@@ -1312,6 +1314,7 @@
         "zh-CN": "核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位），右位心——心电图导联和除颤电极按镜像放置；过敏、气道与误吸风险、预计失血尚未记录，需当场确认。监护已连接。",
         "en": "Identity, procedure, consent and site checked: the gallbladder is on the patient's LEFT (situs inversus totalis); dextrocardia — ECG leads and defibrillator pads placed in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded and are confirmed now. Monitoring attached."
       },
+      "checklist": true,
       "indicatedWhen": {
         "phase": "theatre"
       }
@@ -1331,11 +1334,13 @@
         "en": "Anaesthesia induced; intubated and ventilated. (Teaching step: no drug doses are modelled.)"
       },
       "indicatedWhen": {
-        "intervened": "sign-in"
+        "intervened": "sign-in",
+        "valid": true
       },
       "contraindicatedWhen": {
         "not": {
-          "intervened": "sign-in"
+          "intervened": "sign-in",
+          "valid": true
         }
       },
       "harm": {
@@ -1357,6 +1362,7 @@
         "zh-CN": "团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。",
         "en": "The team confirms the patient, a laparoscopic cholecystectomy and the left-sided pathology; the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach."
       },
+      "checklist": true,
       "indicatedWhen": {
         "intervened": "induction"
       },
@@ -1366,8 +1372,8 @@
         }
       },
       "harm": {
-        "zh-CN": "麻醉诱导前就进行切皮前核对，顺序不对。",
-        "en": "A Time Out before anaesthesia is out of order."
+        "zh-CN": "麻醉诱导前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，诱导后需重新核对。",
+        "en": "A Time Out before anaesthesia is out of order: recorded as invalid; the operation stays locked until a Time Out after induction."
       }
     },
     {
@@ -1384,6 +1390,7 @@
         "zh-CN": "确认实施的手术、器械与纱布清点、标本标记、需关注的问题（包括任何术中并发症）并交接恢复室。",
         "en": "The procedure performed, instrument and swab counts, specimen labelling and concerns for recovery (including any intra-operative complication) are confirmed and handed over."
       },
+      "checklist": true,
       "indicatedWhen": {
         "any": [
           {
@@ -1415,8 +1422,8 @@
         }
       },
       "harm": {
-        "zh-CN": "手术尚未结束就做离室核对。",
-        "en": "Sign Out before the operation has ended."
+        "zh-CN": "手术尚未结束就做离室核对：已记录为无效，手术结束后需重新核对。",
+        "en": "Sign Out before the operation has ended: recorded as invalid; repeat it once the operation has ended."
       }
     },
     {
@@ -1586,13 +1593,15 @@
             "decided": "risk"
           },
           {
-            "intervened": "sign-in"
+            "intervened": "sign-in",
+            "valid": true
           },
           {
             "intervened": "induction"
           },
           {
-            "intervened": "time-out"
+            "intervened": "time-out",
+            "valid": true
           }
         ]
       },
@@ -1629,7 +1638,8 @@
             ]
           },
           {
-            "intervened": "sign-out"
+            "intervened": "sign-out",
+            "valid": true
           }
         ]
       },
@@ -2299,13 +2309,9 @@
         "en": "Sign In before induction"
       },
       "met": {
-        "all": [
-          {
-            "intervened": "sign-in"
-          },
-          {
-            "intervened": "induction"
-          }
+        "inOrder": [
+          "sign-in",
+          "induction"
         ]
       },
       "scoredWhen": {
@@ -2317,11 +2323,22 @@
       "domain": "safety",
       "weight": 2,
       "text": {
-        "zh-CN": "切皮前暂停核对",
-        "en": "Time Out before incision"
+        "zh-CN": "切皮前暂停核对（在诱导之后、切皮之前）",
+        "en": "Time Out before incision (after induction)"
       },
       "met": {
-        "intervened": "time-out"
+        "all": [
+          {
+            "intervened": "time-out",
+            "valid": true
+          },
+          {
+            "not": {
+              "intervened": "time-out",
+              "valid": false
+            }
+          }
+        ]
       }
     },
     {
@@ -2924,11 +2941,12 @@
       "domain": "safety",
       "weight": 1,
       "text": {
-        "zh-CN": "离室前核对",
-        "en": "Sign Out"
+        "zh-CN": "手术结束后、离室前核对",
+        "en": "Sign Out after the operation, before leaving"
       },
       "met": {
-        "intervened": "sign-out"
+        "intervened": "sign-out",
+        "valid": true
       }
     },
     {
@@ -3982,7 +4000,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 2
         }
       }
     },
@@ -5382,13 +5400,14 @@
             }
           },
           {
-            "id": "two",
+            "id": "entering",
             "name": {
-              "zh-CN": "只有两根结构进入胆囊",
-              "en": "Two and only two structures entering the gallbladder"
+              "zh-CN": "进入胆囊的结构：通常两根，均已游离一周，且无其他结构看似进入",
+              "en": "Structures entering the gallbladder: usually two, each free all round, nothing else appearing to enter"
             },
             "test": {
-              "onlyEntering": "gallbladder"
+              "onlyEntering": "gallbladder",
+              "count": 2
             }
           }
         ]
@@ -5781,6 +5800,265 @@
       }
     ]
   },
+  "team": {
+    "room": "or-7",
+    "phases": [
+      "operation"
+    ],
+    "waitRounds": 3,
+    "count": {
+      "item": "sc-gauze-swab",
+      "name": {
+        "zh-CN": "纱布",
+        "en": "swabs"
+      },
+      "when": {
+        "procedure": {
+          "specimen": "extracted"
+        }
+      },
+      "searchPlaces": [
+        "or-7.mayo",
+        "or-7.back-table",
+        "or-7.lap-tower"
+      ]
+    },
+    "members": [
+      {
+        "staff": "or-7.circulating-nurse",
+        "duties": [
+          "circulate"
+        ]
+      },
+      {
+        "staff": "or-7.scrub-nurse",
+        "duties": [
+          "instruments",
+          "count"
+        ]
+      },
+      {
+        "staff": "surgeon",
+        "duties": [
+          "surgeon"
+        ]
+      }
+    ],
+    "note": {
+      "zh-CN": "团队情境是教学材料（编写），不是原病例报告的内容；它们只设定初始条件，不规定步骤。",
+      "en": "Team scenarios are teaching material (authored), not part of the case report; they set initial conditions only, never the steps."
+    },
+    "scenarios": [
+      {
+        "id": "needle-holder",
+        "name": {
+          "zh-CN": "术者需要持针器",
+          "en": "The surgeon needs a needle holder"
+        },
+        "summary": {
+          "zh-CN": "关闭脐部筋膜时术者需要持针器。巡回护士听到后要决定请谁去拿、核对复述，并亲眼确认持针器到了术者手里；洗手护士要找到持针器、拿起、走到术者旁边递交。没有人告诉她们怎么做。",
+          "en": "To close the fascia at the umbilical port the surgeon needs a needle holder. The circulating nurse has to decide whom to ask, check the read-back and see for herself that the surgeon holds it; the scrub nurse has to find it, pick it up, reach the surgeon and hand it over. Nobody tells them how."
+        },
+        "provenance": "authored",
+        "needs": [
+          {
+            "id": "needle-holder",
+            "item": "sc-needle-holder",
+            "for": "surgeon",
+            "name": {
+              "zh-CN": "持针器",
+              "en": "needle holder"
+            }
+          }
+        ],
+        "expect": {
+          "delivered": true
+        }
+      },
+      {
+        "id": "scrub-on-break",
+        "name": {
+          "zh-CN": "洗手护士休息，隔壁同事顶班",
+          "en": "Scrub nurse on a break, a colleague from next door"
+        },
+        "summary": {
+          "zh-CN": "同样需要持针器，但林护士正在休息。巡回护士应改请可以顶班的同事——6号手术间的拉曼护士（电话联系）；她要先走进7号手术间，再找持针器并递交。",
+          "en": "The same need, but Nurse Lim is on a break. The circulating nurse should turn to the colleague who can relieve — Nurse Rahman from OR 6 (by phone), who has to walk into OR 7, find the needle holder and hand it over."
+        },
+        "provenance": "authored",
+        "needs": [
+          {
+            "id": "needle-holder",
+            "item": "sc-needle-holder",
+            "for": "surgeon",
+            "name": {
+              "zh-CN": "持针器",
+              "en": "needle holder"
+            }
+          }
+        ],
+        "absent": [
+          "or-7.scrub-nurse"
+        ],
+        "relief": [
+          {
+            "staff": "or-6.scrub-nurse",
+            "duties": [
+              "instruments"
+            ]
+          }
+        ],
+        "expect": {
+          "delivered": true
+        }
+      },
+      {
+        "id": "needle-holder-moved",
+        "name": {
+          "zh-CN": "持针器不在器械台上",
+          "en": "The needle holder is not on the back table"
+        },
+        "summary": {
+          "zh-CN": "持针器被留在了 Mayo 托盘上，而不是无菌器械台。洗手护士要凭自己看到的找到它，而不是去它通常放的地方。",
+          "en": "The needle holder was left on the Mayo stand, not on the back table. The scrub nurse has to find it by what she sees, not where it is usually kept."
+        },
+        "provenance": "authored",
+        "needs": [
+          {
+            "id": "needle-holder",
+            "item": "sc-needle-holder",
+            "for": "surgeon",
+            "name": {
+              "zh-CN": "持针器",
+              "en": "needle holder"
+            }
+          }
+        ],
+        "items": [
+          {
+            "placement": "or-7.needle-holder",
+            "beside": "or-7.mayo"
+          }
+        ],
+        "expect": {
+          "delivered": true
+        }
+      },
+      {
+        "id": "needle-holder-missing",
+        "name": {
+          "zh-CN": "手术间里没有持针器",
+          "en": "No needle holder in the room"
+        },
+        "summary": {
+          "zh-CN": "7号手术间的持针器被拿到了6号手术间。洗手护士在本间找不到，应说明原因；巡回护士没有别人可派时，应向术者说明情况，而不是假装已经解决。",
+          "en": "OR 7's needle holder went to OR 6. The scrub nurse cannot find one in the room and should say so; with nobody else to send, the circulating nurse should tell the surgeon, not pretend it is solved."
+        },
+        "provenance": "authored",
+        "needs": [
+          {
+            "id": "needle-holder",
+            "item": "sc-needle-holder",
+            "for": "surgeon",
+            "name": {
+              "zh-CN": "持针器",
+              "en": "needle holder"
+            }
+          }
+        ],
+        "items": [
+          {
+            "placement": "or-7.needle-holder",
+            "beside": "or-6.back-table"
+          }
+        ],
+        "expect": {
+          "delivered": false
+        }
+      },
+      {
+        "id": "count-correct",
+        "name": {
+          "zh-CN": "关闭前清点：全部在位（对照）",
+          "en": "Closing count: every swab accounted for (control)"
+        },
+        "summary": {
+          "zh-CN": "五块纱布都在 Mayo 托盘上。清点应一次无误，不应要求暂停关闭（衡量“误停”）。",
+          "en": "All five swabs are on the Mayo tray. The count should be correct the first time, with no hold on closure (it measures false holds)."
+        },
+        "provenance": "authored",
+        "expect": {
+          "count": "correct"
+        }
+      },
+      {
+        "id": "swab-on-floor",
+        "name": {
+          "zh-CN": "一块纱布掉在 Mayo 托盘下",
+          "en": "A swab dropped under the Mayo stand"
+        },
+        "summary": {
+          "zh-CN": "第五块纱布掉到 Mayo 托盘下的地上，被布单边遮住。清点发现少一块：请术者暂停关闭并检查术野（需复述确认），巡回护士按固定顺序在手术间里找，找到后复点无误，可以关闭。",
+          "en": "The fifth swab fell to the floor under the Mayo stand, hidden by the drape's edge. The count finds one short: the surgeon is asked to hold closure and check the wound (read back), the circulating nurse searches the room in her fixed order, finds it, and the recount is correct: closure may go ahead."
+        },
+        "provenance": "authored",
+        "items": [
+          {
+            "placement": "or-7-swab-5",
+            "beside": "or-7.mayo",
+            "concealed": true
+          }
+        ],
+        "expect": {
+          "count": "reconciled"
+        }
+      },
+      {
+        "id": "swab-in-wound",
+        "name": {
+          "zh-CN": "一块纱布留在术野里",
+          "en": "A swab left in the wound"
+        },
+        "summary": {
+          "zh-CN": "第五块纱布留在患者腹腔内（肝下间隙）。巡回护士在手术间里找不到；只有术者检查术野才能找到。找到后复点无误。",
+          "en": "The fifth swab is still in the abdomen (under the liver). The circulating nurse will not find it in the room; only the surgeon's check of the wound does. Once it is out, the recount is correct."
+        },
+        "provenance": "authored",
+        "items": [
+          {
+            "placement": "or-7-swab-5",
+            "beside": "patient",
+            "inside": true
+          }
+        ],
+        "expect": {
+          "count": "reconciled"
+        }
+      },
+      {
+        "id": "swab-gone",
+        "name": {
+          "zh-CN": "一块纱布找不到",
+          "en": "A swab that cannot be found"
+        },
+        "summary": {
+          "zh-CN": "第五块纱布已随布类离开手术间（在 6 号手术间）。全面查找和复点后仍少一块：应向术者说明，患者离开前拍 X 线片——不能假装已经解决。",
+          "en": "The fifth swab left the room with the linen (it is in OR 6). After the search and the recount it is still one short: the surgeon should be told and an X-ray taken before the patient leaves — not pretended solved."
+        },
+        "provenance": "authored",
+        "items": [
+          {
+            "placement": "or-7-swab-5",
+            "beside": "or-6.back-table",
+            "concealed": true
+          }
+        ],
+        "expect": {
+          "count": "unresolved"
+        }
+      }
+    ]
+  },
   "assets": [
     {
       "id": "anatomy",
@@ -6024,6 +6302,19 @@
       },
       "verdict": "safety-critical",
       "capPercent": 50
+    },
+    {
+      "id": "induction-before-sign-in",
+      "label": {
+        "zh-CN": "未完成麻醉前核对即诱导",
+        "en": "Induction before the Sign In"
+      },
+      "when": {
+        "intervened": "induction",
+        "valid": false
+      },
+      "verdict": "safety-critical",
+      "capPercent": 70
     },
     {
       "id": "perforation",

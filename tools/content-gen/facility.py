@@ -371,6 +371,9 @@ inst("clean-lift-l1", "elevator-cabin", -6, -6, 90, overrides={"name": L("洁净
 # (template-local positions; rot 0 rooms add the centre, rot 180 rooms subtract it: world = centre − local)
 P("or-7-infant-warmer", "sc-infant-warmer", 6.5 - 3.6, 2.5 + 0.45, 90, "or-7", L("新生儿复苏辐射台", "Neonatal resuscitation warmer"))
 P("or-7-cell-salvage", "sc-cell-salvage", 6.5 - 0.1, 2.5 + 3.0, 180, "or-7", L("术中自体血回收", "Cell salvage"))
+# OR 7's swabs in use, one by one on the Mayo tray (Case 126's team keeps the count item by item)
+for k in range(5):
+    P(f"or-7-swab-{k + 1}", "sc-gauze-swab", 6.5 + 1.1 - 0.22 + 0.1 * k, 2.5 + 1.25 + 0.02, 0, "or-7", L(f"纱布 {k + 1}", f"Swab {k + 1}"), y=1.16)
 P("or-3-hlm", "sc-heart-lung-machine", 5.5 - 2.4, -14.5 - 3.0, 180, "or-3", L("体外循环机", "Heart-lung machine"))
 P("or-3-cell-salvage", "sc-cell-salvage", 5.5 + 3.6, -14.5 + 2.6, 180, "or-3", L("术中自体血回收", "Cell salvage"))
 P("or-4-navigation", "sc-surgical-navigation", 17.5 - 2.6, -14.5 - 2.6, 180, "or-4", L("光学手术导航", "Optical navigation"))

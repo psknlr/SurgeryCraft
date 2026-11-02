@@ -201,7 +201,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 2
         }
       },
       {
@@ -435,7 +435,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 3
         }
       },
       {
@@ -675,7 +675,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 2
         }
       },
       {
@@ -904,7 +904,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 2
         }
       },
       {
@@ -1195,7 +1195,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 2
         }
       },
       {
