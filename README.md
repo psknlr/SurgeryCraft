@@ -13,7 +13,12 @@
   judged on the field, clips, division, bail-outs and complications that follow from what you do;
 - recovery, then the report's own course.
 
-One rubric and one set of safety gates score it all. See [docs/CASE_126.md](docs/CASE_126.md) for
+One rubric and one set of safety gates score it all. **2.3.0** repairs what an audit of a 2.1.0 save found:
+the monitor is its own task and the WHO Sign In waits for its checks; an anaesthesia hold is recorded (who, why,
+who released it); the agent is told what is still needed and that the operation is done on the field, never with
+a count or a device; colleagues correct unsafe induction, extubation and laterality teaching; and one end-to-end
+acceptance run (history to recovery handover, with a reload before the board's Time Out) keeps the record, the
+WHO board and the score in agreement. See [docs/CASE_126.md](docs/CASE_126.md) for
 what is implemented, its sources and the validation still owed.
 
 **Anatomical variants and an operative benchmark.** The case has five counterfactual anatomies, each
@@ -51,7 +56,9 @@ pack's own `assets/` and keeps screens live over models (the Blender round,
 the built-in types' models for the rest (the models round); with an older one those are not
 found and the voxel parts are drawn. Case 126 needs a ClinicalCraft with the operative field
 ([psknlr/ClinicalCraft#13](https://github.com/psknlr/ClinicalCraft/pull/13)). Its variants and
-operative suite also need procedure variants and `bench operative` (the variants round).
+operative suite also need procedure variants and `bench operative` (the variants round), and Case 126
+2.3.0 needs ClinicalCraft's audit round (explicit holds, `clock.worldTime`, `npcs[].corrections`, the
+requirements in `case_status`, the board's prerequisites on `intervene`).
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 

@@ -56,7 +56,7 @@ hospital. The screenshot shows the reference path after the triangle has been di
 | §5 imaging reconstruction | no DICOM exists for this patient: **case-informed reference anatomy, not a patient-specific CT reconstruction** (stated in the disclaimer, procedure note, asset provenance and README) | §Anatomy below |
 | §6 preoperative workflow | history, examination, records (unrecorded ones answer "not recorded"), a diagnosis decision; nothing reveals the diagnosis | phase `assessment` |
 | §7 elderly perioperative risk | unrecorded items kept unknown (antithrombotics, COPD status, stroke deficits, ECG, lung function); decision `risk` (rejects assigning an ASA class from the record); anaesthetist; synthetic pneumoperitoneum and COPD physiology, labelled; dextrocardia handled in the Sign In (mirror lead and pad positions) | phases `preop`, `theatre` |
-| §8 operating room, WHO checklist | Sign In before induction, a valid Time Out (after induction) opens the operation, Sign Out after closing; the steps are checklist steps: an out-of-order attempt is logged as invalid, leaves the operation locked and can be repeated in order; the order is scored by committed sequence and a reversed induction shows in the verdict (gate `induction-before-sign-in`); OR 7's WHO board shows the case record and its operations are the case's own steps; the operation is done only at the table (the operator and the patient checked again after an approval wait) | interventions `sign-in`, `induction`, `time-out`, `sign-out`; `tools/case126-theatre.test.ts` |
+| §8 operating room, WHO checklist | attaching the monitor is its own task (`attach-monitor`); the Sign In is valid only after its checks (monitor on, allergies and fasting asked) and before induction; a valid Time Out (after a valid Sign In and induction) opens the operation, Sign Out after closing; the steps are checklist steps: an out-of-order attempt is logged as invalid (and said so on every path), leaves the operation locked and can be repeated in order; the order is scored by committed sequence and a reversed induction shows in the verdict (gate `induction-before-sign-in`); OR 7's WHO board shows the case record and its operations are the case's own steps, with the same team prerequisites whichever way a step is taken; an explicit anaesthesia hold refuses induction until its holder records a reassessment; the operation is done only at the table (the operator and the patient checked again after an approval wait) | interventions `attach-monitor`, `sign-in`, `induction`, `time-out`, `sign-out`; `tools/case126-theatre.test.ts`, `tools/case126-acceptance.test.ts` |
 | §9 ergonomics, configurable ports | three plans: the report's three ports (surgeon on the left, hands cross, as reported), a mirrored four-port plan, and the habitual right-sided plan (its shafts fence). Port metrics include reach, manipulation angle, crossing and in-line warnings; trocar-pivot reach and shaft clashes are enforced | `procedure.portPlans`, `portReport` |
 | §10 interactive surgery | every step is an `operate` action: insert or withdraw instruments, retract (named directions in patient terms), dissect (with or without energy), isolate, identify, clip, divide, coagulate, suction, irrigate, cholangiography, inspect, recognise, bag, extract, bail out, close. Impossible steps are refused; unsafe ones are carried out and recorded | ClinicalCraft `docs/PROCEDURE.md` §3 |
 | §11 critical view of safety | three criteria evaluated on the field: triangle cleared, lower third off the cystic plate, and the structures entering the gallbladder (a common bile duct tented by habitual traction appears to enter). For the last one the operator reports how many structures they see (usually two); only the true number is credited, so with a second cystic artery the right report is three. The safety pause records claims against the field; ticking is never verification. The counting criterion needs review by hepatobiliary surgeons | `procedure.views[cvs]`, rubric `r-cvs` |
@@ -64,7 +64,7 @@ hospital. The screenshot shows the reference path after the triangle has been di
 | §12 complications | bile duct injury (clipped: occlusion, seen on imaging; divided: bile in the field), vascular injury, cystic artery bleeding (field obscured until suction, then control), stump leak, perforation with bile and stone spillage, thermal injury from energy near hidden structures, pneumoperitoneum hypercapnia (synthetic). None occurs on a sound operation | ClinicalCraft `docs/PROCEDURE.md` §5 |
 | §13–14 decision-making, state machine | phases gated by conditions (assessment → preop → theatre → operation → recovery → review); multiple defensible strategies accepted (two port plans, completion or bail-out) | `phases`, `objectives` |
 | §15 postoperative | recovery handover, decision `postop`; then the report's own course (histology chronic cholecystitis and gallstones, discharge on day 5, well at one month), opened only after the simulation | phases `recovery`, `review` |
-| §16 unified scoring | 31 rubric items in the brief's seven domains (15/10/15/30/15/10/5). Complication items are scored only when a complication occurs; the percentage then renormalises over the scored items | rubric, `extensions.version4.scoringDomains` |
+| §16 unified scoring | 33 rubric items in the brief's seven domains (15/10/15/30/15/10/5), including closure credited from the field (`r-closed`) and extubation decided apart from oral intake (`r-emergence`). The operation's outcome items are scored from the moment a valid Time Out opens it, so a run that never operates loses them. Complication items are scored only when a complication occurs; the percentage then renormalises over the scored items | rubric, `extensions.version4.scoringDomains` |
 | §16.2 safety override | safety gates: bile duct injury, vascular injury, misidentification and thermal injury cap the score at 40 %; an irreversible step without a true view, an unrecognised injury and carrying on after a visible injury cap it at 50 %. Perforation, bleeding and stump leak are complications | `safetyGates` |
 | §16.3 GOALS | not claimed. Clashes and instrument exchanges are counted; there is no validated GOALS implementation | — |
 | §17 AI agents | the same session tools for agents and learners. `observe_field` shows only what a surgeon could see (handles, not duct names); `operate` acts. Hidden truth, unsafe-act records and scores reach only the debrief; full traces through ClinicalCraft's transcripts | ClinicalCraft `docs/PROCEDURE.md` §7 |
@@ -134,18 +134,19 @@ The engine mechanics these variants rely on are general:
 - a region's `fibrosis` (safe plane, finding, the structure it tears);
 - a structure that `crosses` a plane.
 
-### Measured paths (Case 126 2.1.0, `tools/case126.test.ts`)
+### Measured paths (Case 126 2.3.0, `tools/case126.test.ts`)
 
 | anatomy | expert trajectory, whole case | the reported anatomy's routine, replayed blind |
 |---|---|---|
 | reference | 100 % (90/90), clear | — |
-| double cystic artery | 100 % (96/96), clear | 50 % (uncapped 64 %), safety-critical: irreversible step without a true view, bleeding from the posterior branch, carried on unrecognised |
-| caterpillar hump | 100 % (96/96), clear | 40 % (uncapped 56 %), safety-critical: vascular injury to the right hepatic artery, misidentification |
-| aberrant posterior duct | 100 % (96/96), clear | 40 % (uncapped 56 %), safety-critical: bile duct injury to the aberrant duct, misidentification |
-| hostile triangle | 100 % (75/75), clear (subtotal) | 40 % (uncapped 86 %), safety-critical: common bile duct torn, carried on |
-| subvesical duct | 100 % (94/94), clear | 50 % (uncapped 85 %), safety-critical: bile leak not recognised, carried on |
+| double cystic artery | 100 % (96/96), clear | 50 % (uncapped 60 %), safety-critical: irreversible step without a true view, bleeding from the posterior branch, carried on unrecognised |
+| caterpillar hump | 100 % (96/96), clear | 40 % (uncapped 51 %), safety-critical: vascular injury to the right hepatic artery, misidentification |
+| aberrant posterior duct | 100 % (96/96), clear | 40 % (uncapped 51 %), safety-critical: bile duct injury to the aberrant duct, misidentification |
+| hostile triangle | 100 % (75/75), clear (subtotal) | 40 % (uncapped 81 %), safety-critical: common bile duct torn, carried on |
+| subvesical duct | 100 % (94/94), clear | 50 % (uncapped 80 %), safety-critical: bile leak not recognised, carried on |
 
-The uncapped figures show why the safety gates exist. A blind routine would still earn most of the
+The blind replays stop after the operative steps, so since 2.3.0 they also miss the extubation decision; the
+uncapped figures are a few points lower than in 2.1.0 for that reason alone. The uncapped figures show why the safety gates exist. A blind routine would still earn most of the
 points, but it fails on safety.
 
 ## The operative benchmark (`content/operative/case126-v1`)
@@ -240,6 +241,50 @@ report):
 
 `tools/check.sh` runs both.
 
+## 2.3.0: what the audit of a 2.1.0 save changed
+
+An audited `2.1.0` save showed an intubated patient and a running insufflator while the case was still in the
+preoperative safety phase: the WHO wall board said Time Out was complete, the record had no `time-out`, and the
+demonstration agent tried to advance the operation through the instrument count board. It never entered the
+operative field. The `2.2.0` checklist fix (board = record, ordered steps) was already merged; 2.3.0, with
+ClinicalCraft's audit round, closes the rest.
+
+| audit finding | 2.3.0 | test |
+|---|---|---|
+| A delegated `attach_monitor` recorded the whole Sign In | the monitor is its own intervention (`attach-monitor`, `physiology.monitor.attachedWhen`); ClinicalCraft never lets a monitor's `attach` record a checklist step; the Sign In is valid only after its checks (monitor on, allergies and fasting asked) | theatre: "attaching the monitor is one task"; acceptance |
+| The wall board accepted a Time Out before induction; the record disagreed | the board is the record (2.2.0); the Time Out needs a valid Sign In and induction; `intervene time-out` meets the board's own team prerequisite (the baseline count); an invalid attempt from the board is a failed action, never "completed" | theatre: "the Time Out is one checklist action", with a save and reload between induction and the Time Out |
+| The attending withheld clearance; the agent claimed approval and induced | an explicit hold (`hold` / `release-hold`): who placed it, why, and who released it after which reassessment; the attending's `place_hold` / `release_hold` tools act in its own name; induction is refused while it stands; missing information alone places none | theatre: two hold tests; acceptance |
+| `intervene "laparoscopic cholecystectomy"` failed; counting was taken for the operation | `case_status` names each unmet requirement and the next action ("✓ Induce … · WHO Time Out … → next: intervene {…}"); `intervene` for the operation points at `observe_field` / `operate` and what still opens it; outcome items (`r-specimen`, new `r-closed`) are scored once the operation opens; counts and the tower never change the field | theatre: "the way into the operation" |
+| Unsafe RSI teaching endorsed (little or no hypnotic; EtCO₂ > 40 as preoxygenation) | authored corrections on the attending and the anaesthetist (`npcs[].corrections`); the induction response states the sequence | theatre: "teaching corrections" (offline and a model that endorses the plan) |
+| A teaching "what if" became the family's report | prompt rule for every colleague and the clinician (a hypothetical keeps its status; say who said it and whether verified); history items `prior-treatment` and `pain-meals` answer "not recorded"; a nurse correction | theatre: the nurse corrects it |
+| Laterality advice could reverse sides twice | patient-relative wording everywhere (Sign In, Time Out, knowledge, debrief); a correction; a prompt rule against "reversing" left and right | — (content) |
+| Extubation and oral intake conflated | decision `emergence` (extubation on ventilation, reversal, consciousness, cough, secretions, airway protection; swallowing assessed after extubation, before oral intake); `r-emergence`; a correction | acceptance |
+| Count-board navigation "arrived" 6 m away | `navigate_to` applies a top-level `range` to the goal (or says why not) and reports in view vs within reach and the operations possible from there | theatre: navigation |
+| The warmer "moved" 0.0 m 18 times | a cart already at its destination says so (`already at its destination`); a destination it cannot reach names the obstacle and a reachable alternative; the result reports the real displacement | theatre: the warmer between the clinician and the patient |
+| Six unavailable records were "result available" for the nurse | one result status for every role (`resultStatus`): "no result for this phase" is never "back" | theatre: one result status |
+| Questions to the anaesthetist or receptionist went to `role='nurse'` | `consult {staff}` resolves a named colleague (OR 7's "Dr Tanaka (anaesthesia)" brings the case's anaesthetist brief) and names the recipient first; an unknown name is refused | theatre |
+| "target required" with an equipment id | `give_intervention` says apart: nothing named, a thing in the room (not a treatment), an unknown treatment; a fetch reports where the cart stands | theatre |
+| A 60 s insufflation left the clock at 08:37 | `clock.worldTime: "actual"`: world actions cost their own duration; vitals read afterwards carry it | theatre: the insufflator's minute |
+| Twelve "per-turn limit" results | repeated identical failures are flagged with what to inspect; the round limit says to start from `case_status` | ClinicalCraft `case-route.test.ts` |
+
+### Release acceptance (end to end)
+
+`tools/case126-acceptance.test.ts` runs Case 126 in OR 7 in in-world mode, from history at the bedside to the
+recovery handover, through the same session and world action bus the browser uses (`world_action`,
+`clinical_action`, the clinician's tool calls): the monitor attached by the circulating nurse (Sign In still
+pending on the record and the board), an explicit anaesthesia hold and a refused induction, the Sign In on the
+board, the hold released after a recorded reassessment, the baseline count, induction, **a save and reload**,
+the Time Out **from the wall board**, the operation through `observe_field` / `operate`, the extubation decision,
+the counts and the RF scan, the Sign Out on the board, the handover; at the end the record, the board and the
+assessment agree (every checklist step once and valid, the operative and checklist items met, verdict clear).
+
+Still to do by hand on the **deployed browser build** (not possible from this repository's tests): the same run
+clicking the WHO board and the count board in the browser, with a page reload between induction and the Time Out.
+
+**Patient following is not exercised.** The case's patient stays on OR 7's table; the audited save had a zero-second
+stretcher transfer and no attempt to start, stop or keep a walking follow across rooms, so it supports a regression
+for transport feedback only — it cannot show whether following works. Evaluate following separately.
+
 ## Validation still required (not done)
 
 - **Clinical review.** Two hepatobiliary or experienced laparoscopic surgeons, one anaesthetist and
@@ -253,6 +298,9 @@ report):
   - the expert trajectories of the operative suite.
 - **Physiology calibration.** The intra-operative values are illustrative, not calibrated.
 - **Simulation validity.** Face, content and construct validity, inter-rater reliability.
+- **Teaching corrections and holds.** An anaesthetist should review the induction and emergence corrections, the
+  extubation decision and when the attending or anaesthetist places a hold; the corrections are authored teaching
+  (cited guidance), matched by phrases, not a model's judgement.
 - **Team behaviour review.** Perioperative nurses should review:
   - the check-back wording;
   - the order the circulating nurse searches in;

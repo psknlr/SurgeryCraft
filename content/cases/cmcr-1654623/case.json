@@ -1,7 +1,7 @@
 {
   "schema": "clinicalcraft/case@1",
   "id": "cmcr-1654623",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "title": {
     "zh-CN": "上腹痛伴发热 · 84岁男性",
     "en": "Upper abdominal pain and fever · 84-year-old man"
@@ -207,6 +207,7 @@
   "clock": {
     "mode": "simulated",
     "startTime": "08:00",
+    "worldTime": "actual",
     "actionCosts": {
       "ask": 1,
       "examine": 1,
@@ -656,14 +657,18 @@
           "氯吡格雷",
           "抗凝药",
           "抗血小板",
-          "吃的抗栓药"
+          "吃的抗栓药",
+          "停用抗栓药",
+          "停了阿司匹林"
         ],
         "en": [
           "aspirin",
           "clopidogrel",
           "bloodthinner",
           "anticoagulant",
-          "antiplatelet"
+          "antiplatelet",
+          "stoppedaspirin",
+          "stoppedthebloodthinner"
         ]
       },
       "disclosure": "unknown",
@@ -732,6 +737,74 @@
           "residualdeficit",
           "speechproblems",
           "aftertheastroke"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "prior-treatment",
+      "topic": "medications",
+      "question": {
+        "zh-CN": "来医院之前吃过退烧药或抗生素吗？",
+        "en": "Before you came in, did you take anything for the fever — paracetamol or antibiotics?"
+      },
+      "answer": {
+        "zh-CN": "原报告没有记录入院前的用药，包括退热药或抗生素；也没有家属陈述的记录。",
+        "en": "The source records no treatment before admission — no antipyretic, no antibiotic — and no account from the family."
+      },
+      "keywords": {
+        "zh-CN": [
+          "退烧药",
+          "抗生素",
+          "入院前用药",
+          "来之前吃药",
+          "消炎药"
+        ],
+        "en": [
+          "antipyretic",
+          "antibiotic",
+          "paracetamolbefore",
+          "treatmentbeforeadmission",
+          "tookforthefever"
+        ]
+      },
+      "disclosure": "unknown",
+      "required": false,
+      "source": {
+        "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
+        "en": "Not recorded in the source; this does not establish normality or absence."
+      }
+    },
+    {
+      "id": "pain-meals",
+      "topic": "pain",
+      "question": {
+        "zh-CN": "肚子疼跟吃饭有关系吗？吃油腻的东西会更疼吗？",
+        "en": "Is the pain related to meals — worse after fatty food?"
+      },
+      "answer": {
+        "zh-CN": "原报告只写了上腹痛，没有记录疼痛与进食的关系。",
+        "en": "The source records upper abdominal pain only; it does not say whether the pain is related to meals."
+      },
+      "keywords": {
+        "zh-CN": [
+          "吃饭",
+          "进食后",
+          "油腻",
+          "饭后疼",
+          "餐后"
+        ],
+        "en": [
+          "aftermeals",
+          "fattyfood",
+          "aftereating",
+          "postprandial",
+          "relatedtomeals"
         ]
       },
       "disclosure": "unknown",
@@ -1301,22 +1374,76 @@
   ],
   "interventions": [
     {
-      "id": "sign-in",
+      "id": "attach-monitor",
       "name": {
-        "zh-CN": "WHO 麻醉前核对（Sign In）并连接监护",
-        "en": "WHO Sign In before induction, monitoring attached"
+        "zh-CN": "连接监护：脉搏血氧、心电（镜像导联）与无创血压",
+        "en": "Attach the monitor: pulse oximetry, ECG (mirror leads), non-invasive blood pressure"
       },
       "kind": "monitoring",
       "requires": [],
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位），右位心——心电图导联和除颤电极按镜像放置；过敏、气道与误吸风险、预计失血尚未记录，需当场确认。监护已连接。",
-        "en": "Identity, procedure, consent and site checked: the gallbladder is on the patient's LEFT (situs inversus totalis); dextrocardia — ECG leads and defibrillator pads placed in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded and are confirmed now. Monitoring attached."
+        "zh-CN": "监护已连接：脉搏血氧有波形、读数可靠；右位心——心电图胸导联按镜像位置放置；无创血压按设定间隔测量。这只是连接监护，不是麻醉前核对。",
+        "en": "Monitoring attached: the pulse oximeter shows a good trace and reads reliably; dextrocardia — ECG chest leads in mirror positions; non-invasive blood pressure cycling. This is the monitor only, not the Sign In."
+      },
+      "indicatedWhen": {
+        "phase": "theatre"
+      }
+    },
+    {
+      "id": "sign-in",
+      "name": {
+        "zh-CN": "WHO 麻醉前核对（Sign In）",
+        "en": "WHO Sign In before induction"
+      },
+      "kind": "consult",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录，已当场确认。",
+        "en": "The team checks identity, procedure, consent and site: the gallbladder is on the patient's LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient's own left, with no \"reversing\" of sides; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source and are confirmed now."
       },
       "checklist": true,
       "indicatedWhen": {
-        "phase": "theatre"
+        "all": [
+          {
+            "phase": "theatre"
+          },
+          {
+            "all": [
+              {
+                "intervened": "attach-monitor"
+              },
+              {
+                "asked": "allergies"
+              },
+              {
+                "asked": "fasting"
+              }
+            ]
+          }
+        ]
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "all": [
+            {
+              "intervened": "attach-monitor"
+            },
+            {
+              "asked": "allergies"
+            },
+            {
+              "asked": "fasting"
+            }
+          ]
+        }
+      },
+      "harm": {
+        "zh-CN": "核对项尚未落实就做麻醉前核对：已记录为无效。先连接监护（脉搏血氧工作正常），并问清过敏与禁食（误吸风险），再做 Sign In。",
+        "en": "A Sign In before its checks: recorded as invalid. Attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), then sign in."
       }
     },
     {
@@ -1330,8 +1457,8 @@
       "risk": "high",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "麻醉诱导完成，气管插管，机械通气。（教学步骤：不涉及药物剂量。）",
-        "en": "Anaesthesia induced; intubated and ventilated. (Teaching step: no drug doses are modelled.)"
+        "zh-CN": "充分预充氧（以呼气末氧浓度判断，而非呼末二氧化碳）；先给镇静催眠药使患者意识消失，再给肌松药，绝不在没有足够催眠的情况下肌松；插管后以持续的呼末二氧化碳波形确认导管位置，机械通气。（教学步骤：不涉及具体药物与剂量。）",
+        "en": "Preoxygenated (judged by end-tidal oxygen, not end-tidal CO₂); the hypnotic first, to unconsciousness, then the neuromuscular blocker — never paralysis without adequate hypnosis; tube position confirmed by sustained capnography; ventilated. (Teaching step: no drug or dose is modelled.)"
       },
       "indicatedWhen": {
         "intervened": "sign-in",
@@ -1359,21 +1486,37 @@
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。",
-        "en": "The team confirms the patient, a laparoscopic cholecystectomy and the left-sided pathology; the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach."
+        "zh-CN": "团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧（影像方位标记与皮肤标记均以患者自身左侧核对）；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。",
+        "en": "The team confirms the patient, a laparoscopic cholecystectomy and the pathology on the patient's left (image orientation marker and skin marking both checked against the patient's own left); the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach."
       },
       "checklist": true,
       "indicatedWhen": {
-        "intervened": "induction"
+        "all": [
+          {
+            "intervened": "sign-in",
+            "valid": true
+          },
+          {
+            "intervened": "induction"
+          }
+        ]
       },
       "contraindicatedWhen": {
         "not": {
-          "intervened": "induction"
+          "all": [
+            {
+              "intervened": "sign-in",
+              "valid": true
+            },
+            {
+              "intervened": "induction"
+            }
+          ]
         }
       },
       "harm": {
-        "zh-CN": "麻醉诱导前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，诱导后需重新核对。",
-        "en": "A Time Out before anaesthesia is out of order: recorded as invalid; the operation stays locked until a Time Out after induction."
+        "zh-CN": "麻醉前核对与诱导完成之前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，需在两者之后重新核对。",
+        "en": "A Time Out before a valid Sign In and induction is out of order: recorded as invalid; the operation stays locked until a Time Out after both."
       }
     },
     {
@@ -1584,13 +1727,16 @@
         "en": "Perioperative assessment and checks"
       },
       "hint": {
-        "zh-CN": "弄清楚高龄、慢阻肺与卒中带来的风险，再做麻醉前核对、诱导和切皮前暂停核对。",
-        "en": "Clarify the risks of age, COPD and stroke, then the Sign In, induction and the Time Out."
+        "zh-CN": "弄清楚高龄、慢阻肺与卒中带来的风险；连接监护，问清过敏与禁食，再做麻醉前核对、诱导和切皮前暂停核对。",
+        "en": "Clarify the risks of age, COPD and stroke; attach the monitor and ask about allergies and fasting, then the Sign In, induction and the Time Out."
       },
       "completeWhen": {
         "all": [
           {
             "decided": "risk"
+          },
+          {
+            "intervened": "attach-monitor"
           },
           {
             "intervened": "sign-in",
@@ -1618,8 +1764,8 @@
         "en": "Perform the operation"
       },
       "hint": {
-        "zh-CN": "布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后离室核对。",
-        "en": "Ports, traction, dissection to a true critical view of safety, then clips and division — or a safe alternative if it cannot be reached. Then the Sign Out."
+        "zh-CN": "布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后决定拔管与进食，再离室核对。",
+        "en": "Ports, traction, dissection to a true critical view of safety, then clips and division — or a safe alternative if it cannot be reached. Then decide extubation and oral intake, and the Sign Out."
       },
       "completeWhen": {
         "all": [
@@ -1636,6 +1782,9 @@
                 }
               }
             ]
+          },
+          {
+            "decided": "emergence"
           },
           {
             "intervened": "sign-out",
@@ -2077,6 +2226,82 @@
           "feedback": {
             "zh-CN": "慢阻肺不是腹腔镜手术的绝对禁忌；需要的是评估和较低气腹压等调整。",
             "en": "COPD does not rule out laparoscopy; it calls for assessment and adjustments such as lower insufflation pressure."
+          }
+        }
+      ]
+    },
+    {
+      "id": "emergence",
+      "kind": "multiple",
+      "prompt": {
+        "zh-CN": "手术结束，准备苏醒。这位84岁、慢阻肺、既往脑梗死的患者，何时拔管、何时经口进食，如何决定？（多选）",
+        "en": "The operation is over and he is waking up. For this 84-year-old with COPD and a previous stroke, how are extubation and oral intake decided? (select all that apply)"
+      },
+      "requires": {
+        "any": [
+          {
+            "procedure": {
+              "closed": true
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "convert-open"
+            }
+          }
+        ]
+      },
+      "need": {
+        "zh-CN": "先结束手术。",
+        "en": "Finish the operation first."
+      },
+      "options": [
+        {
+          "id": "criteria",
+          "text": {
+            "zh-CN": "拔管依据通气、肌松恢复、意识、咳嗽、分泌物处理和气道保护",
+            "en": "Extubate on ventilation, reversal, consciousness, cough, secretion handling and airway protection"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "拔管看通气（呼吸频率、潮气量、氧合、无二氧化碳潴留）、肌松已恢复（TOF比值≥0.9）、清醒能听指令、有效咳嗽、能处理分泌物、气道保护反射。",
+            "en": "Extubation rests on ventilation (rate, tidal volume, oxygenation, no CO₂ retention), recovery from neuromuscular block (train-of-four ratio ≥ 0.9), being awake and following commands, an effective cough, handling secretions and protective airway reflexes."
+          }
+        },
+        {
+          "id": "swallow-after",
+          "text": {
+            "zh-CN": "拔管后、经口进食前做正式吞咽评估",
+            "en": "A formal swallowing assessment after extubation, before oral intake"
+          },
+          "correct": true,
+          "feedback": {
+            "zh-CN": "卒中后吞咽障碍风险高：拔管后、经口进食前做正式的吞咽评估；拔管与进食是两个决定。",
+            "en": "After a stroke the risk of dysphagia is high: a formal swallowing assessment comes after extubation and before any oral intake — extubation and eating are two decisions."
+          }
+        },
+        {
+          "id": "swallow-before-extubation",
+          "text": {
+            "zh-CN": "先通过饮水试验或吞咽造影（VFSS）再拔管",
+            "en": "Keep him intubated until he passes a water-swallow test or VFSS"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "带着气管导管不能做饮水试验或吞咽造影，这也不是拔管条件；吞咽评估决定的是何时进食，不是何时拔管。",
+            "en": "A water-swallow test or videofluoroscopy cannot be done with a tube in place and is not an extubation criterion; swallowing assessment decides oral intake, not extubation."
+          }
+        },
+        {
+          "id": "oral-once-extubated",
+          "text": {
+            "zh-CN": "拔管成功就可以经口饮水进食",
+            "en": "Once extubated he can drink and eat: extubation shows his airway is protected"
+          },
+          "correct": false,
+          "feedback": {
+            "zh-CN": "能拔管不等于能安全吞咽；既往卒中者可能隐性误吸，进食前要先做吞咽评估。",
+            "en": "Being fit for extubation is not the same as swallowing safely; after a stroke aspiration can be silent, so oral intake waits for a swallowing assessment."
           }
         }
       ]
@@ -2806,7 +3031,7 @@
     {
       "id": "r-specimen",
       "domain": "management",
-      "weight": 3,
+      "weight": 2,
       "text": {
         "zh-CN": "标本装袋经脐孔取出，或选择了替代方式",
         "en": "Specimen bagged and removed, or an alternative chosen"
@@ -2847,6 +3072,52 @@
             "procedure": {
               "bailout": "any"
             }
+          },
+          {
+            "intervened": "time-out",
+            "valid": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-closed",
+      "domain": "management",
+      "weight": 1,
+      "text": {
+        "zh-CN": "手术在术野中完成：取出标本或次全切除后关腹，或中转开腹",
+        "en": "The operation finished on the field: closed after the specimen or a subtotal, or converted"
+      },
+      "met": {
+        "any": [
+          {
+            "procedure": {
+              "closed": true
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "convert-open"
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "any": [
+          {
+            "procedure": {
+              "counter": "steps",
+              "gte": 8
+            }
+          },
+          {
+            "procedure": {
+              "bailout": "any"
+            }
+          },
+          {
+            "intervened": "time-out",
+            "valid": true
           }
         ]
       }
@@ -2950,9 +3221,21 @@
       }
     },
     {
+      "id": "r-emergence",
+      "domain": "safety",
+      "weight": 1,
+      "text": {
+        "zh-CN": "拔管与经口进食分开决定：拔管看通气与气道保护，吞咽评估在拔管后、进食前",
+        "en": "Extubation and oral intake decided apart: extubation on ventilation and airway protection, swallowing assessed after extubation and before eating"
+      },
+      "met": {
+        "decidedFirstTry": "emergence"
+      }
+    },
+    {
       "id": "r-postop",
       "domain": "management",
-      "weight": 2,
+      "weight": 1,
       "text": {
         "zh-CN": "术后观察重点",
         "en": "Postoperative priorities"
@@ -3297,9 +3580,94 @@
     {
       "role": "nurse",
       "knowledge": {
-        "zh-CN": "协助核对现有记录；未记录的过敏、禁食和用药不能补写。",
-        "en": "Help review available records; do not invent allergy, fasting or medication information."
-      }
+        "zh-CN": "协助核对现有记录；未记录的过敏、禁食和用药不能补写。没有询问过家属：入院前用药、疼痛与进食的关系、抗栓药是否停用都未记录。左右指患者自己的左右（胆囊在患者左侧）。",
+        "en": "Help review available records; do not invent allergy, fasting or medication information. No family member has been interviewed: treatment before admission, any link between pain and meals and whether an antithrombotic was stopped are not recorded. Left and right are the patient's own (the gallbladder is on the patient's left)."
+      },
+      "corrections": [
+        {
+          "id": "hypothetical-history",
+          "misconception": {
+            "zh-CN": "把“如果家属说用过退热药和抗生素”这一假设当成了真实的家属陈述。",
+            "en": "A teaching \"what if the family reported antipyretics and antibiotics\" became an actual family report."
+          },
+          "match": [
+            [
+              "family",
+              "relative",
+              "daughter",
+              "son",
+              "wife",
+              "家属",
+              "家人",
+              "女儿",
+              "儿子",
+              "老伴"
+            ],
+            [
+              "antipyretic",
+              "antibiotic",
+              "paracetamol",
+              "fever medicine",
+              "退烧药",
+              "退热药",
+              "抗生素",
+              "消炎药"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：没有人询问过家属。入院前是否用过退热药或抗生素，是一个教学上的假设问题，不是家属的陈述；病历里没有记录，在真正问到家属之前仍然是未知。",
+            "en": "Correction: no family member has been interviewed. Whether he took antipyretics or antibiotics before admission was a teaching what-if, not a report; the record does not say, and it stays unknown until someone actually asks the family."
+          },
+          "marks": [
+            "what-if",
+            "what if",
+            "hypothetical",
+            "not been interviewed",
+            "not a report",
+            "假设",
+            "没有人询问",
+            "没有询问"
+          ]
+        },
+        {
+          "id": "laterality-reverse",
+          "misconception": {
+            "zh-CN": "因为内脏反位，要把患者的左右再反过来理解。",
+            "en": "Because of situs inversus, reverse the patient's left and right again."
+          },
+          "match": [
+            [
+              "reverse",
+              "swap",
+              "flip",
+              "invert left",
+              "opposite side",
+              "反过来",
+              "颠倒",
+              "互换",
+              "左右反",
+              "对调"
+            ],
+            [
+              "left",
+              "right",
+              "左",
+              "右"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：左右永远指患者自己的左右。全内脏反位反的是器官，不是词：胆囊就在患者左侧。读片时核对影像的方位标记，核对皮肤标记，都以患者左侧为准——不要在脑子里再“反过来”一次。",
+            "en": "Correction: left and right are always the patient's own. In situs inversus the organs are mirrored, not the words: the gallbladder is on the patient's LEFT. Check the image's orientation marker and the skin marking against the patient's left — never \"reverse\" sides in your head."
+          },
+          "marks": [
+            "patient's left",
+            "patient’s left",
+            "patient's own",
+            "患者左侧",
+            "患者自己的左右"
+          ]
+        }
+      ]
     },
     {
       "role": "radiologist",
@@ -3315,9 +3683,233 @@
     {
       "role": "attending",
       "knowledge": {
-        "zh-CN": "引导学员区分来源事实与教学规则，并说明证据局限。",
-        "en": "Guide the learner to distinguish source facts from teaching rules and explain evidence limits."
-      }
+        "zh-CN": "引导学员区分来源事实与教学规则，并说明证据局限。教学中提出的“如果……会怎样”只是假设，不能变成病史。不同意继续某一步（如诱导）时用 place_hold 记录理由，重新评估后用 release_hold；资料缺失本身不构成一律禁止。左右永远指患者自己的左右：胆囊在患者左侧，不要让学员把左右“反过来”。",
+        "en": "Guide the learner to distinguish source facts from teaching rules and explain evidence limits. A \"what if\" you pose in teaching stays a hypothetical and never becomes history. Withholding clearance for a step (such as induction) is recorded with place_hold and the reason, and released after reassessment with release_hold; missing information alone is not a universal prohibition. Left and right are always the patient's own: the gallbladder is on the patient's left — never tell the learner to \"reverse\" sides."
+      },
+      "corrections": [
+        {
+          "id": "rsi-hypnotic",
+          "misconception": {
+            "zh-CN": "快速顺序诱导时可以不给或只给很少的镇静催眠药就直接肌松。",
+            "en": "In a rapid-sequence induction the hypnotic can be omitted or minimal before the neuromuscular blocker."
+          },
+          "match": [
+            [
+              "paraly",
+              "neuromuscular",
+              "rocuronium",
+              "suxamethonium",
+              "succinylcholine",
+              "muscle relaxant",
+              "blocker",
+              "肌松",
+              "罗库溴铵",
+              "琥珀胆碱",
+              "琥珀酰胆碱"
+            ],
+            [
+              "no hypnotic",
+              "without a hypnotic",
+              "without hypnotic",
+              "little or no",
+              "minimal hypnotic",
+              "skip the hypnotic",
+              "omit the hypnotic",
+              "no induction agent",
+              "without an induction agent",
+              "no sedation",
+              "without sedation",
+              "minimal sedation",
+              "little hypnotic",
+              "不用镇静",
+              "不给镇静",
+              "少量或不用",
+              "不用诱导药",
+              "无需镇静",
+              "不用催眠",
+              "少用镇静",
+              "不给催眠",
+              "几乎不用镇静"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以减量、换药、缓慢滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。",
+            "en": "Correction: in a rapid-sequence induction the hypnotic (the induction agent) always goes in before or with the neuromuscular blocker, in a dose that makes him unconscious — in a frail 84-year-old you choose and titrate it, you never omit it; paralysis without adequate hypnosis means awareness. Haemodynamic fragility changes which hypnotic and how much, not whether one is given."
+          },
+          "marks": [
+            "awareness",
+            "unconscious",
+            "never omit",
+            "must not be omitted",
+            "知晓",
+            "意识消失",
+            "不能省略"
+          ]
+        },
+        {
+          "id": "preox-etco2",
+          "misconception": {
+            "zh-CN": "呼末二氧化碳高于40 mmHg说明预充氧充分。",
+            "en": "An end-tidal CO₂ above 40 mmHg shows adequate preoxygenation."
+          },
+          "match": [
+            [
+              "etco2",
+              "etco₂",
+              "end-tidal co2",
+              "end tidal co2",
+              "end-tidal co₂",
+              "end-tidal carbon dioxide",
+              "capnograph",
+              "呼末二氧化碳",
+              "呼气末二氧化碳",
+              "呼末co2"
+            ],
+            [
+              "preoxygen",
+              "pre-oxygen",
+              "denitrogen",
+              "oxygenation",
+              "预充氧",
+              "预给氧",
+              "去氮",
+              "氧合"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：预充氧是否充分看呼气末氧浓度（呼出氧分数约0.9以上），不是看呼末二氧化碳。呼末二氧化碳用来确认导管位置和监测通气；高于40 mmHg 说明不了氧储备，对慢阻肺患者反而可能提示二氧化碳潴留。",
+            "en": "Correction: preoxygenation is judged by end-tidal OXYGEN (an expired oxygen fraction of about 0.9 or more), not by end-tidal CO₂. Capnography confirms the tube position and monitors ventilation; a value above 40 mmHg says nothing about oxygen stores — in a COPD patient it may mean CO₂ retention."
+          },
+          "marks": [
+            "end-tidal oxygen",
+            "expired oxygen",
+            "eto2",
+            "eto₂",
+            "feo2",
+            "呼气末氧",
+            "呼末氧"
+          ]
+        },
+        {
+          "id": "extubation-swallow",
+          "misconception": {
+            "zh-CN": "拔管前必须先通过饮水试验或吞咽造影。",
+            "en": "He must pass a water-swallow test or VFSS before extubation."
+          },
+          "match": [
+            [
+              "extubat",
+              "拔管"
+            ],
+            [
+              "swallow",
+              "vfss",
+              "videofluoroscop",
+              "water test",
+              "drinking test",
+              "吞咽",
+              "饮水试验",
+              "洼田",
+              "造影"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：拔管和经口进食是两个决定。拔管看通气、肌松恢复、意识、有效咳嗽、处理分泌物和气道保护；正式的吞咽评估在拔管之后、经口进食之前做——带着导管做不了饮水试验或吞咽造影，它也不是拔管条件。",
+            "en": "Correction: extubation and oral intake are two decisions. Extubate on ventilation, reversal of neuromuscular block, consciousness, an effective cough, secretion handling and airway protection; a formal swallowing assessment comes after extubation and before anything by mouth — a drinking test or VFSS cannot be done with a tube in and is not an extubation criterion."
+          },
+          "marks": [
+            "two decisions",
+            "separate decision",
+            "after extubation",
+            "两个决定",
+            "拔管之后",
+            "拔管后"
+          ]
+        },
+        {
+          "id": "laterality-reverse",
+          "misconception": {
+            "zh-CN": "因为内脏反位，要把患者的左右再反过来理解。",
+            "en": "Because of situs inversus, reverse the patient's left and right again."
+          },
+          "match": [
+            [
+              "reverse",
+              "swap",
+              "flip",
+              "invert left",
+              "opposite side",
+              "反过来",
+              "颠倒",
+              "互换",
+              "左右反",
+              "对调"
+            ],
+            [
+              "left",
+              "right",
+              "左",
+              "右"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：左右永远指患者自己的左右。全内脏反位反的是器官，不是词：胆囊就在患者左侧。读片时核对影像的方位标记，核对皮肤标记，都以患者左侧为准——不要在脑子里再“反过来”一次。",
+            "en": "Correction: left and right are always the patient's own. In situs inversus the organs are mirrored, not the words: the gallbladder is on the patient's LEFT. Check the image's orientation marker and the skin marking against the patient's left — never \"reverse\" sides in your head."
+          },
+          "marks": [
+            "patient's left",
+            "patient’s left",
+            "patient's own",
+            "患者左侧",
+            "患者自己的左右"
+          ]
+        },
+        {
+          "id": "hypothetical-history",
+          "misconception": {
+            "zh-CN": "把“如果家属说用过退热药和抗生素”这一假设当成了真实的家属陈述。",
+            "en": "A teaching \"what if the family reported antipyretics and antibiotics\" became an actual family report."
+          },
+          "match": [
+            [
+              "family",
+              "relative",
+              "daughter",
+              "son",
+              "wife",
+              "家属",
+              "家人",
+              "女儿",
+              "儿子",
+              "老伴"
+            ],
+            [
+              "antipyretic",
+              "antibiotic",
+              "paracetamol",
+              "fever medicine",
+              "退烧药",
+              "退热药",
+              "抗生素",
+              "消炎药"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：没有人询问过家属。入院前是否用过退热药或抗生素，是一个教学上的假设问题，不是家属的陈述；病历里没有记录，在真正问到家属之前仍然是未知。",
+            "en": "Correction: no family member has been interviewed. Whether he took antipyretics or antibiotics before admission was a teaching what-if, not a report; the record does not say, and it stays unknown until someone actually asks the family."
+          },
+          "marks": [
+            "what-if",
+            "what if",
+            "hypothetical",
+            "not been interviewed",
+            "not a report",
+            "假设",
+            "没有人询问",
+            "没有询问"
+          ]
+        }
+      ]
     },
     {
       "role": "consultant",
@@ -3326,9 +3918,188 @@
         "en": "Anaesthetist"
       },
       "knowledge": {
-        "zh-CN": "负责麻醉前核对、诱导、通气与监护。知道慢阻肺患者在气腹下易有二氧化碳潴留，常用较低气腹压；病例未记录肺功能、ASA分级与用药，需当场核实。不解释手术解剖。",
-        "en": "Runs the Sign In, induction, ventilation and monitoring. Knows that COPD patients retain CO₂ under pneumoperitoneum and that lower pressures are often used; the case records no lung function, ASA class or medicines — these are verified now. Does not interpret surgical anatomy."
-      }
+        "zh-CN": "负责连接监护、麻醉前核对、诱导、通气与监护。知道慢阻肺患者在气腹下易有二氧化碳潴留，常用较低气腹压；病例未记录肺功能、ASA分级与用药，需当场核实。快速顺序诱导：先给镇静催眠药使意识消失，再给肌松药，从不省略催眠；预充氧看呼气末氧浓度，呼末二氧化碳用于确认导管和监测通气。不同意诱导时用 place_hold 记录理由；重新评估后用 release_hold 记录结论（可以是“在明确的不确定性下继续”）；资料缺失本身不是暂缓的理由，但要说明怎么处理。拔管与进食分开：拔管看通气、肌松恢复、意识、咳嗽、分泌物和气道保护；吞咽评估在拔管后、进食前。左右永远指患者自己的左右。不解释手术解剖。",
+        "en": "Attaches the monitor and runs the Sign In, induction, ventilation and monitoring. Knows that COPD patients retain CO₂ under pneumoperitoneum and that lower pressures are often used; the case records no lung function, ASA class or medicines — these are verified now. Rapid-sequence induction: the hypnotic first, to unconsciousness, then the neuromuscular blocker — the hypnotic is never omitted; preoxygenation is judged by end-tidal oxygen, while capnography confirms the tube and monitors ventilation. Withholding clearance for induction is recorded with place_hold and the reason; after reassessment release_hold records the decision (it may be to proceed under stated uncertainty); missing information alone is not a reason to hold, but say how it is handled. Extubation and oral intake are separate: extubate on ventilation, reversal, consciousness, cough, secretions and airway protection; swallowing is assessed after extubation and before eating. Left and right are always the patient's own. Does not interpret surgical anatomy."
+      },
+      "corrections": [
+        {
+          "id": "rsi-hypnotic",
+          "misconception": {
+            "zh-CN": "快速顺序诱导时可以不给或只给很少的镇静催眠药就直接肌松。",
+            "en": "In a rapid-sequence induction the hypnotic can be omitted or minimal before the neuromuscular blocker."
+          },
+          "match": [
+            [
+              "paraly",
+              "neuromuscular",
+              "rocuronium",
+              "suxamethonium",
+              "succinylcholine",
+              "muscle relaxant",
+              "blocker",
+              "肌松",
+              "罗库溴铵",
+              "琥珀胆碱",
+              "琥珀酰胆碱"
+            ],
+            [
+              "no hypnotic",
+              "without a hypnotic",
+              "without hypnotic",
+              "little or no",
+              "minimal hypnotic",
+              "skip the hypnotic",
+              "omit the hypnotic",
+              "no induction agent",
+              "without an induction agent",
+              "no sedation",
+              "without sedation",
+              "minimal sedation",
+              "little hypnotic",
+              "不用镇静",
+              "不给镇静",
+              "少量或不用",
+              "不用诱导药",
+              "无需镇静",
+              "不用催眠",
+              "少用镇静",
+              "不给催眠",
+              "几乎不用镇静"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以减量、换药、缓慢滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。",
+            "en": "Correction: in a rapid-sequence induction the hypnotic (the induction agent) always goes in before or with the neuromuscular blocker, in a dose that makes him unconscious — in a frail 84-year-old you choose and titrate it, you never omit it; paralysis without adequate hypnosis means awareness. Haemodynamic fragility changes which hypnotic and how much, not whether one is given."
+          },
+          "marks": [
+            "awareness",
+            "unconscious",
+            "never omit",
+            "must not be omitted",
+            "知晓",
+            "意识消失",
+            "不能省略"
+          ]
+        },
+        {
+          "id": "preox-etco2",
+          "misconception": {
+            "zh-CN": "呼末二氧化碳高于40 mmHg说明预充氧充分。",
+            "en": "An end-tidal CO₂ above 40 mmHg shows adequate preoxygenation."
+          },
+          "match": [
+            [
+              "etco2",
+              "etco₂",
+              "end-tidal co2",
+              "end tidal co2",
+              "end-tidal co₂",
+              "end-tidal carbon dioxide",
+              "capnograph",
+              "呼末二氧化碳",
+              "呼气末二氧化碳",
+              "呼末co2"
+            ],
+            [
+              "preoxygen",
+              "pre-oxygen",
+              "denitrogen",
+              "oxygenation",
+              "预充氧",
+              "预给氧",
+              "去氮",
+              "氧合"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：预充氧是否充分看呼气末氧浓度（呼出氧分数约0.9以上），不是看呼末二氧化碳。呼末二氧化碳用来确认导管位置和监测通气；高于40 mmHg 说明不了氧储备，对慢阻肺患者反而可能提示二氧化碳潴留。",
+            "en": "Correction: preoxygenation is judged by end-tidal OXYGEN (an expired oxygen fraction of about 0.9 or more), not by end-tidal CO₂. Capnography confirms the tube position and monitors ventilation; a value above 40 mmHg says nothing about oxygen stores — in a COPD patient it may mean CO₂ retention."
+          },
+          "marks": [
+            "end-tidal oxygen",
+            "expired oxygen",
+            "eto2",
+            "eto₂",
+            "feo2",
+            "呼气末氧",
+            "呼末氧"
+          ]
+        },
+        {
+          "id": "extubation-swallow",
+          "misconception": {
+            "zh-CN": "拔管前必须先通过饮水试验或吞咽造影。",
+            "en": "He must pass a water-swallow test or VFSS before extubation."
+          },
+          "match": [
+            [
+              "extubat",
+              "拔管"
+            ],
+            [
+              "swallow",
+              "vfss",
+              "videofluoroscop",
+              "water test",
+              "drinking test",
+              "吞咽",
+              "饮水试验",
+              "洼田",
+              "造影"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：拔管和经口进食是两个决定。拔管看通气、肌松恢复、意识、有效咳嗽、处理分泌物和气道保护；正式的吞咽评估在拔管之后、经口进食之前做——带着导管做不了饮水试验或吞咽造影，它也不是拔管条件。",
+            "en": "Correction: extubation and oral intake are two decisions. Extubate on ventilation, reversal of neuromuscular block, consciousness, an effective cough, secretion handling and airway protection; a formal swallowing assessment comes after extubation and before anything by mouth — a drinking test or VFSS cannot be done with a tube in and is not an extubation criterion."
+          },
+          "marks": [
+            "two decisions",
+            "separate decision",
+            "after extubation",
+            "两个决定",
+            "拔管之后",
+            "拔管后"
+          ]
+        },
+        {
+          "id": "laterality-reverse",
+          "misconception": {
+            "zh-CN": "因为内脏反位，要把患者的左右再反过来理解。",
+            "en": "Because of situs inversus, reverse the patient's left and right again."
+          },
+          "match": [
+            [
+              "reverse",
+              "swap",
+              "flip",
+              "invert left",
+              "opposite side",
+              "反过来",
+              "颠倒",
+              "互换",
+              "左右反",
+              "对调"
+            ],
+            [
+              "left",
+              "right",
+              "左",
+              "右"
+            ]
+          ],
+          "say": {
+            "zh-CN": "纠正：左右永远指患者自己的左右。全内脏反位反的是器官，不是词：胆囊就在患者左侧。读片时核对影像的方位标记，核对皮肤标记，都以患者左侧为准——不要在脑子里再“反过来”一次。",
+            "en": "Correction: left and right are always the patient's own. In situs inversus the organs are mirrored, not the words: the gallbladder is on the patient's LEFT. Check the image's orientation marker and the skin marking against the patient's left — never \"reverse\" sides in your head."
+          },
+          "marks": [
+            "patient's left",
+            "patient’s left",
+            "patient's own",
+            "患者左侧",
+            "患者自己的左右"
+          ]
+        }
+      ]
     }
   ],
   "debrief": {
@@ -3394,6 +4165,22 @@
       {
         "zh-CN": "东京指南2018：确诊急性胆囊炎需要局部征象、全身炎症和影像三者兼备。",
         "en": "Tokyo Guidelines 2018: a definite acute cholecystitis needs local signs, systemic inflammation and imaging together."
+      },
+      {
+        "zh-CN": "左右永远指患者自己的左右：全内脏反位反的是器官，不是词。胆囊在患者左侧；核对影像方位标记（DICOM 患者方位）和皮肤标记都以患者左侧为准，不要再“反过来”。",
+        "en": "Left and right are always the patient's own: in situs inversus the organs are mirrored, not the words. The gallbladder is on the patient's left; check the image orientation marker (DICOM patient orientation) and the skin marking against the patient's left — never \"reverse\" sides again."
+      },
+      {
+        "zh-CN": "快速顺序诱导：先给镇静催眠药使意识消失，再给肌松药；预充氧看呼气末氧浓度，呼末二氧化碳确认导管位置并监测通气。",
+        "en": "Rapid-sequence induction: the hypnotic first, to unconsciousness, then the neuromuscular blocker; preoxygenation is judged by end-tidal oxygen, while end-tidal CO₂ confirms the tube and monitors ventilation."
+      },
+      {
+        "zh-CN": "拔管与经口进食是两个决定：拔管看通气与气道保护，卒中后的吞咽评估在拔管之后、进食之前。",
+        "en": "Extubation and oral intake are two decisions: extubation rests on ventilation and airway protection; after a stroke swallowing is assessed after extubation and before eating."
+      },
+      {
+        "zh-CN": "暂缓是记录，不是语气：主治或麻醉医生不同意时记录暂缓及理由，重新评估后记录解除；资料缺失本身不是一律禁止，但要写明如何处理。",
+        "en": "A hold is a record, not a tone of voice: an attending or anaesthetist who withholds clearance records the hold and why, and its release after reassessment; missing information alone is not a universal prohibition, but how it is handled is written down."
       }
     ],
     "references": [
@@ -3402,7 +4189,10 @@
       "SAGES. Safe Cholecystectomy Multi-Society Practice Guideline. 2020. https://www.sages.org/publications/guidelines/safe-cholecystectomy-multi-society-practice-guideline/",
       "Yokoe M, Hata J, Takada T, et al. Tokyo Guidelines 2018: diagnostic criteria and severity grading of acute cholecystitis (with videos). J Hepatobiliary Pancreat Sci. 2018;25(1):41-54.",
       "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855.",
-      "Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125."
+      "Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125.",
+      "World Health Organization. WHO Guidelines for Safe Surgery 2009: Safe Surgery Saves Lives. Geneva: WHO; 2009 (Surgical Safety Checklist implementation manual).",
+      "Acquisto NM, Mosier JM, Bittner EA, et al. Society of Critical Care Medicine clinical practice guidelines for rapid sequence intubation in the critically ill adult patient. Crit Care Med. 2023;51(10):1411-1430.",
+      "DICOM PS3.3, section C.7.6.2: Image Plane Module (Patient Orientation). NEMA."
     ],
     "notice": {
       "zh-CN": "技术样例的流程评分，非已验证的医疗能力评分；真实模型性能尚未测量。",
@@ -3429,6 +4219,10 @@
     {
       "zh-CN": "标本取出方式、器械规格（除报告的Trocar尺寸外）、气腹压力、出血量的具体数值。",
       "en": "How the specimen was removed, instrument sizes beyond the reported trocars, insufflation pressure and a measured blood loss."
+    },
+    {
+      "zh-CN": "入院前是否用过退热药或抗生素、疼痛与进食的关系、抗栓药是否用过或停用——都未记录，也没有家属陈述；教学中的假设不能补成病史。",
+      "en": "Whether antipyretics or antibiotics were taken before admission, whether the pain is related to meals, and whether an antithrombotic was taken or stopped — none is recorded and no family account exists; a teaching hypothetical does not fill them in."
     }
   ],
   "extensions": {
@@ -3697,6 +4491,34 @@
         "expect": [
           "stroke-deficit"
         ]
+      },
+      {
+        "text": "入院前用过抗生素吗？",
+        "locale": "zh-CN",
+        "expect": [
+          "prior-treatment"
+        ]
+      },
+      {
+        "text": "Did you take any antibiotics before admission?",
+        "locale": "en",
+        "expect": [
+          "prior-treatment"
+        ]
+      },
+      {
+        "text": "吃饭以后会更疼吗？",
+        "locale": "zh-CN",
+        "expect": [
+          "pain-meals"
+        ]
+      },
+      {
+        "text": "Is the pain worse after meals?",
+        "locale": "en",
+        "expect": [
+          "pain-meals"
+        ]
       }
     ],
     "version4": {
@@ -3807,6 +4629,10 @@
       "itemId": "copd-status"
     },
     {
+      "type": "ask",
+      "itemId": "fasting"
+    },
+    {
       "type": "answer",
       "decisionId": "risk",
       "optionIds": [
@@ -3815,6 +4641,10 @@
         "function",
         "dextrocardia"
       ]
+    },
+    {
+      "type": "intervene",
+      "interventionId": "attach-monitor"
     },
     {
       "type": "intervene",
@@ -4172,6 +5002,14 @@
       "op": {
         "op": "close"
       }
+    },
+    {
+      "type": "answer",
+      "decisionId": "emergence",
+      "optionIds": [
+        "criteria",
+        "swallow-after"
+      ]
     },
     {
       "type": "intervene",
@@ -6087,7 +6925,7 @@
     "noise": 1,
     "monitor": {
       "attachedWhen": {
-        "intervened": "sign-in"
+        "intervened": "attach-monitor"
       },
       "spotChecks": [
         "hr",
