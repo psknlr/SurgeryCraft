@@ -266,6 +266,7 @@ ClinicalCraft's audit round, closes the rest.
 | "target required" with an equipment id | `give_intervention` says apart: nothing named, a thing in the room (not a treatment), an unknown treatment; a fetch reports where the cart stands | theatre |
 | A 60 s insufflation left the clock at 08:37 | `clock.worldTime: "actual"`: world actions cost their own duration; vitals read afterwards carry it | theatre: the insufflator's minute |
 | Twelve "per-turn limit" results | repeated identical failures are flagged with what to inspect; the round limit says to start from `case_status` | ClinicalCraft `case-route.test.ts` |
+| External agents could not operate at all | the MCP server, MCP attach mode and the live-world bridge offer `observe_field` and `operate` (high-risk steps through the two-step confirmation); `start_case` says the case has an operation and how it is done | ClinicalCraft `packages/mcp/src/operative.test.ts` |
 
 ### Release acceptance (end to end)
 
