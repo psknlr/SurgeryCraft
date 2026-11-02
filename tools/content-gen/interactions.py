@@ -293,19 +293,36 @@ eq("sc-rf-wand", L("RF 纱布检测棒", "RF surgical-sponge detection wand"), "
              }})
 
 # ------------------------------------------------------------------------------------------------ existing devices
+def when(state, condition):
+    """A board state derived from the case record (`derived: "case-record"`)."""
+    return {**state, "when": condition}
+
+
+def entry(o, item):
+    """A board operation that IS the case's checklist step: one validated act through the session's tool path."""
+    return {**o, "clinical": {"tool": "intervene", "select": "item", "item": item}}
+
+
+# The WHO board shows the case record: in a case that records the checklist (sign-in, time-out, sign-out), its state is
+# derived from the valid steps — whoever made them, at the bedside, on the board or as an agent — and its operations
+# make those steps (an out-of-order one is logged and leaves the board unchanged). Elsewhere it is a physical board.
+VALID = lambda item: {"intervened": item, "valid": True}
 attach("sc-who-checklist", {
     "initial": "pending",
-    "states": {"pending": st("待核查", "pending"), "signed-in": st("麻醉前核查完成（Sign in）", "signed in (before induction)"),
-               "timed-out": st("切皮前暂停核查完成（Time out）", "timed out (before incision)"), "signed-out": st("离室前核查完成（Sign out）", "signed out (before leaving)")},
+    "derived": "case-record",
+    "states": {"pending": st("待核查", "pending"),
+               "signed-in": when(st("麻醉前核查完成（Sign in）", "signed in (before induction)"), VALID("sign-in")),
+               "timed-out": when(st("切皮前暂停核查完成（Time out）", "timed out (before incision)"), VALID("time-out")),
+               "signed-out": when(st("离室前核查完成（Sign out）", "signed out (before leaving)"), VALID("sign-out"))},
     "operations": {
-        "sign_in": op("Sign in：核对身份、术式、部位标记、过敏、气道与失血风险", "Sign in: identity, procedure, site marking, allergies, airway and blood-loss risk",
-                      ["pending"], "signed-in", [{"actorWithin": 3}], TEAM, 60),
-        "time_out": op("Time out：全员暂停，确认患者、术式、部位，预防性抗菌药与影像（需切皮前清点完成）",
-                       "Time out: the whole team pauses — patient, procedure, site, antibiotic prophylaxis, imaging (needs the baseline count)",
-                       ["signed-in"], "timed-out", [{"actorWithin": 3}, near("sc-count-board", ["baseline", "cavity", "closing", "reconciled"], 8)], TEAM, 60),
-        "sign_out": op("Sign out：术式记录、清点相符、标本标识、设备问题（需最终清点相符）",
-                       "Sign out: procedure recorded, counts reconciled, specimens labelled, equipment problems (needs the reconciled count)",
-                       ["timed-out"], "signed-out", [{"actorWithin": 3}, near("sc-count-board", "reconciled", 8)], TEAM, 60),
+        "sign_in": entry(op("Sign in：核对身份、术式、部位标记、过敏、气道与失血风险", "Sign in: identity, procedure, site marking, allergies, airway and blood-loss risk",
+                            ["pending"], "signed-in", [{"actorWithin": 3}], TEAM, 60), "sign-in"),
+        "time_out": entry(op("Time out：全员暂停，确认患者、术式、部位，预防性抗菌药与影像（需切皮前清点完成）",
+                             "Time out: the whole team pauses — patient, procedure, site, antibiotic prophylaxis, imaging (needs the baseline count)",
+                             ["signed-in"], "timed-out", [{"actorWithin": 3}, near("sc-count-board", ["baseline", "cavity", "closing", "reconciled"], 8)], TEAM, 60), "time-out"),
+        "sign_out": entry(op("Sign out：术式记录、清点相符、标本标识、设备问题（需最终清点相符）",
+                             "Sign out: procedure recorded, counts reconciled, specimens labelled, equipment problems (needs the reconciled count)",
+                             ["timed-out"], "signed-out", [{"actorWithin": 3}, near("sc-count-board", "reconciled", 8)], TEAM, 60), "sign-out"),
         "reset": op("下一台手术：新的核查表", "Next case: a fresh checklist", ["signed-out"], "pending", [], TEAM, 10),
     }}, prompt=L("E · 手术安全核查", "E · Surgical safety checklist"))
 

@@ -175,7 +175,8 @@
       },
       "learnerSwitchable": false,
       "enterWhen": {
-        "intervened": "time-out"
+        "intervened": "time-out",
+        "valid": true
       }
     },
     {
@@ -186,7 +187,8 @@
       },
       "learnerSwitchable": false,
       "enterWhen": {
-        "intervened": "sign-out"
+        "intervened": "sign-out",
+        "valid": true
       }
     },
     {
@@ -1312,6 +1314,7 @@
         "zh-CN": "核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位），右位心——心电图导联和除颤电极按镜像放置；过敏、气道与误吸风险、预计失血尚未记录，需当场确认。监护已连接。",
         "en": "Identity, procedure, consent and site checked: the gallbladder is on the patient's LEFT (situs inversus totalis); dextrocardia — ECG leads and defibrillator pads placed in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded and are confirmed now. Monitoring attached."
       },
+      "checklist": true,
       "indicatedWhen": {
         "phase": "theatre"
       }
@@ -1331,11 +1334,13 @@
         "en": "Anaesthesia induced; intubated and ventilated. (Teaching step: no drug doses are modelled.)"
       },
       "indicatedWhen": {
-        "intervened": "sign-in"
+        "intervened": "sign-in",
+        "valid": true
       },
       "contraindicatedWhen": {
         "not": {
-          "intervened": "sign-in"
+          "intervened": "sign-in",
+          "valid": true
         }
       },
       "harm": {
@@ -1357,6 +1362,7 @@
         "zh-CN": "团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。",
         "en": "The team confirms the patient, a laparoscopic cholecystectomy and the left-sided pathology; the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach."
       },
+      "checklist": true,
       "indicatedWhen": {
         "intervened": "induction"
       },
@@ -1366,8 +1372,8 @@
         }
       },
       "harm": {
-        "zh-CN": "麻醉诱导前就进行切皮前核对，顺序不对。",
-        "en": "A Time Out before anaesthesia is out of order."
+        "zh-CN": "麻醉诱导前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，诱导后需重新核对。",
+        "en": "A Time Out before anaesthesia is out of order: recorded as invalid; the operation stays locked until a Time Out after induction."
       }
     },
     {
@@ -1384,6 +1390,7 @@
         "zh-CN": "确认实施的手术、器械与纱布清点、标本标记、需关注的问题（包括任何术中并发症）并交接恢复室。",
         "en": "The procedure performed, instrument and swab counts, specimen labelling and concerns for recovery (including any intra-operative complication) are confirmed and handed over."
       },
+      "checklist": true,
       "indicatedWhen": {
         "any": [
           {
@@ -1415,8 +1422,8 @@
         }
       },
       "harm": {
-        "zh-CN": "手术尚未结束就做离室核对。",
-        "en": "Sign Out before the operation has ended."
+        "zh-CN": "手术尚未结束就做离室核对：已记录为无效，手术结束后需重新核对。",
+        "en": "Sign Out before the operation has ended: recorded as invalid; repeat it once the operation has ended."
       }
     },
     {
@@ -1586,13 +1593,15 @@
             "decided": "risk"
           },
           {
-            "intervened": "sign-in"
+            "intervened": "sign-in",
+            "valid": true
           },
           {
             "intervened": "induction"
           },
           {
-            "intervened": "time-out"
+            "intervened": "time-out",
+            "valid": true
           }
         ]
       },
@@ -1629,7 +1638,8 @@
             ]
           },
           {
-            "intervened": "sign-out"
+            "intervened": "sign-out",
+            "valid": true
           }
         ]
       },
@@ -2299,13 +2309,9 @@
         "en": "Sign In before induction"
       },
       "met": {
-        "all": [
-          {
-            "intervened": "sign-in"
-          },
-          {
-            "intervened": "induction"
-          }
+        "inOrder": [
+          "sign-in",
+          "induction"
         ]
       },
       "scoredWhen": {
@@ -2317,11 +2323,22 @@
       "domain": "safety",
       "weight": 2,
       "text": {
-        "zh-CN": "切皮前暂停核对",
-        "en": "Time Out before incision"
+        "zh-CN": "切皮前暂停核对（在诱导之后、切皮之前）",
+        "en": "Time Out before incision (after induction)"
       },
       "met": {
-        "intervened": "time-out"
+        "all": [
+          {
+            "intervened": "time-out",
+            "valid": true
+          },
+          {
+            "not": {
+              "intervened": "time-out",
+              "valid": false
+            }
+          }
+        ]
       }
     },
     {
@@ -2924,11 +2941,12 @@
       "domain": "safety",
       "weight": 1,
       "text": {
-        "zh-CN": "离室前核对",
-        "en": "Sign Out"
+        "zh-CN": "手术结束后、离室前核对",
+        "en": "Sign Out after the operation, before leaving"
       },
       "met": {
-        "intervened": "sign-out"
+        "intervened": "sign-out",
+        "valid": true
       }
     },
     {
@@ -3982,7 +4000,7 @@
         "claims": {
           "triangle": true,
           "plate": true,
-          "two": true
+          "entering": 2
         }
       }
     },
@@ -5382,13 +5400,14 @@
             }
           },
           {
-            "id": "two",
+            "id": "entering",
             "name": {
-              "zh-CN": "只有两根结构进入胆囊",
-              "en": "Two and only two structures entering the gallbladder"
+              "zh-CN": "进入胆囊的结构：通常两根，均已游离一周，且无其他结构看似进入",
+              "en": "Structures entering the gallbladder: usually two, each free all round, nothing else appearing to enter"
             },
             "test": {
-              "onlyEntering": "gallbladder"
+              "onlyEntering": "gallbladder",
+              "count": 2
             }
           }
         ]
@@ -6024,6 +6043,19 @@
       },
       "verdict": "safety-critical",
       "capPercent": 50
+    },
+    {
+      "id": "induction-before-sign-in",
+      "label": {
+        "zh-CN": "未完成麻醉前核对即诱导",
+        "en": "Induction before the Sign In"
+      },
+      "when": {
+        "intervened": "induction",
+        "valid": false
+      },
+      "verdict": "safety-critical",
+      "capPercent": 70
     },
     {
       "id": "perforation",

@@ -52,12 +52,15 @@ def swap(instrument):
 
 
 def secure(structures, also_named=()):
-    """Free, name, pause on the critical view, then clip and divide `structures` [(id, clips)]; `also_named` are named, never touched."""
+    """Free, name, pause on the critical view, then clip and divide `structures` [(id, clips)]; `also_named` are named, never touched.
+
+    At the pause the operator reports how many structures they see entering the gallbladder: every one secured here
+    enters it (the cystic duct and artery, and a second artery when there is one) — never "two" by habit."""
     return [
         *[op(op='isolate', port='C', handle=f'@{s}') for s, _ in structures],
         *[op(op='identify', handle=f'@{s}', **{'as': s}) for s, _ in structures],
         *[op(op='identify', handle=f'@{s}', **{'as': s}) for s in also_named],
-        op(op='safety-pause', view='cvs', claims={'triangle': True, 'plate': True, 'two': True}),
+        op(op='safety-pause', view='cvs', claims={'triangle': True, 'plate': True, 'entering': len(structures)}),
         *swap('clip-applier'),
         *[op(op='clip', port='C', handle=f'@{s}', count=n) for s, n in structures],
         *swap('scissors'),

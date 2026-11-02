@@ -185,6 +185,30 @@ describe("Case 126: the operation", () => {
     for (const n of names) expect(text).not.toContain(n);
   });
 
+  it("reversing Sign In and induction is visible in the final verdict; an early Time Out leaves surgery locked", () => {
+    const sol = c.solution;
+    const signIn = sol.findIndex((a) => a.type === "intervene" && a.interventionId === "sign-in");
+    const induction = sol.findIndex((a) => a.type === "intervene" && a.interventionId === "induction");
+    const reversed = [...sol];
+    [reversed[signIn], reversed[induction]] = [reversed[induction]!, reversed[signIn]!];
+    const { s, rejected } = replay(reversed);
+    expect(rejected).toEqual([]);
+    const report = assess(c, s);
+    expect(report.safety.verdict).toBe("safety-critical");
+    expect(report.safety.gates?.map((g) => g.id)).toContain("induction-before-sign-in");
+    expect(report.rubric.find((r) => r.id === "r-signin")?.met).toBe(false);
+    expect(report.score.percent).toBeLessThan(100);
+    // a Time Out before induction: logged as invalid, the operation stays locked; the later one opens it
+    const early = replay([...sol.slice(0, signIn), { type: "intervene", interventionId: "time-out" }, { type: "operate", op: { op: "plan-ports", plan: "three-port-left" } }]);
+    expect(early.s.interventions.at(-1)).toMatchObject({ interventionId: "time-out", invalid: true });
+    expect(early.s.phase).not.toBe("operation");
+    expect(early.rejected.at(-1)?.message).toMatch(/not under way/);
+    const later = replay([...sol.slice(0, signIn), { type: "intervene", interventionId: "time-out" }, ...sol.slice(signIn)]);
+    expect(later.rejected).toEqual([]);
+    expect(later.s.finished).toBe(true);
+    expect(assess(c, later.s).rubric.find((r) => r.id === "r-timeout")?.met).toBe(false); // the out-of-order attempt is on record
+  });
+
   it("the operation cannot start before the Time Out", () => {
     const sign = PREOP.findIndex((a) => a.type === "intervene" && a.interventionId === "time-out");
     const { rejected } = replay([...PREOP.slice(0, sign), op({ op: "plan-ports", plan: "three-port-left" })]);
@@ -268,6 +292,18 @@ describe("Case 126: anatomical variants", () => {
       }
       expect({ v, percent: report.score.percent }).toEqual({ v, percent: 100 });
     }
+  });
+
+  it("with a second cystic artery, reporting 'two' at the pause is not credited — the right report is three", () => {
+    const ops = resolveSteps("double-cystic-artery", trajectories.get("double-cystic-artery")!);
+    const pause = ops.findIndex((o) => o.op === "safety-pause");
+    expect((ops[pause] as { claims: Record<string, unknown> }).claims.entering).toBe(3);
+    const asTwo = ops.map((o, i) => (i === pause ? ({ ...o, claims: { triangle: true, plate: true, entering: 2 } } as ProcedureOp) : o));
+    const { s } = replay([start("double-cystic-artery"), ...PREOP.filter((a) => a.type !== "start"), ...asTwo.map(op), ...AFTER_CLOSE]);
+    const report = assess(c, s);
+    expect(s.procedure!.pauses.at(-1)).toMatchObject({ achieved: true, entering: { entering: 3 } });
+    expect(report.rubric.find((r) => r.id === "r-cvs")?.met).toBe(false);
+    expect(report.procedure?.pauses.at(-1)?.claimsMatchField).toBe(false);
   });
 
   it("the reported anatomy's routine, replayed blind, is safety-critical in every variant", () => {

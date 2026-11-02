@@ -77,9 +77,9 @@ case['phases'] = [
     dict(id='theatre', label=L('手术室：安全核对与麻醉', 'Theatre: safety checks and anaesthesia'), learnerSwitchable=False,
          enterWhen={'decided': 'risk'}),
     dict(id='operation', label=L('腹腔镜胆囊切除', 'Laparoscopic cholecystectomy'), learnerSwitchable=False,
-         enterWhen={'intervened': 'time-out'}),
+         enterWhen={'intervened': 'time-out', 'valid': True}),
     dict(id='recovery', label=L('麻醉后恢复与术后', 'Recovery and postoperative care'), learnerSwitchable=False,
-         enterWhen={'intervened': 'sign-out'}),
+         enterWhen={'intervened': 'sign-out', 'valid': True}),
     dict(id='review', label=L('原报告手术与随访回看', 'Review of the reported operation and follow-up'), learnerSwitchable=False,
          enterWhen={'intervened': 'open-historical-review'}),
 ]
@@ -187,8 +187,11 @@ case['decisions'].append(dict(
 # the v3 safety decision is unlocked by planning and laboratory review (unchanged); v3 anatomy/planning stay
 
 # ------------------------------------------------------------------ interventions: checklist, anaesthesia, recovery
-def iv(id, kind, zh, en, resp_zh, resp_en, risk='none', indicated=None, contra=None, harm=None, phases=None):
+def iv(id, kind, zh, en, resp_zh, resp_en, risk='none', indicated=None, contra=None, harm=None, phases=None, checklist=False):
     out = dict(id=id, name=L(zh, en), kind=kind, requires=[], risk=risk, maxDoses=1, response=L(resp_zh, resp_en))
+    if checklist:
+        # a WHO checklist step: an out-of-order attempt is logged, applies nothing and uses none of its single dose
+        out['checklist'] = True
     if indicated:
         out['indicatedWhen'] = indicated
     if contra:
@@ -200,22 +203,23 @@ case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-hi
     iv('sign-in', 'monitoring', 'WHO 麻醉前核对（Sign In）并连接监护', 'WHO Sign In before induction, monitoring attached',
        '核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位），右位心——心电图导联和除颤电极按镜像放置；过敏、气道与误吸风险、预计失血尚未记录，需当场确认。监护已连接。',
        'Identity, procedure, consent and site checked: the gallbladder is on the patient\'s LEFT (situs inversus totalis); dextrocardia — ECG leads and defibrillator pads placed in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded and are confirmed now. Monitoring attached.',
-       indicated={'phase': 'theatre'}),
+       indicated={'phase': 'theatre'}, checklist=True),
     iv('induction', 'airway', '全身麻醉诱导与气管插管', 'Induce general anaesthesia and intubate',
        '麻醉诱导完成，气管插管，机械通气。（教学步骤：不涉及药物剂量。）', 'Anaesthesia induced; intubated and ventilated. (Teaching step: no drug doses are modelled.)',
-       risk='high', indicated={'intervened': 'sign-in'}, contra={'not': {'intervened': 'sign-in'}},
+       risk='high', indicated={'intervened': 'sign-in', 'valid': True}, contra={'not': {'intervened': 'sign-in', 'valid': True}},
        harm=('未完成麻醉前核对就诱导：过敏、气道和部位风险未经团队确认。', 'Induction before the Sign In: allergy, airway and site risks were not confirmed by the team.')),
     iv('time-out', 'consult', 'WHO 切皮前暂停核对（Time Out）', 'WHO Time Out before incision',
        '团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。',
        'The team confirms the patient, a laparoscopic cholecystectomy and the left-sided pathology; the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach.',
+       # the patient under anaesthesia (an induction out of order is still an induction: its own gate shows the order)
        indicated={'intervened': 'induction'}, contra={'not': {'intervened': 'induction'}},
-       harm=('麻醉诱导前就进行切皮前核对，顺序不对。', 'A Time Out before anaesthesia is out of order.')),
+       harm=('麻醉诱导前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，诱导后需重新核对。', 'A Time Out before anaesthesia is out of order: recorded as invalid; the operation stays locked until a Time Out after induction.'), checklist=True),
     iv('sign-out', 'consult', 'WHO 离开手术室前核对（Sign Out）', 'WHO Sign Out before leaving theatre',
        '确认实施的手术、器械与纱布清点、标本标记、需关注的问题（包括任何术中并发症）并交接恢复室。',
        'The procedure performed, instrument and swab counts, specimen labelling and concerns for recovery (including any intra-operative complication) are confirmed and handed over.',
        indicated={'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]},
        contra={'not': {'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}},
-       harm=('手术尚未结束就做离室核对。', 'Sign Out before the operation has ended.')),
+       harm=('手术尚未结束就做离室核对：已记录为无效，手术结束后需重新核对。', 'Sign Out before the operation has ended: recorded as invalid; repeat it once the operation has ended.'), checklist=True),
     iv('pacu-handover', 'monitoring', '恢复室交接', 'Hand over in the recovery room',
        '交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；需观察的问题。',
        'Handover: 84 years, COPD, previous stroke, situs inversus totalis; the operation done and anything that happened; what to watch.',
@@ -242,10 +246,10 @@ case['objectives'] = [
         {'all': [{'decided': 'diagnosis'}, {'decided': 'anatomy'}, {'decided': 'planning'}, {'decided': 'safety'}]}, target='board'),
     obj('periop', '术前评估与安全核对', 'Perioperative assessment and checks', '弄清楚高龄、慢阻肺与卒中带来的风险，再做麻醉前核对、诱导和切皮前暂停核对。',
         'Clarify the risks of age, COPD and stroke, then the Sign In, induction and the Time Out.',
-        {'all': [{'decided': 'risk'}, {'intervened': 'sign-in'}, {'intervened': 'induction'}, {'intervened': 'time-out'}]}, target='board'),
+        {'all': [{'decided': 'risk'}, {'intervened': 'sign-in', 'valid': True}, {'intervened': 'induction'}, {'intervened': 'time-out', 'valid': True}]}, target='board'),
     obj('operate', '完成手术', 'Perform the operation', '布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后离室核对。',
         'Ports, traction, dissection to a true critical view of safety, then clips and division — or a safe alternative if it cannot be reached. Then the Sign Out.',
-        {'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'intervened': 'sign-out'}]}, target='patient'),
+        {'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'intervened': 'sign-out', 'valid': True}]}, target='patient'),
     obj('review', '术后与原报告回看', 'Recovery and the reported course', '交接恢复室、定观察重点，再回看原报告的手术、病理和随访。',
         'Hand over in recovery, set what to watch, then review the reported operation, histology and follow-up.',
         {'all': [{'decided': 'postop'}, {'read': 'operation-record'}, {'read': 'pathology-record'}, {'read': 'followup-record'}, {'decided': 'outcome'}]}, target='records'),
@@ -401,7 +405,10 @@ case['procedure'] = dict(
     views=[dict(id='cvs', name=L('关键安全视野', 'Critical view of safety'), criteria=[
         dict(id='triangle', name=L('胆囊三角内脂肪和纤维组织已清除', 'Hepatocystic triangle cleared of fat and fibrous tissue'), test={'cleared': T, 'atLeast': 1}),
         dict(id='plate', name=L('胆囊下三分之一已与肝床分离，可见胆囊板', 'Lower third of the gallbladder separated from the liver, cystic plate seen'), test={'cleared': 'cystic-plate', 'atLeast': 1}),
-        dict(id='two', name=L('只有两根结构进入胆囊', 'Two and only two structures entering the gallbladder'), test={'onlyEntering': 'gallbladder'}),
+        # the operator reports how many structures they see entering (usually two): "two" is credited only when two
+        # truly enter — with a second cystic artery the right report is three (review by hepatobiliary surgeons pending)
+        dict(id='entering', name=L('进入胆囊的结构：通常两根，均已游离一周，且无其他结构看似进入', 'Structures entering the gallbladder: usually two, each free all round, nothing else appearing to enter'),
+             test={'onlyEntering': 'gallbladder', 'count': 2}),
     ])],
     bailouts=['call-help', 'subtotal-fenestrating', 'subtotal-reconstituting', 'convert-open'],
     insufflation={'usual': 12, 'max': 15},
@@ -550,9 +557,11 @@ case['rubric'] = [
     item('r-risk', 'safety', 3, '围术期风险问题找全', 'Perioperative risks identified', {'decidedFirstTry': 'risk'}),
     # anatomical orientation and operative set-up — 15
     item('r-anatomy', 'diagnosis', 6, '正确判断器官侧别', 'Laterality identified correctly', {'decidedFirstTry': 'anatomy'}, critical=True),
+    # by committed order (two acts in one simulated minute keep their order), not merely both done
     item('r-signin', 'safety', 2, '诱导前完成麻醉前核对', 'Sign In before induction',
-         {'all': [{'intervened': 'sign-in'}, {'intervened': 'induction'}]}, scored={'intervened': 'induction'}),
-    item('r-timeout', 'safety', 2, '切皮前暂停核对', 'Time Out before incision', {'intervened': 'time-out'}),
+         {'inOrder': ['sign-in', 'induction']}, scored={'intervened': 'induction'}),
+    item('r-timeout', 'safety', 2, '切皮前暂停核对（在诱导之后、切皮之前）', 'Time Out before incision (after induction)',
+         {'all': [{'intervened': 'time-out', 'valid': True}, {'not': {'intervened': 'time-out', 'valid': False}}]}),
     item('r-ports', 'management', 2, '选择能到达左侧胆囊三角的布孔', 'A port plan that works the left-sided triangle',
          {'any': [P(plan='three-port-left'), P(plan='mirror-four-port')]}, scored={'any': [P(plan='three-port-left'), P(plan='mirror-four-port'), P(plan='habitual')]}),
     item('r-traction', 'management', 3, '向患者左侧（外侧）牵拉胆囊颈，打开三角', 'Neck retracted towards the patient\'s left to open the triangle', P(dissectedExposed=T, atLeast=0.8),
@@ -586,7 +595,7 @@ case['rubric'] = [
     item('r-bleeding', 'management', 2, '出血得到控制', 'Bleeding controlled', {'not': P(bleeding='any', controlled=False)}, scored=P(bleeding='any')),
     item('r-spill', 'management', 2, '溢出的胆汁和结石已吸净', 'Spilled bile and stones cleared', P(spillage='bile', cleared=True), scored=P(spillage='bile')),
     # postoperative management and documentation — 5
-    item('r-signout', 'safety', 1, '离室前核对', 'Sign Out', {'intervened': 'sign-out'}),
+    item('r-signout', 'safety', 1, '手术结束后、离室前核对', 'Sign Out after the operation, before leaving', {'intervened': 'sign-out', 'valid': True}),
     item('r-postop', 'management', 2, '术后观察重点', 'Postoperative priorities', {'decidedFirstTry': 'postop'}),
     item('r-records', 'investigations', 1, '回看手术与病理记录', 'Operation and histology records reviewed', {'all': [{'read': 'operation-record'}, {'read': 'pathology-record'}]}),
     item('r-outcome', 'management', 1, '正确界定单例结局的意义', 'Single-case outcome bounded correctly', {'decidedFirstTry': 'outcome'}),
@@ -623,6 +632,9 @@ case['safetyGates'] = [
     dict(id='unrecognised-injury', label=L('损伤未被识别', 'An injury not recognised'), when=P(injury='any', recognised=False), verdict='safety-critical', capPercent=50),
     dict(id='continued-after-injury', label=L('发现损伤后仍继续推进', 'Carried on after a visible injury'), when=P(unsafe='continued-after-injury'), verdict='safety-critical', capPercent=50),
     dict(id='thermal', label=L('热损伤（可能术后才表现）', 'Thermal injury (may present after surgery)'), when=P(injury='thermal-injury'), verdict='safety-critical', capPercent=50),
+    # the WHO checklist's order: anaesthesia induced before the team's Sign In (a real act, out of order)
+    dict(id='induction-before-sign-in', label=L('未完成麻醉前核对即诱导', 'Induction before the Sign In'), when={'intervened': 'induction', 'valid': False},
+         verdict='safety-critical', capPercent=70),
     dict(id='perforation', label=L('胆囊破裂、胆汁或结石溢出', 'Gallbladder perforation, bile or stone spillage'), when=P(injury='perforation'), verdict='complication'),
     dict(id='bleeding', label=L('术中出血', 'Intra-operative bleeding'), when=P(injury='bleeding'), verdict='complication'),
     dict(id='bile-leak', label=L('胆囊管残端漏', 'Cystic stump leak'), when=P(injury='bile-leak'), verdict='complication'),
@@ -694,7 +706,7 @@ case['solution'] = [
     *dissect('hepatocystic-triangle', 6), *dissect('cystic-plate', 3),
     OP(op='isolate', port='C', handle=CD), OP(op='isolate', port='C', handle=CA),
     OP(op='identify', handle=CD, **{'as': 'cystic-duct'}), OP(op='identify', handle=CA, **{'as': 'cystic-artery'}),
-    OP(op='safety-pause', view='cvs', claims={'triangle': True, 'plate': True, 'two': True}),
+    OP(op='safety-pause', view='cvs', claims={'triangle': True, 'plate': True, 'entering': 2}),
     OP(op='withdraw', port='C'), OP(op='insert', port='C', instrument='clip-applier'),
     OP(op='clip', port='C', handle=CD, count=3), OP(op='clip', port='C', handle=CA, count=2),
     OP(op='withdraw', port='C'), OP(op='insert', port='C', instrument='scissors'),
