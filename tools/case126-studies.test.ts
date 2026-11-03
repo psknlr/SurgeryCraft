@@ -97,7 +97,7 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     expect(report.output).toMatch(/Impression: with the leads mirrored, the tracing reads as a normally placed heart/);
     expect(report.output).toMatch(/\nDr Tanaka \(anaesthesia\) reviewed the 12-lead ECG/);
     expect(t.session.state.studies!.reviews).toMatchObject([{ accession: "ecg-12lead-1", by: "or-7.anaesthetist" }]);
-    expect((await tool(t, "case_status")).output).toMatch(/New investigations \(simulated\):\n {2}Simulated investigation · 12-lead ECG/);
+    expect((await tool(t, "case_status")).output).toMatch(/New investigations \(simulated\):\n {2}ord-1 · [^\n]* · Simulated investigation · 12-lead ECG/);
 
     // a save and a reload, then a change of language: the same report, the device where it was left
     const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
@@ -128,6 +128,27 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     expect(chem.observations.find((o) => o.id === "tbil")).toMatchObject({ value: 0.8, unit: "mg/dL", flag: "normal" });
     await tool(t, "wait", { minutes: 40 });
     expect((await tool(t, "read_study", { code: "chemistry" })).output).toMatch(/Total bilirubin 0\.8 mg\/dL \(0\.2–1\.2\)/);
+    await t.session.close();
+  });
+
+  it("every order its own instance: a second ECG waiting for the machine is never hidden by the first, reviewed", async () => {
+    const t = await beforeInduction();
+    await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "first" });
+    await tool(t, "wait", { minutes: 10 });
+    expect(t.session.state.studies!.reviews).toHaveLength(1);
+    // the machine taken out of service, a second ECG ordered: it waits, apart from the first
+    t.session.world()!.setAvailability(ECG, false);
+    await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "second" });
+    const both = await tool(t, "read_study", { query: "ECG" });
+    expect(both.output).toMatch(/^12-lead ECG \(new, simulated\): 2 orders, each on its own:/);
+    expect(both.output).toMatch(/ord-1 · .* · Simulated investigation · 12-lead ECG \(new, simulated\) · ecg-12lead-1/);
+    expect(both.output).toMatch(/ord-2 · .* · 12-lead ECG \(new, simulated\) \(ord-2\): waiting — the Mobile ECG machine is out of service/);
+    expect((await tool(t, "case_status")).output).toMatch(/ord-2 · [^\n]*waiting — the Mobile ECG machine is out of service/);
+    // one instance by its accession or its order
+    expect((await tool(t, "read_study", { accession: "ecg-12lead-1" })).output).toMatch(/^Simulated investigation · 12-lead ECG \(new, simulated\) · ecg-12lead-1/);
+    expect((await tool(t, "read_study", { order: "ord-2" })).output).toMatch(/waiting — the Mobile ECG machine is out of service/);
+    const listed = await tool(t, "list_studies", {});
+    expect(listed.output.split("\n").filter((l) => /^ {2}ord-/.test(l))).toHaveLength(2);
     await t.session.close();
   });
 
