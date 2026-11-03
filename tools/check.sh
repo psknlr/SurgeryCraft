@@ -13,7 +13,9 @@
 #      as a view of the case record, holds, the way into the operation, navigation, carts, roles and teaching corrections
 #      (tools/case126-theatre.test.ts), the release acceptance run end to end (tools/case126-acceptance.test.ts), and the
 #      care team working on its own — the
-#      two-nurse needle-holder handoff and its perturbations, save/restore mid-handoff (tools/case126-team.test.ts);
+#      two-nurse needle-holder handoff and its perturbations, save/restore mid-handoff (tools/case126-team.test.ts) —
+#      and one count record by swab identity that the field, the board, the RF wand, the Sign Out, the team and the
+#      score agree on, a reload before the operation and the headless autopilot (tools/case126-count.test.ts);
 #   6. the operative benchmark suite of Case 126 (content/operative/case126-v1): generated files up to date
 #      (tools/operative/build_suite_case126.py --check), then `clinicalcraft bench operative` with the reference and
 #      scripted-llm agents, both at 100 % with no hidden-state leak.
@@ -30,10 +32,11 @@ SKILLS="$CC/packages/agent/src/zz-surgerycraft-skills.test.ts"
 CASE126="$CC/packages/core/src/zz-surgerycraft-case126.test.ts"
 THEATRE="$CC/packages/agent/src/zz-surgerycraft-case126-theatre.test.ts"
 TEAM="$CC/packages/agent/src/zz-surgerycraft-case126-team.test.ts"
+COUNTREC="$CC/packages/agent/src/zz-surgerycraft-case126-count.test.ts"
 ACCEPT="$CC/packages/agent/src/zz-surgerycraft-case126-acceptance.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$ACCEPT"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
 
 echo "== facilities validate (ClinicalCraft at $CC)"
@@ -76,11 +79,15 @@ cp "$HERE/case126-acceptance.test.ts" "$ACCEPT"
 # the care team of OR 7 on its own (ClinicalCraft docs/TEAM.md): request → read-back → find → hand over → verify
 cp "$HERE/case126-team.test.ts" "$TEAM"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-team.test.ts")
+# one count record by swab identity: the field, the board, the RF wand, the Sign Out, the team and the score agree;
+# the scenario survives a reload before the operation; the headless autopilot works it (tools/case126-count.test.ts)
+cp "$HERE/case126-count.test.ts" "$COUNTREC"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-count.test.ts")
 
 echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
 python3 "$HERE/operative/build_suite_case126.py" --check
 OUT="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$ACCEPT"' EXIT
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT"' EXIT
 for agent in reference scripted-llm; do
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
 done

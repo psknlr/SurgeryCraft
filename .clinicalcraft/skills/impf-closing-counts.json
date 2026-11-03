@@ -2,12 +2,12 @@
   "schema": "clinicalcraft/skill@1",
   "id": "impf_closing_counts",
   "name": {
-    "zh-CN": "关闭前清点、RF 扫描与离室前核查",
-    "en": "Closing counts, RF scan and sign-out"
+    "zh-CN": "关闭前清点与 RF 扫描",
+    "en": "Closing counts and the RF scan"
   },
   "description": {
-    "zh-CN": "先到患者身旁（本手术间），关闭体腔前与关闭皮肤前清点；即使清点相符也用 RF 检测棒扫描患者（AORN），最终清点相符后完成 WHO Sign out。",
-    "en": "From the patient's side in this OR: count before closing the cavity and before skin closure; scan the patient with the RF wand even when the counts agree (AORN); after the reconciled final count, the WHO sign-out."
+    "zh-CN": "先到患者身旁（本手术间），在关闭前完成关闭体腔前与关闭皮肤前清点；即使清点相符也用 RF 检测棒扫描患者（AORN），再做最终清点。清点是逐件核对的记录：相符后才关闭；关闭后在 WHO 核查板上做离室核对（Sign out）。",
+    "en": "From the patient's side in this OR, before closure: count before closing the cavity and before skin closure; scan the patient with the RF wand even when the counts agree (AORN); then the final count. The count is a record kept item by item: close once it is reconciled, then do the WHO Sign Out on the checklist board."
   },
   "params": {
     "patient": {
@@ -32,15 +32,6 @@
           "actorNear": "${patient}",
           "range": 3
         }
-      }
-    },
-    {
-      "id": "checklist",
-      "tool": "find_objects",
-      "args": {
-        "type": "sc-who-checklist",
-        "room": "here",
-        "limit": 1
       }
     },
     {
@@ -91,20 +82,6 @@
       }
     },
     {
-      "id": "reset_wand",
-      "tool": "interact_object",
-      "args": {
-        "target": "${steps.wand.data.entities.0.id}",
-        "operation": "reset"
-      },
-      "when": {
-        "entityState": "${steps.wand.data.entities.0.id}",
-        "state": [
-          "clear"
-        ]
-      }
-    },
-    {
       "id": "take_wand",
       "tool": "interact_object",
       "args": {
@@ -115,7 +92,8 @@
         "entityState": "${steps.wand.data.entities.0.id}",
         "state": [
           "ready",
-          "clear"
+          "clear",
+          "detected"
         ]
       }
     },
@@ -148,20 +126,6 @@
       }
     },
     {
-      "id": "sign_out",
-      "tool": "interact_object",
-      "args": {
-        "target": "${steps.checklist.data.entities.0.id}",
-        "operation": "sign_out"
-      },
-      "when": {
-        "entityState": "${steps.checklist.data.entities.0.id}",
-        "state": [
-          "timed-out"
-        ]
-      }
-    },
-    {
       "id": "dock_wand",
       "tool": "interact_object",
       "args": {
@@ -175,10 +139,6 @@
     {
       "entityState": "${steps.board.data.entities.0.id}",
       "state": "reconciled"
-    },
-    {
-      "entityState": "${steps.checklist.data.entities.0.id}",
-      "state": "signed-out"
     }
   ],
   "recovery": [

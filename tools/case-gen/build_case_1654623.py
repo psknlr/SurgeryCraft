@@ -39,7 +39,11 @@ GUIDE = L('教学设计，依据所引指南；不是原报告记载。', 'Teach
 case = copy.deepcopy(base.case)
 
 # ------------------------------------------------------------------ case card
-case['version'] = '2.3.0'
+case['version'] = '2.4.0'
+
+# the swab count (in-world: kept by item identity, docs/TEAM.md §4.3): open while a swab is missing or one is not in the
+# count, until it is reconciled or — escalated — a clear RF scan excludes a retained swab. No record (text mode): not open.
+COUNT_OPEN = {'count': {'status': ['baseline', 'discrepancy', 'unresolved']}}
 case['summary'] = L(
     '84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核对，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。',
     'An 84-year-old man with upper abdominal pain and fever for more than ten days. Take the history, examine, review the records, '
@@ -79,11 +83,13 @@ case['phases'] = [
     dict(id='theatre', label=L('手术室：安全核对与麻醉', 'Theatre: safety checks and anaesthesia'), learnerSwitchable=False,
          enterWhen={'decided': 'risk'}),
     dict(id='operation', label=L('腹腔镜胆囊切除', 'Laparoscopic cholecystectomy'), learnerSwitchable=False,
-         enterWhen={'intervened': 'time-out', 'valid': True}),
+         enterWhen={'all': [{'intervened': 'time-out', 'valid': True}, {'decided': 'diagnosis'}, {'decided': 'planning'}, {'decided': 'risk'}]}),
     dict(id='recovery', label=L('麻醉后恢复与术后', 'Recovery and postoperative care'), learnerSwitchable=False,
          enterWhen={'intervened': 'sign-out', 'valid': True}),
+    # 2.4.0: the reported operation is disclosed only on a valid request after the postoperative discussion and the
+    # Sign Out — checked here on its own, so an early (invalid) request reveals nothing
     dict(id='review', label=L('原报告手术与随访回看', 'Review of the reported operation and follow-up'), learnerSwitchable=False,
-         enterWhen={'intervened': 'open-historical-review'}),
+         enterWhen={'all': [{'intervened': 'open-historical-review', 'valid': True}, {'decided': 'postop'}, {'intervened': 'sign-out', 'valid': True}]}),
 ]
 
 # ------------------------------------------------------------------ history: perioperative risk (unrecorded → unknown)
@@ -238,7 +244,10 @@ def iv(id, kind, zh, en, resp_zh, resp_en, risk='none', indicated=None, contra=N
 # (`attach-monitor`, what the monitor's `attach` and a delegated nurse record); the Sign In is valid only once its
 # checks have been addressed — the pulse oximeter on and working, the allergy and aspiration (fasting) questions
 # asked — and otherwise is logged as invalid and leaves induction unscored as in order.
-SIGN_IN_CHECKS = {'all': [{'intervened': 'attach-monitor'}, {'asked': 'allergies'}, {'asked': 'fasting'}]}
+# 2.4.0: an elective operation is entered only on its milestones — the diagnosis made, the operation planned for this
+# anatomy, the operative risk assessed (an audited run that asked only allergies and fasting reached the operation)
+ELECTIVE_MILESTONES = [{'decided': 'diagnosis'}, {'decided': 'planning'}, {'decided': 'risk'}]
+SIGN_IN_CHECKS = {'all': [*ELECTIVE_MILESTONES, {'intervened': 'attach-monitor'}, {'asked': 'allergies'}, {'asked': 'fasting'}]}
 case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-historical-review'] + [
     iv('attach-monitor', 'monitoring', '连接监护：脉搏血氧、心电（镜像导联）与无创血压', 'Attach the monitor: pulse oximetry, ECG (mirror leads), non-invasive blood pressure',
        '监护已连接：脉搏血氧有波形、读数可靠；右位心——心电图胸导联按镜像位置放置；无创血压按设定间隔测量。这只是连接监护，不是麻醉前核对。',
@@ -248,8 +257,8 @@ case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-hi
        '团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录，已当场确认。',
        'The team checks identity, procedure, consent and site: the gallbladder is on the patient\'s LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient\'s own left, with no "reversing" of sides; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source and are confirmed now.',
        indicated={'all': [{'phase': 'theatre'}, SIGN_IN_CHECKS]}, contra={'not': SIGN_IN_CHECKS},
-       harm=('核对项尚未落实就做麻醉前核对：已记录为无效。先连接监护（脉搏血氧工作正常），并问清过敏与禁食（误吸风险），再做 Sign In。',
-             'A Sign In before its checks: recorded as invalid. Attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), then sign in.'),
+       harm=('核对项尚未落实就做麻醉前核对：已记录为无效。择期手术先要明确诊断、制定手术计划并评估手术风险；再连接监护（脉搏血氧工作正常），问清过敏与禁食（误吸风险），然后 Sign In。',
+             'A Sign In before its checks: recorded as invalid. An elective operation needs the diagnosis made, the operation planned and the operative risk assessed first; then attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), and sign in.'),
        checklist=True),
     iv('induction', 'airway', '全身麻醉诱导与气管插管', 'Induce general anaesthesia and intubate',
        '充分预充氧（以呼气末氧浓度判断，而非呼末二氧化碳）；先给镇静催眠药使患者意识消失，再给肌松药，绝不在没有足够催眠的情况下肌松；插管后以持续的呼末二氧化碳波形确认导管位置，机械通气。（教学步骤：不涉及具体药物与剂量。）',
@@ -263,12 +272,14 @@ case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-hi
        indicated={'all': [{'intervened': 'sign-in', 'valid': True}, {'intervened': 'induction'}]},
        contra={'not': {'all': [{'intervened': 'sign-in', 'valid': True}, {'intervened': 'induction'}]}},
        harm=('麻醉前核对与诱导完成之前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，需在两者之后重新核对。', 'A Time Out before a valid Sign In and induction is out of order: recorded as invalid; the operation stays locked until a Time Out after both.'), checklist=True),
+    # 2.4.0: the Sign Out reads the count record (by item identity) — a count that is not settled is not signed out
     iv('sign-out', 'consult', 'WHO 离开手术室前核对（Sign Out）', 'WHO Sign Out before leaving theatre',
        '确认实施的手术、器械与纱布清点、标本标记、需关注的问题（包括任何术中并发症）并交接恢复室。',
        'The procedure performed, instrument and swab counts, specimen labelling and concerns for recovery (including any intra-operative complication) are confirmed and handed over.',
-       indicated={'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]},
-       contra={'not': {'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}},
-       harm=('手术尚未结束就做离室核对：已记录为无效，手术结束后需重新核对。', 'Sign Out before the operation has ended: recorded as invalid; repeat it once the operation has ended.'), checklist=True),
+       indicated={'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'not': COUNT_OPEN}]},
+       contra={'not': {'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'not': COUNT_OPEN}]}},
+       harm=('手术尚未结束，或纱布清点尚未相符（也未上报并扫描排除体内遗留）就做离室核对：已记录为无效，需在手术结束、清点相符后重新核对。',
+             'Sign Out before the operation has ended, or while the swab count is not reconciled (nor escalated with a clear scan excluding a retained swab): recorded as invalid; repeat it once the operation has ended and the count is settled.'), checklist=True),
     iv('pacu-handover', 'monitoring', '恢复室交接', 'Hand over in the recovery room',
        '交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；需观察的问题。',
        'Handover: 84 years, COPD, previous stroke, situs inversus totalis; the operation done and anything that happened; what to watch.',
@@ -600,6 +611,22 @@ case['team'] = dict(
              summary=L('第五块纱布已随布类离开手术间（在 6 号手术间）。全面查找和复点后仍少一块：应向术者说明，患者离开前拍 X 线片——不能假装已经解决。',
                        'The fifth swab left the room with the linen (it is in OR 6). After the search and the recount it is still one short: the surgeon should be told and an X-ray taken before the patient leaves — not pretended solved.'),
              provenance='authored', items=[dict(placement='or-7-swab-5', beside='or-6.back-table', concealed=True)], expect=dict(count='unresolved')),
+        # 2.4.0: the count is kept by item identity — a number that comes out right is not enough
+        dict(id='swab-extra', name=L('多出一块纱布（6 块对 5 块）', 'One swab too many (six of five)'),
+             summary=L('6 号手术间的一块纱布混到了 7 号手术间的 Mayo 托盘上。清点到 6 块：多出的一块不在本次清点内，不能算“相符”。巡回护士应请术者暂停关闭，把这块纱布移出手术野并记录，再复点。',
+                       'A swab from OR 6 ended up on OR 7\'s Mayo tray. The count finds six: the extra one is not in this count, and six of five is not "correct". The circulating nurse should ask the surgeon to hold closure, take that swab off the field and document it, then recount.'),
+             provenance='authored', items=[dict(placement='or-6-swab-1', beside='or-7.mayo')], expect=dict(count='reconciled')),
+        dict(id='swab-substituted', name=L('数目对但不是同一批纱布（假 5/5）', 'Five of five, but not the same five'),
+             summary=L('第五块纱布留在患者腹腔内，而 6 号手术间的一块纱布混到了 Mayo 托盘上：数目仍是 5 块。逐件核对发现第五块缺失、另一块不在清点内——必须请术者暂停关闭、检查术野，找到后把多出的一块移出并复点。',
+                       'The fifth swab is still in the abdomen, and a swab from OR 6 is on the Mayo tray: the number is still five. Counting item by item finds the fifth missing and one not in the count — the surgeon must hold closure and check the wound; once it is out and the extra one is set aside, the recount is correct.'),
+             provenance='authored', items=[dict(placement='or-7-swab-5', beside='patient', inside=True), dict(placement='or-6-swab-1', beside='or-7.mayo')], expect=dict(count='reconciled')),
+        dict(id='swab-with-specimen', name=L('一块纱布随标本送检（已记录，对照）', 'A swab sent with the specimen (documented — the control)'),
+             summary=L('第五块纱布随标本送到冰冻切片室，巡回护士已在清点中记录。清点 4 块即与记录相符：有记录的转移不是缺失，不应要求暂停关闭（衡量“误停”）。',
+                       'The fifth swab went to the frozen-section lab with the specimen, and the circulating nurse documented it in the count. Four counted agrees with the record: a documented transfer is not a missing swab, and there should be no hold on closure (it measures false holds).'),
+             provenance='authored',
+             items=[dict(placement='or-7-swab-5', beside='frozen-lab.bench',
+                         transfer=dict(to=L('随标本送冰冻切片室', 'with the specimen to the frozen-section lab'), reason=L('标本送检时一并送出', 'sent with the specimen')))],
+             expect=dict(count='correct')),
     ],
 )
 
@@ -746,6 +773,9 @@ case['safetyGates'] = [
     # the WHO checklist's order: anaesthesia induced before the team's Sign In (a real act, out of order)
     dict(id='induction-before-sign-in', label=L('未完成麻醉前核对即诱导', 'Induction before the Sign In'), when={'intervened': 'induction', 'valid': False},
          verdict='safety-critical', capPercent=70),
+    # 2.4.0: closure while the swab count was not settled — recorded for the debrief, never erased by a later count
+    dict(id='closed-on-open-count', label=L('纱布清点未相符即关闭（不安全推进）', 'Closed while the swab count was not settled (unsafe progression)'),
+         when={'count': {'unsafe': True}}, verdict='safety-critical', capPercent=50),
     dict(id='perforation', label=L('胆囊破裂、胆汁或结石溢出', 'Gallbladder perforation, bile or stone spillage'), when=P(injury='perforation'), verdict='complication'),
     dict(id='bleeding', label=L('术中出血', 'Intra-operative bleeding'), when=P(injury='bleeding'), verdict='complication'),
     dict(id='bile-leak', label=L('胆囊管残端漏', 'Cystic stump leak'), when=P(injury='bile-leak'), verdict='complication'),

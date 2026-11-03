@@ -192,6 +192,56 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     await t.session.close();
   });
 
+  it("a record board belongs to the patient's room: OR 1's WHO board shows nothing of this patient and cannot sign them in", async () => {
+    const t = await theatre();
+    upTo(t, isIv("sign-in"));
+    const w = t.session.world()!;
+    const boards = w.entities().filter((e) => e.type === "sc-who-checklist").map((e) => e.id);
+    expect(boards.length).toBeGreaterThan(1);
+    const or1 = boards.find((id) => w.roomOf(id) === "or-1")!;
+    expect(or1).toBeDefined();
+    expect([w.recordBound(or1), w.recordBound(BOARD)]).toEqual([false, true]);
+    // at OR 1's board: refused, pointing at the board in the patient's room; nothing recorded
+    expect((await act(t, PRIMARY_ACTOR, "navigate", undefined, { kind: "interact", id: or1 })).status).toBe("completed");
+    const r = await act(t, PRIMARY_ACTOR, "sign_in", or1);
+    expect(r.status).toBe("failed");
+    expect(r.message).toMatch(/records nothing of this patient/);
+    expect(r.hint?.goal).toMatchObject({ kind: "interact", id: BOARD });
+    expect(ivs(t, "sign-in")).toEqual([]);
+    // signed in on OR 7's board: only that board shows it — every other room's board stays pending
+    await done(t, PRIMARY_ACTOR, "sign_in", BOARD);
+    expect(validSignIn(t)).toBe(true);
+    for (const id of boards) expect(w.inspect(PRIMARY_ACTOR, id)?.state ?? "pending", id).toBe(id === BOARD ? "signed-in" : "pending");
+    await t.session.close();
+  });
+
+  it("an elective operation is entered only on its milestones: monitor, allergies and fasting without a diagnosis, a plan and a risk assessment is not enough", async () => {
+    const t = await theatre();
+    for (const a of [
+      { type: "ask", itemId: "allergies" },
+      { type: "ask", itemId: "fasting" },
+      { type: "intervene", interventionId: "attach-monitor" },
+      { type: "intervene", interventionId: "sign-in" },
+      { type: "intervene", interventionId: "induction" },
+      { type: "intervene", interventionId: "time-out" },
+    ] as ClinicalAction[]) t.session.dispatch({ ...a, by: "system" } as ClinicalAction);
+    expect(ivs(t, "sign-in").map((r) => r.invalid)).toEqual([true]);
+    expect(ivs(t, "time-out").map((r) => r.invalid)).toEqual([true]);
+    expect(t.session.state.phase).not.toBe("operation");
+    expect(t.session.dispatch({ type: "operate", op: { op: "plan-ports", plan: "three-port-left" }, by: "system" }).rejected?.code).toBe("phase-locked");
+    await t.session.close();
+  });
+
+  it("the reported operation stays closed on an early request: an invalid review opens nothing", async () => {
+    const t = await theatre();
+    t.session.dispatch({ type: "intervene", interventionId: "open-historical-review", by: "system" });
+    expect(ivs(t, "open-historical-review").map((r) => r.appropriateness)).toEqual(["contraindicated"]);
+    expect(t.session.state.phase).not.toBe("review");
+    expect(t.session.dispatch({ type: "set-phase", phase: "review", by: "system" }).rejected?.code).toBe("phase-locked");
+    expect(t.session.dispatch({ type: "read", investigationId: "operation-record", phase: "review", by: "system" }).rejected).toBeDefined();
+    await t.session.close();
+  });
+
   it("the Time Out is one checklist action: an early one leaves surgery locked; after a reload, the board's opens the operation once", async () => {
     const c = await content();
     const t = await theatre();

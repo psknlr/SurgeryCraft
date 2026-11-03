@@ -54,6 +54,19 @@ def near(type, state, within=None):
     return {"nearbyState": n}
 
 
+SETTLED_COUNT = ["correct", "reconciled", "excluded"]
+
+
+def counted(state, condition):
+    """A count board / RF wand state derived from the case's count record (`derived: "case-record"`)."""
+    return {**state, "when": condition}
+
+
+def count_step(o, step):
+    """An operation that writes the case's count record (`surgical_count`): the session records it from the world."""
+    return {**o, "clinical": {"tool": "surgical_count", "select": "item", "item": step}}
+
+
 def attach(id, behavior, prompt=None, description=None, usage=None):
     """Give an existing catalog type a behaviour (and make it operable: interaction kind `device`)."""
     e = next(x for x in catalog.EQUIPMENT if x["id"] == id)
@@ -273,18 +286,28 @@ eq("sc-count-board", L("手术清点板（RF 计数辅助）", "Surgical count b
       B("led-green", 0.42, 1.2, -0.008, 0.04, 0.03, 0.004)],
    interaction="device", solid=False, prompt=L("E · 清点", "E · Count"), screen="text", tags=["wall", "or", "count", "safety"],
    behavior={"initial": "not-started",
-             "states": {"not-started": st("未开始", "not started"), "baseline": st("切皮前清点完成", "baseline counted (before incision)"),
-                        "cavity": st("关体腔前清点完成", "counted before cavity closure"), "closing": st("关皮前清点完成", "counted before skin closure"),
-                        "reconciled": st("最终清点相符（RF 扫描阴性）", "final count reconciled (RF scan clear)"), "discrepancy": st("清点不符：寻找 / X 线", "discrepancy: search / X-ray")},
+             # the board is the case's count record (docs/TEAM.md §4.3): its state is derived from the record and its
+             # operations write to it — the items the team in the room can account for, by identity, never typed in.
+             # In a case that keeps no count it is a physical board (its own state machine).
+             "derived": "case-record",
+             "states": {"not-started": st("未开始", "not started"),
+                        "baseline": counted(st("切皮前清点完成", "baseline counted (before incision)"), {"count": {"stage": "baseline", "status": "baseline"}}),
+                        "cavity": counted(st("关体腔前清点完成", "counted before cavity closure"), {"count": {"stage": "cavity", "status": SETTLED_COUNT}}),
+                        "closing": counted(st("关皮前清点完成", "counted before skin closure"),
+                                           {"any": [{"count": {"stage": s_, "status": SETTLED_COUNT}} for s_ in ("closing", "recount", "handover")]}),
+                        "reconciled": counted(st("最终清点相符（RF 扫描阴性）", "final count reconciled (RF scan clear)"), {"count": {"stage": "final", "status": SETTLED_COUNT}}),
+                        "discrepancy": counted(st("清点不符：寻找、上报", "discrepancy: search, escalate"), {"count": {"status": "discrepancy"}}),
+                        "unresolved": counted(st("清点不符已上报：扫描/X 线排除体内遗留", "discrepancy escalated: scan / X-ray to exclude a retained item"), {"count": {"status": "unresolved"}}),
+                        "excluded": counted(st("清点不符，体内遗留已排除（扫描阴性）", "count incorrect — retained item excluded (scan clear)"), {"count": {"status": "excluded"}})},
              "operations": {
-                 "baseline_count": op("切皮前清点（洗手护士与巡回护士唱点）", "Baseline count before incision (scrub and circulator aloud)", ["not-started"], "baseline", [{"actorWithin": 2.5}], CIRCULATOR, 120),
-                 "handover_count": op("人员交接清点", "Count at a staff hand-over", ["baseline", "cavity", "closing"], None, [{"actorWithin": 2.5}], CIRCULATOR, 90),
-                 "cavity_count": op("关闭体腔前清点", "Count before closing a cavity", ["baseline"], "cavity", [{"actorWithin": 2.5}], CIRCULATOR, 90),
-                 "closing_count": op("关闭皮肤前清点", "Count before skin closure", ["baseline", "cavity"], "closing", [{"actorWithin": 2.5}], CIRCULATOR, 90),
-                 "final_count": op("最终清点（需 RF 扫描阴性）", "Final count (needs a clear RF scan)", ["closing"], "reconciled",
-                                   [{"actorWithin": 2.5}, near("sc-rf-wand", "clear", 6)], CIRCULATOR, 60),
-                 "report_discrepancy": op("报告清点不符（寻找，必要时术中 X 线）", "Report a discrepancy (search; intra-operative X-ray if needed)", ["baseline", "cavity", "closing"], "discrepancy", [], CIRCULATOR, 30),
-                 "resolve": op("找到缺失物品，重新清点", "Missing item found — recount", ["discrepancy"], "closing", [{"actorWithin": 2.5}], CIRCULATOR, 120),
+                 "baseline_count": count_step(op("切皮前清点（洗手护士与巡回护士唱点）", "Baseline count before incision (scrub and circulator aloud)", ["not-started"], "baseline", [{"actorWithin": 2.5}], CIRCULATOR, 120), "baseline"),
+                 "handover_count": count_step(op("人员交接清点", "Count at a staff hand-over", ["baseline", "cavity", "closing"], None, [{"actorWithin": 2.5}], CIRCULATOR, 90), "handover"),
+                 "cavity_count": count_step(op("关闭体腔前清点", "Count before closing a cavity", ["baseline"], "cavity", [{"actorWithin": 2.5}], CIRCULATOR, 90), "cavity"),
+                 "closing_count": count_step(op("关闭皮肤前清点", "Count before skin closure", ["baseline", "cavity"], "closing", [{"actorWithin": 2.5}], CIRCULATOR, 90), "closing"),
+                 "final_count": count_step(op("最终清点（需 RF 扫描阴性）", "Final count (needs a clear RF scan)", ["closing"], "reconciled",
+                                              [{"actorWithin": 2.5}, near("sc-rf-wand", "clear", 6)], CIRCULATOR, 60), "final"),
+                 "report_discrepancy": count_step(op("上报清点不符（继续寻找；患者离室前扫描 / X 线）", "Escalate the discrepancy (keep searching; scan / X-ray before the patient leaves)", ["discrepancy"], "unresolved", [], CIRCULATOR, 30), "escalate"),
+                 "resolve": count_step(op("寻找后重新清点", "Recount after the search", ["discrepancy", "unresolved", "excluded"], "closing", [{"actorWithin": 2.5}], CIRCULATOR, 120), "recount"),
                  "reset": op("下一台手术：清空清点板", "Next case: clear the board", ["reconciled"], "not-started", [], CIRCULATOR, 30),
              }})
 
@@ -295,10 +318,13 @@ eq("sc-rf-wand", L("RF 纱布检测棒", "RF surgical-sponge detection wand"), "
    [B("plastic", -0.08, 0.025, 0, 0.18, 0.04, 0.05), B("sc-robot-accent", 0.08, 0.03, 0, 0.18, 0.05, 0.07), B("led-green", -0.12, 0.048, 0, 0.03, 0.004, 0.02)],
    interaction="device", solid=False, portable="handheld", reach=1.2, prompt=L("E · RF 检测棒", "E · RF wand"), tags=["or", "count", "rfid"],
    behavior={"initial": "ready",
-             "states": {"ready": st("待用", "ready"), "clear": st("扫描阴性（无遗留）", "scan clear (nothing retained)")},
+             # what the wand shows is what it found in the patient (the count record's latest scan)
+             "derived": "case-record",
+             "states": {"ready": st("待用", "ready"),
+                        "clear": counted(st("扫描阴性（无遗留）", "scan clear (nothing retained)"), {"count": {"scan": "clear"}}),
+                        "detected": counted(st("检出体内遗留物", "retained item detected"), {"count": {"scan": "detected"}})},
              "operations": {
-                 "scan": op("扫描患者", "Scan the patient", ["ready"], "clear", [IN_HAND, AT_TABLE], CIRCULATOR, 45),
-                 "reset": op("复位（下一台手术）", "Reset (next case)", ["clear"], "ready", [], CIRCULATOR, 5),
+                 "scan": count_step(op("扫描患者", "Scan the patient", ["ready", "clear", "detected"], "clear", [IN_HAND, AT_TABLE], CIRCULATOR, 45), "scan"),
              }})
 
 # ------------------------------------------------------------------------------------------------ existing devices
@@ -331,7 +357,7 @@ attach("sc-who-checklist", {
                              ["signed-in"], "timed-out", [{"actorWithin": 3}, near("sc-count-board", ["baseline", "cavity", "closing", "reconciled"], 8)], TEAM, 60), "time-out"),
         "sign_out": entry(op("Sign out：术式记录、清点相符、标本标识、设备问题（需最终清点相符）",
                              "Sign out: procedure recorded, counts reconciled, specimens labelled, equipment problems (needs the reconciled count)",
-                             ["timed-out"], "signed-out", [{"actorWithin": 3}, near("sc-count-board", "reconciled", 8)], TEAM, 60), "sign-out"),
+                             ["timed-out"], "signed-out", [{"actorWithin": 3}, near("sc-count-board", ["reconciled", "excluded"], 8)], TEAM, 60), "sign-out"),
         "reset": op("下一台手术：新的核查表", "Next case: a fresh checklist", ["signed-out"], "pending", [], TEAM, 10),
     }}, prompt=L("E · 手术安全核查", "E · Surgical safety checklist"))
 

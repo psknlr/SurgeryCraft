@@ -6,8 +6,8 @@
  *   the WHO board) → the attending places an explicit anaesthesia hold → induction is refused → the Sign In on the
  *   board → the attending's recorded reassessment releases the hold → the baseline count → induction → the session is
  *   saved and reloaded → the Time Out on the board opens the operation → the operation on the field (observe_field,
- *   operate) → extubation decided apart from oral intake → the counts and the RF scan → the Sign Out on the board →
- *   the recovery handover;
+ *   operate) → before closure, the counts and the RF scan (the count record, swab by swab) → closure on a reconciled
+ *   count → extubation decided apart from oral intake → the Sign Out on the board → the recovery handover;
  *
  * and at the end the clinical record, the physical board and the assessment agree. Patient following (walking with the
  * patient across rooms) is not exercised here: this case's patient stays on the OR 7 table (docs/CASE_126.md).
@@ -132,19 +132,27 @@ describe("Case 126 · release acceptance in OR 7, history to recovery handover",
     await ok(r, "navigate_to", { target: "patient" });
     await ok(r, "observe_field");
     const steps = sol.filter((x): x is Extract<ClinicalAction, { type: "operate" }> => x.type === "operate");
-    for (const s of steps) await ok(r, "operate", { ...s.op });
-    expect(r.session.state.procedure).toMatchObject({ specimen: "extracted", closed: true });
-    // extubation decided apart from oral intake
-    await ok(r, "answer_decision", { decision_id: "emergence", option_ids: ["criteria", "swallow-after"] });
+    for (const s of steps.filter((x) => x.op.op !== "close")) await ok(r, "operate", { ...s.op });
+    expect(r.session.state.procedure).toMatchObject({ specimen: "extracted" });
 
-    // ---- the counts and the RF scan, then the Sign Out on the board
-    await done(r, CIRCULATOR, "cavity_count", COUNT);
-    await done(r, CIRCULATOR, "closing_count", COUNT);
+    // ---- before closure: the counts and the RF scan, swab by swab in the count record — the team counted when the
+    // specimen came out (the scrub nurse, every swab by its identity); the board shows it
+    expect(r.session.state.count!.entries.find((e) => e.op === "count" && e.stage === "closing")).toMatchObject({ staff: "or-7.scrub-nurse", missing: [], unexpected: [] });
+    expect(r.session.world()!.inspect(PRIMARY_ACTOR, COUNT)?.state).toBe("closing");
     await done(r, CIRCULATOR, "pick_up", WAND);
     expect((await act(r, CIRCULATOR, "navigate", undefined, { kind: "interact", id: r.session.world()!.find(PRIMARY_ACTOR, { kind: "patient" })[0]!.id })).status).toBe("completed");
     await done(r, CIRCULATOR, "scan", WAND);
     await done(r, CIRCULATOR, "final_count", COUNT);
     expect(r.session.world()!.inspect(PRIMARY_ACTOR, COUNT)?.state).toBe("reconciled");
+    expect(r.session.state.count).toMatchObject({ expected: ["eq:or-7-swab-1", "eq:or-7-swab-2", "eq:or-7-swab-3", "eq:or-7-swab-4", "eq:or-7-swab-5"], unsafe: [] });
+
+    // ---- closure on a reconciled count, then the Sign Out on the board
+    await ok(r, "navigate_to", { target: "patient" });
+    await ok(r, "operate", { op: "close" });
+    expect(r.session.state.procedure).toMatchObject({ specimen: "extracted", closed: true });
+    expect(r.session.state.count!.unsafe).toEqual([]);
+    // extubation decided apart from oral intake
+    await ok(r, "answer_decision", { decision_id: "emergence", option_ids: ["criteria", "swallow-after"] });
     await done(r, PRIMARY_ACTOR, "sign_out", BOARD);
     expect(r.session.state.phase).toBe("recovery");
     expect(board(r)).toBe("signed-out");
