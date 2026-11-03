@@ -135,6 +135,32 @@
         "zh-CN": "这份病例没有记录，不能替我补写。",
         "en": "That is not recorded in this case; please do not fill it in."
       }
+    },
+    "nonVerbalWhen": {
+      "all": [
+        {
+          "intervened": "induction"
+        },
+        {
+          "not": {
+            "any": [
+              {
+                "decided": "emergence"
+              },
+              {
+                "phase": "recovery"
+              },
+              {
+                "phase": "review"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "nonVerbalReason": {
+      "zh-CN": "全身麻醉中（已诱导并气管插管）",
+      "en": "under general anaesthesia (induced and intubated)"
     }
   },
   "phases": [

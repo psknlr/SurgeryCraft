@@ -290,6 +290,12 @@ case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-hi
        harm=('术后观察要点尚未讨论。', 'Postoperative priorities have not been discussed yet.')),
 ]
 
+# 2.4.0: speech follows the anaesthetic — from induction (effective whatever its order) the patient is anaesthetised and
+# intubated, and cannot answer: a bedside question gets no answer and earns no history credit; speech returns with
+# emergence (extubation decided once the criteria are met) or in recovery
+case['patient']['nonVerbalWhen'] = {'all': [{'intervened': 'induction'}, {'not': {'any': [{'decided': 'emergence'}, {'phase': 'recovery'}, {'phase': 'review'}]}}]}
+case['patient']['nonVerbalReason'] = L('全身麻醉中（已诱导并气管插管）', 'under general anaesthesia (induced and intubated)')
+
 # ------------------------------------------------------------------ objectives (6)
 def obj(id, zh, en, hzh, hen, cond, target='patient', gzh=None, gen=None):
     out = dict(id=id, title=L(zh, en), hint=L(hzh, hen), completeWhen=cond, waypoints=[{'target': target}])
