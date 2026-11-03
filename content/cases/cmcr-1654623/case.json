@@ -7084,9 +7084,23 @@
         ]
       },
       {
+        "staff": "or-7.anaesthetist",
+        "duties": [
+          "anaesthesia"
+        ]
+      },
+      {
         "staff": "surgeon",
         "duties": [
           "surgeon"
+        ]
+      }
+    ],
+    "cover": [
+      {
+        "staff": "l1-anaesthetist",
+        "duties": [
+          "anaesthesia"
         ]
       }
     ],

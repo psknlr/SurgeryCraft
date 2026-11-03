@@ -8,7 +8,12 @@
  *      the verdict is not clear and the score is capped;
  *   2. the OR 1 board cannot sign in the OR 7 patient — refused, pointing at OR 7's board; only OR 7's board shows the
  *      Sign In;
- *   3. a preoperative reload activates the same team obligations as an uninterrupted run (`swab-in-wound`).
+ *   3. a preoperative reload activates the same team obligations as an uninterrupted run (`swab-in-wound`);
+ *   4. the first release scenario of 2.5.0 (docs/CASE_126.md "2.5.0"): before induction no historical ECG, a new one
+ *      ordered, fetched by the nurse and reviewed by the anaesthetist, shown in the chart as a simulated
+ *      investigation; in the operation the scope dock stays visible beside the theatre while another window is open;
+ *      the assistant takes the neck grasper, then leaves the table — the dock shows the release (traction gone)
+ *      before the operator's next step; saved and reloaded, the dock shows the same field.
  *
  * The page is driven through the app's own session and world (the `?qa` hooks: `__QA__.session`, the world action
  * bus, the save and resume of the web app) and checked against the authoritative state, not pixels; screenshots are
@@ -20,7 +25,7 @@
  *       (`clinicalcraft serve`) and runs the demonstrations in Chromium;
  *   node tools/browser-demos.mjs --url 'https://…/?token=…'
  *       runs them against a deployed build instead (it must serve this pack).
- * Exit status 0 only when all three hold. Needs `playwright` (with its Chromium) and, locally, a ClinicalCraft checkout
+ * Exit status 0 only when all of them hold (`--only 4` runs the fourth alone). Needs `playwright` (with its Chromium) and, locally, a ClinicalCraft checkout
  * with its dependencies installed.
  */
 import { spawn, spawnSync } from "node:child_process";
@@ -44,6 +49,8 @@ const flag = (name) => {
   return i >= 0 ? args.splice(i, 2)[1] : undefined;
 };
 const deployed = flag("--url");
+/** Run only these demonstrations (1-based, comma-separated). */
+const only = (flag("--only") ?? "").split(",").filter(Boolean).map(Number);
 const out = resolve(flag("--out") ?? join(HERE, "..", "browser-demos"));
 const CC = resolve(args[0] ?? join(HERE, "../../ClinicalCraft"));
 mkdirSync(out, { recursive: true });
@@ -95,6 +102,10 @@ async function local() {
 async function enter(browser, entry, team, resume = false, existing = null) {
   const page = existing ?? (await browser.newPage({ viewport: { width: 1280, height: 800 }, locale: "en-US" }));
   if (!existing) {
+    // the page's errors, kept for a failure's report
+    page.__errors = [];
+    page.on("pageerror", (e) => page.__errors.push(String(e?.stack ?? e).slice(0, 600)));
+    page.on("console", (m) => m.type() === "error" && page.__errors.push(m.text().slice(0, 600)));
     await page.goto(entry);
     const u = new URL(page.url());
     u.search = "?qa";
@@ -108,7 +119,10 @@ async function enter(browser, entry, team, resume = false, existing = null) {
   await page.waitForFunction(() => !!window.__QA__, null, { timeout: 180_000 });
   await page.waitForFunction(() => document.querySelector("#enter") && !document.querySelector("#enter").disabled, null, { timeout: 180_000 });
   await page.evaluate(({ c, f, r, t }) => window.__QA__.start(c, f, r, t), { c: CASE, f: FACILITY, r: resume, t: team ?? "" });
-  await page.waitForFunction(() => window.__QA__.game?.entered === true, null, { timeout: 180_000 });
+  await page.waitForFunction(() => window.__QA__.game?.entered === true, null, { timeout: 180_000 }).catch(async (e) => {
+    await page.screenshot({ path: join(out, "enter-failed.png") }).catch(() => {});
+    throw new Error(`${e.message}\npage errors: ${(page.__errors ?? []).join("\n")}`);
+  });
   await page.evaluate(() => {
     const qa = window.__QA__;
     qa.app.prefs.update((s) => (s.ui.quality = "low"));
@@ -252,6 +266,93 @@ async function demoReload(browser, entry) {
   return { name: "a preoperative reload activates the same team obligations as an uninterrupted run", pass, saved, uninterrupted, reloaded };
 }
 
+/** The dock as the learner sees it: shown, not covered by the open window, its step and caption. */
+const dockSeen = (page) =>
+  page.evaluate(() => {
+    const dock = document.querySelector("#scope-dock");
+    if (!dock || dock.hidden) return { visible: false };
+    const r = dock.getBoundingClientRect();
+    const top = document.elementFromPoint(r.left + r.width / 2, r.top + 10);
+    return { visible: true, onTop: !!top && dock.contains(top), step: Number(dock.dataset.step), chip: document.querySelector("#scope-chip")?.textContent ?? "", caption: document.querySelector("#scope-caption")?.textContent ?? "", panel: window.__QA__.panel ?? null };
+  });
+
+async function demoRelease(browser, entry) {
+  const page = await enter(browser, entry, "");
+  await install(page);
+  // before induction: the chart's two commands, the nurse and the anaesthetist on their own
+  const before = await page.evaluate(async () => {
+    const d = window.__demo, s = d.s();
+    d.tool = async (name, args) => {
+      const ev = await s.run({ type: "external_tool_call", callId: "t-" + Math.random().toString(36).slice(2), tool: name, args, allowBypass: true });
+      const end = ev.map((e) => e.msg).filter((m) => m.type === "tool_call_end").at(-1);
+      return end ? { ok: end.ok, output: end.output } : null;
+    };
+    d.upTo((a) => a.type === "intervene" && a.interventionId === "induction");
+    await d.act("actor:clinician", "navigate", undefined, { kind: "interact", id: d.patient() });
+    const retrieved = await d.tool("retrieve_report", { query: "ECG" });
+    const ordered = await d.tool("order_study", { query: "ECG", lead_placement: "mirror", request_key: "pre-induction-ecg" });
+    await d.tool("wait", { minutes: 10 });
+    return { retrieved: retrieved?.output ?? null, ordered: ordered?.output ?? null, ecgRoom: s.world().roomOf("eq:anaes-workroom-ecg"), reviews: s.state.studies?.reviews ?? [] };
+  });
+  await page.evaluate(() => window.__QA__.route("conversation", { agent: "patient", tab: "tests" }));
+  await page.waitForTimeout(800);
+  const chart = await page.evaluate(() => document.querySelector("#new-studies")?.textContent ?? "");
+  await page.screenshot({ path: join(out, "4a-new-investigation.png") });
+  await page.evaluate(() => window.__QA__.closePanel());
+  // into the operation: three dissection steps, then the assistant takes the neck grasper
+  const held = await page.evaluate(async () => {
+    const d = window.__demo, s = d.s(), sol = d.sol;
+    const at = sol.findIndex((a) => a.type === "intervene" && a.interventionId === "induction");
+    const first = sol.findIndex((a) => a.type === "operate" && a.op.op === "dissect");
+    for (const a of sol.slice(at, first)) {
+      const r = s.dispatch({ ...a, by: "system" });
+      if (r.rejected) throw new Error(a.type + ": " + r.rejected.message);
+    }
+    for (let i = 0; i < 3; i++) await s.run({ type: "clinical_action", action: { type: "operate", op: { op: "dissect", port: "C", region: "hepatocystic-triangle", energy: false } } });
+    const r = await d.tool("delegate_task", { role: "staff:or-7-assistant", task: "hold_traction", params: { port: "B" } });
+    return { output: r?.output ?? null, holder: s.state.procedure.ports.find((p) => p.site === "B")?.holder ?? null, steps: s.state.procedure.counters.steps };
+  });
+  // the learner watches the team's window: the scope stays in view beside it
+  await page.evaluate(() => window.__QA__.route("team"));
+  await page.waitForFunction((n) => Number(document.querySelector("#scope-dock")?.dataset.step) === n, held.steps, { timeout: 30_000 });
+  const withTeam = await dockSeen(page);
+  await page.screenshot({ path: join(out, "4b-team-and-scope.png") });
+  // the assistant leaves the table: the release (traction gone) is shown before the operator's next step
+  const away = await page.evaluate(async () => {
+    const d = window.__demo, s = d.s();
+    await d.act("staff:or-7-assistant", "navigate", undefined, { kind: "room", id: "l1-control" });
+    const ops = s.snapshot().actions.filter((a) => a.type === "operate").slice(-2).map((a) => [a.op.op, a.actor ?? null]);
+    return { ops, steps: s.state.procedure.counters.steps, retractions: Object.keys(s.state.procedure.retractions) };
+  });
+  await page.waitForFunction(() => document.querySelector("#scope-caption [data-op]")?.getAttribute("data-op") === "release", null, { timeout: 30_000 });
+  const releaseFrame = await dockSeen(page);
+  await page.screenshot({ path: join(out, "4c-traction-released.png") });
+  await page.waitForFunction((n) => Number(document.querySelector("#scope-dock")?.dataset.step) === n, away.steps, { timeout: 30_000 });
+  // saved, reloaded and resumed: the same field on the dock
+  await page.evaluate(() => window.__QA__.closePanel());
+  await page.evaluate(() => window.__QA__.save());
+  await page.reload();
+  await enter(browser, null, "", true, page);
+  await page.waitForFunction((n) => Number(document.querySelector("#scope-dock")?.dataset.step) === n, away.steps, { timeout: 60_000 });
+  const resumed = await dockSeen(page);
+  const after = await page.evaluate(() => ({ steps: window.__QA__.session.state.procedure.counters.steps, holder: window.__QA__.session.state.procedure.ports.find((p) => p.site === "B")?.holder ?? null, ecgRoom: window.__QA__.session.world().roomOf("eq:anaes-workroom-ecg"), reports: window.__QA__.session.state.studies?.reports.length ?? 0 }));
+  await page.screenshot({ path: join(out, "4d-resumed.png") });
+  await page.close();
+  const pass =
+    /^Historical material unavailable/.test(before.retrieved ?? "") &&
+    /Nurse Aisyah \(circulating\) will fetch the Mobile ECG machine/.test(before.ordered ?? "") &&
+    before.ecgRoom === "or-7" &&
+    before.reviews.length === 1 &&
+    /Simulated investigation · 12-lead ECG/.test(chart) &&
+    held.holder === "or-7-assistant" &&
+    withTeam.visible && withTeam.onTop && withTeam.panel === "team" &&
+    JSON.stringify(away.ops) === JSON.stringify([["release", "or-7-assistant"], ["hand-over", "or-7-assistant"]]) &&
+    away.retractions.length === 0 &&
+    releaseFrame.visible && /traction has gone/.test(releaseFrame.caption) && /exposure (none|poor|partial)/.test(releaseFrame.caption) &&
+    resumed.visible && resumed.step === away.steps && after.steps === away.steps && after.holder === null && after.ecgRoom === "or-7" && after.reports === 1;
+  return { name: "the first release scenario: the ECG beyond the published case, the scope beside the theatre, the assistant's traction", pass, before, chart: chart.slice(0, 400), held, withTeam, away, releaseFrame, resumed, after };
+}
+
 /* ------------------------------------------------------------------ */
 
 let failed = false;
@@ -260,7 +361,8 @@ try {
   const entry = deployed ?? (await local());
   browser = await chromium.launch();
   const results = [];
-  for (const demo of [demoUnresolved, demoBoard, demoReload]) {
+  const demos = [demoUnresolved, demoBoard, demoReload, demoRelease].filter((_, i) => !only.length || only.includes(i + 1));
+  for (const demo of demos) {
     try {
       results.push(await demo(browser, entry));
     } catch (e) {

@@ -619,7 +619,11 @@ case['team'] = dict(
                searchPlaces=['or-7.mayo', 'or-7.back-table', 'or-7.lap-tower']),
     members=[dict(staff='or-7.circulating-nurse', duties=['circulate']),
              dict(staff='or-7.scrub-nurse', duties=['instruments', 'count']),
+             dict(staff='or-7.anaesthetist', duties=['anaesthesia']),
              dict(staff='surgeon', duties=['surgeon'])],
+    # who takes over the anaesthetic if Dr Tanaka has to leave during the case: the duty consultant anaesthetist
+    # (theatre control) comes to the patient first, the hand-over is recorded, then Dr Tanaka goes
+    cover=[dict(staff='l1-anaesthetist', duties=['anaesthesia'])],
     note=L('团队情境是教学材料（编写），不是原病例报告的内容；它们只设定初始条件，不规定步骤。',
            'Team scenarios are teaching material (authored), not part of the case report; they set initial conditions only, never the steps.'),
     scenarios=[

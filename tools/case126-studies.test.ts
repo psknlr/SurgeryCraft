@@ -131,6 +131,65 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     await t.session.close();
   });
 
+  it("the second run: the only machine out of service waits with its reason, the order and its requester kept; back in service, it is fulfilled", async () => {
+    const t = await beforeInduction();
+    t.session.world()!.setAvailability(ECG, false);
+    const ordered = await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "k" });
+    expect(ordered.ok).toBe(true);
+    const o = t.session.state.studies!.orders[0]!;
+    expect(o).toMatchObject({ code: "ecg-12lead", requester: expect.any(String), waiting: { reason: "the Mobile ECG machine is out of service" } });
+    expect(t.session.state.studies!.accessions).toEqual([]);
+    expect((await tool(t, "read_study", { query: "ECG" })).output).toMatch(/waiting — the Mobile ECG machine is out of service/);
+    // back in service: the next act fulfils the same order (no second order), the requester unchanged
+    t.session.world()!.setAvailability(ECG, true);
+    await tool(t, "case_status");
+    expect(t.session.state.studies!.orders).toHaveLength(1);
+    expect(t.session.state.studies!.orders[0]).toMatchObject({ id: o.id, requester: o.requester });
+    expect(t.session.state.studies!.accessions.map((a) => a.order)).toEqual([o.id]);
+    await t.session.close();
+  });
+
+  it("the second run: the way to the machine blocked (the workroom door locked), the order waits with the nurse's reason; the door opened, it is fulfilled", async () => {
+    const t = await beforeInduction();
+    const w = t.session.world()!;
+    w.setDoor("door:anaes-workroom:n:0", { open: false, locked: true });
+    await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "k" });
+    const o = t.session.state.studies!.orders[0]!;
+    expect(o.waiting?.reason).toMatch(/^Nurse Aisyah \(circulating\) could not bring the Mobile ECG machine: /);
+    expect(t.session.state.studies!.accessions).toEqual([]);
+    expect(w.roomOf(ECG)).toBe("anaes-workroom");
+    w.setDoor("door:anaes-workroom:n:0", { open: false, locked: false });
+    await tool(t, "case_status");
+    expect(t.session.state.studies!.orders).toHaveLength(1);
+    expect(t.session.state.studies!.accessions.map((a) => a.order)).toEqual([o.id]);
+    expect(w.roomOf(ECG)).toBe("or-7");
+    await t.session.close();
+  });
+
+  it("the second run: a reporting agent that times out, or writes what the tracing does not show, is replaced by the template — never an invented report", async () => {
+    // a writer that never answers
+    const stuck = await beforeInduction({ reportWriter: () => new Promise(() => {}), reportWriterTimeoutMs: 50 });
+    await tool(stuck, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "k" });
+    await tool(stuck, "wait", { minutes: 10 });
+    expect(stuck.session.state.studies!.reports).toMatchObject([{ accession: "ecg-12lead-1", generator: "template" }]);
+    expect(stuck.session.state.studies!.reviews).toHaveLength(1);
+    await stuck.session.close();
+    // a writer that invents a number and a side the observations do not have
+    const wrong = await beforeInduction({
+      reportWriter: async () => ({
+        findings: { en: "Rate 190/min, ST elevation in the left chest leads.", "zh-CN": "心率 190 次/分，左胸导联 ST 段抬高。" },
+        impression: { en: "Acute infarction.", "zh-CN": "急性心肌梗死。" },
+        generator: "a-model",
+      }),
+    });
+    await tool(wrong, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "k" });
+    await tool(wrong, "wait", { minutes: 10 });
+    const report = wrong.session.state.studies!.reports[0]!;
+    expect(report.generator).toBe("template");
+    expect(report.findings.en).not.toMatch(/190|infarction/);
+    await wrong.session.close();
+  });
+
   it("never invented: a cholangiogram is acquired at the table, not ordered; a chest radiograph the hospital cannot take waits with its reason", async () => {
     const t = await beforeInduction();
     const ioc = await tool(t, "order_study", { query: "intraoperative cholangiogram" });

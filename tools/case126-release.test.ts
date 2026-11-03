@@ -156,6 +156,35 @@ describe("Case 126 · the first release scenario", () => {
     await r.session.close();
   });
 
+  it("asked to leave the anaesthetised patient, the anaesthetist first has the duty anaesthetist take over and records it", async () => {
+    const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    recordUntil(t, isFirstDissection);
+    expect((await act(t, PRIMARY_ACTOR, "navigate", { kind: "interact", id: patientId(t) })).status).toBe("completed");
+    const w = t.session.world()!;
+    expect(w.roomOf("staff:l1-anaesthetist")).toBe("l1-control");
+    const events = await t.session.run({ type: "user_message", text: "Dr Tanaka, please show me the way to theatre control.", to: "attending", staff: "or-7.anaesthetist" } as never);
+    const said = msgsOf(events, "agent_message").map((m) => `${m.speaker}: ${m.text}`);
+    expect(said[0]).toMatch(/^Dr Tanaka \(anaesthesia\): The patient is under anaesthesia: I'll hand over first\. Calling Dr Wang \(duty consultant anaesthetist\) to take over\./);
+    expect(said).toContainEqual(expect.stringMatching(/^Dr Wang \(duty consultant anaesthetist\): I've taken over the anaesthetic from Dr Tanaka \(anaesthesia\)\./));
+    // the colleague came to the patient before Dr Tanaka went; the hand-over is in the record
+    expect(w.roomOf("staff:l1-anaesthetist")).toBe("or-7");
+    expect(t.session.state.notes.at(-1)!.text).toMatch(/^Anaesthesia handed over at .+: Dr Tanaka \(anaesthesia\) → Dr Wang \(duty consultant anaesthetist\), the patient under anaesthesia\./);
+    expect(w.roomOf("staff:or-7.anaesthetist")).toBe("l1-control");
+    await t.session.close();
+  });
+
+  it("before induction nobody needs to take over: the anaesthetist just goes", async () => {
+    const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    recordUntil(t, isInduction);
+    const events = await t.session.run({ type: "user_message", text: "Dr Tanaka, please show me the way to theatre control.", to: "attending", staff: "or-7.anaesthetist" } as never);
+    expect(msgsOf(events, "agent_message").map((m) => m.text).join(" ")).not.toMatch(/hand over/);
+    expect(t.session.world()!.roomOf("staff:l1-anaesthetist")).toBe("l1-control");
+    expect(t.session.state.notes.some((n) => /Anaesthesia handed over/.test(n.text))).toBe(false);
+    await t.session.close();
+  });
+
   it("sent on an errand while holding traction, the assistant lets go first and says so; the operator sees the window close", async () => {
     const t = await toTheTriangle();
     expect((await tool(t, "delegate_task", { role: ASSISTANT, task: "hold_traction", params: { port: "B" } })).ok).toBe(true);
