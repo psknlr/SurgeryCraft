@@ -231,6 +231,35 @@ describe("Case 126 · the first release scenario", () => {
     await t.session.close();
   });
 
+  it("a consultation is not a hint: Dr Tanaka answers from the anaesthetic side, the hint count unchanged", async () => {
+    const t = await toTheTriangle();
+    const hints = t.session.state.hints;
+    const events = await t.session.run({ type: "user_message", text: "Dr Tanaka, what are your anaesthetic concerns?", to: "attending", staff: "or-7.anaesthetist" } as never);
+    const reply = msgsOf(events, "agent_message").find((m) => /Tanaka/.test(m.speaker))!;
+    expect(reply.text).toMatch(/^From the anaesthetic side: the patient is under general anaesthesia\./);
+    expect(reply.text).toMatch(/Allergy status remains unknown \(asked; not recorded\)\. Fasting status remains unknown/);
+    expect(reply.text).not.toMatch(/\/hint|objective/i);
+    // the same through consult, and words that sound like a request for help: still a consultation
+    await tool(t, "consult", { staff: "Dr Tanaka", question: "I'm stuck — can you help me with the ventilation?" });
+    expect(t.session.state.hints).toBe(hints);
+    await t.session.close();
+  });
+
+  it("the Sign In states the unknowns as unknown — never 'confirmed'", async () => {
+    const c = (await content()).caseDef;
+    const t = await makeSession({ ...(await content()), settingsPatch: { embodiment: "clinical", approvalMode: "bypass" } });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    const at = c.solution.findIndex((a) => a.type === "intervene" && a.interventionId === "sign-in");
+    for (const a of c.solution.slice(1, at)) t.session.dispatch({ ...a, by: "system" } as ClinicalAction);
+    expect(t.session.state.asked).toEqual(expect.arrayContaining(["allergies", "fasting"]));
+    const signIn = await tool(t, "intervene", { intervention_id: "sign-in" });
+    expect(signIn.ok, signIn.output).toBe(true);
+    expect(signIn.output).not.toMatch(/confirmed now/);
+    expect(signIn.output).toMatch(/Allergy status remains unknown \(asked; not recorded\)\.\n {2}Fasting status remains unknown \(asked; not recorded\)\.\n {2}The team has acknowledged these unresolved items\./);
+    expect(signIn.data.safetyData).toEqual({ allergy: "asked-unknown", fasting: "asked-unknown" });
+    await t.session.close();
+  });
+
   it("sent on an errand while holding traction, the assistant lets go first and says so; the operator sees the window close", async () => {
     const t = await toTheTriangle();
     expect((await tool(t, "delegate_task", { role: ASSISTANT, task: "hold_traction", params: { port: "B" } })).ok).toBe(true);
