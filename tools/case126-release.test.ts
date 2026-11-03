@@ -169,8 +169,41 @@ describe("Case 126 · the first release scenario", () => {
     expect(said).toContainEqual(expect.stringMatching(/^Dr Wang \(duty consultant anaesthetist\): I've taken over the anaesthetic from Dr Tanaka \(anaesthesia\)\./));
     // the colleague came to the patient before Dr Tanaka went; the hand-over is in the record
     expect(w.roomOf("staff:l1-anaesthetist")).toBe("or-7");
-    expect(t.session.state.notes.at(-1)!.text).toMatch(/^Anaesthesia handed over at .+: Dr Tanaka \(anaesthesia\) → Dr Wang \(duty consultant anaesthetist\), the patient under anaesthesia\./);
+    expect(t.session.state.anaesthesia).toMatchObject({ responsible: "l1-anaesthetist", handoverStatus: "transferred" });
+    const h = t.session.state.anaesthesia!.handovers[0]!;
+    expect(h).toMatchObject({ from: "or-7.anaesthetist", to: "l1-anaesthetist", accepted: true });
+    // the hand-over carries what the record holds: the vitals now, the drugs given
+    expect(Object.keys(h.haemodynamics)).toEqual(expect.arrayContaining(["hr", "sbp"]));
+    expect(said.find((l) => l.startsWith("Dr Wang"))).toMatch(/Hand-over — airway: .+; ventilation: .+; haemodynamics: HR \d+/);
     expect(w.roomOf("staff:or-7.anaesthetist")).toBe("l1-control");
+    // Dr Wang is now bound by the same rule: a fetch, or a direct move out of OR 7, is refused
+    const fetch = await t.session.run({ type: "user_message", text: "Dr Wang, please fetch the ECG machine.", to: "attending", staff: "l1-anaesthetist" } as never);
+    expect(msgsOf(fetch, "agent_message").map((m) => m.text).join(" ")).toMatch(/Continuous anaesthesia responsibility is required\. Arrange relief before leaving the patient/);
+    const away = await act(t, "staff:l1-anaesthetist", "navigate", { kind: "room", id: "l1-control" });
+    expect(away).toMatchObject({ status: "failed", errorCode: "NOT_AUTHORIZED" });
+    expect(w.roomOf("staff:l1-anaesthetist")).toBe("or-7");
+    // a hand-over is never typed in
+    const forged = await t.session.run({ type: "clinical_action", action: { type: "anaesthesia", anaesthesia: { op: "request-relief", from: "l1-anaesthetist", to: "or-7.anaesthetist" } } as ClinicalAction });
+    expect(msgsOf(forged, "error")[0]).toMatchObject({ code: "permission_denied" });
+    await t.session.close();
+  });
+
+  it("no relief arranged: the anaesthetist of an induced patient may not leave — by a request to fetch, a direct move or a delegated task (every path goes through the one world-action guard)", async () => {
+    const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    recordUntil(t, isFirstDissection);
+    const w = t.session.world()!;
+    const fetch = await t.session.run({ type: "user_message", text: "Dr Tanaka, please fetch the ECG machine.", to: "attending", staff: "or-7.anaesthetist" } as never);
+    expect(msgsOf(fetch, "agent_message").map((m) => m.text).join(" ")).toMatch(/Continuous anaesthesia responsibility is required\. Arrange relief before leaving the patient/);
+    expect(w.roomOf("staff:or-7.anaesthetist")).toBe("or-7");
+    expect(w.roomOf(ECG)).toBe("anaes-workroom");
+    expect(await act(t, "staff:or-7.anaesthetist", "navigate", { kind: "room", id: "anaes-workroom" })).toMatchObject({ status: "failed", errorCode: "NOT_AUTHORIZED" });
+    const delegated = await tool(t, "delegate_task", { role: "staff:or-7.anaesthetist", task: "fetch_equipment", target: ECG });
+    expect(delegated.ok).toBe(false);
+    expect(delegated.output).toMatch(/Continuous anaesthesia responsibility is required/);
+    // within OR 7 they move freely
+    expect((await act(t, "staff:or-7.anaesthetist", "navigate", { kind: "interact", id: patientId(t) })).status).toBe("completed");
+    expect(t.session.state.anaesthesia).toBeUndefined();
     await t.session.close();
   });
 

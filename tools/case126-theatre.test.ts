@@ -424,12 +424,14 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
   it("one result status for every role; named colleagues answer as themselves; equipment is not a treatment", async () => {
     const t = await theatre();
     upTo(t, isIv("attach-monitor"));
+    // a document of the review does not exist yet: refused, nothing recorded (records in the simulated timeline)
+    expect(t.session.dispatch({ type: "order", investigationId: "pathology-record", by: "system" }).rejected).toMatchObject({ code: "not-ready" });
     // a record the case has none of in this phase: "no record" for the clinician — and never "back" for the nurse
-    expect(t.session.dispatch({ type: "order", investigationId: "pathology-record", by: "system" }).rejected).toBeUndefined();
-    expect((await tool(t, "case_status")).output).toMatch(/pathology-record@theatre\] no record/);
+    expect(t.session.dispatch({ type: "order", investigationId: "ecg-record", by: "system" }).rejected).toBeUndefined();
+    expect((await tool(t, "case_status")).output).toMatch(/ecg-record@theatre\] no record/);
     const nurse = await tool(t, "consult", { role: "nurse", question: "Are any results back?" });
-    expect(nurse.output).toMatch(/No result for this phase \(nothing will come back\): [^\n]*postoperative histology/i);
-    expect(nurse.output).not.toMatch(/Back and waiting for you: [^\n]*histology/i);
+    expect(nurse.output).toMatch(/No result for this phase \(nothing will come back\): [^\n]*ECG/i);
+    expect(nurse.output).not.toMatch(/Back and waiting for you: [^\n]*ECG/i);
     // named colleagues, resolved before anything is said
     const anaesthetist = await tool(t, "consult", { staff: "anaesthetist", question: "Is the machine checked?" });
     expect(anaesthetist.output.split("\n")[0]).toBe("To: Dr Tanaka (anaesthesia) (attending)");
