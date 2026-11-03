@@ -1145,6 +1145,9 @@
             "en": "Source report p. 180, Case; limited to recorded information."
           }
         }
+      },
+      "availability": {
+        "historical": true
       }
     },
     {
@@ -1179,6 +1182,9 @@
             "en": "Source report p. 180, Case; limited to recorded information."
           }
         }
+      },
+      "availability": {
+        "historical": true
       }
     },
     {
@@ -1213,6 +1219,9 @@
             "en": "Source report p. 180, Case; limited to recorded information."
           }
         }
+      },
+      "availability": {
+        "historical": true
       }
     },
     {
@@ -1247,6 +1256,10 @@
             "en": "Source report p. 180, Case; limited to recorded information."
           }
         }
+      },
+      "availability": {
+        "earliestPhase": "review",
+        "historical": false
       }
     },
     {
@@ -1281,6 +1294,10 @@
             "en": "Source report p. 180, Case; limited to recorded information."
           }
         }
+      },
+      "availability": {
+        "earliestPhase": "review",
+        "historical": false
       }
     },
     {
@@ -1315,6 +1332,10 @@
             "en": "Source report p. 180, outcome."
           }
         }
+      },
+      "availability": {
+        "earliestPhase": "review",
+        "historical": false
       }
     },
     {
@@ -1350,6 +1371,9 @@
             "en": "Not recorded in the source; this does not establish normality or absence."
           }
         }
+      },
+      "availability": {
+        "historical": true
       }
     },
     {
@@ -1385,6 +1409,9 @@
             "en": "Not recorded in the source; this does not establish normality or absence."
           }
         }
+      },
+      "availability": {
+        "historical": true
       }
     },
     {
@@ -1420,6 +1447,9 @@
             "en": "Not recorded in the source; this does not establish normality or absence."
           }
         }
+      },
+      "availability": {
+        "historical": true
       }
     }
   ],

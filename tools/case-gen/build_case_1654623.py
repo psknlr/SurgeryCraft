@@ -941,6 +941,18 @@ for r in [
     if r not in refs:
         refs.append(r)
 
+# ------------------------------------------------------------------ records in the simulated timeline
+# (ClinicalCraft `recordAvailability`): the source's preoperative reports predate the encounter; the operation record,
+# the histology and the follow-up are written during it and exist only once the review is reached — never earlier,
+# whatever the learner searches for
+for inv in case['investigations']:
+    if inv.get('performedAt') != 'records':
+        continue
+    if inv['id'] in ('operation-record', 'pathology-record', 'followup-record'):
+        inv['availability'] = dict(earliestPhase='review', historical=False)
+    else:
+        inv['availability'] = dict(historical=True)
+
 # ------------------------------------------------------------------ reference path
 sol = [s for s in case['solution'] if s['type'] != 'finish' and not (s['type'] == 'intervene' and s['interventionId'] == 'open-historical-review')]
 # the review-phase steps (operation/pathology/follow-up records, outcome) move to the end

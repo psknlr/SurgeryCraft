@@ -190,6 +190,47 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     await wrong.session.close();
   });
 
+  it("records in the simulated timeline: before the review the operation record, the histology and the follow-up do not exist yet — no text from a later phase; in the review they do", async () => {
+    const c = (await content()).caseDef;
+    const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    expect(t.session.state.phase).toBe("assessment");
+    const text = (id: string) => (c.investigations.find((i) => i.id === id)!.results.review!.text as { en: string }).en;
+    for (const [query, id] of [["operation record", "operation-record"], ["pathology", "pathology-record"], ["follow-up", "followup-record"]] as const) {
+      const r = await tool(t, "retrieve_report", { query });
+      expect(r.data, query).toMatchObject({ source: "not-yet", investigationId: id });
+      expect(r.output).toMatch(/^Record not yet created — /);
+      expect(r.output).not.toContain(text(id).slice(0, 40));
+      // ordered or read directly: refused, nothing recorded
+      const ordered = await tool(t, "order_test", { investigation_id: id });
+      expect(ordered.ok).toBe(false);
+      expect(t.session.state.orders.some((o) => o.investigationId === id)).toBe(false);
+      const read = await tool(t, "read_result", { investigation_id: id, phase: "review" });
+      expect(read.ok).toBe(false);
+      expect(read.output).not.toContain(text(id).slice(0, 40));
+    }
+    // the source's preoperative reports are there
+    expect((await tool(t, "retrieve_report", { query: "CT" })).data).toMatchObject({ source: "record", investigationId: "ct-record" });
+    await t.session.close();
+    // in the review the records exist (a clinical-mode run of the reference record: in OR 7 the Sign Out also waits
+    // for the swab count, which tools/case126-count.test.ts works through)
+    const r = await makeSession({ ...(await content()), settingsPatch: { embodiment: "clinical", approvalMode: "bypass" } });
+    await r.session.run({ type: "clinical_action", action: { type: "start" } });
+    const sol = c.solution;
+    const at = sol.findIndex((a) => a.type === "order" && a.investigationId === "operation-record");
+    for (const a of sol.slice(1, at)) {
+      const x = r.session.dispatch({ ...a, by: "system" } as ClinicalAction);
+      if (x.rejected) throw new Error(`${a.type}: ${x.rejected.message}`);
+    }
+    expect(r.session.state.phase).toBe("review");
+    for (const [query, id] of [["operation record", "operation-record"], ["pathology", "pathology-record"], ["follow-up", "followup-record"]] as const) {
+      const got = await tool(r, "retrieve_report", { query });
+      expect(got.data, query).toMatchObject({ source: "record", investigationId: id });
+      expect(got.output).toContain(text(id).slice(0, 40));
+    }
+    await r.session.close();
+  });
+
   it("never invented: a cholangiogram is acquired at the table, not ordered; a chest radiograph the hospital cannot take waits with its reason", async () => {
     const t = await beforeInduction();
     const ioc = await tool(t, "order_study", { query: "intraoperative cholangiogram" });
