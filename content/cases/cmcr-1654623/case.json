@@ -1,7 +1,7 @@
 {
   "schema": "clinicalcraft/case@1",
   "id": "cmcr-1654623",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "title": {
     "zh-CN": "上腹痛伴发热 · 84岁男性",
     "en": "Upper abdominal pain and fever · 84-year-old man"
@@ -135,6 +135,32 @@
         "zh-CN": "这份病例没有记录，不能替我补写。",
         "en": "That is not recorded in this case; please do not fill it in."
       }
+    },
+    "nonVerbalWhen": {
+      "all": [
+        {
+          "intervened": "induction"
+        },
+        {
+          "not": {
+            "any": [
+              {
+                "decided": "emergence"
+              },
+              {
+                "phase": "recovery"
+              },
+              {
+                "phase": "review"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "nonVerbalReason": {
+      "zh-CN": "全身麻醉中（已诱导并气管插管）",
+      "en": "under general anaesthesia (induced and intubated)"
     }
   },
   "phases": [
@@ -175,8 +201,21 @@
       },
       "learnerSwitchable": false,
       "enterWhen": {
-        "intervened": "time-out",
-        "valid": true
+        "all": [
+          {
+            "intervened": "time-out",
+            "valid": true
+          },
+          {
+            "decided": "diagnosis"
+          },
+          {
+            "decided": "planning"
+          },
+          {
+            "decided": "risk"
+          }
+        ]
       }
     },
     {
@@ -199,7 +238,19 @@
       },
       "learnerSwitchable": false,
       "enterWhen": {
-        "intervened": "open-historical-review"
+        "all": [
+          {
+            "intervened": "open-historical-review",
+            "valid": true
+          },
+          {
+            "decided": "postop"
+          },
+          {
+            "intervened": "sign-out",
+            "valid": true
+          }
+        ]
       }
     }
   ],
@@ -1414,6 +1465,15 @@
           {
             "all": [
               {
+                "decided": "diagnosis"
+              },
+              {
+                "decided": "planning"
+              },
+              {
+                "decided": "risk"
+              },
+              {
                 "intervened": "attach-monitor"
               },
               {
@@ -1430,6 +1490,15 @@
         "not": {
           "all": [
             {
+              "decided": "diagnosis"
+            },
+            {
+              "decided": "planning"
+            },
+            {
+              "decided": "risk"
+            },
+            {
               "intervened": "attach-monitor"
             },
             {
@@ -1442,8 +1511,8 @@
         }
       },
       "harm": {
-        "zh-CN": "核对项尚未落实就做麻醉前核对：已记录为无效。先连接监护（脉搏血氧工作正常），并问清过敏与禁食（误吸风险），再做 Sign In。",
-        "en": "A Sign In before its checks: recorded as invalid. Attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), then sign in."
+        "zh-CN": "核对项尚未落实就做麻醉前核对：已记录为无效。择期手术先要明确诊断、制定手术计划并评估手术风险；再连接监护（脉搏血氧工作正常），问清过敏与禁食（误吸风险），然后 Sign In。",
+        "en": "A Sign In before its checks: recorded as invalid. An elective operation needs the diagnosis made, the operation planned and the operative risk assessed first; then attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), and sign in."
       }
     },
     {
@@ -1535,38 +1604,68 @@
       },
       "checklist": true,
       "indicatedWhen": {
-        "any": [
+        "all": [
           {
-            "procedure": {
-              "closed": true
-            }
+            "any": [
+              {
+                "procedure": {
+                  "closed": true
+                }
+              },
+              {
+                "procedure": {
+                  "bailout": "convert-open"
+                }
+              }
+            ]
           },
           {
-            "procedure": {
-              "bailout": "convert-open"
+            "not": {
+              "count": {
+                "status": [
+                  "baseline",
+                  "discrepancy",
+                  "unresolved"
+                ]
+              }
             }
           }
         ]
       },
       "contraindicatedWhen": {
         "not": {
-          "any": [
+          "all": [
             {
-              "procedure": {
-                "closed": true
-              }
+              "any": [
+                {
+                  "procedure": {
+                    "closed": true
+                  }
+                },
+                {
+                  "procedure": {
+                    "bailout": "convert-open"
+                  }
+                }
+              ]
             },
             {
-              "procedure": {
-                "bailout": "convert-open"
+              "not": {
+                "count": {
+                  "status": [
+                    "baseline",
+                    "discrepancy",
+                    "unresolved"
+                  ]
+                }
               }
             }
           ]
         }
       },
       "harm": {
-        "zh-CN": "手术尚未结束就做离室核对：已记录为无效，手术结束后需重新核对。",
-        "en": "Sign Out before the operation has ended: recorded as invalid; repeat it once the operation has ended."
+        "zh-CN": "手术尚未结束，或纱布清点尚未相符（也未上报并扫描排除体内遗留）就做离室核对：已记录为无效，需在手术结束、清点相符后重新核对。",
+        "en": "Sign Out before the operation has ended, or while the swab count is not reconciled (nor escalated with a clear scan excluding a retained swab): recorded as invalid; repeat it once the operation has ended and the count is settled."
       }
     },
     {
@@ -6894,6 +6993,84 @@
         "expect": {
           "count": "unresolved"
         }
+      },
+      {
+        "id": "swab-extra",
+        "name": {
+          "zh-CN": "多出一块纱布（6 块对 5 块）",
+          "en": "One swab too many (six of five)"
+        },
+        "summary": {
+          "zh-CN": "6 号手术间的一块纱布混到了 7 号手术间的 Mayo 托盘上。清点到 6 块：多出的一块不在本次清点内，不能算“相符”。巡回护士应请术者暂停关闭，把这块纱布移出手术野并记录，再复点。",
+          "en": "A swab from OR 6 ended up on OR 7's Mayo tray. The count finds six: the extra one is not in this count, and six of five is not \"correct\". The circulating nurse should ask the surgeon to hold closure, take that swab off the field and document it, then recount."
+        },
+        "provenance": "authored",
+        "items": [
+          {
+            "placement": "or-6-swab-1",
+            "beside": "or-7.mayo"
+          }
+        ],
+        "expect": {
+          "count": "reconciled"
+        }
+      },
+      {
+        "id": "swab-substituted",
+        "name": {
+          "zh-CN": "数目对但不是同一批纱布（假 5/5）",
+          "en": "Five of five, but not the same five"
+        },
+        "summary": {
+          "zh-CN": "第五块纱布留在患者腹腔内，而 6 号手术间的一块纱布混到了 Mayo 托盘上：数目仍是 5 块。逐件核对发现第五块缺失、另一块不在清点内——必须请术者暂停关闭、检查术野，找到后把多出的一块移出并复点。",
+          "en": "The fifth swab is still in the abdomen, and a swab from OR 6 is on the Mayo tray: the number is still five. Counting item by item finds the fifth missing and one not in the count — the surgeon must hold closure and check the wound; once it is out and the extra one is set aside, the recount is correct."
+        },
+        "provenance": "authored",
+        "items": [
+          {
+            "placement": "or-7-swab-5",
+            "beside": "patient",
+            "inside": true
+          },
+          {
+            "placement": "or-6-swab-1",
+            "beside": "or-7.mayo"
+          }
+        ],
+        "expect": {
+          "count": "reconciled"
+        }
+      },
+      {
+        "id": "swab-with-specimen",
+        "name": {
+          "zh-CN": "一块纱布随标本送检（已记录，对照）",
+          "en": "A swab sent with the specimen (documented — the control)"
+        },
+        "summary": {
+          "zh-CN": "第五块纱布随标本送到冰冻切片室，巡回护士已在清点中记录。清点 4 块即与记录相符：有记录的转移不是缺失，不应要求暂停关闭（衡量“误停”）。",
+          "en": "The fifth swab went to the frozen-section lab with the specimen, and the circulating nurse documented it in the count. Four counted agrees with the record: a documented transfer is not a missing swab, and there should be no hold on closure (it measures false holds)."
+        },
+        "provenance": "authored",
+        "items": [
+          {
+            "placement": "or-7-swab-5",
+            "beside": "frozen-lab.bench",
+            "transfer": {
+              "to": {
+                "zh-CN": "随标本送冰冻切片室",
+                "en": "with the specimen to the frozen-section lab"
+              },
+              "reason": {
+                "zh-CN": "标本送检时一并送出",
+                "en": "sent with the specimen"
+              }
+            }
+          }
+        ],
+        "expect": {
+          "count": "correct"
+        }
       }
     ]
   },
@@ -7153,6 +7330,20 @@
       },
       "verdict": "safety-critical",
       "capPercent": 70
+    },
+    {
+      "id": "closed-on-open-count",
+      "label": {
+        "zh-CN": "纱布清点未相符即关闭（不安全推进）",
+        "en": "Closed while the swab count was not settled (unsafe progression)"
+      },
+      "when": {
+        "count": {
+          "unsafe": true
+        }
+      },
+      "verdict": "safety-critical",
+      "capPercent": 50
     },
     {
       "id": "perforation",

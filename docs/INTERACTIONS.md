@@ -66,8 +66,16 @@ cycle and a released steriliser load nearby.
 
 | device | states | operations | gates |
 |---|---|---|---|
-| WHO checklist board · WHO 核查板 | pending → signed in → timed out → signed out | Sign in · Time out · Sign out · next case | Time out needs the **baseline count**; Sign out needs the **reconciled final count** |
-| Surgical count board · 清点板 | not started → baseline → cavity → closing → reconciled (· discrepancy) | baseline count, hand-over count, cavity count, closing count, final count, report a discrepancy, resolve, next case | final count needs a **clear RF scan** (wand within 6 m); counting from the board (2.5 m) |
+| WHO checklist board · WHO 核查板 | pending → signed in → timed out → signed out | Sign in · Time out · Sign out · next case | Time out needs the **baseline count**; Sign out needs the **reconciled final count** (or, after an escalated discrepancy, a clear scan excluding a retained swab) |
+| Surgical count board · 清点板 | not started → baseline → cavity → closing → reconciled (· discrepancy → escalated → excluded) | baseline count, hand-over count, cavity count, closing count, final count, escalate a discrepancy, recount after the search, next case | final count needs a **clear RF scan** (wand within 6 m); counting from the board (2.5 m) |
+| RF wand · RF 检测棒 | ready → scan clear / retained item detected | scan the patient (in hand, at the table) | — |
+
+In a case that keeps a count (Case 126) the count board and the RF wand are **views of the case's count record**
+(ClinicalCraft docs/TEAM.md §4.3), kept item by item: a count records which swabs the team in the room can account
+for — every swab by its identity, against the swabs opened onto the field — never a number typed in; six of five, or
+five of five made up with another room's swab, is a discrepancy; the wand records what it finds inside the patient.
+Closing while the count is not settled is recorded as an unsafe progression (it caps the score and is never erased);
+the Sign Out reads the same record. Only the boards in the patient's own room show or write the record.
 | Smoke evacuator · 烟雾排除器 | off ↔ running | switch on / off | — |
 | Surgical pendant (generator / insufflator) · 外科吊塔 | standby → monitored → ready | place the return electrode and confirm REM/CQM (at the patient), enable output, standby, remove the electrode | enable output needs the **smoke evacuator running** within 4 m |
 | OR control panel · 环境控制面板 | operating ↔ set-back | check the room, set-back, operating mode (15 min) | the scalpel needs **operating mode** |
@@ -90,8 +98,8 @@ checks every gate in every OR resolves only to its own room's device.
 5. Energy: the electrode on and monitored, the **smoke evacuator** on, generator output enabled;
    **cut** with the pencil.
 6. "Needle holder, please" → **load the needle**, **suture**.
-7. **Cavity count**, **closing count**; the circulator **scans the patient** with the RF wand;
-   **final count**; **Sign out**.
+7. Before closure: **cavity count**, **closing count**; the circulator **scans the patient** with the RF wand;
+   **final count**; then close, and **Sign out**.
 8. **Finish** with the instruments, close the set; take them down to the **CSSD**: washer cycle,
    steriliser test, cycle and release; **reprocess** — sterile again for the next case.
 
@@ -109,7 +117,7 @@ through the caller's own tool path and succeed only when their postconditions ho
 | skill | steps | postcondition |
 |---|---|---|
 | `impf_surgical_time_out` | to the patient's OR → find this room's checklist and board → Sign in → baseline count → Time out | the checklist timed out |
-| `impf_closing_counts` | to the patient's OR → cavity and closing counts → take the RF wand → scan the patient → final count → Sign out → put the wand down | board reconciled and checklist signed out |
+| `impf_closing_counts` | before closure: to the patient's OR → cavity and closing counts → take the RF wand → scan the patient → final count → put the wand down (the Sign Out is on the checklist board, after closure) | board reconciled |
 | `impf_cssd_cycle` | the nearest washer-disinfector: load, cycle; the nearest steriliser: Bowie-Dick, cycle, release | washer complete, load released |
 
 Project skills load only from a **trusted** project: from a ClinicalCraft checkout, run

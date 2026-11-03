@@ -37,7 +37,8 @@ describe("IMPF Surgery Hospital · project skills and the OR team", () => {
     expect(close.ok, close.text).toBe(true);
     expect(close.data.skill).toMatchObject({ status: "succeeded" });
     const w = t.session.world()!;
-    expect(w.inspect(PRIMARY_ACTOR, "eq:or-7.checklist")?.state).toBe("signed-out");
+    // the counts and the scan before closure; the Sign Out is the board's, after closure (not the skill's)
+    expect(w.inspect(PRIMARY_ACTOR, "eq:or-7.checklist")?.state).toBe("timed-out");
     expect(w.inspect(PRIMARY_ACTOR, "eq:or-7.count-board")?.state).toBe("reconciled");
     await t.session.close();
   });

@@ -363,3 +363,68 @@ describe("Case 126 in OR 7 · the care team works on its own", () => {
     });
   });
 });
+
+describe("Case 126 in OR 7 · who spoke, who it was said to, and whether the patient can answer", () => {
+  let n = 0;
+  async function tool(t: TestSession, name: string, args: Record<string, unknown> = {}) {
+    const events = await t.session.run({ type: "external_tool_call", callId: `id-${++n}`, tool: name, args, allowBypass: true });
+    return msgsOf(events, "tool_call_end").at(-1) as { ok: boolean; output: string; data?: any };
+  }
+
+  it("one resolver: a typed @ mention, the staff picker and consult reach the same colleague; English and Chinese titles the same anaesthetist", async () => {
+    const t = await theatre("count-correct");
+    toTheTable(t);
+    await learner(t, "navigate", { kind: "interact", id: patientId(t) });
+    for (const staff of ["Nurse Lim", "Lim", "or-7.scrub-nurse", "洗手护士"]) expect((await tool(t, "consult", { staff, question: "Ready?" })).data?.staffId, staff).toBe("or-7.scrub-nurse");
+    for (const staff of ["anaesthetist", "麻醉医生", "Dr Tanaka", "or-7.anaesthetist"]) expect((await tool(t, "consult", { staff, question: "Ready?" })).data?.staffId, staff).toBe("or-7.anaesthetist");
+    const speakers = async (op: Record<string, unknown>) => msgsOf(await t.session.run({ type: "user_message", ...op } as never), "agent_message").map((m) => m.speaker);
+    const typed = await speakers({ text: "@Nurse Lim, how many swabs are on the Mayo tray?" });
+    const picked = await speakers({ text: "How many swabs are on the Mayo tray?", to: "nurse", staff: "or-7.scrub-nurse" });
+    expect(typed.length).toBeGreaterThan(0);
+    expect(typed[0]).toBe(picked[0]);
+    expect(typed[0]).toMatch(/Lim/);
+    await t.session.close();
+  });
+
+  it("a read-back is the addressee's: the learner cannot answer a request said to the scrub nurse; one about another instrument reads back nothing", async () => {
+    const t = await theatre("needle-holder");
+    toTheTable(t);
+    const events = team(await learner(t, "navigate", { kind: "interact", id: patientId(t) }));
+    const toScrub = said(events).find((m) => m.kind === "request" && m.to === SCRUB)!;
+    const refused = await t.session.run({ type: "team", action: "reply", message: toScrub.id, kind: "readback" });
+    expect(msgsOf(refused, "error")[0]).toMatchObject({ code: "permission_denied", message: expect.stringMatching(/said to Nurse Lim/) });
+    await t.session.close();
+
+    // the hold said to the surgeon, read back about the needle holder: not read back — the circulating nurse asks again
+    const c = await theatre("swab-in-wound");
+    for (const a of c.session.caseDef.solution.slice(1, c.session.caseDef.solution.findIndex((x) => x.type === "operate" && (x as { op?: { op?: string } }).op?.op === "close"))) c.session.dispatch({ ...a, by: "system" } as ClinicalAction);
+    await c.session.run({ type: "team", action: "pause" });
+    await learner(c, "navigate", { kind: "interact", id: patientId(c) });
+    const hold = said(team(await c.session.run({ type: "team", action: "run", rounds: 6 }))).find((m) => m.kind === "request" && m.about.hold)!;
+    await c.session.run({ type: "team", action: "reply", message: hold.id, kind: "readback", text: "Holding — I'll look for the needle holder." });
+    const after = team(await c.session.run({ type: "team", action: "run", rounds: 2 }));
+    const state = c.session.snapshot().team!.state;
+    expect(state.messages.find((m) => m.id === hold.id)?.readBack).toBeFalsy();
+    expect(said(after).find((m) => m.kind === "request" && m.to === PRIMARY_ACTOR && m.thread === hold.thread)?.text.en).toMatch(/^Not that — please hold closure and check the wound for the missing swabs/);
+    await c.session.close();
+  });
+
+  it("under anaesthesia the patient cannot answer and nothing is credited; speech returns with emergence", async () => {
+    const t = await theatre("count-correct");
+    toTheTable(t);
+    await learner(t, "navigate", { kind: "interact", id: patientId(t) });
+    const before = [...t.session.state.asked];
+    const quiet = await tool(t, "ask_patient", { question: "How is your pain?" });
+    expect(quiet.output).toMatch(/under general anaesthesia/);
+    expect(t.session.state.asked).toEqual(before);
+    expect(t.session.dispatch({ type: "ask", itemId: "pain-score", by: "system" }).rejected?.code).toBe("cannot-answer");
+    // emergence: the operation ended, extubation decided — the patient speaks again
+    const sol = t.session.caseDef.solution;
+    const close = sol.findIndex((x) => x.type === "operate" && (x as { op?: { op?: string } }).op?.op === "close");
+    for (const a of sol.slice(sol.findIndex((x) => x.type === "operate"), close)) t.session.dispatch({ ...a, by: "system" } as ClinicalAction);
+    t.session.dispatch({ type: "operate", op: { op: "close" }, by: "system" } as ClinicalAction);
+    expect(t.session.dispatch({ type: "answer", decisionId: "emergence", optionIds: ["criteria", "swallow-after"], by: "system" }).rejected).toBeUndefined();
+    expect(t.session.dispatch({ type: "ask", itemId: "pain-score", by: "system" }).rejected).toBeUndefined();
+    await t.session.close();
+  });
+});

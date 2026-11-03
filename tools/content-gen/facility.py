@@ -374,6 +374,9 @@ P("or-7-cell-salvage", "sc-cell-salvage", 6.5 - 0.1, 2.5 + 3.0, 180, "or-7", L("
 # OR 7's swabs in use, one by one on the Mayo tray (Case 126's team keeps the count item by item)
 for k in range(5):
     P(f"or-7-swab-{k + 1}", "sc-gauze-swab", 6.5 + 1.1 - 0.22 + 0.1 * k, 2.5 + 1.25 + 0.02, 0, "or-7", L(f"纱布 {k + 1}", f"Swab {k + 1}"), y=1.16)
+# a swab of OR 6's own (never in OR 7's count): Case 126's count scenarios move it into OR 7 — six of five, or five of
+# five made up with a swab that is not in the count
+P("or-6-swab-1", "sc-gauze-swab", -5.5 + 1.1 - 0.22, 2.5 + 1.25 + 0.02, 0, "or-6", L("6 号手术间纱布", "OR 6 swab"), y=1.16)
 P("or-3-hlm", "sc-heart-lung-machine", 5.5 - 2.4, -14.5 - 3.0, 180, "or-3", L("体外循环机", "Heart-lung machine"))
 P("or-3-cell-salvage", "sc-cell-salvage", 5.5 + 3.6, -14.5 + 2.6, 180, "or-3", L("术中自体血回收", "Cell salvage"))
 P("or-4-navigation", "sc-surgical-navigation", 17.5 - 2.6, -14.5 - 2.6, 180, "or-4", L("光学手术导航", "Optical navigation"))
