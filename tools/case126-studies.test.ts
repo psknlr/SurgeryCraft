@@ -166,6 +166,40 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     await t.session.close();
   });
 
+  it("the nurse shut out of OR 7: a blood count is assigned, blocked with the reason, no specimen and no result; the door opened, the same order is collected once and reported once", async () => {
+    const t = await beforeInduction();
+    const w = t.session.world()!;
+    const NURSE = "staff:or-7.circulating-nurse";
+    // the nurse steps out to theatre control, and OR 7's doors are locked behind them
+    expect((await t.session.run({ type: "world_action", request: { actionId: "out", actorId: NURSE, operation: "navigate", goal: { kind: "room", id: "l1-control" } } })).length).toBeGreaterThan(0);
+    expect(w.roomOf(NURSE)).toBe("l1-control");
+    // every door on OR 7's walls (its own, and the scrub bays' and set-up rooms' into it): x 2–11, z −2–7 on L1
+    const doors = w.entities().filter((e) => e.kind === "door" && e.level === "L1" && e.position.x >= 1.9 && e.position.x <= 11.1 && e.position.z >= -2.1 && e.position.z <= 7.1).map((e) => e.id);
+    expect(doors.length).toBeGreaterThan(0);
+    for (const d of doors) w.setDoor(d, { open: false, locked: true });
+    await tool(t, "order_study", { query: "blood count", request_key: "cbc-1" });
+    const o = t.session.state.studies!.orders[0]!;
+    expect(o).toMatchObject({ code: "cbc", assignee: "or-7.circulating-nurse", stage: "blocked", waiting: { reason: expect.stringMatching(/^Nurse Aisyah \(circulating\) could not reach the patient: /) } });
+    expect(o.stages!.map((x) => x.stage)).toEqual(["ordered", "assigned", "en-route", "blocked"]);
+    expect(t.session.state.studies!.accessions).toEqual([]);
+    expect((await tool(t, "read_study", { query: "blood count" })).output).toMatch(/waiting — Nurse Aisyah \(circulating\) could not reach the patient/);
+    await tool(t, "wait", { minutes: 30 });
+    expect(t.session.state.studies!.accessions).toEqual([]);
+    expect(t.session.state.studies!.reports).toEqual([]);
+    // unlocked: the same order resumes, one specimen, one report
+    for (const d of doors) w.setDoor(d, { locked: false });
+    await tool(t, "case_status");
+    expect(t.session.state.studies!.orders).toHaveLength(1);
+    expect(t.session.state.studies!.accessions.map((a) => [a.order, a.collector])).toEqual([[o.id, "or-7.circulating-nurse"]]);
+    expect(w.roomOf(NURSE)).toBe("or-7");
+    await tool(t, "wait", { minutes: 30 });
+    await tool(t, "case_status");
+    expect(t.session.state.studies!.accessions).toHaveLength(1);
+    expect(t.session.state.studies!.reports).toHaveLength(1);
+    expect(t.session.state.studies!.orders[0]!.stages!.map((x) => x.stage)).toEqual(["ordered", "assigned", "en-route", "blocked", "en-route", "at-patient", "acquisition-started", "acquired", "reported"]);
+    await t.session.close();
+  });
+
   it("the second run: a reporting agent that times out, or writes what the tracing does not show, is replaced by the template — never an invented report", async () => {
     // a writer that never answers
     const stuck = await beforeInduction({ reportWriter: () => new Promise(() => {}), reportWriterTimeoutMs: 50 });
