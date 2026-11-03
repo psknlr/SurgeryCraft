@@ -1,0 +1,117 @@
+{
+  "build": "local build of ClinicalCraft claude/gallant-brown-pqa12w, served by clinicalcraft serve with this pack; Chromium (Playwright, SwiftShader)",
+  "at": "2026-11-03T06:56:39.202Z",
+  "results": [
+    {
+      "name": "an unresolved 4/5 count cannot receive a safe full score",
+      "pass": true,
+      "escalation": "Still 4 of 5 swabs after searching the room — an X-ray before the patient leaves.",
+      "closeAccepted": true,
+      "boardSignOut": "failed",
+      "signOutValid": false,
+      "countBoard": "unresolved",
+      "checklist": "timed-out",
+      "unsafe": [
+        {
+          "what": "closure",
+          "status": "unresolved",
+          "missing": [
+            "eq:or-7-swab-5"
+          ],
+          "unexpected": [],
+          "at": 73.38000000000001,
+          "seq": 78
+        }
+      ],
+      "verdict": "safety-critical",
+      "score": {
+        "earned": 87,
+        "possible": 90,
+        "percent": 50,
+        "uncapped": 97
+      },
+      "gates": [
+        {
+          "id": "closed-on-open-count",
+          "verdict": "safety-critical"
+        }
+      ]
+    },
+    {
+      "name": "the OR 1 board cannot sign in the OR 7 patient",
+      "pass": true,
+      "or1": "eq:or-1.checklist",
+      "atOr1": {
+        "status": "failed",
+        "message": "Cannot \"Sign in: identity, procedure, site marking, allergies, airway and blood-loss risk\": WHO Surgical Safety Checklist is not in the room of the patient Mr Lin (pseudonym) (OR 7 · Emergency & obstetric (24/7)) — it records nothing of this patient. Use the one in OR 7 · Emergency & obstetric (24/7).",
+        "hint": {
+          "kind": "interact",
+          "id": "eq:or-7.checklist"
+        }
+      },
+      "recordedAfterOr1": 0,
+      "atOr7": "completed",
+      "states": {
+        "eq:or-7.checklist": "signed-in",
+        "eq:or-1.checklist": "pending",
+        "eq:or-2.checklist": "pending",
+        "eq:or-3.checklist": "pending",
+        "eq:or-4.checklist": "pending",
+        "eq:or-5.checklist": "pending",
+        "eq:or-6.checklist": "pending",
+        "eq:or-8.checklist": "pending",
+        "eq:l0-sim-or.checklist": "pending"
+      }
+    },
+    {
+      "name": "a preoperative reload activates the same team obligations as an uninterrupted run",
+      "pass": true,
+      "saved": {
+        "phase": "assessment",
+        "lifecycle": "pending"
+      },
+      "uninterrupted": {
+        "said": [
+          "staff:or-7.scrub-nurse report staff:or-7.circulating-nurse",
+          "staff:or-7.circulating-nurse request actor:clinician",
+          "actor:clinician readback staff:or-7.circulating-nurse",
+          "staff:or-7.circulating-nurse confirm actor:clinician",
+          "staff:or-7.circulating-nurse request staff:or-7.scrub-nurse",
+          "staff:or-7.scrub-nurse report staff:or-7.circulating-nurse",
+          "actor:clinician report staff:or-7.circulating-nurse",
+          "staff:or-7.circulating-nurse report actor:clinician"
+        ],
+        "lifecycle": "completed",
+        "outcome": "reconciled",
+        "holds": 1,
+        "record": [
+          "baseline",
+          "count",
+          "recover",
+          "count"
+        ]
+      },
+      "reloaded": {
+        "said": [
+          "staff:or-7.scrub-nurse report staff:or-7.circulating-nurse",
+          "staff:or-7.circulating-nurse request actor:clinician",
+          "actor:clinician readback staff:or-7.circulating-nurse",
+          "staff:or-7.circulating-nurse confirm actor:clinician",
+          "staff:or-7.circulating-nurse request staff:or-7.scrub-nurse",
+          "staff:or-7.scrub-nurse report staff:or-7.circulating-nurse",
+          "actor:clinician report staff:or-7.circulating-nurse",
+          "staff:or-7.circulating-nurse report actor:clinician"
+        ],
+        "lifecycle": "completed",
+        "outcome": "reconciled",
+        "holds": 1,
+        "record": [
+          "baseline",
+          "count",
+          "recover",
+          "count"
+        ]
+      }
+    }
+  ]
+}

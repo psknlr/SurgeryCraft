@@ -5,7 +5,7 @@
 | Setting / facility | Operating department, IMPF Surgery Hospital (OR 7) |
 | Difficulty / duration | 3/5 / about 45 minutes |
 | Specialty / languages | General surgery / zh-CN + en |
-| Review | AI-assisted editorial review, 2026-11-02 (2.3.0 audit repairs). **Not clinician-reviewed.** |
+| Review | AI-assisted editorial review, 2026-11-03 (2.4.0: the 2.3.0 interaction audit's repairs). **Not clinician-reviewed.** |
 | Scope | Whole encounter: presentation, records, diagnosis, perioperative risk, WHO checklist, the operation itself, recovery, then review of the reported course |
 | Source | Dataset item 126; published case report, pp. 180–181 (citation below) |
 
@@ -243,6 +243,16 @@ not recorded. The generator is `tools/case-gen/build_case_1654623.py` (on top of
 
 ## Changelog
 
+- 2026-11-03, 2.4.0 (the 2.3.0 interaction audit; needs ClinicalCraft's repairs 1–5):
+  - the swab count is one record by identity (the board, the RF wand, the Sign Out, the team and the score read it);
+    closure on an open count is a safety-critical unsafe progression, never erased; new scenarios `swab-extra`,
+    `swab-substituted`, `swab-with-specimen` (OR 6 gets its own swab);
+  - the Sign In needs the diagnosis, the plan and the risk assessment; the review opens only on a valid request after
+    the postoperative discussion and the Sign Out;
+  - the patient cannot answer from induction until emergence or recovery (`nonVerbalWhen`);
+  - the closing-count skill counts and scans before closure;
+  - tests: `tools/case126-count.test.ts`, the board in the patient's room, entry milestones, the review gate, named
+    colleagues, read-backs, speech under anaesthesia.
 - 2026-11-02, 2.3.0 (the audit of a 2.1.0 save; needs ClinicalCraft's audit round):
   - attaching the monitor is its own task (`attach-monitor`); the Sign In is valid only after its checks; the
     Time Out needs a valid Sign In and induction;
@@ -293,5 +303,7 @@ agents at 100 %) and the team benchmark (every scenario passes).
 2.2.0 新增7号手术间的手术团队：巡回护士与洗手护士在手术阶段自主协作——器械传递先复述确认、再亲眼核实；取出标本后逐块清点纱布，不符时请术者暂停关闭并检查术野，巡回护士按固定顺序在手术间里查找，然后复点，仍找不到就上报并拍 X 线片。共8个编写的团队情境（含一个全部在位的对照），可用 `clinicalcraft bench team` 评测。
 
 2.3.0 根据一次 2.1.0 存档的审查做了修订：连接监护仪是单独的任务，不再等于完成麻醉前核查；麻醉前核查要在监护、过敏和禁食都落实后才有效，切皮前暂停核查要在有效的麻醉前核查和诱导之后；上级医师或麻醉医生不同意诱导时会记录“暂缓”及理由，只有本人重新评估并记录后才能解除；新增拔管与经口进食分开决定的决策；术中结果（取出标本、关腹）只按术野计分，清点和气腹机不能代替手术；上级医师、麻醉医生和护士会纠正快速顺序诱导、预充氧判断、拔管前吞咽试验、“把左右再反过来”以及把教学假设当成家属陈述等错误。另有一条从问诊到恢复室交接的端到端验收测试。
+
+2.4.0 根据对 2.3.0 的交互审查做了修订：纱布清点成为按纱布身份逐件核对的唯一记录，清点板、RF 检测棒、离室前核查（Sign Out）、团队和评分都读取同一记录；6 块对 5 块、或用 6 号手术间的纱布凑足 5 块都算清点不符；清点未相符时关闭会被记为“不安全推进”，计入复盘且不会被之后的操作抹去；麻醉前核查需要先明确诊断、制定计划并评估风险；原报告回看只能在术后讨论和离室前核查之后有效打开；诱导后到苏醒前患者不能说话，也不计问诊分；只有患者所在手术间的核查板记录本病例。新增 3 个清点情境。
 
 三维解剖不是患者CT重建，术中生命体征为模拟值，本病例尚未经临床专家审核。

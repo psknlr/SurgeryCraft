@@ -207,12 +207,16 @@ In in-world mode, during the operation, OR 7's staff work on their own. Nobody t
 - **Nurse Lim (scrub)** reads the request back, finds the instrument she can see, and hands it over.
 
 Once the specimen is out, Nurse Lim counts the five swabs on the Mayo tray (single X-ray-detectable swabs,
-`sc-gauze-swab`, placements `or-7-swab-1` to `or-7-swab-5`). If the count is short:
+`sc-gauze-swab`, placements `or-7-swab-1` to `or-7-swab-5`) — **swab by swab, by identity** (2.4.0): the count is
+the case's one count record (ClinicalCraft docs/TEAM.md §4.3), which the count board, the RF wand, the WHO Sign Out
+and the score read too. If a swab is missing, or one is there that is not in the count:
 1. Nurse Aisyah asks the surgeon to hold closure and check the wound, and the surgeon reads it back.
-2. She searches the floor round the Mayo stand, then the back table, then the laparoscopy tower. The places are the
+2. A swab not in the count she takes off the field and documents as set aside.
+3. She searches the floor round the Mayo stand, then the back table, then the laparoscopy tower. The places are the
    same whatever happened.
-3. She asks for a recount.
-4. If it is still short, she escalates for an X-ray.
+4. She asks for a recount.
+5. If it is still not reconciled, she escalates for an X-ray — credited to her in the record; the count stays open
+   until a clear RF scan excludes a retained swab (or the swab is found and counted).
 
 The learner answers as the surgeon (the Team panel: Read back, Wound checked; "Check the wound" searches the wound) or
 watches a simulated surgeon (Observe).
@@ -230,9 +234,13 @@ report):
 | `swab-on-floor` | swab 5 under the Mayo stand, hidden | hold, found by the room search, recount correct |
 | `swab-in-wound` | swab 5 in the wound | hold, found only by the surgeon's check of the wound, recount correct |
 | `swab-gone` | swab 5 left the room (in OR 6) | still short after the search and the recount: escalated for an X-ray |
+| `swab-extra` (2.4.0) | OR 6's swab on OR 7's Mayo tray: six of five | a discrepancy (one not in the count): hold, set aside and documented, recount reconciled |
+| `swab-substituted` (2.4.0) | swab 5 in the wound and OR 6's swab on the tray: five of five by number | a discrepancy by identity (swab 5 missing, OR 6's not in the count): found in the wound, the stranger set aside, reconciled |
+| `swab-with-specimen` (2.4.0) | swab 5 sent with the specimen to the frozen-section lab, documented | the positive control: four of four is correct, no hold |
 
-`tools/case126-team.test.ts` (13 tests) runs them, and so does `clinicalcraft bench team --case cmcr-1654623`:
-8 / 8, every act exactly once. The tests add:
+`tools/case126-team.test.ts` (16 tests) and `tools/case126-count.test.ts` (11) run them, and so does
+`clinicalcraft bench team --case cmcr-1654623`: 11 / 11 (11 activated, 11 completed, 2 appropriately escalated,
+0 invalid), every act exactly once. The tests add:
 - the surgeon away from the table;
 - two requests for one needle holder (one owner);
 - save and restore mid-handoff (one hand-over);
@@ -285,6 +293,45 @@ clicking the WHO board and the count board in the browser, with a page reload be
 **Patient following is not exercised.** The case's patient stays on OR 7's table; the audited save had a zero-second
 stretcher transfer and no attempt to start, stop or keep a walking follow across rooms, so it supports a regression
 for transport feedback only — it cannot show whether following works. Evaluate following separately.
+
+## 2.4.0: one record for the count, the board for the patient's room (the 2.3.0 interaction audit)
+
+The audit of 2.3.0 found the team reporting "four of five" and asking for an X-ray while the learner could still
+close, sign out and score 90/90 with a `clear` verdict; OR 1's WHO board signing in the patient in OR 7; a reload
+before the operation that never set the team scenario up; a headless run that finished `clear` with zero team rounds.
+
+| audit finding | 2.4.0 (with ClinicalCraft's repairs) | test |
+|---|---|---|
+| The count compared numbers: 6/5 and a 5/5 made up with OR 6's swab were "correct" | one count record by swab identity; the board, the RF wand, the Sign Out, the team and the score read it; a count is never typed in | `case126-count.test.ts`: 6/5, the false 5/5, a documented transfer; ClinicalCraft `count.test.ts` |
+| An unresolved 4/5 closed, signed out and scored 90/90 `clear` | closure on an open count is an unsafe progression (gate `closed-on-open-count`, safety-critical, cap 50 %) that a later count never erases; the Sign Out is invalid on an open count; the nurse's escalation keeps its credit; escalated with a clear RF scan, the count is `excluded` and closure is safe | `case126-count.test.ts`: the unresolved 4/5 and the same handled properly |
+| OR 1's board signed in the OR 7 patient; every board showed `signed-in` | a record-backed board shows and writes the record only in the patient's room, checked again right before the commit; another room's board points at the right one | `case126-theatre.test.ts`: "a record board belongs to the patient's room" |
+| Allergies and fasting alone led to 41/41 operative steps | the Sign In (and so the operation) needs the diagnosis, the plan and the risk assessment; the operation phase checks them itself | theatre: "an elective operation is entered only on its milestones" |
+| An invalid early review could open the reported operation | the review phase opens only on a valid request after the postoperative discussion and the Sign Out | theatre: "the reported operation stays closed on an early request" |
+| A save during assessment restored a team that never set up | the scenario is pending / active / completed with its set-up event; a pending one is set up when the operation begins | `case126-count.test.ts`: the reload before the operation |
+| Headless autopilot: 100 %, `clear`, zero team rounds | the team takes its turn after every autopilot step; the autopilot counts (escalates, scans) before closure; the team benchmark counts obligations and reports a never-activated scenario as invalid | `case126-count.test.ts`: the autopilot in `swab-gone` and `swab-in-wound`; ClinicalCraft `bench/src/team/score.test.ts` |
+| A learner could release the attending's hold by naming it; read-backs were anyone's | a hold is released by the caller; the learner answers only what was said to them; a read-back about another instrument is not one | ClinicalCraft `identity.test.ts`; team: "who a reply is for" |
+| "@Nurse Lim", "Dr Tanaka" unresolved; "麻醉医生" reached another anaesthetist | one room-aware resolver for mentions, the staff picker, consult and delegation; a tie asks which | team: "one resolver" |
+| The patient answered while intubated | `nonVerbalWhen`: from induction until emergence or recovery, no answer and no history credit | team: "under anaesthesia" |
+
+The closing-count skill (`impf_closing_counts`) now counts and scans **before** closure; the Sign Out is done on the
+board after closure.
+
+**The three browser demonstrations** required before the version is frozen for a paper — kept beside the headless
+regressions as `tools/browser-demos.mjs` (it builds the web app of a ClinicalCraft checkout and serves it with this
+pack, or runs against a deployed build with `--url`; the page is driven through the app's own session, world and
+save, and checked against the authoritative state):
+1. an unresolved 4/5 count cannot receive a safe full score — the team escalates "Still 4 of 5 swabs", the learner
+   closes anyway and the board's Sign Out is refused: closure recorded as an unsafe progression, verdict
+   `safety-critical`, score capped at 50 % (97 % uncapped);
+2. the OR 1 board cannot sign in the OR 7 patient — refused ("it records nothing of this patient", pointing at OR 7's
+   board); after the Sign In at OR 7's board, only that board of nine shows it;
+3. a preoperative reload activates the same team obligations as an uninterrupted run — saved in the assessment
+   phase (the scenario pending), reloaded and resumed: the same eight messages, the same count record and outcome
+   (reconciled) as the run never interrupted.
+
+All three passed on 2026-11-03 on a **local** build of these revisions in Chromium (Playwright, SwiftShader):
+`docs/img/case126-browser-demos/` (screenshots and `browser-demos.json`). They have **not** been run on the deployed
+build: run `node tools/browser-demos.mjs --url '<deployed URL with ?token=…>'` there before freezing the version.
 
 ## Validation still required (not done)
 
