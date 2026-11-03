@@ -269,8 +269,9 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     const status = (await tool(t, "case_status")).output;
     expect(status).toMatch(/✓ Induce general anaesthesia and intubate/);
     expect(status).toMatch(/· WHO Time Out before incision — a valid attempt, in order \(an attempt is recorded as invalid[^\n]*\n\s+→ next: intervene \{intervention_id: "time-out"\}/);
-    // save and reload between induction and the Time Out
+    // save and reload between induction and the Time Out (the state compared is a deep copy taken at the save)
     const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    const before = structuredClone(t.session.state);
     await t.session.close();
     const r = await makeSession({
       ...c,
@@ -282,7 +283,7 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     expect(r.session.state.phase).toBe("theatre");
     expect(rw.inspect(PRIMARY_ACTOR, BOARD)?.state).toBe("signed-in");
     expect(rw.inspect(PRIMARY_ACTOR, COUNT)?.state).toBe("baseline");
-    expect(r.session.state.interventions.map((x) => [x.interventionId, !!x.invalid])).toEqual(t.session.state.interventions.map((x) => [x.interventionId, !!x.invalid]));
+    expect(r.session.state.interventions.map((x) => [x.interventionId, !!x.invalid])).toEqual(before.interventions.map((x) => [x.interventionId, !!x.invalid]));
     // the board's Time Out after the reload: valid, both views agree, the operation opens exactly once
     const opened: string[] = [];
     const off = r.session.subscribe((e) => {

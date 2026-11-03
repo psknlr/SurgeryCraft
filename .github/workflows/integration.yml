@@ -1,0 +1,52 @@
+name: SurgeryCraft × ClinicalCraft
+
+# The content pack is checked against the engine it is written for: ClinicalCraft at the revision pinned in
+# tools/clinicalcraft.rev (a commit), never "whatever main is today". `tools/check.sh` runs the regression list first
+# (tools/regressions.tsv), then validation, the Case 126 tests inside the ClinicalCraft checkout, the operative and
+# team benchmarks. Moving the pin is a change of its own, with this run green.
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: SurgeryCraft
+      - name: Pinned ClinicalCraft revision
+        id: pin
+        run: echo "rev=$(grep -Eo '^[0-9a-f]{40}' SurgeryCraft/tools/clinicalcraft.rev | head -1)" >> "$GITHUB_OUTPUT"
+      - name: Check the pin is a full commit id
+        run: test -n "${{ steps.pin.outputs.rev }}"
+      - uses: actions/checkout@v5
+        with:
+          repository: psknlr/ClinicalCraft
+          ref: ${{ steps.pin.outputs.rev }}
+          path: ClinicalCraft
+          # a private ClinicalCraft needs a read token in this repository's secrets; a public one does not
+          token: ${{ secrets.CLINICALCRAFT_READ_TOKEN || github.token }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ClinicalCraft/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install ClinicalCraft
+        working-directory: ClinicalCraft
+        run: npm ci
+      - name: tools/check.sh (regression list, validation, Case 126 tests, benchmarks)
+        run: SurgeryCraft/tools/check.sh ClinicalCraft

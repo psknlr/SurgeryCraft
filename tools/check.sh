@@ -20,11 +20,15 @@
 #      nurse, recorded, reported (simulated) and reviewed by the anaesthetist (tools/case126-studies.test.ts) — and the
 #      first release scenario: the ECG before induction, the assistant surgeon taking the neck grasper with its
 #      traction, a save and resume midway, the traction falling when the assistant leaves the table
-#      (tools/case126-release.test.ts);
+#      (tools/case126-release.test.ts) — and staff working on their own: the ECG's work and the responsible
+#      anaesthetist answering a hypotension alarm on the staff's own clock (tools/case126-staff.test.ts) — and the
+#      final acceptance scenario in one session, from the pre-operative ECG to the conversion (tools/case126-final.test.ts);
 #   6. the operative benchmark suite of Case 126 (content/operative/case126-v1): generated files up to date
 #      (tools/operative/build_suite_case126.py --check), then `clinicalcraft bench operative` with the reference and
 #      scripted-llm agents, both at 100 % with no hidden-state leak.
 #   7. the team benchmark of Case 126 (`clinicalcraft bench team`): every team scenario passes against its `expect`.
+#   0. first, the regression list (tools/regressions.tsv): every fixed interaction failure keeps its test.
+# CI (.github/workflows/integration.yml) runs this against the ClinicalCraft revision pinned in tools/clinicalcraft.rev.
 # Usage: tools/check.sh [path/to/ClinicalCraft]   (default: ../ClinicalCraft next to this repository)
 # Nothing is left behind in the ClinicalCraft checkout.
 set -euo pipefail
@@ -41,10 +45,15 @@ COUNTREC="$CC/packages/agent/src/zz-surgerycraft-case126-count.test.ts"
 ACCEPT="$CC/packages/agent/src/zz-surgerycraft-case126-acceptance.test.ts"
 STUDIES="$CC/packages/agent/src/zz-surgerycraft-case126-studies.test.ts"
 RELEASE="$CC/packages/agent/src/zz-surgerycraft-case126-release.test.ts"
+STAFF="$CC/packages/agent/src/zz-surgerycraft-case126-staff.test.ts"
+FINAL="$CC/packages/agent/src/zz-surgerycraft-case126-final.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
+
+echo "== regression list (tools/regressions.tsv): every listed test present"
+python3 -I "$HERE/check-regressions.py"
 
 echo "== facilities validate (ClinicalCraft at $CC)"
 (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- facilities validate --all)
@@ -98,11 +107,21 @@ cp "$HERE/case126-studies.test.ts" "$STUDIES"
 # save and resume midway, the window closing when the assistant leaves the table (tools/case126-release.test.ts)
 cp "$HERE/case126-release.test.ts" "$RELEASE"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-release.test.ts")
+# staff working on their own (ClinicalCraft docs/TEAM.md §5): the ECG's work and an alarm answered on the staff's own
+# clock (`staff_step`), with no act of the learner in between; role states that agree after a reload
+# (tools/case126-staff.test.ts)
+cp "$HERE/case126-staff.test.ts" "$STAFF"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-staff.test.ts")
+# the final acceptance scenario, one session: pre-operative ECG → anaesthesia relief → traction loss → playback
+# integrity (a refused cholangiogram and six rapid steps, each a frame of the one operative playback) → save and
+# resume → conversion (tools/case126-final.test.ts)
+cp "$HERE/case126-final.test.ts" "$FINAL"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-final.test.ts")
 
 echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
 python3 "$HERE/operative/build_suite_case126.py" --check
 OUT="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE"' EXIT
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL"' EXIT
 for agent in reference scripted-llm; do
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
 done

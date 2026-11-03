@@ -114,7 +114,10 @@ describe("Case 126 · the first release scenario", () => {
     expect(msgsOf(forged, "error")[0]).toMatchObject({ code: "permission_denied" });
 
     // save and resume midway: positions, field, custody, report, step order
+    // the save as a front-end writes it (a deep copy, through JSON), and the state it was taken from (a deep copy too:
+    // nothing later can change what is compared)
     const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    const atSave = structuredClone(t.session.state);
     const w0 = t.session.world()!;
     const where = (w: typeof w0, id: string) => {
       const p = w.actor(id)?.pose ?? w.entity(id)!.position;
@@ -125,12 +128,16 @@ describe("Case 126 · the first release scenario", () => {
     const order = steps(t);
     await t.session.close();
     const r = await makeSession({ ...(await content()), settingsPatch: SETTINGS, resume: { sessionId: saved.sessionId, actions: saved.actions, messages: saved.messages, dialogue: saved.dialogue }, embodied: { snapshot: saved.world, team: saved.team } });
-    expect(r.session.state.procedure).toEqual(saved.state?.procedure ?? r.session.state.procedure);
+    expect(atSave.procedure).toBeDefined();
+    expect(r.session.state.procedure).toEqual(atSave.procedure);
     expect(r.session.state.procedure!.ports.find((p) => p.site === "B")!.holder).toBe("or-7-assistant");
-    expect(r.session.state.studies).toEqual(saved.state?.studies ?? r.session.state.studies);
+    expect(atSave.studies?.reports.length).toBeGreaterThan(0);
+    expect(r.session.state.studies).toEqual(atSave.studies);
     expect(bodies.map((id) => where(r.session.world()!, id))).toEqual(positions);
     expect(steps(r)).toEqual(order);
-    expect(r.session.state.procedure!.counters.steps).toBe(saved.state?.procedure?.counters.steps ?? r.session.state.procedure!.counters.steps);
+    expect(r.session.state.procedure!.counters.steps).toBe(atSave.procedure!.counters.steps);
+    expect(r.session.state.anaesthesia).toEqual(atSave.anaesthesia);
+    expect(r.session.state.clock).toBe(atSave.clock);
     expect((await tool(r, "read_study", { query: "ECG" })).output).toMatch(/^Simulated investigation · 12-lead ECG/);
 
     // the assistant is called away: the traction goes with their hands, before the operator's next instrument step

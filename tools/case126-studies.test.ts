@@ -101,9 +101,11 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
 
     // a save and a reload, then a change of language: the same report, the device where it was left
     const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    const before = structuredClone(t.session.state.studies);
     await t.session.close();
     const r = await makeSession({ ...(await content()), settingsPatch: SETTINGS, resume: { sessionId: saved.sessionId, actions: saved.actions, messages: saved.messages, dialogue: saved.dialogue }, embodied: { snapshot: saved.world, team: saved.team } });
-    expect(r.session.state.studies).toEqual(saved.state?.studies ?? t.session.state.studies);
+    expect(before?.reviews.length).toBe(1);
+    expect(r.session.state.studies).toEqual(before);
     expect(r.session.world()!.roomOf(ECG)).toBe("or-7");
     expect((await tool(r, "read_study", { query: "ECG" })).output).toBe(report.output);
     await r.session.run({ type: "configure", patch: { locale: "zh-CN" } });
