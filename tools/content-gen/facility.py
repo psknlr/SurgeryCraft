@@ -369,11 +369,18 @@ inst("clean-lift-l1", "elevator-cabin", -6, -6, 90, overrides={"name": L("洁净
 
 # specialty equipment added to template rooms
 # (template-local positions; rot 0 rooms add the centre, rot 180 rooms subtract it: world = centre − local)
+# OR 7's assistant surgeon (Case 126 2.5.0): holds traction when asked (ClinicalCraft `delegate_task hold_traction`),
+# standing by the scrub bay until then — the walk to the table is part of taking over
+staff("or-7-assistant", "attending", L("森医生（助手）", "Dr Mori (assistant surgeon)"), "or-7", 6.5 + 1.2, 2.5 + 3.2, 180,
+      L("今天我当助手——需要我拉哪里就说，我来维持牵引。", "I'm assisting today — tell me what to hold and I'll keep the traction."))
 P("or-7-infant-warmer", "sc-infant-warmer", 6.5 - 3.6, 2.5 + 0.45, 90, "or-7", L("新生儿复苏辐射台", "Neonatal resuscitation warmer"))
 P("or-7-cell-salvage", "sc-cell-salvage", 6.5 - 0.1, 2.5 + 3.0, 180, "or-7", L("术中自体血回收", "Cell salvage"))
 # OR 7's swabs in use, one by one on the Mayo tray (Case 126's team keeps the count item by item)
 for k in range(5):
     P(f"or-7-swab-{k + 1}", "sc-gauze-swab", 6.5 + 1.1 - 0.22 + 0.1 * k, 2.5 + 1.25 + 0.02, 0, "or-7", L(f"纱布 {k + 1}", f"Swab {k + 1}"), y=1.16)
+# the operating department's only mobile 12-lead ECG machine, in the anaesthesia workroom (a nurse fetches it to the
+# patient for a new ECG: ClinicalCraft docs/STUDIES.md)
+P("anaes-workroom-ecg", "ecg-machine", 25.5 - 1.8, -16.75 - 0.3, 0, "anaes-workroom", L("移动心电图机", "Mobile ECG machine"))
 # a swab of OR 6's own (never in OR 7's count): Case 126's count scenarios move it into OR 7 — six of five, or five of
 # five made up with a swab that is not in the count
 P("or-6-swab-1", "sc-gauze-swab", -5.5 + 1.1 - 0.22, 2.5 + 1.25 + 0.02, 0, "or-6", L("6 号手术间纱布", "OR 6 swab"), y=1.16)

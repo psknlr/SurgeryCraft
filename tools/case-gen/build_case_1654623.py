@@ -39,7 +39,7 @@ GUIDE = L('教学设计，依据所引指南；不是原报告记载。', 'Teach
 case = copy.deepcopy(base.case)
 
 # ------------------------------------------------------------------ case card
-case['version'] = '2.4.0'
+case['version'] = '2.5.0'
 
 # the swab count (in-world: kept by item identity, docs/TEAM.md §4.3): open while a swab is missing or one is not in the
 # count, until it is reconciled or — escalated — a clear RF scan excludes a retained swab. No record (text mode): not open.
@@ -288,6 +288,45 @@ case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-hi
        '以下为原报告记载的真实经过；模拟中的操作不改变它。', 'What follows is what the source reports; nothing done in the simulation changes it.',
        indicated={'decided': 'postop'}, contra={'not': {'decided': 'postop'}},
        harm=('术后观察要点尚未讨论。', 'Postoperative priorities have not been discussed yet.')),
+]
+
+# 2.5.0: new investigations in this encounter (ClinicalCraft docs/STUDIES.md) — studies the published case never
+# reported, as versioned teaching profiles: the result is a simulated investigation, never the source's record (the
+# source's own records stay what they are: no ECG, no chest radiograph, laboratory tests summarised as normal)
+TEACHING = L('（教学配置，模拟）', ' (teaching profile, simulated)')
+def _t(zh, en):
+    return L(zh + TEACHING['zh-CN'], en + TEACHING['en'])
+case['studies'] = [
+    dict(code='ecg-12lead', name=L('十二导联心电图（新开，模拟）', '12-lead ECG (new, simulated)'),
+         aliases={'zh-CN': ['心电图', '十二导联心电图', '导联心电图'], 'en': ['ecg', 'ekg', 'electrocardiogram', '12-lead', '12 lead']},
+         acquisition='bedside-device', requires=['ecg-12lead'], turnaroundMinutes=10, reviewer='anaesthetist', historical='ecg-record',
+         model=dict(kind='ecg', rhythm=_t('窦性心律', 'sinus rhythm'), prMs=[160, 196], qrsMs=[84, 104], qtcMs=[412, 444], dextrocardia=True)),
+    dict(code='cbc', name=L('血常规（新采样，模拟）', 'Full blood count (new sample, simulated)'),
+         aliases={'zh-CN': ['血常规', '血细胞计数'], 'en': ['cbc', 'fbc', 'blood count', 'full blood count']},
+         acquisition='sample', turnaroundMinutes=30, historical='laboratory-record',
+         model=dict(kind='lab', analytes=[
+             dict(id='hb', name=L('血红蛋白', 'Haemoglobin'), unit='g/dL', low=13.0, high=17.0, base=13.6, spread=0.3, decimals=1,
+                  effects=[dict(when={'procedure': {'injury': 'bleeding'}}, delta=-2.2), dict(when={'procedure': {'injury': 'vascular-injury'}}, delta=-3.5)]),
+             dict(id='wbc', name=L('白细胞', 'White cells'), unit='×10⁹/L', low=4.0, high=10.0, base=7.6, spread=0.6, decimals=1),
+             dict(id='plt', name=L('血小板', 'Platelets'), unit='×10⁹/L', low=150, high=400, base=214, spread=18, decimals=0)])),
+    dict(code='chemistry', name=L('生化（新采样，模拟）', 'Chemistry panel (new sample, simulated)'),
+         aliases={'zh-CN': ['生化', '肝功能', '血生化'], 'en': ['chemistry', 'liver function', 'lft', 'biochemistry', 'bilirubin']},
+         acquisition='sample', turnaroundMinutes=40, historical='laboratory-record',
+         model=dict(kind='lab', analytes=[
+             dict(id='tbil', name=L('总胆红素', 'Total bilirubin'), unit='mg/dL', low=0.2, high=1.2, base=0.8, spread=0, decimals=1,
+                  effects=[dict(when={'procedure': {'injury': 'bile-duct-injury'}}, delta=1.6)]),
+             dict(id='alt', name=L('丙氨酸转氨酶', 'ALT'), unit='U/L', low=7, high=56, base=24, spread=4, decimals=0),
+             dict(id='alp', name=L('碱性磷酸酶', 'Alkaline phosphatase'), unit='U/L', low=40, high=129, base=88, spread=8, decimals=0),
+             dict(id='creat', name=L('肌酐', 'Creatinine'), unit='mg/dL', low=0.7, high=1.3, base=0.9, spread=0.08, decimals=2),
+             dict(id='na', name=L('钠', 'Sodium'), unit='mmol/L', low=135, high=145, base=139, spread=1.5, decimals=0),
+             dict(id='k', name=L('钾', 'Potassium'), unit='mmol/L', low=3.5, high=5.1, base=4.2, spread=0.2, decimals=1)])),
+    dict(code='cxr', name=L('胸部X线（新拍，模拟）', 'Chest radiograph (new, simulated)'),
+         aliases={'zh-CN': ['胸片', '胸部X线', '胸部 X 线'], 'en': ['cxr', 'chest x-ray', 'chest xray', 'chest radiograph']},
+         acquisition='department', requires=['xray'], turnaroundMinutes=30, historical='cxr-record',
+         model=dict(kind='imaging', technique=_t('后前位立位胸片', 'PA erect chest radiograph'),
+                    findings=[dict(id='heart', side='right', text=_t('心影位于患者右侧（右位心）', "cardiac silhouette on the patient's right (dextrocardia)")),
+                              dict(id='bubble', side='right', text=_t('胃泡位于患者右侧膈下', "gastric air bubble under the patient's right hemidiaphragm")),
+                              dict(id='lungs', text=_t('双肺过度充气，膈肌低平；无局灶实变', 'hyperinflated lungs with flattened hemidiaphragms; no focal consolidation'))])),
 ]
 
 # 2.4.0: speech follows the anaesthetic — from induction (effective whatever its order) the patient is anaesthetised and
@@ -580,7 +619,11 @@ case['team'] = dict(
                searchPlaces=['or-7.mayo', 'or-7.back-table', 'or-7.lap-tower']),
     members=[dict(staff='or-7.circulating-nurse', duties=['circulate']),
              dict(staff='or-7.scrub-nurse', duties=['instruments', 'count']),
+             dict(staff='or-7.anaesthetist', duties=['anaesthesia']),
              dict(staff='surgeon', duties=['surgeon'])],
+    # who takes over the anaesthetic if Dr Tanaka has to leave during the case: the duty consultant anaesthetist
+    # (theatre control) comes to the patient first, the hand-over is recorded, then Dr Tanaka goes
+    cover=[dict(staff='l1-anaesthetist', duties=['anaesthesia'])],
     note=L('团队情境是教学材料（编写），不是原病例报告的内容；它们只设定初始条件，不规定步骤。',
            'Team scenarios are teaching material (authored), not part of the case report; they set initial conditions only, never the steps.'),
     scenarios=[
