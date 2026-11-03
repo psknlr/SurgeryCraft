@@ -369,6 +369,10 @@ inst("clean-lift-l1", "elevator-cabin", -6, -6, 90, overrides={"name": L("洁净
 
 # specialty equipment added to template rooms
 # (template-local positions; rot 0 rooms add the centre, rot 180 rooms subtract it: world = centre − local)
+# OR 7's assistant surgeon (Case 126 2.5.0): holds traction when asked (ClinicalCraft `delegate_task hold_traction`),
+# standing by the scrub bay until then — the walk to the table is part of taking over
+staff("or-7-assistant", "attending", L("森医生（助手）", "Dr Mori (assistant surgeon)"), "or-7", 6.5 + 1.2, 2.5 + 3.2, 180,
+      L("今天我当助手——需要我拉哪里就说，我来维持牵引。", "I'm assisting today — tell me what to hold and I'll keep the traction."))
 P("or-7-infant-warmer", "sc-infant-warmer", 6.5 - 3.6, 2.5 + 0.45, 90, "or-7", L("新生儿复苏辐射台", "Neonatal resuscitation warmer"))
 P("or-7-cell-salvage", "sc-cell-salvage", 6.5 - 0.1, 2.5 + 3.0, 180, "or-7", L("术中自体血回收", "Cell salvage"))
 # OR 7's swabs in use, one by one on the Mayo tray (Case 126's team keeps the count item by item)

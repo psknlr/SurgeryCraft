@@ -17,7 +17,10 @@
 #      and one count record by swab identity that the field, the board, the RF wand, the Sign Out, the team and the
 #      score agree on, a reload before the operation and the headless autopilot (tools/case126-count.test.ts) — and
 #      investigations beyond the published case: no historical ECG, a new one ordered, fetched by the circulating
-#      nurse, recorded, reported (simulated) and reviewed by the anaesthetist (tools/case126-studies.test.ts);
+#      nurse, recorded, reported (simulated) and reviewed by the anaesthetist (tools/case126-studies.test.ts) — and the
+#      first release scenario: the ECG before induction, the assistant surgeon taking the neck grasper with its
+#      traction, a save and resume midway, the traction falling when the assistant leaves the table
+#      (tools/case126-release.test.ts);
 #   6. the operative benchmark suite of Case 126 (content/operative/case126-v1): generated files up to date
 #      (tools/operative/build_suite_case126.py --check), then `clinicalcraft bench operative` with the reference and
 #      scripted-llm agents, both at 100 % with no hidden-state leak.
@@ -37,9 +40,10 @@ TEAM="$CC/packages/agent/src/zz-surgerycraft-case126-team.test.ts"
 COUNTREC="$CC/packages/agent/src/zz-surgerycraft-case126-count.test.ts"
 ACCEPT="$CC/packages/agent/src/zz-surgerycraft-case126-acceptance.test.ts"
 STUDIES="$CC/packages/agent/src/zz-surgerycraft-case126-studies.test.ts"
+RELEASE="$CC/packages/agent/src/zz-surgerycraft-case126-release.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
 
 echo "== facilities validate (ClinicalCraft at $CC)"
@@ -90,11 +94,15 @@ cp "$HERE/case126-count.test.ts" "$COUNTREC"
 # mobile ECG machine, the simulated report, the anaesthetist's review, save/reload/language (tools/case126-studies.test.ts)
 cp "$HERE/case126-studies.test.ts" "$STUDIES"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-studies.test.ts")
+# the first release scenario (the engineering recommendations): ECG before induction, the assistant's traction, a
+# save and resume midway, the window closing when the assistant leaves the table (tools/case126-release.test.ts)
+cp "$HERE/case126-release.test.ts" "$RELEASE"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-release.test.ts")
 
 echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
 python3 "$HERE/operative/build_suite_case126.py" --check
 OUT="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES"' EXIT
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE"' EXIT
 for agent in reference scripted-llm; do
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
 done
