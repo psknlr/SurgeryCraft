@@ -372,6 +372,14 @@ encounter was `source-only` or `expanded` (new investigations ordered), which a 
 
 ## Validation still required (not done)
 
+- **Measured in a browser, not only headless.** The final scenario (`tools/case126-final.test.ts`) runs headless
+  against the web's own operative playback; the browser demonstrations (`tools/browser-demos.mjs`) have not been
+  re-run for this change, nor on the deployed build. Frame rate and input latency of the scope dock and the surgery
+  window have not been measured.
+- **CI not yet observed.** `.github/workflows/integration.yml` runs `tools/check.sh` against the pinned ClinicalCraft
+  commit; it was run locally (green), not yet on GitHub (a private ClinicalCraft needs the `CLINICALCRAFT_READ_TOKEN`
+  secret).
+
 - **Clinical review.** Two hepatobiliary or experienced laparoscopic surgeons, one anaesthetist and
   one abdominal radiologist must review:
   - organ orientation;

@@ -14,15 +14,15 @@
  *      operative playback the scope dock and the surgery window share.
  *   5. Save and resume: the field, the studies, the anaesthesia responsibility, the step order and the persistent
  *      action ids agree with the run never interrupted.
- *   6. Conversion: a confirmed conversion to open surgery; pressure, instruments and traction go together, and the
- *      field says the operation is open.
+ *   6. Conversion: a confirmed conversion to open surgery; pressure, instruments and traction go together, the
+ *      field says the operation is open, and the views' open field shows what was done (no scope picture).
  *
  * `tools/check.sh` copies this file into `<ClinicalCraft>/packages/agent/src/` for the run and removes it afterwards.
  * The repository root comes from $SURGERYCRAFT_ROOT.
  */
 import { describe, expect, it } from "vitest";
 import { PRIMARY_ACTOR, type NavGoal } from "@clinicalcraft/world";
-import { procedureFor, type CaseDefinition, type ClinicalAction } from "@clinicalcraft/core";
+import { observeField, procedureFor, type CaseDefinition, type ClinicalAction } from "@clinicalcraft/core";
 import type { AgentEvent } from "./protocol.js";
 import { makeSession, msgsOf, type TestSession } from "./__fixtures__/harness.js";
 import { loadContent } from "./node/content.js";
@@ -180,6 +180,11 @@ describe("Case 126 · the final acceptance scenario", () => {
     expect(p.insufflated).toBe(false);
     expect(p.ports.every((x) => !x.instrument)).toBe(true);
     expect((await tool(r, "observe_field")).output).toMatch(/open/i);
+    // the views show the open field (no scope picture): the dissection done and the structures clipped and divided
+    const open = observeField(procedureFor(r.session.caseDef, r.session.state)!, p, "open");
+    expect(open.inView).toBe(false);
+    expect(open.regions.find((x) => x.id === "hepatocystic-triangle")?.dissection).not.toBe("untouched");
+    expect(open.tubes.filter((x) => x.divided)).toHaveLength(2);
     await r.session.close();
   });
 });
