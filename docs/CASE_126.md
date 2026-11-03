@@ -333,6 +333,25 @@ All three passed on 2026-11-03 on a **local** build of these revisions in Chromi
 `docs/img/case126-browser-demos/` (screenshots and `browser-demos.json`). They have **not** been run on the deployed
 build: run `node tools/browser-demos.mjs --url '<deployed URL with ?token=…>'` there before freezing the version.
 
+## 2.5.0: investigations beyond the published case, and the operative record (the engineering recommendations)
+
+The published case reports no ECG. 2.5.0 keeps that fact and lets the simulated hospital do one
+(ClinicalCraft `docs/STUDIES.md`):
+
+| recommendation | 2.5.0 (with ClinicalCraft) | test |
+|---|---|---|
+| The chart separates "retrieve an existing report" from "order a new investigation" | `retrieve_report "ECG"` → *Historical material unavailable — No ECG is recorded in the published case*; `order_study "ECG"` → a new order the hospital fulfils | `case126-studies.test.ts` |
+| The ordering service resolves the test, the facility's capability, the staff and the device | test profiles in `case.studies` (12-lead ECG, blood count, chemistry, chest radiograph); the department's one **Mobile ECG machine** (`anaes-workroom-ecg`, anaesthesia workroom); the IMPF hospital has no X-ray device, so a chest radiograph waits "no device in this hospital provides xray" | studies: the third test |
+| The nurse fetches the device independently | the case team's circulating nurse (Nurse Aisyah) walks to the workroom, reserves the machine and wheels it to the patient with their own body; the world keeps its custody, and it is still in OR 7 after a reload | studies: the first test |
+| The engine captures the state at acquisition; a test-specific model | the ECG's rate from the patient now, seeded intervals, and the lead placement: standard leads show the dextrocardia (lead I inverted, reversed progression), mirrored leads read as a normally placed heart; the laboratory panel's values move with a bleed or a duct injury at the moment of collection | studies: the second test; ClinicalCraft `study.test.ts` |
+| The reporting agent writes, a validator checks, a template is the fallback | numbers, sides and claims checked against the observations; the report is labelled *simulated investigation* and reviewed by the anaesthetist (Dr Tanaka) in their own voice | studies: the first test |
+| A retry is the same order; a deliberate repeat a new accession; a report never changes on reload or language | request keys; `ecg-12lead-1`, `ecg-12lead-2`; save/reload/zh-CN compared | studies: the first two tests |
+| A generic report request never bypasses an operative prerequisite | "intraoperative cholangiogram" is refused from the chart: it is acquired at the table or not at all | studies: the third test |
+| Duplicated bail-outs; conversion cleanup; action identity | a bail-out under way is refused with no second effect or time; a committed subtotal changes only by an explicit revision; conversion clears pressure, instruments and traction together; every operative step carries `id`, `step`, `seq`, `at`, `by` | ClinicalCraft `approach.test.ts` |
+
+The case version is 2.5.0; the score export carries the case version, the engine version, `finished` and whether the
+encounter was `source-only` or `expanded` (new investigations ordered), which a benchmark reports apart.
+
 ## Validation still required (not done)
 
 - **Clinical review.** Two hepatobiliary or experienced laparoscopic surgeons, one anaesthetist and

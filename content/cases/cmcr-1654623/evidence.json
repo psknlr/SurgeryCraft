@@ -1,7 +1,7 @@
 {
   "schema": "surgerycraft/evidence-ledger@2",
   "caseId": "cmcr-1654623",
-  "caseVersion": "2.4.0",
+  "caseVersion": "2.5.0",
   "sourceArchive": "dataset/126_1654623_内脏完全反位腹腔镜胆囊切除术一例.zip",
   "sourcePages": [
     180,

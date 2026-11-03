@@ -194,6 +194,7 @@
     {"id": "or-7-swab-3", "type": "sc-gauze-swab", "x": 7.58, "z": 3.77, "room": "or-7", "label": {"zh-CN": "纱布 3", "en": "Swab 3"}, "y": 1.16},
     {"id": "or-7-swab-4", "type": "sc-gauze-swab", "x": 7.68, "z": 3.77, "room": "or-7", "label": {"zh-CN": "纱布 4", "en": "Swab 4"}, "y": 1.16},
     {"id": "or-7-swab-5", "type": "sc-gauze-swab", "x": 7.78, "z": 3.77, "room": "or-7", "label": {"zh-CN": "纱布 5", "en": "Swab 5"}, "y": 1.16},
+    {"id": "anaes-workroom-ecg", "type": "ecg-machine", "x": 23.7, "z": -17.05, "room": "anaes-workroom", "label": {"zh-CN": "移动心电图机", "en": "Mobile ECG machine"}},
     {"id": "or-6-swab-1", "type": "sc-gauze-swab", "x": -4.62, "z": 3.77, "room": "or-6", "label": {"zh-CN": "6 号手术间纱布", "en": "OR 6 swab"}, "y": 1.16},
     {"id": "or-3-hlm", "type": "sc-heart-lung-machine", "x": 3.1, "z": -17.5, "rot": 180, "room": "or-3", "label": {"zh-CN": "体外循环机", "en": "Heart-lung machine"}},
     {"id": "or-3-cell-salvage", "type": "sc-cell-salvage", "x": 9.1, "z": -11.9, "rot": 180, "room": "or-3", "label": {"zh-CN": "术中自体血回收", "en": "Cell salvage"}},
