@@ -218,6 +218,19 @@ describe("Case 126 · the first release scenario", () => {
     await t.session.close();
   });
 
+  it("case_status recommends only what would run: with the specimen still in, closure, emergence and the Sign Out are not 'next'", async () => {
+    const t = await toTheTriangle();
+    const st = await tool(t, "case_status");
+    const recs = st.data.recommendations as { action: string; available: boolean; blockedBy: string[] }[];
+    const of = (re: RegExp) => recs.find((r) => re.test(r.action));
+    expect(of(/op: "close"/)).toMatchObject({ available: false, blockedBy: [expect.stringMatching(/specimen is still inside/)] });
+    expect(of(/"emergence"/)).toMatchObject({ available: false, blockedBy: ["Finish the operation first."] });
+    expect(of(/"sign-out"/)).toMatchObject({ available: false, blockedBy: [expect.stringMatching(/^out of order — first: /)] });
+    expect(st.output).toMatch(/→ not yet: at the table: observe_field, then operate \{op: "close"\} — The specimen is still inside/);
+    expect(st.output).not.toMatch(/→ next: [^\n]*(op: "close"|"emergence"|"sign-out")/);
+    await t.session.close();
+  });
+
   it("sent on an errand while holding traction, the assistant lets go first and says so; the operator sees the window close", async () => {
     const t = await toTheTriangle();
     expect((await tool(t, "delegate_task", { role: ASSISTANT, task: "hold_traction", params: { port: "B" } })).ok).toBe(true);
