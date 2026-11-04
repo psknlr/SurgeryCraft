@@ -16,7 +16,7 @@
  * The repository root comes from $SURGERYCRAFT_ROOT.
  */
 import { describe, expect, it } from "vitest";
-import { PRIMARY_ACTOR, type NavGoal } from "@clinicalcraft/world";
+import { PRIMARY_ACTOR, type NavGoal, type WorldActionRequest } from "@clinicalcraft/world";
 import { assess, countStatus, evaluate, type CaseDefinition, type ClinicalAction } from "@clinicalcraft/core";
 import type { AgentEvent, TeamEvent } from "./protocol.js";
 import { makeSession, msgsOf, type TestSession } from "./__fixtures__/harness.js";
@@ -66,7 +66,11 @@ const isClose = (a: ClinicalAction) => a.type === "operate" && a.op.op === "clos
 
 let seq = 0;
 async function act(t: TestSession, actorId: string, operation: string, targetId?: string, goal?: NavGoal) {
-  const events = await t.session.run({ type: "world_action", request: { actionId: `c-${++seq}`, actorId, operation, ...(targetId ? { targetId } : {}), ...(goal ? { goal } : {}) } });
+  const request = { actionId: `c-${++seq}`, actorId, operation, ...(targetId ? { targetId } : {}), ...(goal ? { goal } : {}) };
+  // the learner's op moves only the learner's own body (PROTOCOL §12.2); a colleague's body is the scenario's to move,
+  // through the world facade, as the benchmark's setup moves it
+  if (actorId !== PRIMARY_ACTOR) return t.session.world()!.execute(request as WorldActionRequest);
+  const events = await t.session.run({ type: "world_action", request });
   const r = msgsOf(events, "world_action_result").at(-1)?.result;
   if (!r) throw new Error(`no result for ${operation}`);
   return r;

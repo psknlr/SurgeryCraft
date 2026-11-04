@@ -15,7 +15,7 @@
  * `tools/check.sh` copies this file into `<ClinicalCraft>/packages/agent/src/` for the run and removes it afterwards.
  */
 import { describe, expect, it } from "vitest";
-import { PRIMARY_ACTOR, type NavGoal } from "@clinicalcraft/world";
+import { PRIMARY_ACTOR, type NavGoal, type WorldActionRequest } from "@clinicalcraft/world";
 import { assess, evaluate, type ClinicalAction } from "@clinicalcraft/core";
 import { makeSession, msgsOf, type TestSession } from "./__fixtures__/harness.js";
 import { loadContent } from "./node/content.js";
@@ -29,7 +29,11 @@ const CIRCULATOR = "staff:or-7.circulating-nurse";
 
 let seq = 0;
 async function act(t: TestSession, actorId: string, operation: string, targetId?: string, goal?: NavGoal) {
-  const events = await t.session.run({ type: "world_action", request: { actionId: `a-${++seq}`, actorId, operation, ...(targetId ? { targetId } : {}), ...(goal ? { goal } : {}) } });
+  const request = { actionId: `a-${++seq}`, actorId, operation, ...(targetId ? { targetId } : {}), ...(goal ? { goal } : {}) };
+  // the learner's op moves only the learner's own body (PROTOCOL §12.2); a colleague's body is the scenario's to move,
+  // through the world facade, as the benchmark's setup moves it
+  if (actorId !== PRIMARY_ACTOR) return t.session.world()!.execute(request as WorldActionRequest);
+  const events = await t.session.run({ type: "world_action", request });
   const r = msgsOf(events, "world_action_result").at(-1)?.result;
   if (!r) throw new Error(`no result for ${operation}`);
   return r;
