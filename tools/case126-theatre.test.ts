@@ -41,6 +41,8 @@ const CASE = "cmcr-1654623";
 const BOARD = "eq:or-7.checklist";
 const COUNT = "eq:or-7.count-board";
 const TOWER = "eq:or-7.lap-tower";
+/** Every staff line said so far (speaker: text). */
+const spoken = (t: TestSession) => msgsOf(t.events, "agent_message").map((m) => `${m.speaker}: ${m.text}`);
 const WARMER = "eq:or-7.warmer";
 const TABLE = "eq:or-7.table";
 const CIRCULATOR = "staff:or-7.circulating-nurse";
@@ -357,8 +359,8 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     expect((await tool(t, "observe_field")).output).toMatch(/not under way in this phase[\s\S]*Time Out/);
     // counts and the tower: perioperative tasks, never the operation (and a device's minute is a clinical minute)
     await done(t, CIRCULATOR, "baseline_count", COUNT);
-    for (const op of ["power_on", "white_balance"]) await done(t, PRIMARY_ACTOR, op, TOWER);
-    await toBedside(t);
+    // OR 7's tower is set up before the list (on, self-tested, white-balanced): gas on is a device act of its own
+    expect(t.session.world()!.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("balanced");
     const clock = t.session.state.clock;
     await done(t, PRIMARY_ACTOR, "start_insufflation", TOWER);
     expect(t.session.state.clock - clock).toBeGreaterThanOrEqual(1);
@@ -506,16 +508,20 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     // no CO₂: the pneumoperitoneum is refused with why; the record holds what the equipment supplies
     const gas = await tool(t, "operate", { op: "insufflate", pressure: 12 });
     expect(gas.ok).toBe(false);
-    expect(gas.output).toMatch(/There is no CO₂ supply: the insufflator is out of service/u);
+    expect(gas.output).toMatch(/There is no CO₂ supply: the insufflator is not working \(switched off or out of service\)/u);
     expect(t.session.state.procedure).toMatchObject({ insufflated: false, pressure: 0, supply: { image: false, gas: false } });
     const dark = await tool(t, "observe_field");
-    expect(dark.output).toMatch(/No picture: the laparoscopic camera or light source is out of service/u);
+    expect(dark.output).toMatch(/No picture: the laparoscopic camera or light source is not working \(switched off or out of service\)/u);
     expect(dark.output).toMatch(/No CO₂ supply/u);
     expect(dark.output).not.toMatch(/In view: Liver/u);
-    // the circulating nurse fetches the spare tower from the equipment store: it supplies both again
+    // the circulating nurse fetches the spare tower from the equipment store — it was off there — and, the operation
+    // under way, switches it on herself: it supplies both again
+    expect(w.provides("eq:l1-spare-lap-tower")).toEqual([]);
     const fetched = await tool(t, "delegate_task", { role: CIRCULATOR, task: "fetch_equipment", target: "eq:l1-spare-lap-tower" });
     expect(fetched.ok, fetched.output).toBe(true);
     expect(w.roomOf("eq:l1-spare-lap-tower")).toBe("or-7");
+    expect(w.inspect(PRIMARY_ACTOR, "eq:l1-spare-lap-tower")?.state).toBe("on");
+    expect(spoken(t).join("\n")).toMatch(/Nurse [^:]+: I've switched the Spare laparoscopy tower on — we have a laparoscopic camera, a light source and an insufflator again\./u);
     for (const step of [{ op: "insufflate", pressure: 12 }, { op: "insert", port: "A", instrument: "laparoscope" }]) {
       const r = await tool(t, "operate", step);
       expect(r.ok, `${step.op}: ${r.output}`).toBe(true);
@@ -526,6 +532,80 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     const supplies = t.session.snapshot().actions.filter((a) => a.type === "procedure-supply").map((a) => (a as { supply: { image: boolean; gas: boolean } }).supply);
     expect(supplies.map((x) => [x.image, x.gas])).toEqual([[false, false], [true, true]]);
     await t.session.close();
+  });
+
+  it("the tower switched off: no picture and no gas; once the operation begins the circulating nurse switches it on — the device, the record and the field agree at each step", async () => {
+    const t = await theatre();
+    toTheTable(t);
+    await toBedside(t);
+    const w = t.session.world()!;
+    // OR 7's tower is set up before the list: on, self-tested and white-balanced
+    expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("balanced");
+    expect(w.provides(TOWER)).toEqual(["endoscopic-camera", "light-source", "insufflator"]);
+    // switched off at the tower: it supplies nothing, and the field says so
+    expect((await act(t, PRIMARY_ACTOR, "navigate", undefined, { kind: "interact", id: TOWER })).status).toBe("completed");
+    expect((await act(t, PRIMARY_ACTOR, "power_off", TOWER)).status).toBe("completed");
+    expect([w.inspect(PRIMARY_ACTOR, TOWER)?.state, w.provides(TOWER)]).toEqual(["off", []]);
+    // looked at before the plan is chosen: the record already holds that nothing is supplied
+    await tool(t, "observe_field");
+    expect(t.session.state.procedure).toMatchObject({ insufflated: false, pressure: 0, supply: { image: false, gas: false } });
+    // nobody switches it back on before the operation begins (it may be off on purpose)
+    await t.session.run({ type: "staff_step" });
+    expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("off");
+    // the operation begins: the circulating nurse switches it on with her own body, and says what it gives back
+    await toBedside(t);
+    const plan = await tool(t, "operate", { op: "plan-ports", plan: "three-port-left" });
+    expect(plan.ok, plan.output).toBe(true);
+    expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("on");
+    expect(w.actor(CIRCULATOR)?.room).toBe("or-7");
+    expect(spoken(t).join("\n")).toMatch(/I've switched the 4K\/3D laparoscopy tower on — we have a laparoscopic camera, a light source and an insufflator again\./u);
+    expect(t.session.state.procedure!.supply).toMatchObject({ image: true, gas: true });
+    for (const step of [{ op: "insufflate", pressure: 12 }, { op: "insert", port: "A", instrument: "laparoscope" }]) {
+      const r = await tool(t, "operate", step);
+      expect(r.ok, `${step.op}: ${r.output}`).toBe(true);
+    }
+    expect((await tool(t, "observe_field")).output).toMatch(/In view: Liver/u);
+    const supplies = t.session.snapshot().actions.filter((a) => a.type === "procedure-supply").map((a) => (a as { supply: { image: boolean; gas: boolean } }).supply);
+    expect(supplies.map((x) => [x.image, x.gas])).toEqual([[false, false], [true, true]]);
+    await t.session.close();
+  });
+
+  it("the working tower fails mid-operation: dark and deflated at once, a backup restores it; a save and resume keeps the dark field and the recovery", async () => {
+    const t = await theatre();
+    toTheTable(t);
+    await toBedside(t);
+    const w = t.session.world()!;
+    for (const step of [{ op: "plan-ports", plan: "three-port-left" }, { op: "insufflate", pressure: 12 }, { op: "insert", port: "A", instrument: "laparoscope" }]) expect((await tool(t, "operate", step)).ok).toBe(true);
+    expect((await tool(t, "observe_field")).output).toMatch(/In view: Liver/u);
+    // the tower fails with the scope in: the staff's round records it — no picture, no gas, the abdomen down
+    w.setAvailability(TOWER, false);
+    await t.session.run({ type: "staff_step" });
+    expect(t.session.state.procedure).toMatchObject({ insufflated: false, pressure: 0, supply: { image: false, gas: false } });
+    const dark = await tool(t, "observe_field");
+    expect(dark.output).toMatch(/No picture/u);
+    expect(dark.output).not.toMatch(/In view: Liver/u);
+    const refused = await tool(t, "operate", { op: "insert", port: "B", instrument: "grasper" });
+    expect(refused.ok).toBe(false);
+    // saved and resumed while dark: the same field
+    const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    await t.session.close();
+    const r = await makeSession({
+      ...(await content()),
+      settingsPatch: { embodiment: "embodied", approvalMode: "bypass" },
+      resume: { sessionId: saved.sessionId, actions: saved.actions, messages: saved.messages, dialogue: saved.dialogue },
+      embodied: { snapshot: saved.world, team: saved.team },
+    });
+    expect(r.session.state.procedure).toMatchObject({ insufflated: false, pressure: 0, supply: { image: false, gas: false } });
+    expect((await tool(r, "observe_field")).output).toMatch(/No picture/u);
+    // the spare tower: fetched, switched on by the circulating nurse, the abdomen insufflated again, the picture back
+    const fetched = await tool(r, "delegate_task", { role: CIRCULATOR, task: "fetch_equipment", target: "eq:l1-spare-lap-tower" });
+    expect(fetched.ok, fetched.output).toBe(true);
+    expect(r.session.state.procedure!.supply).toMatchObject({ image: true, gas: true });
+    expect((await tool(r, "operate", { op: "insufflate", pressure: 12 })).ok).toBe(true);
+    expect((await tool(r, "observe_field")).output).toMatch(/In view: Liver/u);
+    const supplies = r.session.snapshot().actions.filter((a) => a.type === "procedure-supply").map((a) => (a as { supply: { image: boolean; gas: boolean } }).supply);
+    expect(supplies.map((x) => [x.image, x.gas])).toEqual([[false, false], [true, true]]);
+    await r.session.close();
   });
 });
 

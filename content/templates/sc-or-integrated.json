@@ -53,7 +53,7 @@
     {"id": "grille-1", "type": "sc-return-grille", "x": 3.9, "z": -4.285},
     {"id": "grille-2", "type": "sc-return-grille", "x": -3.9, "z": 4.285, "rot": 180},
     {"id": "sanitizer", "type": "hand-sanitizer", "x": -0.6, "z": 4, "label": {"zh-CN": "手消毒液", "en": "Hand rub"}},
-    {"id": "lap-tower", "type": "sc-laparoscopy-tower", "x": 0.5, "z": -1.35, "label": {"zh-CN": "4K/3D 腹腔镜系统", "en": "4K/3D laparoscopy tower"}},
+    {"id": "lap-tower", "type": "sc-laparoscopy-tower", "x": 0.5, "z": -1.35, "label": {"zh-CN": "4K/3D 腹腔镜系统", "en": "4K/3D laparoscopy tower"}, "state": "balanced"},
     {"id": "ultrasound", "type": "ultrasound-machine", "x": 0.2, "z": -3.9, "label": {"zh-CN": "超声 / 经食道超声", "en": "Ultrasound / TOE"}},
     {"id": "airway", "type": "sc-difficult-airway-trolley", "x": -1.4, "z": -4.05, "label": {"zh-CN": "困难气道车", "en": "Difficult airway trolley"}},
     {"id": "display-1", "type": "sc-ceiling-display", "x": 1.6, "z": 2.6, "rot": 180, "label": {"zh-CN": "吊臂显示器 1", "en": "Ceiling display 1"}},

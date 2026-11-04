@@ -187,4 +187,81 @@ describe("Case 126 · the final acceptance scenario", () => {
     expect(open.tubes.filter((x) => x.divided)).toHaveLength(2);
     await r.session.close();
   });
+  it("the learner keeps operating while the team works: an alarm and a hand-over with the surgery window open — who moves, who speaks, who signs the next report (the follow-up audit's acceptance test)", { timeout: 300_000 }, async () => {
+    // Case 126 with hypotension once the abdomen is insufflated (a scenario variant: the rules are ClinicalCraft's)
+    const c = await content();
+    const caseDef = structuredClone(c.caseDef);
+    const bleed = caseDef.physiology!.events!.find((e) => e.id === "ev-major-bleeding")!;
+    caseDef.physiology!.events!.push({ ...structuredClone(bleed), id: "ev-test-hypotension", when: { procedure: { insufflated: true } }, setVitals: { sbp: 72, dbp: 40, hr: 112 } });
+    const t = await makeSession({ ...c, caseDef, settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    let i = recordUntil(t, isFirstDissection);
+    const w = t.session.world()!;
+    const sol = t.session.caseDef.solution;
+    const heard: AgentEvent[] = [];
+    /** The learner walks to the table (what is said meanwhile is heard). */
+    const toTable = async () => {
+      const events = await t.session.run({ type: "world_action", request: { actionId: `w-${++n}`, actorId: PRIMARY_ACTOR, operation: "navigate", goal: { kind: "interact", id: patientId(t) } } });
+      heard.push(...events);
+      expect(msgsOf(events, "world_action_result").at(-1)!.result.status).toBe("completed");
+    };
+    await toTable();
+    const said = () => msgsOf(heard, "agent_message").map((m) => `${m.speaker}: ${m.text}`);
+    // the surgery window's picture: the one playback the web draws, fed with what the session emits
+    const def = procedureFor(t.session.caseDef, t.session.state)!;
+    const playback = new OperativePlayback({ now: () => 0, schedule: () => 0, cancel: () => undefined });
+    playback.attach("acceptance", def);
+    const drawn = () => {
+      playback.sync(operativeEvents(heard), t.session.state.procedure!);
+      while (playback.pending()) playback.next();
+      return playback.frame().state!;
+    };
+    drawn();
+    /** The learner's next operative step of the reference record, from the surgery window. */
+    const operate = async () => {
+      const a = sol[i++] as Extract<ClinicalAction, { type: "operate" }>;
+      expect(a.type).toBe("operate");
+      const r = await tool(t, "operate", a.op as unknown as Record<string, unknown>);
+      heard.push(...r.events);
+      expect(r.ok, `${a.op.op}: ${r.output}`).toBe(true);
+      // the picture on screen is the session's own field after every step
+      expect(drawn().counters.steps).toBe(t.session.state.procedure!.counters.steps);
+    };
+    const round0 = t.session.team()?.state.round ?? 0;
+
+    // 1. the abdomen is up and the pressure falls as the learner takes the table: the responsible anaesthetist, already
+    // at the patient, says so — the learner dissects on
+    await operate();
+    expect(t.session.state.alarms).toMatchObject([{ vital: "sbp", by: "or-7.anaesthetist", stage: "arrived" }]);
+    expect(said()).toContainEqual(expect.stringMatching(/^Dr Tanaka \(anaesthesia\): Alarm: SBP 72 — I'm at the patient and checking it\.$/u));
+
+    // 2. still operating, the learner asks Dr Tanaka to go: Dr Wang comes in and takes over first, then Dr Tanaka goes
+    const asked = await t.session.run({ type: "user_message", text: "Dr Tanaka, please show me the way to theatre control.", to: "attending", staff: "or-7.anaesthetist" } as never);
+    heard.push(...asked);
+    expect(t.session.state.anaesthesia).toMatchObject({ responsible: "l1-anaesthetist", handoverStatus: "transferred" });
+    expect(said()).toContainEqual(expect.stringMatching(/^Dr Wang \(duty consultant anaesthetist\): I've taken over the anaesthetic from Dr Tanaka \(anaesthesia\)\./u));
+    expect([w.roomOf("staff:l1-anaesthetist"), w.roomOf("staff:or-7.anaesthetist")]).toEqual(["or-7", "l1-control"]);
+    await toTable();
+    await operate();
+
+    // 3. a new ECG: the circulating nurse records it with her own body; Dr Wang — responsible now — signs the report
+    const ordered = await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "intra-op" });
+    heard.push(...ordered.events);
+    expect(ordered.ok, ordered.output).toBe(true);
+    const waited = await tool(t, "wait", { minutes: 10 });
+    heard.push(...waited.events);
+    const studies = t.session.state.studies!;
+    expect(studies.accessions[0]).toMatchObject({ collector: "or-7.circulating-nurse" });
+    expect(studies.reviews).toEqual([expect.objectContaining({ by: "l1-anaesthetist", basis: "responsible" })]);
+    expect(said()).toContainEqual(expect.stringMatching(/^Dr Wang \(duty consultant anaesthetist\): I've reviewed the simulated 12-lead ECG/u));
+    // Dr Tanaka, gone to theatre control, only showed the learner the way: no alarm, no review, nothing of the patient's
+    const afterHandover = said().slice(said().findIndex((x) => x.startsWith("Dr Wang (duty consultant anaesthetist): I've taken over")) + 1);
+    expect(afterHandover.filter((x) => x.startsWith("Dr Tanaka"))).toEqual(["Dr Tanaka (anaesthesia): Follow me — I'll take you to Theatre control desk."]);
+    await operate();
+
+    // the team went on working with the operation (its rounds ran after the learner's steps), and the picture is the field's
+    expect(t.session.team()?.state.round ?? 0).toBeGreaterThan(round0);
+    expect(observeField(def, drawn()).inView).toBe(true);
+    await t.session.close();
+  });
 });
