@@ -159,11 +159,11 @@ def or_team(scrub, circulating, anaesthetist):
     """The OR team at their posts (named per OR in the facility): scrub nurse at the set-up table, circulating
     nurse, anaesthetist at the head of the table. The learner operates; they pass, count and anaesthetise."""
     return [
-        {"id": "scrub-nurse", "role": "nurse", "name": L("洗手护士", "Scrub nurse"), "x": num(scrub[0]), "z": num(scrub[1]), "rot": scrub[2],
+        {"id": "scrub-nurse", "role": "nurse", "position": "scrub-nurse", "name": L("洗手护士", "Scrub nurse"), "x": num(scrub[0]), "z": num(scrub[1]), "rot": scrub[2],
          "greeting": L("器械台已按清单摆好，纱布已清点。要什么器械说一声，我递给您。", "The set-up is laid out to the tray list and the swabs are counted. Call for what you need and I'll pass it.")},
-        {"id": "circulating-nurse", "role": "nurse", "name": L("巡回护士", "Circulating nurse"), "x": num(circulating[0]), "z": num(circulating[1]), "rot": circulating[2],
+        {"id": "circulating-nurse", "role": "nurse", "position": "circulating-nurse", "name": L("巡回护士", "Circulating nurse"), "x": num(circulating[0]), "z": num(circulating[1]), "rot": circulating[2],
          "greeting": L("我负责核查和清点，开台前我们一起做 Sign in 和 Time out。", "I run the checklist and the counts — we'll do the sign-in and the time-out together before you start.")},
-        {"id": "anaesthetist", "role": "attending", "name": L("麻醉医生", "Anaesthetist"), "x": num(anaesthetist[0]), "z": num(anaesthetist[1]), "rot": anaesthetist[2],
+        {"id": "anaesthetist", "role": "attending", "position": "anaesthetist", "name": L("麻醉医生", "Anaesthetist"), "x": num(anaesthetist[0]), "z": num(anaesthetist[1]), "rot": anaesthetist[2],
          "greeting": L("麻醉机已完成开机检查，监测按日本麻醉科学会指南：SpO₂、ETCO₂、心电、无创血压、体温和肌松监测。", "The machine check is done; monitoring follows the JSA guideline — SpO₂, capnography, ECG, NIBP, temperature and neuromuscular monitoring.")},
     ]
 
@@ -531,7 +531,7 @@ template(
     grid_lights(WP, DP, 3, 2),
     pacu,
     slots=pacu_slots,
-    staff=[{"id": "nurse", "role": "nurse", "name": L("复苏室护士", "Recovery nurse"), "x": 0, "z": 1.9, "rot": 180,
+    staff=[{"id": "nurse", "role": "nurse", "position": "recovery-nurse", "name": L("复苏室护士", "Recovery nurse"), "x": 0, "z": 1.9, "rot": 180,
             "greeting": L("交接时请说清楚术式、麻醉方式、术中出血和镇痛计划。", "For handover I need the procedure, the anaesthetic, blood loss and the analgesia plan.")}],
     caps=["cardiac-monitor", "capnography", "oxygen", "suction", "infusion-pump", "ventilator", "niv", "defibrillator", "crash-cart", "airway", "medications", "lab-blood-gas", "records"],
     tags=["pacu", "recovery", "perioperative"],

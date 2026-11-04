@@ -254,8 +254,8 @@ case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-hi
        'Monitoring attached: the pulse oximeter shows a good trace and reads reliably; dextrocardia — ECG chest leads in mirror positions; non-invasive blood pressure cycling. This is the monitor only, not the Sign In.',
        indicated={'phase': 'theatre'}),
     iv('sign-in', 'consult', 'WHO 麻醉前核对（Sign In）', 'WHO Sign In before induction',
-       '团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录，已当场确认。',
-       'The team checks identity, procedure, consent and site: the gallbladder is on the patient\'s LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient\'s own left, with no "reversing" of sides; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source and are confirmed now.',
+       '团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录：团队逐项说明已知情况，不明的仍为不明。',
+       'The team checks identity, procedure, consent and site: the gallbladder is on the patient\'s LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient\'s own left, with no "reversing" of sides; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source: the team states what is known of each, and an unknown stays unknown.',
        indicated={'all': [{'phase': 'theatre'}, SIGN_IN_CHECKS]}, contra={'not': SIGN_IN_CHECKS},
        harm=('核对项尚未落实就做麻醉前核对：已记录为无效。择期手术先要明确诊断、制定手术计划并评估手术风险；再连接监护（脉搏血氧工作正常），问清过敏与禁食（误吸风险），然后 Sign In。',
              'A Sign In before its checks: recorded as invalid. An elective operation needs the diagnosis made, the operation planned and the operative risk assessed first; then attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), and sign in.'),
@@ -940,6 +940,30 @@ for r in [
 ]:
     if r not in refs:
         refs.append(r)
+
+# ------------------------------------------------------------------ safety data (ClinicalCraft `datumStatus`)
+# asking is not confirming: the source records neither allergies nor fasting, so both stay unknown when asked, and the
+# Sign In states them as unknown — acknowledged by the team, never "confirmed"
+for h in case['history']:
+    if h['id'] == 'allergies':
+        h['safety'] = dict(datum='allergy')
+    elif h['id'] == 'fasting':
+        h['safety'] = dict(datum='fasting')
+for i in case['interventions']:
+    if i['id'] == 'sign-in':
+        i['reports'] = ['allergy', 'fasting']
+
+# ------------------------------------------------------------------ records in the simulated timeline
+# (ClinicalCraft `recordAvailability`): the source's preoperative reports predate the encounter; the operation record,
+# the histology and the follow-up are written during it and exist only once the review is reached — never earlier,
+# whatever the learner searches for
+for inv in case['investigations']:
+    if inv.get('performedAt') != 'records':
+        continue
+    if inv['id'] in ('operation-record', 'pathology-record', 'followup-record'):
+        inv['availability'] = dict(earliestPhase='review', historical=False)
+    else:
+        inv['availability'] = dict(historical=True)
 
 # ------------------------------------------------------------------ reference path
 sol = [s for s in case['solution'] if s['type'] != 'finish' and not (s['type'] == 'intervene' and s['interventionId'] == 'open-historical-review')]

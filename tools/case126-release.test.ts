@@ -114,7 +114,10 @@ describe("Case 126 · the first release scenario", () => {
     expect(msgsOf(forged, "error")[0]).toMatchObject({ code: "permission_denied" });
 
     // save and resume midway: positions, field, custody, report, step order
+    // the save as a front-end writes it (a deep copy, through JSON), and the state it was taken from (a deep copy too:
+    // nothing later can change what is compared)
     const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    const atSave = structuredClone(t.session.state);
     const w0 = t.session.world()!;
     const where = (w: typeof w0, id: string) => {
       const p = w.actor(id)?.pose ?? w.entity(id)!.position;
@@ -125,12 +128,16 @@ describe("Case 126 · the first release scenario", () => {
     const order = steps(t);
     await t.session.close();
     const r = await makeSession({ ...(await content()), settingsPatch: SETTINGS, resume: { sessionId: saved.sessionId, actions: saved.actions, messages: saved.messages, dialogue: saved.dialogue }, embodied: { snapshot: saved.world, team: saved.team } });
-    expect(r.session.state.procedure).toEqual(saved.state?.procedure ?? r.session.state.procedure);
+    expect(atSave.procedure).toBeDefined();
+    expect(r.session.state.procedure).toEqual(atSave.procedure);
     expect(r.session.state.procedure!.ports.find((p) => p.site === "B")!.holder).toBe("or-7-assistant");
-    expect(r.session.state.studies).toEqual(saved.state?.studies ?? r.session.state.studies);
+    expect(atSave.studies?.reports.length).toBeGreaterThan(0);
+    expect(r.session.state.studies).toEqual(atSave.studies);
     expect(bodies.map((id) => where(r.session.world()!, id))).toEqual(positions);
     expect(steps(r)).toEqual(order);
-    expect(r.session.state.procedure!.counters.steps).toBe(saved.state?.procedure?.counters.steps ?? r.session.state.procedure!.counters.steps);
+    expect(r.session.state.procedure!.counters.steps).toBe(atSave.procedure!.counters.steps);
+    expect(r.session.state.anaesthesia).toEqual(atSave.anaesthesia);
+    expect(r.session.state.clock).toBe(atSave.clock);
     expect((await tool(r, "read_study", { query: "ECG" })).output).toMatch(/^Simulated investigation · 12-lead ECG/);
 
     // the assistant is called away: the traction goes with their hands, before the operator's next instrument step
@@ -169,8 +176,41 @@ describe("Case 126 · the first release scenario", () => {
     expect(said).toContainEqual(expect.stringMatching(/^Dr Wang \(duty consultant anaesthetist\): I've taken over the anaesthetic from Dr Tanaka \(anaesthesia\)\./));
     // the colleague came to the patient before Dr Tanaka went; the hand-over is in the record
     expect(w.roomOf("staff:l1-anaesthetist")).toBe("or-7");
-    expect(t.session.state.notes.at(-1)!.text).toMatch(/^Anaesthesia handed over at .+: Dr Tanaka \(anaesthesia\) → Dr Wang \(duty consultant anaesthetist\), the patient under anaesthesia\./);
+    expect(t.session.state.anaesthesia).toMatchObject({ responsible: "l1-anaesthetist", handoverStatus: "transferred" });
+    const h = t.session.state.anaesthesia!.handovers[0]!;
+    expect(h).toMatchObject({ from: "or-7.anaesthetist", to: "l1-anaesthetist", accepted: true });
+    // the hand-over carries what the record holds: the vitals now, the drugs given
+    expect(Object.keys(h.haemodynamics)).toEqual(expect.arrayContaining(["hr", "sbp"]));
+    expect(said.find((l) => l.startsWith("Dr Wang"))).toMatch(/Hand-over — airway: .+; ventilation: .+; haemodynamics: HR \d+/);
     expect(w.roomOf("staff:or-7.anaesthetist")).toBe("l1-control");
+    // Dr Wang is now bound by the same rule: a fetch, or a direct move out of OR 7, is refused
+    const fetch = await t.session.run({ type: "user_message", text: "Dr Wang, please fetch the ECG machine.", to: "attending", staff: "l1-anaesthetist" } as never);
+    expect(msgsOf(fetch, "agent_message").map((m) => m.text).join(" ")).toMatch(/Continuous anaesthesia responsibility is required\. Arrange relief before leaving the patient/);
+    const away = await act(t, "staff:l1-anaesthetist", "navigate", { kind: "room", id: "l1-control" });
+    expect(away).toMatchObject({ status: "failed", errorCode: "NOT_AUTHORIZED" });
+    expect(w.roomOf("staff:l1-anaesthetist")).toBe("or-7");
+    // a hand-over is never typed in
+    const forged = await t.session.run({ type: "clinical_action", action: { type: "anaesthesia", anaesthesia: { op: "request-relief", from: "l1-anaesthetist", to: "or-7.anaesthetist" } } as ClinicalAction });
+    expect(msgsOf(forged, "error")[0]).toMatchObject({ code: "permission_denied" });
+    await t.session.close();
+  });
+
+  it("no relief arranged: the anaesthetist of an induced patient may not leave — by a request to fetch, a direct move or a delegated task (every path goes through the one world-action guard)", async () => {
+    const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    recordUntil(t, isFirstDissection);
+    const w = t.session.world()!;
+    const fetch = await t.session.run({ type: "user_message", text: "Dr Tanaka, please fetch the ECG machine.", to: "attending", staff: "or-7.anaesthetist" } as never);
+    expect(msgsOf(fetch, "agent_message").map((m) => m.text).join(" ")).toMatch(/Continuous anaesthesia responsibility is required\. Arrange relief before leaving the patient/);
+    expect(w.roomOf("staff:or-7.anaesthetist")).toBe("or-7");
+    expect(w.roomOf(ECG)).toBe("anaes-workroom");
+    expect(await act(t, "staff:or-7.anaesthetist", "navigate", { kind: "room", id: "anaes-workroom" })).toMatchObject({ status: "failed", errorCode: "NOT_AUTHORIZED" });
+    const delegated = await tool(t, "delegate_task", { role: "staff:or-7.anaesthetist", task: "fetch_equipment", target: ECG });
+    expect(delegated.ok).toBe(false);
+    expect(delegated.output).toMatch(/Continuous anaesthesia responsibility is required/);
+    // within OR 7 they move freely
+    expect((await act(t, "staff:or-7.anaesthetist", "navigate", { kind: "interact", id: patientId(t) })).status).toBe("completed");
+    expect(t.session.state.anaesthesia).toBeUndefined();
     await t.session.close();
   });
 
@@ -182,6 +222,48 @@ describe("Case 126 · the first release scenario", () => {
     expect(msgsOf(events, "agent_message").map((m) => m.text).join(" ")).not.toMatch(/hand over/);
     expect(t.session.world()!.roomOf("staff:l1-anaesthetist")).toBe("l1-control");
     expect(t.session.state.notes.some((n) => /Anaesthesia handed over/.test(n.text))).toBe(false);
+    await t.session.close();
+  });
+
+  it("case_status recommends only what would run: with the specimen still in, closure, emergence and the Sign Out are not 'next'", async () => {
+    const t = await toTheTriangle();
+    const st = await tool(t, "case_status");
+    const recs = st.data.recommendations as { action: string; available: boolean; blockedBy: string[] }[];
+    const of = (re: RegExp) => recs.find((r) => re.test(r.action));
+    expect(of(/op: "close"/)).toMatchObject({ available: false, blockedBy: [expect.stringMatching(/specimen is still inside/)] });
+    expect(of(/"emergence"/)).toMatchObject({ available: false, blockedBy: ["Finish the operation first."] });
+    expect(of(/"sign-out"/)).toMatchObject({ available: false, blockedBy: [expect.stringMatching(/^out of order — first: /)] });
+    expect(st.output).toMatch(/→ not yet: at the table: observe_field, then operate \{op: "close"\} — The specimen is still inside/);
+    expect(st.output).not.toMatch(/→ next: [^\n]*(op: "close"|"emergence"|"sign-out")/);
+    await t.session.close();
+  });
+
+  it("a consultation is not a hint: Dr Tanaka answers from the anaesthetic side, the hint count unchanged", async () => {
+    const t = await toTheTriangle();
+    const hints = t.session.state.hints;
+    const events = await t.session.run({ type: "user_message", text: "Dr Tanaka, what are your anaesthetic concerns?", to: "attending", staff: "or-7.anaesthetist" } as never);
+    const reply = msgsOf(events, "agent_message").find((m) => /Tanaka/.test(m.speaker))!;
+    expect(reply.text).toMatch(/^From the anaesthetic side: the patient is under general anaesthesia\./);
+    expect(reply.text).toMatch(/Allergy status remains unknown \(asked; not recorded\)\. Fasting status remains unknown/);
+    expect(reply.text).not.toMatch(/\/hint|objective/i);
+    // the same through consult, and words that sound like a request for help: still a consultation
+    await tool(t, "consult", { staff: "Dr Tanaka", question: "I'm stuck — can you help me with the ventilation?" });
+    expect(t.session.state.hints).toBe(hints);
+    await t.session.close();
+  });
+
+  it("the Sign In states the unknowns as unknown — never 'confirmed'", async () => {
+    const c = (await content()).caseDef;
+    const t = await makeSession({ ...(await content()), settingsPatch: { embodiment: "clinical", approvalMode: "bypass" } });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    const at = c.solution.findIndex((a) => a.type === "intervene" && a.interventionId === "sign-in");
+    for (const a of c.solution.slice(1, at)) t.session.dispatch({ ...a, by: "system" } as ClinicalAction);
+    expect(t.session.state.asked).toEqual(expect.arrayContaining(["allergies", "fasting"]));
+    const signIn = await tool(t, "intervene", { intervention_id: "sign-in" });
+    expect(signIn.ok, signIn.output).toBe(true);
+    expect(signIn.output).not.toMatch(/confirmed now/);
+    expect(signIn.output).toMatch(/Allergy status remains unknown \(asked; not recorded\)\.\n {2}Fasting status remains unknown \(asked; not recorded\)\.\n {2}The team has acknowledged these unresolved items\./);
+    expect(signIn.data.safetyData).toEqual({ allergy: "asked-unknown", fasting: "asked-unknown" });
     await t.session.close();
   });
 

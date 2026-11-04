@@ -97,13 +97,15 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     expect(report.output).toMatch(/Impression: with the leads mirrored, the tracing reads as a normally placed heart/);
     expect(report.output).toMatch(/\nDr Tanaka \(anaesthesia\) reviewed the 12-lead ECG/);
     expect(t.session.state.studies!.reviews).toMatchObject([{ accession: "ecg-12lead-1", by: "or-7.anaesthetist" }]);
-    expect((await tool(t, "case_status")).output).toMatch(/New investigations \(simulated\):\n {2}Simulated investigation · 12-lead ECG/);
+    expect((await tool(t, "case_status")).output).toMatch(/New investigations \(simulated\):\n {2}ord-1 · [^\n]* · Simulated investigation · 12-lead ECG/);
 
     // a save and a reload, then a change of language: the same report, the device where it was left
     const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    const before = structuredClone(t.session.state.studies);
     await t.session.close();
     const r = await makeSession({ ...(await content()), settingsPatch: SETTINGS, resume: { sessionId: saved.sessionId, actions: saved.actions, messages: saved.messages, dialogue: saved.dialogue }, embodied: { snapshot: saved.world, team: saved.team } });
-    expect(r.session.state.studies).toEqual(saved.state?.studies ?? t.session.state.studies);
+    expect(before?.reviews.length).toBe(1);
+    expect(r.session.state.studies).toEqual(before);
     expect(r.session.world()!.roomOf(ECG)).toBe("or-7");
     expect((await tool(r, "read_study", { query: "ECG" })).output).toBe(report.output);
     await r.session.run({ type: "configure", patch: { locale: "zh-CN" } });
@@ -128,6 +130,27 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     expect(chem.observations.find((o) => o.id === "tbil")).toMatchObject({ value: 0.8, unit: "mg/dL", flag: "normal" });
     await tool(t, "wait", { minutes: 40 });
     expect((await tool(t, "read_study", { code: "chemistry" })).output).toMatch(/Total bilirubin 0\.8 mg\/dL \(0\.2–1\.2\)/);
+    await t.session.close();
+  });
+
+  it("every order its own instance: a second ECG waiting for the machine is never hidden by the first, reviewed", async () => {
+    const t = await beforeInduction();
+    await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "first" });
+    await tool(t, "wait", { minutes: 10 });
+    expect(t.session.state.studies!.reviews).toHaveLength(1);
+    // the machine taken out of service, a second ECG ordered: it waits, apart from the first
+    t.session.world()!.setAvailability(ECG, false);
+    await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "second" });
+    const both = await tool(t, "read_study", { query: "ECG" });
+    expect(both.output).toMatch(/^12-lead ECG \(new, simulated\): 2 orders, each on its own:/);
+    expect(both.output).toMatch(/ord-1 · .* · Simulated investigation · 12-lead ECG \(new, simulated\) · ecg-12lead-1/);
+    expect(both.output).toMatch(/ord-2 · .* · 12-lead ECG \(new, simulated\) \(ord-2\): waiting — the Mobile ECG machine is out of service/);
+    expect((await tool(t, "case_status")).output).toMatch(/ord-2 · [^\n]*waiting — the Mobile ECG machine is out of service/);
+    // one instance by its accession or its order
+    expect((await tool(t, "read_study", { accession: "ecg-12lead-1" })).output).toMatch(/^Simulated investigation · 12-lead ECG \(new, simulated\) · ecg-12lead-1/);
+    expect((await tool(t, "read_study", { order: "ord-2" })).output).toMatch(/waiting — the Mobile ECG machine is out of service/);
+    const listed = await tool(t, "list_studies", {});
+    expect(listed.output.split("\n").filter((l) => /^ {2}ord-/.test(l))).toHaveLength(2);
     await t.session.close();
   });
 
@@ -166,6 +189,40 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     await t.session.close();
   });
 
+  it("the nurse shut out of OR 7: a blood count is assigned, blocked with the reason, no specimen and no result; the door opened, the same order is collected once and reported once", async () => {
+    const t = await beforeInduction();
+    const w = t.session.world()!;
+    const NURSE = "staff:or-7.circulating-nurse";
+    // the nurse steps out to theatre control, and OR 7's doors are locked behind them
+    expect((await t.session.run({ type: "world_action", request: { actionId: "out", actorId: NURSE, operation: "navigate", goal: { kind: "room", id: "l1-control" } } })).length).toBeGreaterThan(0);
+    expect(w.roomOf(NURSE)).toBe("l1-control");
+    // every door on OR 7's walls (its own, and the scrub bays' and set-up rooms' into it): x 2–11, z −2–7 on L1
+    const doors = w.entities().filter((e) => e.kind === "door" && e.level === "L1" && e.position.x >= 1.9 && e.position.x <= 11.1 && e.position.z >= -2.1 && e.position.z <= 7.1).map((e) => e.id);
+    expect(doors.length).toBeGreaterThan(0);
+    for (const d of doors) w.setDoor(d, { open: false, locked: true });
+    await tool(t, "order_study", { query: "blood count", request_key: "cbc-1" });
+    const o = t.session.state.studies!.orders[0]!;
+    expect(o).toMatchObject({ code: "cbc", assignee: "or-7.circulating-nurse", stage: "blocked", waiting: { reason: expect.stringMatching(/^Nurse Aisyah \(circulating\) could not reach the patient: /) } });
+    expect(o.stages!.map((x) => x.stage)).toEqual(["ordered", "assigned", "en-route", "blocked"]);
+    expect(t.session.state.studies!.accessions).toEqual([]);
+    expect((await tool(t, "read_study", { query: "blood count" })).output).toMatch(/waiting — Nurse Aisyah \(circulating\) could not reach the patient/);
+    await tool(t, "wait", { minutes: 30 });
+    expect(t.session.state.studies!.accessions).toEqual([]);
+    expect(t.session.state.studies!.reports).toEqual([]);
+    // unlocked: the same order resumes, one specimen, one report
+    for (const d of doors) w.setDoor(d, { locked: false });
+    await tool(t, "case_status");
+    expect(t.session.state.studies!.orders).toHaveLength(1);
+    expect(t.session.state.studies!.accessions.map((a) => [a.order, a.collector])).toEqual([[o.id, "or-7.circulating-nurse"]]);
+    expect(w.roomOf(NURSE)).toBe("or-7");
+    await tool(t, "wait", { minutes: 30 });
+    await tool(t, "case_status");
+    expect(t.session.state.studies!.accessions).toHaveLength(1);
+    expect(t.session.state.studies!.reports).toHaveLength(1);
+    expect(t.session.state.studies!.orders[0]!.stages!.map((x) => x.stage)).toEqual(["ordered", "assigned", "en-route", "blocked", "en-route", "at-patient", "acquisition-started", "acquired", "reported"]);
+    await t.session.close();
+  });
+
   it("the second run: a reporting agent that times out, or writes what the tracing does not show, is replaced by the template — never an invented report", async () => {
     // a writer that never answers
     const stuck = await beforeInduction({ reportWriter: () => new Promise(() => {}), reportWriterTimeoutMs: 50 });
@@ -188,6 +245,47 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     expect(report.generator).toBe("template");
     expect(report.findings.en).not.toMatch(/190|infarction/);
     await wrong.session.close();
+  });
+
+  it("records in the simulated timeline: before the review the operation record, the histology and the follow-up do not exist yet — no text from a later phase; in the review they do", async () => {
+    const c = (await content()).caseDef;
+    const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    expect(t.session.state.phase).toBe("assessment");
+    const text = (id: string) => (c.investigations.find((i) => i.id === id)!.results.review!.text as { en: string }).en;
+    for (const [query, id] of [["operation record", "operation-record"], ["pathology", "pathology-record"], ["follow-up", "followup-record"]] as const) {
+      const r = await tool(t, "retrieve_report", { query });
+      expect(r.data, query).toMatchObject({ source: "not-yet", investigationId: id });
+      expect(r.output).toMatch(/^Record not yet created — /);
+      expect(r.output).not.toContain(text(id).slice(0, 40));
+      // ordered or read directly: refused, nothing recorded
+      const ordered = await tool(t, "order_test", { investigation_id: id });
+      expect(ordered.ok).toBe(false);
+      expect(t.session.state.orders.some((o) => o.investigationId === id)).toBe(false);
+      const read = await tool(t, "read_result", { investigation_id: id, phase: "review" });
+      expect(read.ok).toBe(false);
+      expect(read.output).not.toContain(text(id).slice(0, 40));
+    }
+    // the source's preoperative reports are there
+    expect((await tool(t, "retrieve_report", { query: "CT" })).data).toMatchObject({ source: "record", investigationId: "ct-record" });
+    await t.session.close();
+    // in the review the records exist (a clinical-mode run of the reference record: in OR 7 the Sign Out also waits
+    // for the swab count, which tools/case126-count.test.ts works through)
+    const r = await makeSession({ ...(await content()), settingsPatch: { embodiment: "clinical", approvalMode: "bypass" } });
+    await r.session.run({ type: "clinical_action", action: { type: "start" } });
+    const sol = c.solution;
+    const at = sol.findIndex((a) => a.type === "order" && a.investigationId === "operation-record");
+    for (const a of sol.slice(1, at)) {
+      const x = r.session.dispatch({ ...a, by: "system" } as ClinicalAction);
+      if (x.rejected) throw new Error(`${a.type}: ${x.rejected.message}`);
+    }
+    expect(r.session.state.phase).toBe("review");
+    for (const [query, id] of [["operation record", "operation-record"], ["pathology", "pathology-record"], ["follow-up", "followup-record"]] as const) {
+      const got = await tool(r, "retrieve_report", { query });
+      expect(got.data, query).toMatchObject({ source: "record", investigationId: id });
+      expect(got.output).toContain(text(id).slice(0, 40));
+    }
+    await r.session.close();
   });
 
   it("never invented: a cholangiogram is acquired at the table, not ordered; a chest radiograph the hospital cannot take waits with its reason", async () => {

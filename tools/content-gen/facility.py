@@ -119,8 +119,10 @@ def inst(id, template, x, z, rot=0, level="L1", overrides=None):
     return i
 
 
-def staff(id, role, name, room, x, z, rot=0, greeting=None, level=None):
+def staff(id, role, name, room, x, z, rot=0, greeting=None, level=None, position=None):
     s = {"id": id, "role": role, "name": name, "room": room, "x": num(x), "z": num(z)}
+    if position:
+        s["position"] = position  # the job they hold: their role card (ClinicalCraft docs/CHARACTERS.md)
     if rot:
         s["rot"] = rot
     if greeting:
@@ -238,9 +240,9 @@ on_s("l1-status-board", "sc-status-board", -2.4, "l1-control", L("手术排程�
 P("l1-control-records", "records-terminal", 4.8, 11.0, 0, "l1-control", L("电子病历终端", "EHR terminal"))
 on_s("l1-control-clock", "wall-clock", 4.2, "l1-control")
 staff("l1-coordinator", "nurse", L("林护士长（手术协调）", "Charge Nurse Lin (theatre coordinator)"), "l1-control", 1.0, 13.3, 180,
-      L("急诊剖宫产随时可以进 7 号手术间；先到更衣室换洗手衣。", "OR 7 is held for emergencies and caesareans — change into scrubs in the changing room first."))
+      L("急诊剖宫产随时可以进 7 号手术间；先到更衣室换洗手衣。", "OR 7 is held for emergencies and caesareans — change into scrubs in the changing room first."), position="theatre-coordinator")
 staff("l1-anaesthetist", "attending", L("王医生（麻醉科值班主治）", "Dr Wang (duty consultant anaesthetist)"), "l1-control", 3.0, 13.3, 180,
-      L("麻醉前核查：气道评估、禁食时间、过敏史和备血情况都要确认。", "Before induction I want the airway assessment, fasting times, allergies and blood availability confirmed."))
+      L("麻醉前核查：气道评估、禁食时间、过敏史和备血情况都要确认。", "Before induction I want the airway assessment, fasting times, allergies and blood availability confirmed."), position="anaesthetist")
 P("l1-lobby-chairs", "waiting-chairs", -3.0, 15.0, 0, "l1-lobby")
 P("l1-lobby-plant", "potted-plant", -8.3, 15.0, 0, "l1-lobby")
 P("l1-lobby-sanitizer", "hand-sanitizer", -1.4, 14.5, 0, "l1-lobby", L("手消毒液", "Hand rub"))
@@ -372,7 +374,7 @@ inst("clean-lift-l1", "elevator-cabin", -6, -6, 90, overrides={"name": L("洁净
 # OR 7's assistant surgeon (Case 126 2.5.0): holds traction when asked (ClinicalCraft `delegate_task hold_traction`),
 # standing by the scrub bay until then — the walk to the table is part of taking over
 staff("or-7-assistant", "attending", L("森医生（助手）", "Dr Mori (assistant surgeon)"), "or-7", 6.5 + 1.2, 2.5 + 3.2, 180,
-      L("今天我当助手——需要我拉哪里就说，我来维持牵引。", "I'm assisting today — tell me what to hold and I'll keep the traction."))
+      L("今天我当助手——需要我拉哪里就说，我来维持牵引。", "I'm assisting today — tell me what to hold and I'll keep the traction."), position="assistant-surgeon")
 P("or-7-infant-warmer", "sc-infant-warmer", 6.5 - 3.6, 2.5 + 0.45, 90, "or-7", L("新生儿复苏辐射台", "Neonatal resuscitation warmer"))
 P("or-7-cell-salvage", "sc-cell-salvage", 6.5 - 0.1, 2.5 + 3.0, 180, "or-7", L("术中自体血回收", "Cell salvage"))
 # OR 7's swabs in use, one by one on the Mayo tray (Case 126's team keeps the count item by item)
@@ -479,7 +481,7 @@ P("l0-bb-records", "records-terminal", 17.0, 16.9, 0, "l0-blood-bank", L("输血
 on_e("l0-bb-desk", "desk", 18.5, "l0-blood-bank")
 P("l0-bb-chair", "office-chair", 24.6, 18.5, 0, "l0-blood-bank")
 staff("l0-bb-scientist", "lab-tech", L("钱技师（输血科）", "Qian, transfusion scientist"), "l0-blood-bank", 20.0, 19.0, 180,
-      L("大出血预案启动后，第一批红细胞和血浆十分钟内送到手术部。", "When the major-haemorrhage protocol is called, the first red cells and plasma reach theatres within ten minutes."))
+      L("大出血预案启动后，第一批红细胞和血浆十分钟内送到手术部。", "When the major-haemorrhage protocol is called, the first red cells and plasma reach theatres within ten minutes."), position="transfusion-scientist")
 # CSSD
 for k, z in enumerate((-11.3, -10.7, -6.3, -5.7, -1.3, -0.7)):
     for j, x in enumerate((-2.25, -0.75, 0.75, 2.25), start=1):
@@ -533,7 +535,7 @@ on_n("l0-debrief-whiteboard", "whiteboard", -26.5, "l0-debrief")
 inst("l0-skills", "teaching-room", -27, 0, 0, L0, {
     "name": L("外科技能与模拟实训室", "Surgical skills & simulation lab"),
     "sign": {"text": L("技能实训", "Skills lab"), "color": "#a397bc"},
-    "staff": {"attending": {"name": L("陈主任（外科教学）", "Dr Chen (surgical educator)"),
+    "staff": {"attending": {"name": L("陈主任（外科教学）", "Dr Chen (surgical educator)"), "position": "educator",
                             "greeting": L("先在模拟手术室把核查流程练熟，再上二层手术部。", "Rehearse the checklist in the simulation OR before you go up to theatres.")}},
 })
 inst("l0-observation", "teaching-room", -17, 0, 0, L0, {
