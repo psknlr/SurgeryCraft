@@ -195,6 +195,41 @@ describe("Case 126 · the first release scenario", () => {
     await t.session.close();
   });
 
+  it("after the hand-over a new ECG is reviewed by the anaesthetist who took over, not the one who left; a reviewer named on the order stays theirs; both kept after a save and resume (the follow-up audit)", async () => {
+    const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    recordUntil(t, isFirstDissection);
+    const toPatient = async (x: TestSession) => expect((await act(x, PRIMARY_ACTOR, "navigate", { kind: "interact", id: patientId(x) })).status).toBe("completed");
+    await toPatient(t);
+    await t.session.run({ type: "user_message", text: "Dr Tanaka, please show me the way to theatre control.", to: "attending", staff: "or-7.anaesthetist" } as never);
+    expect(t.session.state.anaesthesia).toMatchObject({ responsible: "l1-anaesthetist", handoverStatus: "transferred" });
+    await toPatient(t);
+    // a new ECG for the anaesthetist (the study's default reviewer): resolved when the report is ready
+    const ordered = await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "post-handover" });
+    expect(ordered.ok, ordered.output).toBe(true);
+    // a second one that names its reviewer: Dr Tanaka, asked to look at it from theatre control
+    const named = await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "for-tanaka", reviewer: "Dr Tanaka" });
+    expect(named.ok, named.output).toBe(true);
+    await tool(t, "wait", { minutes: 12 });
+    const reviews = () => t.session.state.studies!.reviews.map((r) => ({ by: r.by, basis: r.basis }));
+    expect(reviews()).toEqual([
+      { by: "l1-anaesthetist", basis: "responsible" },
+      { by: "or-7.anaesthetist", basis: "named" },
+    ]);
+    // the outgoing anaesthetist is in theatre control: never the default reviewer of what came after
+    expect(t.session.world()!.roomOf("staff:or-7.anaesthetist")).toBe("l1-control");
+    const read = await tool(t, "read_study", { order: "ord-1" });
+    expect(read.output).toMatch(/Dr Wang \(duty consultant anaesthetist\) \(the anaesthetist responsible now\) reviewed the 12-lead ECG/u);
+    expect((await tool(t, "read_study", { order: "ord-2" })).output).toMatch(/Dr Tanaka \(anaesthesia\) \(the reviewer named on the order\) reviewed/u);
+    // saved and resumed: who reviewed, and why, unchanged
+    const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    const before = reviews();
+    await t.session.close();
+    const r = await makeSession({ ...(await content()), settingsPatch: SETTINGS, resume: { sessionId: saved.sessionId, actions: saved.actions, messages: saved.messages, dialogue: saved.dialogue }, embodied: { snapshot: saved.world!, team: saved.team } });
+    expect(r.session.state.studies!.reviews.map((x) => ({ by: x.by, basis: x.basis }))).toEqual(before);
+    await r.session.close();
+  });
+
   it("no relief arranged: the anaesthetist of an induced patient may not leave — by a request to fetch, a direct move or a delegated task (every path goes through the one world-action guard)", async () => {
     const t = await makeSession({ ...(await content()), settingsPatch: SETTINGS });
     await t.session.run({ type: "clinical_action", action: { type: "start" } });

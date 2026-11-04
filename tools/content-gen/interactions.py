@@ -27,10 +27,13 @@ SCRUBBED = [{"handsClean": True}, {"actorHolding": "sc-sterile-gown"}, {"actorHo
 AT_TABLE = {"patientWithin": 1.4}
 
 
-def st(zh, en, available=None):
+def st(zh, en, available=None, supplies=None):
     s = {"name": L(zh, en)}
     if available is not None:
         s["available"] = available
+    if supplies is not None:
+        # the capabilities that work in this state (ClinicalCraft: the world's capability rule)
+        s["supplies"] = list(supplies)
     return s
 
 
@@ -385,10 +388,13 @@ attach("sc-surgical-pendant", {
         "remove_return_electrode": op("移除负极板，检查皮肤", "Remove the return electrode and check the skin", ["monitored"], "standby", [AT_TABLE], TEAM, 30),
     }}, prompt=L("E · 电刀主机 / 气腹机", "E · Generator / insufflator"))
 
+# switched off the tower gives no picture and no gas; powered on (self-test passed) its camera, light source and
+# insufflator work (ClinicalCraft docs/PROCEDURE.md "Equipment"). OR 7's is set up before the list (templates.py).
+TOWER = ["endoscopic-camera", "light-source", "insufflator"]
 attach("sc-laparoscopy-tower", {
     "initial": "off",
-    "states": {"off": st("关闭", "off"), "on": st("开机自检完成", "on (self-test passed)"), "balanced": st("已白平衡", "white-balanced"),
-               "insufflating": st("气腹中（压力按术式设定）", "insufflating (pressure set for the procedure)")},
+    "states": {"off": st("关闭", "off", supplies=[]), "on": st("开机自检完成", "on (self-test passed)", supplies=TOWER), "balanced": st("已白平衡", "white-balanced", supplies=TOWER),
+               "insufflating": st("气腹中（压力按术式设定）", "insufflating (pressure set for the procedure)", supplies=TOWER)},
     "operations": {
         "power_on": op("开机自检", "Power on and self-test", ["off"], "on", [], TEAM, 30),
         "white_balance": op("白平衡", "White balance", ["on"], "balanced", [], TEAM, 10),

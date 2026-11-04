@@ -229,7 +229,8 @@ template(
     {"text": L("手术室 · Ⅱ级洁净", "OR · Class II"), "color": "#3f8f5a"},
     OR_LIGHTS,
     or_skeleton("sc-laminar-canopy") + [
-        P("lap-tower", "sc-laparoscopy-tower", 0.5, -1.35, label=L("4K/3D 腹腔镜系统", "4K/3D laparoscopy tower")),
+        # set up before the list: on, self-tested and white-balanced (the spare in the store is off)
+        P("lap-tower", "sc-laparoscopy-tower", 0.5, -1.35, label=L("4K/3D 腹腔镜系统", "4K/3D laparoscopy tower"), state="balanced"),
         on_n("ultrasound", "ultrasound-machine", 0.2, D9, L("超声 / 经食道超声", "Ultrasound / TOE")),
         on_n("airway", "sc-difficult-airway-trolley", -1.4, D9, L("困难气道车", "Difficult airway trolley")),
         P("display-1", "sc-ceiling-display", 1.6, 2.6, 180, L("吊臂显示器 1", "Ceiling display 1")),
@@ -299,7 +300,7 @@ template(
     {"text": L("负压隔离手术室", "Negative-pressure isolation OR"), "color": "#c9473c"},
     OR_LIGHTS,
     [p for p in or_skeleton("sc-laminar-canopy") if p["id"] not in ("sanitizer",)] + [
-        P("lap-tower", "sc-laparoscopy-tower", 0.5, -1.35, label=L("4K/3D 腹腔镜系统", "4K/3D laparoscopy tower")),
+        P("lap-tower", "sc-laparoscopy-tower", 0.5, -1.35, label=L("4K/3D 腹腔镜系统", "4K/3D laparoscopy tower"), state="balanced"),
         on_n("ultrasound", "ultrasound-machine", 0.2, D9, L("超声", "Ultrasound")),
         on_n("airway", "sc-difficult-airway-trolley", -1.4, D9, L("困难气道车", "Difficult airway trolley")),
         P("display-1", "sc-ceiling-display", 1.6, 2.6, 180, L("吊臂显示器 1", "Ceiling display 1")),

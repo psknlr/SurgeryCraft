@@ -19,6 +19,7 @@ import { describe, expect, it } from "vitest";
 import { PRIMARY_ACTOR, type NavGoal } from "@clinicalcraft/world";
 import type { CaseDefinition, ClinicalAction } from "@clinicalcraft/core";
 import { makeSession, msgsOf, type TestSession } from "./__fixtures__/harness.js";
+import { textScript } from "./providers/scripted.js";
 import { loadContent } from "./node/content.js";
 
 const ROOT = process.env.SURGERYCRAFT_ROOT ?? "";
@@ -234,6 +235,33 @@ describe("Case 126 · staff working on their own", () => {
     expect(await staffStep(q)).toEqual([]);
     expect(q.session.state.alarms).toHaveLength(1);
     await q.session.close();
+  });
+
+  it("characters.engine llm: a model that says “I am at the bedside” while the anaesthetist is shut out is refused — the record's blocked line is said; once there, the model's own words are", async () => {
+    const wrong = "I am at the bedside and checking the patient.";
+    const t = await makeSession({
+      ...(await hypotensive()),
+      settingsPatch: { ...SETTINGS, characters: { engine: "llm", timeoutMs: 5000 } },
+      scripts: Array.from({ length: 60 }, () => () => textScript(wrong)),
+    });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    const until = recordUntil(t, isInduction);
+    const w = t.session.world()!;
+    expect((await act(t, ANAESTHETIST, "navigate", { kind: "room", id: "anaes-workroom" })).status).toBe("completed");
+    w.setDoor(WORKROOM_DOOR, { open: false, locked: true });
+    recordUntil(t, isFirstDissection, until);
+    const said = await staffStep(t);
+    expect(t.session.state.alarms![0]!.stage).toBe("blocked");
+    expect(w.roomOf(ANAESTHETIST)).toBe("anaes-workroom");
+    // never an arrival claim while blocked: the template that states the record is said instead
+    expect(said.join(" ")).not.toContain(wrong);
+    expect(said).toEqual([expect.stringMatching(/^Dr Tanaka \(anaesthesia\): Alarm: SBP 72 — I can't get to the patient: .+ I need someone at the bedside now\.$/u)]);
+    // the door opens: at the patient, the same words are true — and said in the model's own wording
+    w.setDoor(WORKROOM_DOOR, { open: false, locked: false });
+    const there = await staffStep(t);
+    expect(t.session.state.alarms![0]!.stage).toBe("arrived");
+    expect(there).toEqual([`Dr Tanaka (anaesthesia): ${wrong}`]);
+    await t.session.close();
   });
 });
 
