@@ -530,6 +530,8 @@ eq("sc-robotic-vision-cart", L("机器人视频系统车", "Robotic vision cart"
        B("sc-matte-black", 0, 1.9, 0.0, 0.76, 0.46, 0.06),
        B("screen-dark", 0, 1.9, 0.034, 0.7, 0.4, 0.006, name="screen"),
    ],
+   # the robot's picture: camera and light (ClinicalCraft docs/PROCEDURE.md "Equipment"); no insufflator on this cart
+   caps=["endoscopic-camera", "light-source"],
    screen="pacs", tags=["or", "robotic", "mis", "display"])
 
 eq("sc-laparoscopy-tower", L("4K/3D 腹腔镜系统", "4K/3D laparoscopy tower"), "surgery",
@@ -559,6 +561,7 @@ eq("sc-laparoscopy-tower", L("4K/3D 腹腔镜系统", "4K/3D laparoscopy tower")
    ],
    usage=L("连接光缆和摄像头，白平衡后入镜；气腹压力按术式和患者情况设定，并留意高压报警。",
            "Connect the light cable and camera, white-balance, then insert the scope; set the insufflation pressure for the procedure and patient, and respond to over-pressure alarms."),
+   caps=["endoscopic-camera", "light-source", "insufflator"],  # the picture and the pneumoperitoneum
    screen="pacs", portable="cart", tags=["or", "mis", "endoscopy", "display"])
 
 # ---------------------------------------------------------------- cardiac, neuro, ortho

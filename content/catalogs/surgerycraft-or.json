@@ -774,7 +774,7 @@
         "zh-CN": "机器人系统的视频车：三维内镜图像处理、光源、电外科能量平台和触摸显示屏，供台上助手和巡回护士观看。",
         "en": "Vision cart of the robotic system: 3D endoscope image processing, light source, energy platform and a touch display for the bedside team."
       },
-      "capabilities": [],
+      "capabilities": ["endoscopic-camera", "light-source"],
       "footprint": {"w": 0.8, "d": 0.75, "h": 2.15},
       "solid": true,
       "interaction": {"kind": "none"},
@@ -809,7 +809,7 @@
         "zh-CN": "连接光缆和摄像头，白平衡后入镜；气腹压力按术式和患者情况设定，并留意高压报警。",
         "en": "Connect the light cable and camera, white-balance, then insert the scope; set the insufflation pressure for the procedure and patient, and respond to over-pressure alarms."
       },
-      "capabilities": [],
+      "capabilities": ["endoscopic-camera", "light-source", "insufflator"],
       "footprint": {"w": 0.75, "d": 0.7, "h": 2.15},
       "solid": true,
       "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 腹腔镜系统", "en": "E · Laparoscopy tower"}},

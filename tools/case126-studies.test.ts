@@ -305,4 +305,40 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     expect(t.session.state.studies!.reports).toEqual([]);
     await t.session.close();
   });
+
+  it("a manual case clock: what the case waits for is said with its time, and waiting until it brings the report and the review", async () => {
+    const t = await beforeInduction();
+    expect((await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "next-event" })).ok).toBe(true);
+    const due = t.session.state.studies!.accessions[0]!.dueAt;
+    // what the case waits for next, and how far away (the HUD's next-event control shows it)
+    expect(t.session.nextEvent()).toMatchObject({ kind: "study-report", id: "ecg-12lead-1", at: due, inMinutes: 10 });
+    // the clock moves only with what is done here (no real time): staff rounds alone do not move it
+    const before = t.session.state.clock;
+    for (let i = 0; i < 5; i++) await t.session.run({ type: "staff_step" });
+    expect(t.session.state.clock).toBe(before);
+    // the learner waits until it (the control's own action): the report is released and reviewed in that act
+    const next = t.session.nextEvent()!;
+    await t.session.run({ type: "clinical_action", action: { type: "advance-time", minutes: next.inMinutes } });
+    expect(t.session.state.clock).toBeCloseTo(due, 5);
+    expect(t.session.state.studies!.orders[0]!.stage).toBe("reviewed");
+    expect(t.session.nextEvent()).toBeNull();
+    await t.session.close();
+  });
+
+  it("a writer's unsupported diagnosis is never released: the template is, the refusal is on the record, and release and review are separate acts (the audit's counterexample)", async () => {
+    const t = await beforeInduction({ reportWriter: async () => ({ findings: { en: "Sinus rhythm.", "zh-CN": "窦性心律。" }, impression: { en: "Acute pulmonary embolism confirmed.", "zh-CN": "急性肺栓塞已确诊。" }, generator: "audit-writer", bindings: [], supportedBy: [] }) });
+    await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "writer" });
+    await tool(t, "wait", { minutes: 10 });
+    const { reports, reviews } = t.session.state.studies!;
+    expect(reports).toHaveLength(1);
+    expect(reports[0]!.generator).toBe("template");
+    expect(`${reports[0]!.impression.en} ${reports[0]!.impression["zh-CN"]}`).not.toMatch(/embolism|confirmed|肺栓塞|确诊/u);
+    // what was reviewed is the template's report
+    expect(reviews).toMatchObject([{ accession: reports[0]!.accession, by: "or-7.anaesthetist" }]);
+    // the record: the release and the review are two acts, the review after the release
+    const ops = t.session.snapshot().actions.flatMap((a) => (a.type === "study" && (a.study.op === "release" || a.study.op === "review") ? [a.study.op] : []));
+    expect(ops).toEqual(["release", "review"]);
+    await t.session.close();
+  });
 });
+

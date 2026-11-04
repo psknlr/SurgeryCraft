@@ -194,5 +194,46 @@ describe("Case 126 · staff working on their own", () => {
     expect((await tool(r, "get_action_feedback", { action_id: id })).output).toBe(fb.output);
     await r.session.close();
   });
+
+  it("an alarm while the anaesthetist is shut out: the blocked walk is said with its reason, never “at the patient”; once the way opens they arrive and say so once — also after a save and resume", async () => {
+    const t = await makeSession({ ...(await hypotensive()), settingsPatch: SETTINGS });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    const at = recordUntil(t, isInduction);
+    const w = t.session.world()!;
+    // before induction the anaesthetist steps into the workroom; then its door is locked
+    expect((await act(t, ANAESTHETIST, "navigate", { kind: "room", id: "anaes-workroom" })).status).toBe("completed");
+    w.setDoor(WORKROOM_DOOR, { open: false, locked: true });
+    recordUntil(t, isFirstDissection, at);
+    const atPatient = (x: TestSession) => x.session.world()!.checkSpatial(ANAESTHETIST, { tool: "examine", kind: "examine" }).ok;
+    // the alarm is recognised; the way is blocked: said with why, and nobody is said to be at the patient
+    const blocked = await staffStep(t);
+    expect(blocked).toEqual([expect.stringMatching(/^Dr Tanaka \(anaesthesia\): Alarm: SBP 72 — I can't get to the patient: .+ I need someone at the bedside now\.$/u)]);
+    expect(blocked.join(" ")).not.toMatch(/I'm at the patient/u);
+    expect(atPatient(t)).toBe(false);
+    expect(t.session.state.alarms).toMatchObject([{ id: "alarm-1", vital: "sbp", by: "or-7.anaesthetist", stage: "blocked", reason: expect.any(String) }]);
+    // still locked: tried again, nothing new said
+    expect(await staffStep(t)).toEqual([]);
+    expect(w.roomOf(ANAESTHETIST)).toBe("anaes-workroom");
+    // saved while blocked, resumed: the same episode, still outstanding
+    const saved = JSON.parse(JSON.stringify(t.session.snapshot()));
+    const atSave = structuredClone(t.session.state.alarms);
+    await t.session.close();
+    const r = await makeSession({ ...(await hypotensive()), settingsPatch: SETTINGS, resume: { sessionId: saved.sessionId, actions: saved.actions, messages: saved.messages, dialogue: saved.dialogue }, embodied: { snapshot: saved.world!, team: saved.team } });
+    expect(r.session.state.alarms).toEqual(atSave);
+    // the way opens: the next round they get there, and only now is it said — once
+    r.session.world()!.setDoor(WORKROOM_DOOR, { open: false, locked: false });
+    expect(await staffStep(r)).toEqual([expect.stringMatching(/^Dr Tanaka \(anaesthesia\): Alarm: SBP 72 — I'm at the patient and checking it\.$/u)]);
+    expect(atPatient(r)).toBe(true);
+    expect(r.session.world()!.roomOf(ANAESTHETIST)).toBe("or-7");
+    expect(r.session.state.alarms![0]!.history.map((h) => h.stage)).toEqual(["detected", "blocked", "arrived"]);
+    expect(await staffStep(r)).toEqual([]);
+    // and after another save and resume, the arrival is not announced again
+    const again = JSON.parse(JSON.stringify(r.session.snapshot()));
+    await r.session.close();
+    const q = await makeSession({ ...(await hypotensive()), settingsPatch: SETTINGS, resume: { sessionId: again.sessionId, actions: again.actions, messages: again.messages, dialogue: again.dialogue }, embodied: { snapshot: again.world!, team: again.team } });
+    expect(await staffStep(q)).toEqual([]);
+    expect(q.session.state.alarms).toHaveLength(1);
+    await q.session.close();
+  });
 });
 

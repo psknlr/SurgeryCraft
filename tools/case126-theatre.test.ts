@@ -495,4 +495,37 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
       await t.session.close();
     });
   });
+
+  it("the laparoscopic tower out of service: no gas, no picture — said and recorded; the spare tower fetched from the store brings both back", async () => {
+    const t = await theatre();
+    toTheTable(t);
+    await toBedside(t);
+    const w = t.session.world()!;
+    w.setAvailability(TOWER, false);
+    expect((await tool(t, "operate", { op: "plan-ports", plan: "three-port-left" })).ok).toBe(true);
+    // no CO₂: the pneumoperitoneum is refused with why; the record holds what the equipment supplies
+    const gas = await tool(t, "operate", { op: "insufflate", pressure: 12 });
+    expect(gas.ok).toBe(false);
+    expect(gas.output).toMatch(/There is no CO₂ supply: the insufflator is out of service/u);
+    expect(t.session.state.procedure).toMatchObject({ insufflated: false, pressure: 0, supply: { image: false, gas: false } });
+    const dark = await tool(t, "observe_field");
+    expect(dark.output).toMatch(/No picture: the laparoscopic camera or light source is out of service/u);
+    expect(dark.output).toMatch(/No CO₂ supply/u);
+    expect(dark.output).not.toMatch(/In view: Liver/u);
+    // the circulating nurse fetches the spare tower from the equipment store: it supplies both again
+    const fetched = await tool(t, "delegate_task", { role: CIRCULATOR, task: "fetch_equipment", target: "eq:l1-spare-lap-tower" });
+    expect(fetched.ok, fetched.output).toBe(true);
+    expect(w.roomOf("eq:l1-spare-lap-tower")).toBe("or-7");
+    for (const step of [{ op: "insufflate", pressure: 12 }, { op: "insert", port: "A", instrument: "laparoscope" }]) {
+      const r = await tool(t, "operate", step);
+      expect(r.ok, `${step.op}: ${r.output}`).toBe(true);
+    }
+    expect(t.session.state.procedure!.supply).toEqual({ image: true, gas: true });
+    expect((await tool(t, "observe_field")).output).toMatch(/In view: Liver/u);
+    // the record kept each change of supply apart from the operative steps
+    const supplies = t.session.snapshot().actions.filter((a) => a.type === "procedure-supply").map((a) => (a as { supply: { image: boolean; gas: boolean } }).supply);
+    expect(supplies.map((x) => [x.image, x.gas])).toEqual([[false, false], [true, true]]);
+    await t.session.close();
+  });
 });
+
