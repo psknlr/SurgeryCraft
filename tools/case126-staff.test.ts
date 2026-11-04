@@ -237,6 +237,27 @@ describe("Case 126 · staff working on their own", () => {
     await q.session.close();
   });
 
+  it("characters.engine llm: a shut-out anaesthetist's model claiming to have palpated the pulse is refused — the record's blocked line is said (the round 3 audit)", async () => {
+    const wrong = "I have just palpated the patient's pulse.";
+    const t = await makeSession({
+      ...(await hypotensive()),
+      settingsPatch: { ...SETTINGS, characters: { engine: "llm", timeoutMs: 5000 } },
+      scripts: Array.from({ length: 60 }, () => () => textScript(wrong)),
+    });
+    await t.session.run({ type: "clinical_action", action: { type: "start" } });
+    const until = recordUntil(t, isInduction);
+    const w = t.session.world()!;
+    expect((await act(t, ANAESTHETIST, "navigate", { kind: "room", id: "anaes-workroom" })).status).toBe("completed");
+    w.setDoor(WORKROOM_DOOR, { open: false, locked: true });
+    recordUntil(t, isFirstDissection, until);
+    const said = await staffStep(t);
+    expect(t.session.state.alarms![0]!.stage).toBe("blocked");
+    expect(w.checkSpatial(ANAESTHETIST, { tool: "examine", kind: "examine" }).ok).toBe(false);
+    expect(said.join(" ")).not.toContain(wrong);
+    expect(said).toEqual([expect.stringMatching(/^Dr Tanaka \(anaesthesia\): Alarm: SBP 72 — I can't get to the patient: .+ I need someone at the bedside now\.$/u)]);
+    await t.session.close();
+  });
+
   it("characters.engine llm: a model that says “I am at the bedside” while the anaesthetist is shut out is refused — the record's blocked line is said; once there, the model's own words are", async () => {
     const wrong = "I am at the bedside and checking the patient.";
     const t = await makeSession({
