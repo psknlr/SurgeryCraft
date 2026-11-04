@@ -398,8 +398,14 @@ attach("sc-laparoscopy-tower", {
     "operations": {
         "power_on": op("开机自检", "Power on and self-test", ["off"], "on", [], TEAM, 30),
         "white_balance": op("白平衡", "White balance", ["on"], "balanced", [], TEAM, 10),
-        "start_insufflation": op("开始气腹", "Start insufflation", ["balanced"], "insufflating", [AT_TABLE], SURGEON, 60),
-        "stop_insufflation": op("停止气腹并排气", "Stop insufflation and desufflate", ["insufflating"], "balanced", [], TEAM, 30),
+        # the gas controls are the operation's own pneumoperitoneum (ClinicalCraft `clinical: {tool: "operate"}`):
+        # starting insufflates the abdomen at the procedure's pressure, stopping lets it down — the tower, the record
+        # and the picture never disagree, and a step the operation refuses (no port plan yet) leaves the tower as it was
+        "start_insufflation": {**op("开始气腹（按术式压力建立气腹）", "Start insufflation (the pneumoperitoneum, at the procedure's pressure)", ["balanced"], "insufflating", [AT_TABLE], SURGEON, 60),
+                               "clinical": {"tool": "operate", "select": "item", "item": "insufflate"}},
+        # worked from the table like the start (the operator at the patient's side, the step at the table)
+        "stop_insufflation": {**op("停止气腹并排气", "Stop insufflation and desufflate", ["insufflating"], "balanced", [AT_TABLE], TEAM, 30),
+                              "clinical": {"tool": "operate", "select": "item", "item": "desufflate"}},
         "power_off": op("关机", "Power off", ["on", "balanced"], "off", [], TEAM, 5),
     }}, prompt=L("E · 腹腔镜系统", "E · Laparoscopy tower"))
 

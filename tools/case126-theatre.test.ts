@@ -69,6 +69,16 @@ async function act(t: TestSession, actorId: string, operation: string, targetId?
   return r;
 }
 
+/** Act, walking where a refusal points (reach and sight) first — the result whatever it is. */
+async function tryAt(t: TestSession, operation: string, targetId: string) {
+  let r = await act(t, PRIMARY_ACTOR, operation, targetId);
+  for (let i = 0; i < 2 && r.status === "failed" && r.hint && (r.errorCode === "NOT_IN_RANGE" || r.errorCode === "NOT_VISIBLE"); i++) {
+    expect((await act(t, PRIMARY_ACTOR, "navigate", undefined, r.hint.goal)).status).toBe("completed");
+    r = await act(t, PRIMARY_ACTOR, operation, targetId);
+  }
+  return r;
+}
+
 /** Walk where a refusal points (reach and sight), then act — as the browser and agents do. */
 async function done(t: TestSession, actorId: string, operation: string, targetId?: string) {
   let r = await act(t, actorId, operation, targetId);
@@ -359,11 +369,13 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     expect((await tool(t, "observe_field")).output).toMatch(/not under way in this phase[\s\S]*Time Out/);
     // counts and the tower: perioperative tasks, never the operation (and a device's minute is a clinical minute)
     await done(t, CIRCULATOR, "baseline_count", COUNT);
-    // OR 7's tower is set up before the list (on, self-tested, white-balanced): gas on is a device act of its own
+    // OR 7's tower is set up before the list (on, self-tested, white-balanced); its gas is the operation's own
+    // pneumoperitoneum, so before the Time Out it is refused with what still opens the operation — nothing starts
     expect(t.session.world()!.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("balanced");
-    const clock = t.session.state.clock;
-    await done(t, PRIMARY_ACTOR, "start_insufflation", TOWER);
-    expect(t.session.state.clock - clock).toBeGreaterThanOrEqual(1);
+    const gas = await tryAt(t, "start_insufflation", TOWER);
+    expect(gas.status).toBe("failed");
+    expect(gas.message).toMatch(/the operation is not under way[\s\S]*Time Out/u);
+    expect(t.session.world()!.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("balanced");
     expect(t.session.state.procedure).toBeUndefined();
     expect(t.session.state.objectivesDone.operate).toBeUndefined();
     expect(t.session.state.phase).toBe("theatre");
@@ -546,9 +558,12 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     expect((await act(t, PRIMARY_ACTOR, "navigate", undefined, { kind: "interact", id: TOWER })).status).toBe("completed");
     expect((await act(t, PRIMARY_ACTOR, "power_off", TOWER)).status).toBe("completed");
     expect([w.inspect(PRIMARY_ACTOR, TOWER)?.state, w.provides(TOWER)]).toEqual(["off", []]);
-    // looked at before the plan is chosen: the record already holds that nothing is supplied
-    await tool(t, "observe_field");
-    expect(t.session.state.procedure).toMatchObject({ insufflated: false, pressure: 0, supply: { image: false, gas: false } });
+    // looked at before the plan is chosen: the record already holds that nothing is supplied — as equipment, the
+    // operation not begun by it
+    const unplanned = await tool(t, "observe_field");
+    expect(unplanned.output).toMatch(/Equipment fault/u);
+    expect(t.session.state.equipment).toMatchObject({ image: false, gas: false });
+    expect(t.session.state.procedure).toBeUndefined();
     // nobody switches it back on before the operation begins (it may be off on purpose)
     await t.session.run({ type: "staff_step" });
     expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("off");
@@ -567,6 +582,65 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     expect((await tool(t, "observe_field")).output).toMatch(/In view: Liver/u);
     const supplies = t.session.snapshot().actions.filter((a) => a.type === "procedure-supply").map((a) => (a as { supply: { image: boolean; gas: boolean } }).supply);
     expect(supplies.map((x) => [x.image, x.gas])).toEqual([[false, false], [true, true]]);
+    await t.session.close();
+  });
+
+  it("the tower's gas controls are the operation's own pneumoperitoneum: stop and desufflate lets the abdomen down; start before a port plan changes nothing (the round 3 audit)", async () => {
+    const t = await theatre();
+    toTheTable(t);
+    await toBedside(t);
+    const w = t.session.world()!;
+    // before a port plan, starting the gas is refused by the operation, and the tower stays as it was
+    const refused = await tryAt(t, "start_insufflation", TOWER);
+    expect(refused.status).toBe("failed");
+    expect(refused.message).toMatch(/Choose the port plan first/u);
+    expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("balanced");
+    await toBedside(t);
+    // at the table: the plan, the pneumoperitoneum, the scope — the field in view
+    for (const op of [{ op: "plan-ports", plan: "three-port-left" }, { op: "insufflate", pressure: 12 }, { op: "insert", port: "A", instrument: "laparoscope" }]) expect((await tool(t, "operate", op)).ok).toBe(true);
+    expect((await tool(t, "observe_field")).output).toMatch(/In view: Liver/u);
+    // the gas run from the tower: the operation's own step (the operator's), the tower shows it
+    await done(t, PRIMARY_ACTOR, "start_insufflation", TOWER);
+    expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("insufflating");
+    expect(t.session.state.procedure).toMatchObject({ insufflated: true, pressure: 12 });
+    // stop and desufflate: the tower, the record and the picture agree — the abdomen is down
+    await done(t, PRIMARY_ACTOR, "stop_insufflation", TOWER);
+    expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("balanced");
+    expect(t.session.state.procedure).toMatchObject({ insufflated: false, pressure: 0 });
+    await toBedside(t);
+    expect((await tool(t, "observe_field")).output).not.toMatch(/In view: Liver/u);
+    const ops = t.session.snapshot().actions.flatMap((a) => (a.type === "operate" ? [a.op.op] : []));
+    expect(ops.slice(-5)).toEqual(["plan-ports", "insufflate", "insert", "insufflate", "desufflate"]);
+    await t.session.close();
+  });
+
+  it("a tower fault before the Time Out is an equipment fault, never the start of the operation: the Time Out stays outstanding and both are said (the round 3 audit)", async () => {
+    const t = await theatre();
+    upTo(t, isIv("time-out"));
+    await toBedside(t);
+    const before = (await tool(t, "case_status")).output;
+    expect(before).toMatch(/Operation: not under way in this phase/u);
+    t.session.world()!.setAvailability(TOWER, false);
+    await t.session.run({ type: "staff_step" });
+    // recorded as equipment, not as an operation
+    expect(t.session.state.procedure).toBeUndefined();
+    expect(t.session.state.equipment).toMatchObject({ image: false, gas: false });
+    const after = (await tool(t, "case_status")).output;
+    expect(after).toMatch(/Operation: not under way in this phase[\s\S]*Time Out/u);
+    expect(after).toMatch(/Equipment fault \(the operation has not begun because of it, nor will it count as begun\): no picture — the laparoscopic camera or light source is not working, no CO₂ — the insufflator is not working\./u);
+    expect(after).not.toMatch(/no port plan yet/u);
+    const field = await tool(t, "observe_field");
+    expect(field.ok).toBe(false);
+    expect(field.output).toMatch(/not under way in this phase[\s\S]*Equipment fault/u);
+    // the gate is unchanged: no step before the Time Out
+    expect((await tool(t, "operate", { op: "plan-ports", plan: "three-port-left" })).ok).toBe(false);
+    expect(t.session.state.procedure).toBeUndefined();
+    // the Time Out opens the operation with the fault as it is: the plan may be chosen, no gas, no picture
+    const timeOut = t.session.caseDef.solution.find((x) => isIv("time-out")(x as ClinicalAction))!;
+    expect(t.session.dispatch({ ...timeOut, by: "system" } as ClinicalAction).rejected).toBeUndefined();
+    expect((await tool(t, "operate", { op: "plan-ports", plan: "three-port-left" })).ok).toBe(true);
+    expect(t.session.state.procedure!.supply).toEqual({ image: false, gas: false });
+    expect((await tool(t, "operate", { op: "insufflate", pressure: 12 })).ok).toBe(false);
     await t.session.close();
   });
 

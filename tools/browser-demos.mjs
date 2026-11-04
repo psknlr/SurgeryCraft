@@ -16,7 +16,10 @@
  *      before the operator's next step; saved and reloaded, the dock shows the same field;
  *   5. the follow-up audit: the tower fails with the scope in and nothing queued — the dock says "No picture" at
  *      once (never "Live"), and "Abdomen down" once the tower is back; with the surgery window open the care team's
- *      round goes on, and the pause menu stops it.
+ *      round goes on, and the pause menu stops it;
+ *   6. the round 3 audit: the tower fails and is restored while some 28 older operative frames wait — the dock never
+ *      says "Live" (nor draws 12 mmHg) while the record has the abdomen down, frame after frame, until the queue has
+ *      drained ("Abdomen down").
  *
  * The page is driven through the app's own session and world (the `?qa` hooks: `__QA__.session`, the world action
  * bus, the save and resume of the web app) and checked against the authoritative state, not pixels; screenshots are
@@ -28,7 +31,7 @@
  *       (`clinicalcraft serve`) and runs the demonstrations in Chromium;
  *   node tools/browser-demos.mjs --url 'https://…/?token=…'
  *       runs them against a deployed build instead (it must serve this pack).
- * Exit status 0 only when all of them hold (`--only 5` runs the fifth alone). Needs `playwright` (with its Chromium) and, locally, a ClinicalCraft checkout
+ * Exit status 0 only when all of them hold (`--only 6` runs the sixth alone). Needs `playwright` (with its Chromium) and, locally, a ClinicalCraft checkout
  * with its dependencies installed.
  */
 import { spawn, spawnSync } from "node:child_process";
@@ -406,6 +409,62 @@ async function demoEquipment(browser, entry) {
   return { name: "the equipment in view and the team's clock while the learner operates", pass, live, engine, failedTower, back, team: { surgeryOpen: [r0, r1], paused: [p0, p1] } };
 }
 
+/** 6. Equipment recovery with older frames queued (the round 3 audit's browser finding). */
+async function demoQueued(browser, entry) {
+  const page = await enter(browser, entry, "");
+  await install(page);
+  const step = await page.evaluate(async () => {
+    const d = window.__demo, s = d.s();
+    d.upTo((a) => a.type === "operate" && a.op.op === "dissect");
+    await d.act("actor:clinician", "navigate", undefined, { kind: "interact", id: d.patient() });
+    await s.run({ type: "staff_step" });
+    return s.state.procedure.counters.steps;
+  });
+  await page.evaluate(() => window.__QA__.route("team"));
+  await page.waitForFunction((n) => document.querySelector("#scope-chip")?.dataset.state === "live" && Number(document.querySelector("#scope-dock").dataset.step) === n && window.__QA__.app.playback.pending() === 0, step, { timeout: 60_000 });
+  // a backlog: accepted inspections, each a frame of its own, faster than they can be shown
+  await page.evaluate(() => {
+    const s = window.__QA__.session;
+    for (let i = 0; i < 28; i++) {
+      const r = s.dispatch({ type: "operate", op: { op: "inspect" }, by: "system" });
+      if (r.rejected) throw new Error(r.rejected.message);
+    }
+  });
+  await page.waitForFunction(() => window.__QA__.app.playback.pending() > 5, null, { timeout: 20_000 });
+  const look = () =>
+    page.evaluate(() => {
+      const q = window.__QA__, p = q.session.state.procedure, f = q.app.playback.frame().state;
+      return { chip: document.querySelector("#scope-chip")?.dataset.state, queue: q.app.playback.pending(), pressure: p.pressure, insufflated: p.insufflated, framePressure: f.pressure, frameInsufflated: f.insufflated };
+    });
+  const queued = await look();
+  const tower = (available) =>
+    page.evaluate(async (on) => {
+      const s = window.__QA__.session;
+      s.world().setAvailability("eq:or-7.lap-tower", on);
+      await s.run({ type: "staff_step" });
+    }, available);
+  await tower(false);
+  await page.waitForFunction(() => document.querySelector("#scope-chip")?.dataset.state === "no-image", null, { timeout: 15_000 }).catch(() => {});
+  const failedTower = await look();
+  await tower(true);
+  await page.waitForFunction(() => window.__QA__.session.state.procedure.supply?.image !== false && document.querySelector("#scope-chip")?.dataset.state !== "no-image", null, { timeout: 15_000 }).catch(() => {});
+  // frame after frame while the backlog drains: never live, never a pressure the record does not have
+  const samples = [];
+  for (let i = 0; i < 120; i++) {
+    const x = await look();
+    samples.push(x);
+    if (x.queue === 0 && x.chip === "deflated") break;
+    await page.waitForTimeout(250);
+  }
+  await page.screenshot({ path: join(out, "6-queued-recovery.png") });
+  await page.close();
+  const restored = samples[0];
+  const lies = samples.filter((x) => !x.insufflated && (x.chip === "live" || x.framePressure !== 0 || x.frameInsufflated));
+  const drained = samples.at(-1);
+  const pass = queued.queue > 5 && failedTower.chip === "no-image" && restored.queue > 0 && lies.length === 0 && drained.queue === 0 && drained.chip === "deflated";
+  return { name: "equipment recovery with older frames queued never shows a pneumoperitoneum the record does not have", pass, queued, failedTower, restored, drained, samples: samples.length, lies: lies.slice(0, 3) };
+}
+
 /* ------------------------------------------------------------------ */
 
 let failed = false;
@@ -414,7 +473,7 @@ try {
   const entry = deployed ?? (await local());
   browser = await chromium.launch();
   const results = [];
-  const demos = [demoUnresolved, demoBoard, demoReload, demoRelease, demoEquipment].filter((_, i) => !only.length || only.includes(i + 1));
+  const demos = [demoUnresolved, demoBoard, demoReload, demoRelease, demoEquipment, demoQueued].filter((_, i) => !only.length || only.includes(i + 1));
   for (const demo of demos) {
     try {
       results.push(await demo(browser, entry));

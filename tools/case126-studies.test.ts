@@ -371,6 +371,52 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
   it("a writer's unsupported diagnosis appended to genuine findings is never released: the service's template is (the follow-up audit)", () => unsupportedClaim("appended to genuine findings"));
   it("a writer's unsupported diagnosis labelled as the template is never released: the service's template is (the follow-up audit)", () => unsupportedClaim("labelled as the template"));
 
+  it("a writer that keeps the rhythm's id but states ventricular tachycardia in English is refused: the chart says sinus rhythm in both languages (the round 3 audit)", async () => {
+    const t = await beforeInduction({
+      reportWriter: async ({ profile, accession }) => {
+        const report = templateReport(profile, accession);
+        report.generator = "narrative";
+        const b = report.bindings!.find((x) => x.observation === "rhythm")!;
+        const opposite = "Rhythm: ventricular tachycardia.";
+        report.findings.en = report.findings.en.replace(b.en, opposite);
+        b.en = opposite;
+        return report;
+      },
+    });
+    expect((await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "binding" })).ok).toBe(true);
+    await tool(t, "wait", { minutes: 10 });
+    const report = t.session.state.studies!.reports[0]!;
+    expect(report.generator).toBe("template");
+    expect(report.findings.en).not.toMatch(/tachycardia/u);
+    expect(report.findings.en).toMatch(/sinus rhythm/u);
+    expect(report.findings["zh-CN"]).toMatch(/窦性/u);
+    expect((await tool(t, "read_study", { query: "ECG" })).output).not.toMatch(/ventricular tachycardia/u);
+    await t.session.close();
+  });
+
+  it("the limitations and the writer's label are the service's: a diagnosis put there never reaches the chart (the round 3 audit)", async () => {
+    const t = await beforeInduction({
+      reportWriter: async ({ profile, accession }) => {
+        const report = templateReport(profile, accession);
+        report.generator = "Acute pulmonary embolism confirmed";
+        report.limitations = { en: "Acute pulmonary embolism confirmed.", "zh-CN": "急性肺栓塞已确诊。" };
+        return report;
+      },
+    });
+    expect((await tool(t, "order_study", { query: "ECG", lead_placement: "mirror", request_key: "limitations" })).ok).toBe(true);
+    await tool(t, "wait", { minutes: 10 });
+    const report = t.session.state.studies!.reports[0]!;
+    // the writer's findings and impression were sound, so its text is released — with the service's limitations,
+    // and under a plain name, not the claim it gave itself
+    expect(report.generator).toBe("writer");
+    for (const L of ["en", "zh-CN"] as const) expect(report.limitations?.[L] ?? "").not.toMatch(/embolism|肺栓塞/u);
+    const chart = (await tool(t, "read_study", { query: "ECG" })).output;
+    expect(chart).not.toMatch(/embolism/u);
+    expect(chart).toMatch(/Limitations: Simulated from the case's teaching profile/u);
+    expect(t.session.state.studies!.reviews).toHaveLength(1);
+    await t.session.close();
+  });
+
   it("a writer that changes what it was given and returns nothing changes nothing: the acquisition, the released report and a reload agree (the follow-up audit)", async () => {
     const t = await beforeInduction({
       reportWriter: async ({ accession }) => {
