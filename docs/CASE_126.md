@@ -286,8 +286,10 @@ ClinicalCraft's audit round, closes the rest.
 ### Release acceptance (end to end)
 
 `tools/case126-acceptance.test.ts` runs Case 126 in OR 7 in in-world mode, from history at the bedside to the
-recovery handover, through the same session and world action bus the browser uses (`world_action`,
-`clinical_action`, the clinician's tool calls): the monitor attached by the circulating nurse (Sign In still
+recovery handover, through the same session and world action bus the browser uses (`world_action` with the
+learner's own body, `clinical_action`, the clinician's tool calls; a colleague's body is moved by the scenario
+through the session's world facade, as the benchmark's set-up moves it — the learner's op never drives another
+body): the monitor attached by the circulating nurse (Sign In still
 pending on the record and the board), an explicit anaesthesia hold and a refused induction, the Sign In on the
 board, the hold released after a recorded reassessment, the baseline count, induction, **a save and reload**,
 the Time Out **from the wall board**, the operation through `observe_field` / `operate`, the extubation decision,

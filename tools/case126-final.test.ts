@@ -21,7 +21,7 @@
  * The repository root comes from $SURGERYCRAFT_ROOT.
  */
 import { describe, expect, it } from "vitest";
-import { PRIMARY_ACTOR, type NavGoal } from "@clinicalcraft/world";
+import { PRIMARY_ACTOR, type NavGoal, type WorldActionRequest } from "@clinicalcraft/world";
 import { observeField, procedureFor, type CaseDefinition, type ClinicalAction } from "@clinicalcraft/core";
 import type { AgentEvent } from "./protocol.js";
 import { makeSession, msgsOf, type TestSession } from "./__fixtures__/harness.js";
@@ -48,7 +48,11 @@ async function tool(t: TestSession, name: string, args: Record<string, unknown> 
   return { ...(msgsOf(events, "tool_call_end").at(-1) as { ok: boolean; output: string; data?: any; actionIds?: string[] }), events };
 }
 async function act(t: TestSession, actorId: string, operation: string, goal?: NavGoal) {
-  const events = await t.session.run({ type: "world_action", request: { actionId: `w-${++n}`, actorId, operation, ...(goal ? { goal } : {}) } });
+  const request = { actionId: `w-${++n}`, actorId, operation, ...(goal ? { goal } : {}) };
+  // the learner's op moves only the learner's own body (PROTOCOL §12.2); a colleague's body is the scenario's to move,
+  // through the world facade, as the benchmark's setup moves it
+  if (actorId !== PRIMARY_ACTOR) return t.session.world()!.execute(request as WorldActionRequest);
+  const events = await t.session.run({ type: "world_action", request });
   return msgsOf(events, "world_action_result").at(-1)!.result;
 }
 const patientId = (t: TestSession) => t.session.world()!.find(PRIMARY_ACTOR, { kind: "patient" })[0]!.id;
@@ -104,9 +108,12 @@ describe("Case 126 · the final acceptance scenario", () => {
     // ── 3. live views and traction loss ──────────────────────────────────────────────────────────────────────────
     for (let i = 0; i < 3; i++) expect((await tool(t, "operate", { op: "dissect", port: "C", region: "hepatocystic-triangle", energy: false })).ok).toBe(true);
     expect((await tool(t, "delegate_task", { role: ASSISTANT, task: "hold_traction", params: { port: "B" } })).output).toMatch(/Dr Mori \(assistant surgeon\) has the grasper in port B and keeps its traction/);
-    const awayEvents = await t.session.run({ type: "world_action", request: { actionId: "mori-away", actorId: ASSISTANT, operation: "navigate", goal: { kind: "room", id: "l1-control" } } });
-    const away = { events: awayEvents };
-    expect(msgsOf(awayEvents, "world_action_result").at(-1)!.result.status).toBe("completed");
+    // Dr Mori is called away (the scenario moves their body, through the world facade; the staff's own clock — the
+    // `staff_step` a front-end sends on a timer — finds the hands gone from the table)
+    const from = t.events.length;
+    expect((await t.session.world()!.execute({ actionId: "mori-away", actorId: ASSISTANT, operation: "navigate", goal: { kind: "room", id: "l1-control" } })).status).toBe("completed");
+    await t.session.run({ type: "staff_step" });
+    const away = { events: t.events.slice(from) };
     // the traction went with their hands — recorded before any next step of the operator
     expect(steps(t).slice(-2)).toEqual(["release", "hand-over"]);
     const released = operativeEvents(away.events ?? []).find((e) => e.type === "procedure.step" && e.op === "release");

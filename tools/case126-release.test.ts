@@ -15,7 +15,7 @@
  * The repository root comes from $SURGERYCRAFT_ROOT.
  */
 import { describe, expect, it } from "vitest";
-import { PRIMARY_ACTOR, type NavGoal } from "@clinicalcraft/world";
+import { PRIMARY_ACTOR, type NavGoal, type WorldActionRequest } from "@clinicalcraft/world";
 import { observeField, procedureFor, type CaseDefinition, type ClinicalAction, type DomainEvent } from "@clinicalcraft/core";
 import type { AgentEvent } from "./protocol.js";
 import { makeSession, msgsOf, type TestSession } from "./__fixtures__/harness.js";
@@ -45,7 +45,11 @@ async function tool(t: TestSession, name: string, args: Record<string, unknown> 
   return { ...(msgsOf(events, "tool_call_end").at(-1) as { ok: boolean; output: string; data?: any }), events };
 }
 async function act(t: TestSession, actorId: string, operation: string, goal?: NavGoal) {
-  const events = await t.session.run({ type: "world_action", request: { actionId: `w-${++n}`, actorId, operation, ...(goal ? { goal } : {}) } });
+  const request = { actionId: `w-${++n}`, actorId, operation, ...(goal ? { goal } : {}) };
+  // the learner's op moves only the learner's own body (PROTOCOL §12.2); a colleague's body is the scenario's to move,
+  // through the world facade, as the benchmark's setup moves it
+  if (actorId !== PRIMARY_ACTOR) return t.session.world()!.execute(request as WorldActionRequest);
+  const events = await t.session.run({ type: "world_action", request });
   return msgsOf(events, "world_action_result").at(-1)!.result;
 }
 const patientId = (t: TestSession) => t.session.world()!.find(PRIMARY_ACTOR, { kind: "patient" })[0]!.id;
@@ -142,8 +146,12 @@ describe("Case 126 · the first release scenario", () => {
 
     // the assistant is called away: the traction goes with their hands, before the operator's next instrument step
     const cleared = triangle(r).dissection;
-    const awayEvents = await r.session.run({ type: "world_action", request: { actionId: "away", actorId: ASSISTANT, operation: "navigate", goal: { kind: "room", id: "l1-control" } } });
-    expect(msgsOf(awayEvents, "world_action_result").at(-1)!.result.status).toBe("completed");
+    // (the scenario moves the assistant's body, through the world facade; the staff's own clock — the `staff_step` a
+    // front-end sends on a timer — finds the hands gone from the table)
+    const from = r.events.length;
+    expect((await r.session.world()!.execute({ actionId: "away", actorId: ASSISTANT, operation: "navigate", goal: { kind: "room", id: "l1-control" } })).status).toBe("completed");
+    await r.session.run({ type: "staff_step" });
+    const awayEvents = r.events.slice(from);
     expect(steps(r).slice(-2)).toEqual([
       { op: "release", actor: "or-7-assistant" },
       { op: "hand-over", actor: "or-7-assistant" },

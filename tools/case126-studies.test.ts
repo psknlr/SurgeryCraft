@@ -195,7 +195,8 @@ describe("Case 126 in OR 7 · investigations beyond the published case", () => {
     const w = t.session.world()!;
     const NURSE = "staff:or-7.circulating-nurse";
     // the nurse steps out to theatre control, and OR 7's doors are locked behind them
-    expect((await t.session.run({ type: "world_action", request: { actionId: "out", actorId: NURSE, operation: "navigate", goal: { kind: "room", id: "l1-control" } } })).length).toBeGreaterThan(0);
+    // (the scenario moves the nurse's body, through the world facade)
+    expect((await w.execute({ actionId: "out", actorId: NURSE, operation: "navigate", goal: { kind: "room", id: "l1-control" } })).status).toBe("completed");
     expect(w.roomOf(NURSE)).toBe("l1-control");
     // every door on OR 7's walls (its own, and the scrub bays' and set-up rooms' into it): x 2–11, z −2–7 on L1
     const doors = w.entities().filter((e) => e.kind === "door" && e.level === "L1" && e.position.x >= 1.9 && e.position.x <= 11.1 && e.position.z >= -2.1 && e.position.z <= 7.1).map((e) => e.id);
