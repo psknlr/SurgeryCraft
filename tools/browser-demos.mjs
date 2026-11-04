@@ -149,7 +149,10 @@ window.__demo = {
   },
   async act(actorId, operation, targetId, goal) {
     const id = "demo-" + Math.random().toString(36).slice(2);
-    const ev = await this.s().run({ type: "world_action", request: { actionId: id, actorId, operation, ...(targetId ? { targetId } : {}), ...(goal ? { goal } : {}) } });
+    const request = { actionId: id, actorId, operation, ...(targetId ? { targetId } : {}), ...(goal ? { goal } : {}) };
+    // the learner's op moves only the learner's own body; a colleague's is moved by the demo through the world facade
+    if (actorId !== "actor:clinician") return this.s().world().execute(request);
+    const ev = await this.s().run({ type: "world_action", request });
     return ev.map((e) => e.msg).filter((m) => m.type === "world_action_result").map((m) => m.result).find((r) => r.actionId === id) ?? null;
   },
   async done(actorId, operation, targetId) {
