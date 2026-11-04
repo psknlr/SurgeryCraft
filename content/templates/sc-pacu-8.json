@@ -81,7 +81,7 @@
     {"id": "bay-8", "x": 5.425, "z": 2.2, "rot": 270, "posture": "lying", "bed": "bed-8", "accepts": ["operating-room"], "monitor": "monitor-8"}
   ],
   "staff": [
-    {"id": "nurse", "role": "nurse", "name": {"zh-CN": "复苏室护士", "en": "Recovery nurse"}, "x": 0, "z": 1.9, "rot": 180, "greeting": {"zh-CN": "交接时请说清楚术式、麻醉方式、术中出血和镇痛计划。", "en": "For handover I need the procedure, the anaesthetic, blood loss and the analgesia plan."}}
+    {"id": "nurse", "role": "nurse", "position": "recovery-nurse", "name": {"zh-CN": "复苏室护士", "en": "Recovery nurse"}, "x": 0, "z": 1.9, "rot": 180, "greeting": {"zh-CN": "交接时请说清楚术式、麻醉方式、术中出血和镇痛计划。", "en": "For handover I need the procedure, the anaesthetic, blood loss and the analgesia plan."}}
   ],
   "capabilities": ["cardiac-monitor", "capnography", "oxygen", "suction", "infusion-pump", "ventilator", "niv", "defibrillator", "crash-cart", "airway", "medications", "lab-blood-gas", "records"],
   "tags": ["pacu", "recovery", "perioperative"]

@@ -22,7 +22,8 @@
 #      traction, a save and resume midway, the traction falling when the assistant leaves the table
 #      (tools/case126-release.test.ts) — and staff working on their own: the ECG's work and the responsible
 #      anaesthetist answering a hypotension alarm on the staff's own clock (tools/case126-staff.test.ts) — and the
-#      final acceptance scenario in one session, from the pre-operative ECG to the conversion (tools/case126-final.test.ts);
+#      final acceptance scenario in one session, from the pre-operative ECG to the conversion (tools/case126-final.test.ts)
+#      — and every character's own role: positions, role cards, model-driven team members (tools/case126-characters.test.ts);
 #   6. the operative benchmark suite of Case 126 (content/operative/case126-v1): generated files up to date
 #      (tools/operative/build_suite_case126.py --check), then `clinicalcraft bench operative` with the reference and
 #      scripted-llm agents, both at 100 % with no hidden-state leak.
@@ -47,9 +48,10 @@ STUDIES="$CC/packages/agent/src/zz-surgerycraft-case126-studies.test.ts"
 RELEASE="$CC/packages/agent/src/zz-surgerycraft-case126-release.test.ts"
 STAFF="$CC/packages/agent/src/zz-surgerycraft-case126-staff.test.ts"
 FINAL="$CC/packages/agent/src/zz-surgerycraft-case126-final.test.ts"
+CHARS="$CC/packages/agent/src/zz-surgerycraft-case126-characters.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
 
 echo "== regression list (tools/regressions.tsv): every listed test present"
@@ -117,11 +119,15 @@ cp "$HERE/case126-staff.test.ts" "$STAFF"
 # resume → conversion (tools/case126-final.test.ts)
 cp "$HERE/case126-final.test.ts" "$FINAL"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-final.test.ts")
+# every character has a role of its own (ClinicalCraft docs/CHARACTERS.md): each member of staff's position and role
+# card; with `characters.engine: "llm"` the nurses' moves decided by their models, grounded (tools/case126-characters.test.ts)
+cp "$HERE/case126-characters.test.ts" "$CHARS"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-characters.test.ts")
 
 echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
 python3 "$HERE/operative/build_suite_case126.py" --check
 OUT="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL"' EXIT
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
 for agent in reference scripted-llm; do
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
 done
