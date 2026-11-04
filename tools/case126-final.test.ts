@@ -108,9 +108,11 @@ describe("Case 126 · the final acceptance scenario", () => {
     // ── 3. live views and traction loss ──────────────────────────────────────────────────────────────────────────
     for (let i = 0; i < 3; i++) expect((await tool(t, "operate", { op: "dissect", port: "C", region: "hepatocystic-triangle", energy: false })).ok).toBe(true);
     expect((await tool(t, "delegate_task", { role: ASSISTANT, task: "hold_traction", params: { port: "B" } })).output).toMatch(/Dr Mori \(assistant surgeon\) has the grasper in port B and keeps its traction/);
-    // Dr Mori is called away (the scenario moves their body, through the world facade)
+    // Dr Mori is called away (the scenario moves their body, through the world facade; the staff's own clock — the
+    // `staff_step` a front-end sends on a timer — finds the hands gone from the table)
     const from = t.events.length;
     expect((await t.session.world()!.execute({ actionId: "mori-away", actorId: ASSISTANT, operation: "navigate", goal: { kind: "room", id: "l1-control" } })).status).toBe("completed");
+    await t.session.run({ type: "staff_step" });
     const away = { events: t.events.slice(from) };
     // the traction went with their hands — recorded before any next step of the operator
     expect(steps(t).slice(-2)).toEqual(["release", "hand-over"]);

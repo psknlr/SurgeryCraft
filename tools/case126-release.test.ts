@@ -146,9 +146,11 @@ describe("Case 126 · the first release scenario", () => {
 
     // the assistant is called away: the traction goes with their hands, before the operator's next instrument step
     const cleared = triangle(r).dissection;
-    // (the scenario moves the assistant's body, through the world facade)
+    // (the scenario moves the assistant's body, through the world facade; the staff's own clock — the `staff_step` a
+    // front-end sends on a timer — finds the hands gone from the table)
     const from = r.events.length;
     expect((await r.session.world()!.execute({ actionId: "away", actorId: ASSISTANT, operation: "navigate", goal: { kind: "room", id: "l1-control" } })).status).toBe("completed");
+    await r.session.run({ type: "staff_step" });
     const awayEvents = r.events.slice(from);
     expect(steps(r).slice(-2)).toEqual([
       { op: "release", actor: "or-7-assistant" },
