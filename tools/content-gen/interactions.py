@@ -147,9 +147,9 @@ instrument(
     {"grasp": op("夹持组织", "Grasp tissue", ["sterile", "in-use"], "in-use", [IN_HAND, *SCRUBBED, AT_TABLE], SCRUB, 10)})
 
 instrument(
-    "sc-metzenbaum-scissors", L("Metzenbaum 解剖剪（碳化钨刃口）", "Metzenbaum dissecting scissors (tungsten-carbide edges)"),
-    L("弯头 Metzenbaum 解剖剪，碳化钨刃口（黑色手柄识别），剪刀通用要求与切割试验按 ISO 7741:1986，UDI 直接标记。",
-      "Curved Metzenbaum dissecting scissors with tungsten-carbide edges (black handles), scissors requirements and cutting test to ISO 7741:1986, UDI direct-marked."),
+    "sc-metzenbaum-scissors", L("Metzenbaum 解剖剪（超锋利刃口）", "Metzenbaum dissecting scissors (supercut edge)"),
+    L("弯头 Metzenbaum 解剖剪，超锋利（supercut）刃口：一片剃刀式刃配一片微齿刃（黑色指环识别；金色指环表示碳化钨镶片），剪刀通用要求与切割试验按 ISO 7741:1986，UDI 直接标记。",
+      "Curved Metzenbaum dissecting scissors with a supercut edge — one razor-honed blade against one micro-serrated blade (black ring handles; gold rings mark tungsten-carbide inserts) — scissors requirements and cutting test to ISO 7741:1986, UDI direct-marked."),
     None, (0.18, 0.05, 0.02),
     [thin("chrome", 0.02, 0.008, -0.005, 0.12, 0.008, 0.008), thin("chrome", 0.02, 0.008, 0.005, 0.12, 0.008, 0.008),
      thin("sc-matte-black", -0.065, 0.01, 0, 0.04, 0.012, 0.04)],
@@ -353,13 +353,14 @@ attach("sc-who-checklist", {
                "timed-out": when(st("切皮前暂停核查完成（Time out）", "timed out (before incision)"), VALID("time-out")),
                "signed-out": when(st("离室前核查完成（Sign out）", "signed out (before leaving)"), VALID("sign-out"))},
     "operations": {
-        "sign_in": entry(op("Sign in：核对身份、术式、部位标记、过敏、气道与失血风险", "Sign in: identity, procedure, site marking, allergies, airway and blood-loss risk",
+        "sign_in": entry(op("Sign in：核对身份、术式、知情同意与部位标记，麻醉机与药品检查，脉搏血氧已连接，过敏、气道与误吸风险、失血风险",
+                            "Sign in: identity, procedure, consent and site marking; anaesthesia machine and medication check; pulse oximeter on; allergies, airway and aspiration risk, blood-loss risk",
                             ["pending"], "signed-in", [{"actorWithin": 3}], TEAM, 60), "sign-in"),
         "time_out": entry(op("Time out：全员暂停，确认患者、术式、部位，预防性抗菌药与影像（需切皮前清点完成）",
                              "Time out: the whole team pauses — patient, procedure, site, antibiotic prophylaxis, imaging (needs the baseline count)",
                              ["signed-in"], "timed-out", [{"actorWithin": 3}, near("sc-count-board", ["baseline", "cavity", "closing", "reconciled"], 8)], TEAM, 60), "time-out"),
-        "sign_out": entry(op("Sign out：术式记录、清点相符、标本标识、设备问题（需最终清点相符）",
-                             "Sign out: procedure recorded, counts reconciled, specimens labelled, equipment problems (needs the reconciled count)",
+        "sign_out": entry(op("Sign out：术式记录、器械纱布缝针清点相符、标本标识、设备问题、恢复期关注事项（需最终清点相符）",
+                             "Sign out: procedure recorded, instrument, swab and needle counts reconciled, specimens labelled, equipment problems, concerns for recovery (needs the reconciled count)",
                              ["timed-out"], "signed-out", [{"actorWithin": 3}, near("sc-count-board", ["reconciled", "excluded"], 8)], TEAM, 60), "sign-out"),
         "reset": op("下一台手术：新的核查表", "Next case: a fresh checklist", ["signed-out"], "pending", [], TEAM, 10),
     }}, prompt=L("E · 手术安全核查", "E · Surgical safety checklist"))

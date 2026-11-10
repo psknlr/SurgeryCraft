@@ -158,7 +158,7 @@
         {"m": "coal", "p": [0.26, 0.92, 0.92], "s": [0.26, 0.08, 0.26]},
         {"m": "warning-yellow", "p": [0.26, 0.72, 1.135], "s": [0.12, 0.06, 0.01]}
       ],
-      "model": {"uri": "models/sc-robotic-c-arm.glb", "sha256": "5e78961098ebb69704ff589bbd0d3e8fb2b0a4686db0f7fcd4ecdfc488f4195e", "scale": 1, "offset": [-0.025, 0.0, 0.0375], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-robotic-c-arm.glb", "sha256": "d940d2ed7a150fa9842c56b45ac9cf053b695a39c6da28a471fce5060173d4a8", "scale": 1, "offset": [-0.045, 0.0, 0.0375], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-contrast-injector",
@@ -322,8 +322,8 @@
       "name": {"zh-CN": "麻醉吊塔", "en": "Anaesthesia pendant"},
       "category": "surgery",
       "description": {
-        "zh-CN": "吊顶式麻醉吊塔：氧气、医用空气、笑气、负压吸引和麻醉废气排放（AGSS）终端，双层设备托架和多路电源插座（含隔离电源），吊臂可旋转升降。",
-        "en": "Ceiling-mounted anaesthesia supply pendant: oxygen, medical air, nitrous oxide, vacuum and anaesthetic gas scavenging (AGSS) outlets, two equipment shelves and power sockets (including isolated-power circuits) on a rotating, height-adjustable arm."
+        "zh-CN": "吊顶式麻醉吊塔：氧气、医用空气、笑气、负压吸引和麻醉废气排放（AGSS）终端，双层设备托架和多路电源插座（含隔离电源），吊臂可旋转升降。终端按 ISO 32 标识色区分：氧气白色、医用空气黑白、笑气蓝色、负压黄色、AGSS 品红色。",
+        "en": "Ceiling-mounted anaesthesia supply pendant: oxygen, medical air, nitrous oxide, vacuum and anaesthetic gas scavenging (AGSS) outlets, two equipment shelves and power sockets (including isolated-power circuits) on a rotating, height-adjustable arm. The outlets are colour-coded to ISO 32: white oxygen, black-and-white medical air, blue nitrous oxide, yellow vacuum, magenta AGSS."
       },
       "usage": {
         "zh-CN": "从吊塔取氧气和负压吸引：调节吸引负压并检查吸引瓶，麻醉机接 AGSS 废气排放；设备停放在托架上，地面不留拖线。",
@@ -349,8 +349,9 @@
         {"m": "coal", "p": [0.226, 1.3, -0.05], "s": [0.01, 0.06, 0.1]},
         {"m": "coal", "p": [0.226, 1.42, -0.05], "s": [0.01, 0.06, 0.1]},
         {"m": "led-green", "p": [0, 2.2, 0.215], "s": [0.12, 0.02, 0.01]},
-        {"m": "oxygen-green", "p": [-0.15, 1.26, 0.215], "s": [0.06, 0.06, 0.02]},
+        {"m": "gas-oxygen", "p": [-0.15, 1.26, 0.215], "s": [0.06, 0.06, 0.02]},
         {"m": "sc-gas-air", "p": [-0.05, 1.26, 0.215], "s": [0.06, 0.06, 0.02]},
+        {"m": "gas-oxygen", "p": [-0.05, 1.26, 0.226], "s": [0.026, 0.026, 0.004]},
         {"m": "sc-gas-n2o", "p": [0.05, 1.26, 0.215], "s": [0.06, 0.06, 0.02]},
         {"m": "yellow", "p": [0.15, 1.26, 0.215], "s": [0.06, 0.06, 0.02]},
         {"m": "sc-gas-agss", "p": [0, 1.38, 0.215], "s": [0.06, 0.06, 0.02]},
@@ -361,7 +362,7 @@
         {"m": "coal", "p": [-0.18, 1.74, 0.18], "s": [0.3, 0.2, 0.26]},
         {"m": "led-amber", "p": [-0.18, 1.74, 0.315], "s": [0.12, 0.03, 0.01]}
       ],
-      "model": {"uri": "models/sc-anaesthesia-pendant.glb", "sha256": "cc4c84c4f872fd46d4f49390a34424694d8db6369eac7a3ae50904c7f4e6e33c", "scale": 1, "offset": [0.0, 0.735, -0.04], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-anaesthesia-pendant.glb", "sha256": "56a6e0524c4d4a9e2f00cff552a410aa3b656c70835b3ee2ebeedb2651f3733b", "scale": 1, "offset": [0.0, 0.735, -0.04], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-surgical-pendant",
@@ -403,10 +404,10 @@
         {"m": "sc-robot", "p": [0, 1.73, 0.17], "s": [0.62, 0.18, 0.44]},
         {"m": "coal", "p": [-0.1, 1.73, 0.392], "s": [0.3, 0.1, 0.006]},
         {"m": "led-green", "p": [0.18, 1.75, 0.392], "s": [0.06, 0.03, 0.006]},
-        {"m": "oxygen-green", "p": [-0.1, 1.38, 0.215], "s": [0.06, 0.06, 0.02]},
+        {"m": "gas-oxygen", "p": [-0.1, 1.38, 0.215], "s": [0.06, 0.06, 0.02]},
         {"m": "yellow", "p": [0.1, 1.38, 0.215], "s": [0.06, 0.06, 0.02]}
       ],
-      "model": {"uri": "models/sc-surgical-pendant.glb", "sha256": "152828427a3cec76b5d96d76cd426551470d73cc99e236876e30b1c738c542ae", "scale": 1, "offset": [0.0, 0.94, -0.04], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-surgical-pendant.glb", "sha256": "94da3f470d6fd1594cc96121a4d74b87f2487bd7bc7a4bca6a4098a80ca2f199", "scale": 1, "offset": [0.0, 0.94, -0.04], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-ceiling-display",
@@ -522,7 +523,7 @@
       "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 手术安全核查", "en": "E · Surgical safety checklist"}},
       "screen": "none",
       "tags": ["wall", "or", "safety"],
-      "behavior": {"initial": "pending", "derived": "case-record", "states": {"pending": {"name": {"zh-CN": "待核查", "en": "pending"}}, "signed-in": {"name": {"zh-CN": "麻醉前核查完成（Sign in）", "en": "signed in (before induction)"}, "when": {"intervened": "sign-in", "valid": true}}, "timed-out": {"name": {"zh-CN": "切皮前暂停核查完成（Time out）", "en": "timed out (before incision)"}, "when": {"intervened": "time-out", "valid": true}}, "signed-out": {"name": {"zh-CN": "离室前核查完成（Sign out）", "en": "signed out (before leaving)"}, "when": {"intervened": "sign-out", "valid": true}}}, "operations": {"sign_in": {"name": {"zh-CN": "Sign in：核对身份、术式、部位标记、过敏、气道与失血风险", "en": "Sign in: identity, procedure, site marking, allergies, airway and blood-loss risk"}, "from": ["pending"], "to": "signed-in", "requires": [{"actorWithin": 3}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"], "clinical": {"tool": "intervene", "select": "item", "item": "sign-in"}}, "time_out": {"name": {"zh-CN": "Time out：全员暂停，确认患者、术式、部位，预防性抗菌药与影像（需切皮前清点完成）", "en": "Time out: the whole team pauses — patient, procedure, site, antibiotic prophylaxis, imaging (needs the baseline count)"}, "from": ["signed-in"], "to": "timed-out", "requires": [{"actorWithin": 3}, {"nearbyState": {"type": "sc-count-board", "state": ["baseline", "cavity", "closing", "reconciled"], "within": 8}}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"], "clinical": {"tool": "intervene", "select": "item", "item": "time-out"}}, "sign_out": {"name": {"zh-CN": "Sign out：术式记录、清点相符、标本标识、设备问题（需最终清点相符）", "en": "Sign out: procedure recorded, counts reconciled, specimens labelled, equipment problems (needs the reconciled count)"}, "from": ["timed-out"], "to": "signed-out", "requires": [{"actorWithin": 3}, {"nearbyState": {"type": "sc-count-board", "state": ["reconciled", "excluded"], "within": 8}}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"], "clinical": {"tool": "intervene", "select": "item", "item": "sign-out"}}, "reset": {"name": {"zh-CN": "下一台手术：新的核查表", "en": "Next case: a fresh checklist"}, "from": ["signed-out"], "to": "pending", "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}}},
+      "behavior": {"initial": "pending", "derived": "case-record", "states": {"pending": {"name": {"zh-CN": "待核查", "en": "pending"}}, "signed-in": {"name": {"zh-CN": "麻醉前核查完成（Sign in）", "en": "signed in (before induction)"}, "when": {"intervened": "sign-in", "valid": true}}, "timed-out": {"name": {"zh-CN": "切皮前暂停核查完成（Time out）", "en": "timed out (before incision)"}, "when": {"intervened": "time-out", "valid": true}}, "signed-out": {"name": {"zh-CN": "离室前核查完成（Sign out）", "en": "signed out (before leaving)"}, "when": {"intervened": "sign-out", "valid": true}}}, "operations": {"sign_in": {"name": {"zh-CN": "Sign in：核对身份、术式、知情同意与部位标记，麻醉机与药品检查，脉搏血氧已连接，过敏、气道与误吸风险、失血风险", "en": "Sign in: identity, procedure, consent and site marking; anaesthesia machine and medication check; pulse oximeter on; allergies, airway and aspiration risk, blood-loss risk"}, "from": ["pending"], "to": "signed-in", "requires": [{"actorWithin": 3}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"], "clinical": {"tool": "intervene", "select": "item", "item": "sign-in"}}, "time_out": {"name": {"zh-CN": "Time out：全员暂停，确认患者、术式、部位，预防性抗菌药与影像（需切皮前清点完成）", "en": "Time out: the whole team pauses — patient, procedure, site, antibiotic prophylaxis, imaging (needs the baseline count)"}, "from": ["signed-in"], "to": "timed-out", "requires": [{"actorWithin": 3}, {"nearbyState": {"type": "sc-count-board", "state": ["baseline", "cavity", "closing", "reconciled"], "within": 8}}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"], "clinical": {"tool": "intervene", "select": "item", "item": "time-out"}}, "sign_out": {"name": {"zh-CN": "Sign out：术式记录、器械纱布缝针清点相符、标本标识、设备问题、恢复期关注事项（需最终清点相符）", "en": "Sign out: procedure recorded, instrument, swab and needle counts reconciled, specimens labelled, equipment problems, concerns for recovery (needs the reconciled count)"}, "from": ["timed-out"], "to": "signed-out", "requires": [{"actorWithin": 3}, {"nearbyState": {"type": "sc-count-board", "state": ["reconciled", "excluded"], "within": 8}}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"], "clinical": {"tool": "intervene", "select": "item", "item": "sign-out"}}, "reset": {"name": {"zh-CN": "下一台手术：新的核查表", "en": "Next case: a fresh checklist"}, "from": ["signed-out"], "to": "pending", "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}}},
       "parts": [
         {"m": "plastic", "p": [0, 1.5, -0.03], "s": [1.12, 0.84, 0.02]},
         {"m": "sc-robot-accent", "p": [-0.36, 1.86, -0.017], "s": [0.34, 0.07, 0.006]},
@@ -630,7 +631,7 @@
         {"m": "coal", "p": [0.12, 1.54, 0.04], "s": [0.08, 0.03, 0.08]},
         {"m": "coal", "p": [0.26, 1.54, 0.04], "s": [0.08, 0.03, 0.08]},
         {"m": "lead-glass", "p": [-0.42, 1.1, -0.05], "s": [0.12, 0.22, 0.12]},
-        {"m": "purple", "p": [-0.42, 1.09, -0.05], "s": [0.1, 0.18, 0.1]},
+        {"m": "paper", "p": [-0.42, 1.09, -0.05], "s": [0.1, 0.18, 0.1]},
         {"m": "clin-hose-blue", "p": [-0.41, 0.97, 0.06], "s": [0.06, 0.17, 0.06]},
         {"m": "clin-hose-blue", "p": [-0.41, 0.91, 0.2], "s": [0.06, 0.06, 0.2]},
         {"m": "mattress", "p": [-0.33, 0.97, 0.06], "s": [0.06, 0.17, 0.06]},
@@ -639,10 +640,10 @@
         {"m": "plastic", "p": [0.18, 1.86, -0.15], "s": [0.62, 0.36, 0.08]},
         {"m": "coal", "p": [0.18, 1.86, -0.106], "s": [0.58, 0.32, 0.008]},
         {"m": "screen-dark", "p": [0.18, 1.86, -0.1], "s": [0.55, 0.29, 0.004], "name": "screen"},
-        {"m": "oxygen-green", "p": [-0.22, 0.52, -0.4], "s": [0.1, 0.55, 0.04]},
+        {"m": "gas-oxygen", "p": [-0.22, 0.52, -0.4], "s": [0.1, 0.55, 0.04]},
         {"m": "blue", "p": [0.22, 0.52, -0.4], "s": [0.1, 0.55, 0.04]}
       ],
-      "model": {"uri": "models/sc-anaesthesia-workstation.glb", "sha256": "1a5651fbd6891b2bc88a4424a073c2a8bbb208a667442944ce0d024c27d4e683", "scale": 1, "offset": [0.002, 0.001, -0.0137], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-anaesthesia-workstation.glb", "sha256": "f8ee702dc612b8d5b2b3b2b6b49fee5d6fe90858089816a46545547c09408a4c", "scale": 1, "offset": [0.002, 0.001, -0.0137], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-difficult-airway-trolley",
@@ -730,7 +731,7 @@
         {"m": "sc-robot-accent", "p": [0.42, 1.06, 0.6], "s": [0.08, 0.3, 0.08]},
         {"m": "chrome", "p": [0.42, 0.76, 0.6], "s": [0.02, 0.3, 0.02]}
       ],
-      "model": {"uri": "models/sc-robotic-patient-cart.glb", "sha256": "14147d87b40c3d587c62000fa4864b797fde758219b7170df6bb6737b9febfbe", "scale": 1, "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-robotic-patient-cart.glb", "sha256": "ed565e005b248637b80b74042a0e59898605e2bac5d33b07e8b490a170f7a691", "scale": 1, "offset": [0.0, 0.0, 0.0135], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-robotic-console",
@@ -764,7 +765,7 @@
         {"m": "coal", "p": [0.43, 0.96, 0.28], "s": [0.16, 0.12, 0.02]},
         {"m": "screen-dark", "p": [0.43, 0.96, 0.292], "s": [0.14, 0.1, 0.004], "name": "screen"}
       ],
-      "model": {"uri": "models/sc-robotic-console.glb", "sha256": "a4b04417291286889f201dd81a4e9d8dd63dd2b5f5e21e7d366ed4132933428a", "scale": 1, "offset": [0.0, 0.0, -0.005], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-robotic-console.glb", "sha256": "374813a7aa121dc2137d43c24134d890caf263be48d3ecc3dab684b6b91b9804", "scale": 1, "offset": [0.0, 0.0, -0.005], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-robotic-vision-cart",
@@ -834,7 +835,7 @@
         {"m": "led-blue", "p": [0.18, 0.82, 0.255], "s": [0.08, 0.03, 0.01]},
         {"m": "steel", "p": [0, 1.02, 0], "s": [0.68, 0.03, 0.62]},
         {"m": "plastic", "p": [0, 1.12, 0], "s": [0.6, 0.16, 0.5]},
-        {"m": "oxygen-green", "p": [-0.18, 1.12, 0.255], "s": [0.1, 0.06, 0.01]},
+        {"m": "led-green", "p": [-0.18, 1.12, 0.255], "s": [0.1, 0.06, 0.01]},
         {"m": "led-amber", "p": [0.15, 1.12, 0.255], "s": [0.12, 0.04, 0.01]},
         {"m": "steel", "p": [0, 1.32, 0], "s": [0.68, 0.03, 0.62]},
         {"m": "plastic", "p": [0, 1.4, 0], "s": [0.6, 0.12, 0.5]},
@@ -842,7 +843,7 @@
         {"m": "screen-dark", "p": [0, 1.86, 0.054], "s": [0.66, 0.38, 0.006], "name": "screen"},
         {"m": "steel", "p": [0, 1.6, -0.05], "s": [0.12, 0.08, 0.12]}
       ],
-      "model": {"uri": "models/sc-laparoscopy-tower.glb", "sha256": "cdfec4c31d4463d4ebce46072f9883482c63ef0114ff4399d444ef3b487ee11a", "scale": 1, "offset": [0.0, 0.001, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-laparoscopy-tower.glb", "sha256": "15b5cad5403bc850a3c825a437f3454fb7fcef0ea03d06d5643327b2e2f3cc84", "scale": 1, "offset": [0.0, 0.001, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-heart-lung-machine",
@@ -896,7 +897,7 @@
         {"m": "plastic", "p": [0.35, 1.6, -0.15], "s": [0.52, 0.34, 0.06]},
         {"m": "screen-dark", "p": [0.35, 1.6, -0.117], "s": [0.48, 0.3, 0.006], "name": "screen"}
       ],
-      "model": {"uri": "models/sc-heart-lung-machine.glb", "sha256": "c953a51435617bed7e1feab93e145929706526bdbe3eea258efd1f59fbe54181", "scale": 1, "offset": [0.0, 0.0007, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-heart-lung-machine.glb", "sha256": "1eacec2183ed7a38b91bfaea25d05fa9d8f5e4d50915c46dc06811e097e1a601", "scale": 1, "offset": [0.0, 0.0, 0.0054], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-cell-salvage",
@@ -992,7 +993,7 @@
         {"m": "chrome", "p": [0.16, 1.28, 0.34], "s": [0.05, 0.03, 0.03]},
         {"m": "led-blue", "p": [0, 1.2, 0.465], "s": [0.06, 0.02, 0.01]}
       ],
-      "model": {"uri": "models/sc-surgical-microscope.glb", "sha256": "1bbff777c7ef5766767ba6dc294572b0b01b2486983db7c5f05e28bf3ba2421a", "scale": 1, "offset": [0.0, 0.0007, 0.02], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-surgical-microscope.glb", "sha256": "1024d7957cb55373ba43013525cc559ba7c50ab927695a70ed63fd6f8b77738a", "scale": 1, "offset": [0.0, 0.001, 0.0052], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-infant-warmer",
@@ -1031,10 +1032,10 @@
         {"m": "plastic", "p": [0.28, 1.3, -0.32], "s": [0.36, 0.3, 0.06]},
         {"m": "screen-dark", "p": [0.28, 1.32, -0.287], "s": [0.3, 0.2, 0.006], "name": "screen"},
         {"m": "led-red", "p": [0.28, 1.19, -0.287], "s": [0.12, 0.03, 0.006]},
-        {"m": "oxygen-green", "p": [-0.28, 1.15, -0.27], "s": [0.06, 0.2, 0.06]},
+        {"m": "gas-oxygen", "p": [-0.28, 1.15, -0.27], "s": [0.06, 0.2, 0.06]},
         {"m": "lead-glass", "p": [0.4, 0.68, 0], "s": [0.1, 0.18, 0.1]}
       ],
-      "model": {"uri": "models/sc-infant-warmer.glb", "sha256": "3ebca2ca35774bacc5f593f6269af16d93b1ccebe6d29bf5065686b3ab6819dd", "scale": 1, "offset": [0.005, 0.0007, 0.0006], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-infant-warmer.glb", "sha256": "e5797cc17213d061975ea69a828707400a14d77662502ace9ce4d1568cd13e46", "scale": 1, "offset": [0.005, 0.0007, 0.0006], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-forced-air-warmer",
@@ -1063,7 +1064,7 @@
         {"m": "led-amber", "p": [0.12, 0.88, 0.162], "s": [0.05, 0.03, 0.006]},
         {"m": "clin-hose-blue", "p": [0, 0.72, 0.15], "s": [0.1, 0.12, 0.1]}
       ],
-      "model": {"uri": "models/sc-forced-air-warmer.glb", "sha256": "fc5eea438a01d162c1b365df78309b89befe61e744187a3ec9827b664b738b60", "scale": 1, "offset": [0.0, 0.0008, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-forced-air-warmer.glb", "sha256": "a621e08404607691f7d36edb6bbe248a136e611ca917f4561187881b7e49c15b", "scale": 1, "offset": [0.0, 0.0008, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-warming-cabinet",
@@ -1542,8 +1543,8 @@
       "name": {"zh-CN": "医用气体区域阀箱与报警器", "en": "Medical-gas zone valve box & area alarm"},
       "category": "structure",
       "description": {
-        "zh-CN": "医用气体区域阀箱（氧气、医用空气、笑气、负压、废气排放）与区域报警器：压力异常时声光报警，紧急情况下可关断本区供气。",
-        "en": "Medical-gas zone valve box (oxygen, medical air, nitrous oxide, vacuum, scavenging) and area alarm: alarms on abnormal pressure and lets staff isolate the zone in an emergency."
+        "zh-CN": "医用气体区域阀箱（氧气、医用空气、笑气、负压、废气排放）与区域报警器：压力异常时声光报警，紧急情况下可关断本区供气；各阀按 ISO 32 标识色区分。",
+        "en": "Medical-gas zone valve box (oxygen, medical air, nitrous oxide, vacuum, scavenging) and area alarm: alarms on abnormal pressure and lets staff isolate the zone in an emergency; each valve carries its ISO 32 colour."
       },
       "capabilities": [],
       "footprint": {"w": 0.95, "d": 0.12, "h": 1.95},
@@ -1554,8 +1555,9 @@
       "parts": [
         {"m": "steel", "p": [0, 1.35, -0.04], "s": [0.9, 0.5, 0.04]},
         {"m": "glass", "p": [0, 1.35, -0.018], "s": [0.82, 0.42, 0.006]},
-        {"m": "oxygen-green", "p": [-0.3, 1.35, -0.025], "s": [0.08, 0.16, 0.02]},
+        {"m": "gas-oxygen", "p": [-0.3, 1.35, -0.025], "s": [0.08, 0.16, 0.02]},
         {"m": "sc-gas-air", "p": [-0.15, 1.35, -0.025], "s": [0.08, 0.16, 0.02]},
+        {"m": "gas-oxygen", "p": [-0.15, 1.39, -0.014], "s": [0.08, 0.05, 0.004]},
         {"m": "sc-gas-n2o", "p": [0, 1.35, -0.025], "s": [0.08, 0.16, 0.02]},
         {"m": "yellow", "p": [0.15, 1.35, -0.025], "s": [0.08, 0.16, 0.02]},
         {"m": "sc-gas-agss", "p": [0.3, 1.35, -0.025], "s": [0.08, 0.16, 0.02]},
@@ -1566,7 +1568,7 @@
         {"m": "led-green", "p": [0.11, 1.78, -0.018], "s": [0.05, 0.05, 0.006]},
         {"m": "led-green", "p": [0.22, 1.78, -0.018], "s": [0.05, 0.05, 0.006]}
       ],
-      "model": {"uri": "models/sc-gas-zone-valve.glb", "sha256": "0b5ebdd6e6d9c7e847756cf957e692e13547251ecd9a5193970a3b1d0b00919b", "scale": 1, "offset": [0.0, 1.1, -0.0375], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-gas-zone-valve.glb", "sha256": "a6155902abeedfcf85a8d2d09a56d11a5ac2fc8f1d31531dc515b7ec5738f5b9", "scale": 1, "offset": [0.0, 1.1, -0.036], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-cryostat",
@@ -1714,11 +1716,11 @@
     },
     {
       "id": "sc-metzenbaum-scissors",
-      "name": {"zh-CN": "Metzenbaum 解剖剪（碳化钨刃口）", "en": "Metzenbaum dissecting scissors (tungsten-carbide edges)"},
+      "name": {"zh-CN": "Metzenbaum 解剖剪（超锋利刃口）", "en": "Metzenbaum dissecting scissors (supercut edge)"},
       "category": "surgery",
       "description": {
-        "zh-CN": "弯头 Metzenbaum 解剖剪，碳化钨刃口（黑色手柄识别），剪刀通用要求与切割试验按 ISO 7741:1986，UDI 直接标记。",
-        "en": "Curved Metzenbaum dissecting scissors with tungsten-carbide edges (black handles), scissors requirements and cutting test to ISO 7741:1986, UDI direct-marked."
+        "zh-CN": "弯头 Metzenbaum 解剖剪，超锋利（supercut）刃口：一片剃刀式刃配一片微齿刃（黑色指环识别；金色指环表示碳化钨镶片），剪刀通用要求与切割试验按 ISO 7741:1986，UDI 直接标记。",
+        "en": "Curved Metzenbaum dissecting scissors with a supercut edge — one razor-honed blade against one micro-serrated blade (black ring handles; gold rings mark tungsten-carbide inserts) — scissors requirements and cutting test to ISO 7741:1986, UDI direct-marked."
       },
       "capabilities": [],
       "footprint": {"w": 0.18, "d": 0.05, "h": 0.02},
@@ -1833,7 +1835,8 @@
       "parts": [
         {"m": "white", "p": [0, 0.008, 0], "s": [0.1, 0.015, 0.1]},
         {"m": "blue", "p": [0.03, 0.017, 0.03], "s": [0.02, 0.003, 0.02]}
-      ]
+      ],
+      "model": {"uri": "models/sc-gauze-swab.glb", "sha256": "c63b45eacc71cd1d260936b086dd435830eadee8ae6a5cbc5c8fe1394fbc4a9c", "scale": 1, "offset": [-0.0008, 0.0003, 0.0006], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-instrument-set",
@@ -1932,7 +1935,7 @@
         {"m": "sc-robot-accent", "p": [0, 0.86, 0], "s": [0.3, 0.06, 0.07]},
         {"m": "chrome", "p": [0, 0.89, 0], "s": [0.04, 0.02, 0.02]}
       ],
-      "model": {"uri": "models/sc-lead-apron.glb", "sha256": "9f28159b945d71f4f32eb5eab70aa068674ef370b01b525140c7692a4c7d8845", "scale": 1, "offset": [0.0, 0.03, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-lead-apron.glb", "sha256": "d4ff290dcb3fa9179497e469f4f8cf1e80b907a0851abd4d92017d9628366b90", "scale": 1, "offset": [0.0, 0.012, 0.0027], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-sterile-setup-table",
@@ -2056,7 +2059,7 @@
         {"m": "sc-robot-accent", "p": [0.08, 0.03, 0], "s": [0.18, 0.05, 0.07]},
         {"m": "led-green", "p": [-0.12, 0.048, 0], "s": [0.03, 0.004, 0.02]}
       ],
-      "model": {"uri": "models/sc-rf-wand.glb", "sha256": "8283c8d4b099c0fd5c8cbd802e6663387cb78a4aaa3227cb141aed5cc83e1f85", "scale": 1, "offset": [0.0, 0.0025, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+      "model": {"uri": "models/sc-rf-wand.glb", "sha256": "15e4931ae2383a9c152bcc837ff65938fe61ada0cc61b2356c907379a0bfc4b3", "scale": 1, "offset": [-0.0027, 0.0, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-ext-fins",

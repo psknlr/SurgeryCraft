@@ -34,7 +34,7 @@ and patient bay can be walked to and that every workflow runs (see [§8](#8-vali
 | Vertical links | 2 bed lifts, clean lift (CSSD → sterile core), dirty lift (soiled utility → decontamination), main stairs, escape stairs |
 | Exterior | white rainscreen volume with ribbon glazing, a double-height glass lantern at the entrance, timber-look fin screen on the operating floor, floating canopy with the IMPF letters and a covered walkway, granite arrival plaza with a reflecting pool and tree bosque, rooftop helipad, PV, plant screen and staff gardens ([EXTERIOR.md](EXTERIOR.md)) |
 | Size | building 64 × 44 m, two 5 m storeys; 69 rooms (46 on L1), 885 placements (577 on L1, 101 of them handheld, 63 exterior), 21 patient slots, 40 staff, 22 access zones |
-| Content | 1 facility, 15 room templates, 1 catalog with 74 equipment types and 35 materials, 3 skills (all bilingual zh-CN / en) |
+| Content | 1 facility, 15 room templates, 1 catalog with 75 equipment types and 35 materials, 3 skills (all bilingual zh-CN / en) |
 
 ## 中文概要
 

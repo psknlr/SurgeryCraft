@@ -5,8 +5,9 @@
 #   2. the navigation & zoning test (tools/navcheck.test.ts) and the operating-room interaction test
 #      (tools/orflow.test.ts) on ClinicalCraft's world model;
 #   3. the project skills (.clinicalcraft/skills) and "pass me …" in an embodied session (tools/skills.test.ts);
-#   4. every equipment model (content/assets/models) against its catalog reference: `clinicalcraft assets inspect --type`
-#      (licence, use status, pinned hash, size against the footprint; docs/MODELS.md);
+#   4. every equipment type has a model, and every model (content/assets/models) is checked against its catalog
+#      reference: `clinicalcraft assets inspect --type` (licence, use status, pinned hash, size against the footprint;
+#      docs/MODELS.md);
 #   5. Case 126 (content/cases/cmcr-1654623): `cases validate --strict`, `cases verify` (reference path, utterance corpus),
 #      the anatomy asset (tools/blender/verify_anatomy_1654623.py), the case's fidelity, safety and variant scenarios
 #      (tools/case126.test.ts; docs/CASE_126.md) and, embodied in OR 7, the operating-site check and the WHO board
@@ -70,6 +71,14 @@ cp "$HERE/skills.test.ts" "$SKILLS"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-skills.test.ts")
 
 echo "== equipment models against their catalog references"
+# every equipment type of the pack is drawn as a model (docs/MODELS.md): a new type gets one before it ships
+python3 -I -c 'import json, pathlib, sys
+pack = pathlib.Path(sys.argv[1])
+types = json.loads((pack / "catalogs" / "surgerycraft-or.json").read_text(encoding="utf-8"))["equipment"]
+missing = [e["id"] for e in types if not e.get("model") or not (pack / "assets" / e["model"]["uri"]).is_file()]
+if missing:
+    sys.exit("equipment types without a model (tools/blender/build.py, then tools/content-gen/build.py): " + ", ".join(missing))
+print("every one of the %d equipment types has a model" % len(types))' "$PACK"
 for glb in "$PACK"/assets/models/*.glb; do
   id="$(basename "$glb" .glb)"
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- assets inspect "$glb" --type "$id" --lang en --json) \

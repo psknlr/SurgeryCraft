@@ -508,6 +508,27 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
       expect(JSON.stringify(t.provider!.requests[0]!.messages)).toMatch(/must_correct/);
       await t.session.close();
     });
+
+    it("offline: correct statements are left alone — reversing a block, ECG leads and pads in dextrocardia, a reason to wait, a normal EtCO2", async () => {
+      const t = await theatre();
+      upTo(t, isIv("induction"));
+      const LATERALITY = /left and right are always the patient's own/;
+      // "reverse" and "right" in one sentence is not a claim about sides
+      for (const question of [
+        "Can we reverse the neuromuscular block right now?",
+        "With dextrocardia I will reverse the arm leads and put the chest leads on the right chest. Correct?",
+        "The defibrillator pads go in mirror positions, left and right swapped, for the right-sided heart?",
+      ])
+        expect((await tool(t, "consult", { staff: "anaesthetist", question })).output, question).not.toMatch(LATERALITY);
+      // … while the misconception itself is still corrected
+      expect((await tool(t, "consult", { staff: "anaesthetist", question: "Because of situs inversus I should reverse left and right when I read the CT image, yes?" })).output).toMatch(LATERALITY);
+      // "reason" and "person" are not his son; nobody has turned a what-if into a family report
+      const nurse = (await tool(t, "consult", { role: "nurse", question: "Has antibiotic prophylaxis been given to this person? Any reason to wait?" })).output;
+      expect(nurse).not.toMatch(/no family member has been interviewed/);
+      // an end-tidal CO₂ beside "oxygenation" is not the preoxygenation misconception
+      expect((await tool(t, "consult", { staff: "anaesthetist", question: "EtCO2 is 36 and oxygenation is fine. Happy to carry on?" })).output).not.toMatch(/end-tidal OXYGEN/);
+      await t.session.close();
+    });
   });
 
   it("the laparoscopic tower out of service: no gas, no picture — said and recorded; the spare tower fetched from the store brings both back", async () => {

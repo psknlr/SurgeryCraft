@@ -1,13 +1,13 @@
 {
   "schema": "clinicalcraft/case@1",
   "id": "cmcr-1654623",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "title": {
     "zh-CN": "上腹痛伴发热 · 84岁男性",
     "en": "Upper abdominal pain and fever · 84-year-old man"
   },
   "summary": {
-    "zh-CN": "84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核对，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。",
+    "zh-CN": "84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核查，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。",
     "en": "An 84-year-old man with upper abdominal pain and fever for more than ten days. Take the history, examine, review the records, assess perioperative risk, run the surgical safety checklist and perform the laparoscopic operation yourself on case-informed reference anatomy, then review the operation and follow-up the source reports."
   },
   "specialty": [
@@ -72,18 +72,20 @@
     "citation": "张少博, 余仁斌. 内脏完全反位腹腔镜胆囊切除术一例. 肝胆胰外科杂志. 2024;36(3):180-181.",
     "license": "Educational adaptation; source publication and images retain their original rights.",
     "notes": {
-      "zh-CN": "依据dataset第126例PDF改编。v4增加：东京指南框架的诊断决策、围术期风险评估、WHO安全核对、在参考解剖上的交互式手术（关键安全视野由术野状态判定），以及标注为模拟值的术中生理。化名、医院场景、参考解剖和术中生理为教学设定；原报告的事实未改动。",
+      "zh-CN": "依据dataset第126例PDF改编。v4增加：东京指南框架的诊断决策、围术期风险评估、WHO手术安全核查、在参考解剖上的交互式手术（关键安全视野由术野状态判定），以及标注为模拟值的术中生理。化名、医院场景、参考解剖和术中生理为教学设定；原报告的事实未改动。",
       "en": "Adapted from dataset item 126. v4 adds a Tokyo-Guidelines diagnostic decision, perioperative risk assessment, the WHO checklist, an interactive operation on reference anatomy (the critical view of safety is judged on the field) and intra-operative physiology labelled as simulated. Pseudonym, hospital, reference anatomy and physiology are authored; no source fact is changed."
     },
     "review": {
       "status": "editorial",
-      "reviewedAt": "2026-10-31",
+      "reviewedAt": "2026-11-10",
       "reviewers": [
         "AI-assisted technical/editorial review"
       ],
       "guidelines": [
         "WHO Surgical Safety Checklist implementation manual, 2009",
-        "SAGES Safe Cholecystectomy Multi-Society Practice Guideline, 2020"
+        "SAGES Safe Cholecystectomy Multi-Society Practice Guideline, 2020",
+        "Tokyo Guidelines 2018 (diagnostic criteria of acute cholecystitis)",
+        "ASA Physical Status Classification System (approved examples)"
       ],
       "notes": {
         "zh-CN": "已做原文与所引安全原则的编辑核对；尚未经过执业外科及麻醉医生审核，不构成已验证的临床能力评测。",
@@ -107,8 +109,8 @@
       "en": "Upper abdominal pain and fever for more than ten days"
     },
     "triageNote": {
-      "zh-CN": "84岁男性，因上腹痛、发热十多天住院。本场景是术前资料核对与历史病例回看，不模拟实时急救或麻醉。",
-      "en": "84-year-old man admitted with upper abdominal pain and fever for more than ten days. This scene reviews preoperative evidence and a historical case, without real-time resuscitation or anaesthesia."
+      "zh-CN": "84岁男性，因上腹痛、发热十多天住院。",
+      "en": "84-year-old man admitted with upper abdominal pain and fever for more than ten days."
     },
     "posture": "lying",
     "appearance": {
@@ -185,7 +187,7 @@
     {
       "id": "theatre",
       "label": {
-        "zh-CN": "手术室：安全核对与麻醉",
+        "zh-CN": "手术室：安全核查与麻醉",
         "en": "Theatre: safety checks and anaesthesia"
       },
       "learnerSwitchable": false,
@@ -1002,7 +1004,7 @@
       },
       "finding": {
         "zh-CN": "肠鸣音3–4次/min，无气过水音。",
-        "en": "Bowel sounds 3–4/min; no succussion splash."
+        "en": "Bowel sounds 3–4/min; no high-pitched tinkling (gas-through-fluid) sounds."
       },
       "keywords": {
         "zh-CN": [
@@ -1369,8 +1371,8 @@
         "preop": {
           "available": false,
           "text": {
-            "zh-CN": "病历中没有心电图记录。右位心时需按镜像位置放置胸导联，结果才可解读。",
-            "en": "No ECG is recorded. With dextrocardia the chest leads must be placed in mirror positions for a readable tracing."
+            "zh-CN": "病历中没有心电图记录。右位心时需把左右上肢导联对调，并按镜像位置放置胸导联（右胸导联 V1R–V6R），结果才可解读。",
+            "en": "No ECG is recorded. With dextrocardia the arm leads must be reversed and the chest leads placed in mirror-image (right-sided, V1R–V6R) positions for a readable tracing."
           },
           "source": {
             "zh-CN": "原报告没有记录，不能据此认定正常或不存在。",
@@ -1471,8 +1473,8 @@
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "监护已连接：脉搏血氧有波形、读数可靠；右位心——心电图胸导联按镜像位置放置；无创血压按设定间隔测量。这只是连接监护，不是麻醉前核对。",
-        "en": "Monitoring attached: the pulse oximeter shows a good trace and reads reliably; dextrocardia — ECG chest leads in mirror positions; non-invasive blood pressure cycling. This is the monitor only, not the Sign In."
+        "zh-CN": "监护已连接：脉搏血氧有波形、读数可靠；右位心——心电图电极按镜像位置放置（左右上肢电极对调，胸前电极置于右胸）；无创血压按设定间隔测量。这只是连接监护，不是麻醉前核查。",
+        "en": "Monitoring attached: the pulse oximeter shows a good trace and reads reliably; dextrocardia — ECG electrodes in mirror positions (arm electrodes reversed, chest electrodes on the right chest); non-invasive blood pressure cycling. This is the monitor only, not the Sign In."
       },
       "indicatedWhen": {
         "phase": "theatre"
@@ -1481,7 +1483,7 @@
     {
       "id": "sign-in",
       "name": {
-        "zh-CN": "WHO 麻醉前核对（Sign In）",
+        "zh-CN": "WHO 麻醉前核查（Sign In）",
         "en": "WHO Sign In before induction"
       },
       "kind": "consult",
@@ -1489,8 +1491,8 @@
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录：团队逐项说明已知情况，不明的仍为不明。",
-        "en": "The team checks identity, procedure, consent and site: the gallbladder is on the patient's LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient's own left, with no \"reversing\" of sides; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source: the team states what is known of each, and an unknown stays unknown."
+        "zh-CN": "团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；麻醉机与药品检查已完成；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录：团队逐项说明已知情况，不明的仍为不明。",
+        "en": "The team checks identity, procedure, consent and site: the gallbladder is on the patient's LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient's own left, with no \"reversing\" of sides; the anaesthesia machine and medication check is complete; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source: the team states what is known of each, and an unknown stays unknown."
       },
       "checklist": true,
       "indicatedWhen": {
@@ -1547,7 +1549,7 @@
         }
       },
       "harm": {
-        "zh-CN": "核对项尚未落实就做麻醉前核对：已记录为无效。择期手术先要明确诊断、制定手术计划并评估手术风险；再连接监护（脉搏血氧工作正常），问清过敏与禁食（误吸风险），然后 Sign In。",
+        "zh-CN": "核查项尚未落实就做麻醉前核查：已记录为无效。择期手术先要明确诊断、制定手术计划并评估手术风险；再连接监护（脉搏血氧工作正常），问清过敏与禁食（误吸风险），然后 Sign In。",
         "en": "A Sign In before its checks: recorded as invalid. An elective operation needs the diagnosis made, the operation planned and the operative risk assessed first; then attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), and sign in."
       },
       "reports": [
@@ -1580,14 +1582,14 @@
         }
       },
       "harm": {
-        "zh-CN": "未完成麻醉前核对就诱导：过敏、气道和部位风险未经团队确认。",
+        "zh-CN": "未完成麻醉前核查就诱导：过敏、气道和部位风险未经团队确认。",
         "en": "Induction before the Sign In: allergy, airway and site risks were not confirmed by the team."
       }
     },
     {
       "id": "time-out",
       "name": {
-        "zh-CN": "WHO 切皮前暂停核对（Time Out）",
+        "zh-CN": "WHO 切皮前暂停核查（Time Out）",
         "en": "WHO Time Out before incision"
       },
       "kind": "consult",
@@ -1595,8 +1597,8 @@
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧（影像方位标记与皮肤标记均以患者自身左侧核对）；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。",
-        "en": "The team confirms the patient, a laparoscopic cholecystectomy and the pathology on the patient's left (image orientation marker and skin marking both checked against the patient's own left); the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach."
+        "zh-CN": "团队成员互报姓名与角色；团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧（影像方位标记与皮肤标记均以患者自身左侧核对）；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）；麻醉医生说明患者的特殊问题，护士确认灭菌合格、设备无问题；预防性抗菌药已在切皮前60分钟内给予（或经确认不适用），必要的影像已展示；如解剖不清将暂停、求助或改变术式。",
+        "en": "Team members introduce themselves by name and role. The team confirms the patient, a laparoscopic cholecystectomy and the pathology on the patient's left (image orientation marker and skin marking both checked against the patient's own left); the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety); the anaesthetist states the patient-specific concerns and the nurses confirm sterility and equipment; antibiotic prophylaxis has been given within the last 60 minutes (or is confirmed not applicable) and the essential imaging is displayed; if the anatomy is unclear the team will stop, call for help or change approach."
       },
       "checklist": true,
       "indicatedWhen": {
@@ -1624,14 +1626,14 @@
         }
       },
       "harm": {
-        "zh-CN": "麻醉前核对与诱导完成之前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，需在两者之后重新核对。",
+        "zh-CN": "麻醉前核查与诱导完成之前就进行切皮前暂停核查，顺序不对：已记录为无效，手术仍未开始，需在两者之后重新核查。",
         "en": "A Time Out before a valid Sign In and induction is out of order: recorded as invalid; the operation stays locked until a Time Out after both."
       }
     },
     {
       "id": "sign-out",
       "name": {
-        "zh-CN": "WHO 离开手术室前核对（Sign Out）",
+        "zh-CN": "WHO 离室前核查（Sign Out）",
         "en": "WHO Sign Out before leaving theatre"
       },
       "kind": "consult",
@@ -1639,8 +1641,8 @@
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "确认实施的手术、器械与纱布清点、标本标记、需关注的问题（包括任何术中并发症）并交接恢复室。",
-        "en": "The procedure performed, instrument and swab counts, specimen labelling and concerns for recovery (including any intra-operative complication) are confirmed and handed over."
+        "zh-CN": "确认实施的手术名称，器械、纱布与缝针清点完成，标本标签（朗读，含患者姓名），有无需要处理的设备问题，以及恢复期需关注的问题（包括任何术中并发症），并交接恢复室。",
+        "en": "The name of the procedure, completion of the instrument, swab and needle counts, specimen labelling (read aloud, with the patient's name), any equipment problems to be addressed and the key concerns for recovery (including any intra-operative complication) are confirmed and handed over."
       },
       "checklist": true,
       "indicatedWhen": {
@@ -1704,7 +1706,7 @@
         }
       },
       "harm": {
-        "zh-CN": "手术尚未结束，或纱布清点尚未相符（也未上报并扫描排除体内遗留）就做离室核对：已记录为无效，需在手术结束、清点相符后重新核对。",
+        "zh-CN": "手术尚未结束，或纱布清点尚未相符（也未上报并扫描排除体内遗留）就做离室前核查：已记录为无效，需在手术结束、清点相符后重新核查。",
         "en": "Sign Out before the operation has ended, or while the swab count is not reconciled (nor escalated with a clear scan excluding a retained swab): recorded as invalid; repeat it once the operation has ended and the count is settled."
       }
     },
@@ -1862,11 +1864,11 @@
     {
       "id": "periop",
       "title": {
-        "zh-CN": "术前评估与安全核对",
+        "zh-CN": "术前评估与安全核查",
         "en": "Perioperative assessment and checks"
       },
       "hint": {
-        "zh-CN": "弄清楚高龄、慢阻肺与卒中带来的风险；连接监护，问清过敏与禁食，再做麻醉前核对、诱导和切皮前暂停核对。",
+        "zh-CN": "弄清楚高龄、慢阻肺与卒中带来的风险；连接监护，问清过敏与禁食，再做麻醉前核查、诱导和切皮前暂停核查。",
         "en": "Clarify the risks of age, COPD and stroke; attach the monitor and ask about allergies and fasting, then the Sign In, induction and the Time Out."
       },
       "completeWhen": {
@@ -1903,7 +1905,7 @@
         "en": "Perform the operation"
       },
       "hint": {
-        "zh-CN": "布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后决定拔管与进食，再离室核对。",
+        "zh-CN": "布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后决定拔管与进食，再离室前核查。",
         "en": "Ports, traction, dissection to a true critical view of safety, then clips and division — or a safe alternative if it cannot be reached. Then decide extubation and oral intake, and the Sign Out."
       },
       "completeWhen": {
@@ -2168,8 +2170,8 @@
     {
       "id": "safety",
       "prompt": {
-        "zh-CN": "进入历史手术记录回看前，应采用哪项安全原则？",
-        "en": "Which safety principle should precede the historical operation review?"
+        "zh-CN": "手术开始前，应采用哪项安全原则？",
+        "en": "Which safety principle applies before the operation begins?"
       },
       "kind": "single",
       "requires": {
@@ -2339,8 +2341,8 @@
           },
           "correct": true,
           "feedback": {
-            "zh-CN": "右位心：心电图胸导联与除颤电极要按镜像位置放置。",
-            "en": "Dextrocardia: ECG chest leads and defibrillator pads go in mirror positions."
+            "zh-CN": "右位心：心电图导联（左右上肢导联对调、胸导联置于右胸）与除颤电极要按镜像位置放置。",
+            "en": "Dextrocardia: ECG leads (arm leads reversed, chest leads on the right chest) and defibrillator pads go in mirror positions."
           }
         },
         {
@@ -2351,8 +2353,8 @@
           },
           "correct": false,
           "feedback": {
-            "zh-CN": "病例没有ASA分级、肺功能或心功能资料，不能凭年龄和诊断名称补出分级。",
-            "en": "The case gives no ASA class, lung or cardiac function; a class cannot be filled in from age and diagnoses."
+            "zh-CN": "ASA分级由麻醉医生在麻醉当日评估患者后确定，依据的是全身疾病的严重程度和功能受限，不是年龄或某项检查。按ASA示例，慢阻肺和3个月以上的卒中史属III级，3个月内的卒中属IV级；本例卒中时间和功能状态均未记录，不能照现有病历直接定级。",
+            "en": "The ASA class is assigned by the anaesthetist after assessing the patient on the day, from the severity of systemic disease and functional limitation — not from age or a test result. By the ASA's examples COPD and a stroke more than 3 months ago are class III and a stroke within 3 months is class IV; here the date of the stroke and his functional status are not recorded, so a class cannot be assigned from this record."
           }
         },
         {
@@ -2434,7 +2436,7 @@
         {
           "id": "oral-once-extubated",
           "text": {
-            "zh-CN": "拔管成功就可以经口饮水进食",
+            "zh-CN": "拔管成功就可以经口饮水进食：能拔管说明气道已有保护",
             "en": "Once extubated he can drink and eat: extubation shows his airway is protected"
           },
           "correct": false,
@@ -2669,7 +2671,7 @@
       "domain": "safety",
       "weight": 2,
       "text": {
-        "zh-CN": "诱导前完成麻醉前核对",
+        "zh-CN": "诱导前完成麻醉前核查",
         "en": "Sign In before induction"
       },
       "met": {
@@ -2687,7 +2689,7 @@
       "domain": "safety",
       "weight": 2,
       "text": {
-        "zh-CN": "切皮前暂停核对（在诱导之后、切皮之前）",
+        "zh-CN": "切皮前暂停核查（在诱导之后、切皮之前）",
         "en": "Time Out before incision (after induction)"
       },
       "met": {
@@ -3173,7 +3175,7 @@
       "weight": 2,
       "text": {
         "zh-CN": "标本装袋经脐孔取出，或选择了替代方式",
-        "en": "Specimen bagged and removed, or an alternative chosen"
+        "en": "Specimen bagged and removed through the umbilical port, or an alternative chosen"
       },
       "met": {
         "any": [
@@ -3351,7 +3353,7 @@
       "domain": "safety",
       "weight": 1,
       "text": {
-        "zh-CN": "手术结束后、离室前核对",
+        "zh-CN": "手术结束后、离室前核查",
         "en": "Sign Out after the operation, before leaving"
       },
       "met": {
@@ -3732,9 +3734,12 @@
           "match": [
             [
               "family",
-              "relative",
+              "relatives",
               "daughter",
-              "son",
+              "his son",
+              "her son",
+              "patient's son",
+              "patient’s son",
               "wife",
               "家属",
               "家人",
@@ -3792,6 +3797,27 @@
               "right",
               "左",
               "右"
+            ],
+            [
+              "situs",
+              "gallbladder",
+              "the liver",
+              "organ",
+              "image",
+              "film",
+              "scan",
+              "marker",
+              "marking",
+              "反位",
+              "胆囊",
+              "肝脏",
+              "肝胆",
+              "脏器",
+              "器官",
+              "影像",
+              "读片",
+              "片子",
+              "标记"
             ]
           ],
           "say": {
@@ -3872,7 +3898,7 @@
             ]
           ],
           "say": {
-            "zh-CN": "纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以减量、换药、缓慢滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。",
+            "zh-CN": "纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以换药、减量并滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。",
             "en": "Correction: in a rapid-sequence induction the hypnotic (the induction agent) always goes in before or with the neuromuscular blocker, in a dose that makes him unconscious — in a frail 84-year-old you choose and titrate it, you never omit it; paralysis without adequate hypnosis means awareness. Haemodynamic fragility changes which hypnotic and how much, not whether one is given."
           },
           "marks": [
@@ -3908,11 +3934,9 @@
               "preoxygen",
               "pre-oxygen",
               "denitrogen",
-              "oxygenation",
               "预充氧",
               "预给氧",
-              "去氮",
-              "氧合"
+              "去氮"
             ]
           ],
           "say": {
@@ -3989,6 +4013,27 @@
               "right",
               "左",
               "右"
+            ],
+            [
+              "situs",
+              "gallbladder",
+              "the liver",
+              "organ",
+              "image",
+              "film",
+              "scan",
+              "marker",
+              "marking",
+              "反位",
+              "胆囊",
+              "肝脏",
+              "肝胆",
+              "脏器",
+              "器官",
+              "影像",
+              "读片",
+              "片子",
+              "标记"
             ]
           ],
           "say": {
@@ -4012,9 +4057,12 @@
           "match": [
             [
               "family",
-              "relative",
+              "relatives",
               "daughter",
-              "son",
+              "his son",
+              "her son",
+              "patient's son",
+              "patient’s son",
               "wife",
               "家属",
               "家人",
@@ -4057,7 +4105,7 @@
         "en": "Anaesthetist"
       },
       "knowledge": {
-        "zh-CN": "负责连接监护、麻醉前核对、诱导、通气与监护。知道慢阻肺患者在气腹下易有二氧化碳潴留，常用较低气腹压；病例未记录肺功能、ASA分级与用药，需当场核实。快速顺序诱导：先给镇静催眠药使意识消失，再给肌松药，从不省略催眠；预充氧看呼气末氧浓度，呼末二氧化碳用于确认导管和监测通气。不同意诱导时用 place_hold 记录理由；重新评估后用 release_hold 记录结论（可以是“在明确的不确定性下继续”）；资料缺失本身不是暂缓的理由，但要说明怎么处理。拔管与进食分开：拔管看通气、肌松恢复、意识、咳嗽、分泌物和气道保护；吞咽评估在拔管后、进食前。左右永远指患者自己的左右。不解释手术解剖。",
+        "zh-CN": "负责连接监护、麻醉前核查、诱导、通气与监护。知道慢阻肺患者在气腹下易有二氧化碳潴留，常用较低气腹压；病例未记录肺功能、ASA分级与用药，需当场核实。快速顺序诱导：先给镇静催眠药使意识消失，再给肌松药，从不省略催眠；预充氧看呼气末氧浓度，呼末二氧化碳用于确认导管和监测通气。不同意诱导时用 place_hold 记录理由；重新评估后用 release_hold 记录结论（可以是“在明确的不确定性下继续”）；资料缺失本身不是暂缓的理由，但要说明怎么处理。拔管与进食分开：拔管看通气、肌松恢复、意识、咳嗽、分泌物和气道保护；吞咽评估在拔管后、进食前。左右永远指患者自己的左右。不解释手术解剖。",
         "en": "Attaches the monitor and runs the Sign In, induction, ventilation and monitoring. Knows that COPD patients retain CO₂ under pneumoperitoneum and that lower pressures are often used; the case records no lung function, ASA class or medicines — these are verified now. Rapid-sequence induction: the hypnotic first, to unconsciousness, then the neuromuscular blocker — the hypnotic is never omitted; preoxygenation is judged by end-tidal oxygen, while capnography confirms the tube and monitors ventilation. Withholding clearance for induction is recorded with place_hold and the reason; after reassessment release_hold records the decision (it may be to proceed under stated uncertainty); missing information alone is not a reason to hold, but say how it is handled. Extubation and oral intake are separate: extubate on ventilation, reversal, consciousness, cough, secretions and airway protection; swallowing is assessed after extubation and before eating. Left and right are always the patient's own. Does not interpret surgical anatomy."
       },
       "corrections": [
@@ -4107,7 +4155,7 @@
             ]
           ],
           "say": {
-            "zh-CN": "纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以减量、换药、缓慢滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。",
+            "zh-CN": "纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以换药、减量并滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。",
             "en": "Correction: in a rapid-sequence induction the hypnotic (the induction agent) always goes in before or with the neuromuscular blocker, in a dose that makes him unconscious — in a frail 84-year-old you choose and titrate it, you never omit it; paralysis without adequate hypnosis means awareness. Haemodynamic fragility changes which hypnotic and how much, not whether one is given."
           },
           "marks": [
@@ -4143,11 +4191,9 @@
               "preoxygen",
               "pre-oxygen",
               "denitrogen",
-              "oxygenation",
               "预充氧",
               "预给氧",
-              "去氮",
-              "氧合"
+              "去氮"
             ]
           ],
           "say": {
@@ -4224,6 +4270,27 @@
               "right",
               "左",
               "右"
+            ],
+            [
+              "situs",
+              "gallbladder",
+              "the liver",
+              "organ",
+              "image",
+              "film",
+              "scan",
+              "marker",
+              "marking",
+              "反位",
+              "胆囊",
+              "肝脏",
+              "肝胆",
+              "脏器",
+              "器官",
+              "影像",
+              "读片",
+              "片子",
+              "标记"
             ]
           ],
           "say": {
@@ -4272,8 +4339,8 @@
         "en": "In mirror-image anatomy the triangle opens by pulling the neck towards the patient's left; the habitual pull to the right closes it and makes the common bile duct look as if it runs into the gallbladder neck."
       },
       {
-        "zh-CN": "关键安全视野由术野判定，而非勾选：三角清空、胆囊板可见、只有两根结构进入胆囊。",
-        "en": "The critical view of safety is judged on the field, not by ticking: triangle cleared, cystic plate seen, two and only two structures entering the gallbladder."
+        "zh-CN": "关键安全视野由术野判定，而非勾选：三角清空、胆囊板可见、进入胆囊的结构全部游离可见（通常只有两根），且没有其他结构看似进入。",
+        "en": "The critical view of safety is judged on the field, not by ticking: triangle cleared, cystic plate seen, every structure entering the gallbladder seen and free (normally two and only two), nothing else appearing to enter."
       }
     ],
     "boundaries": {
@@ -4329,9 +4396,9 @@
       "Yokoe M, Hata J, Takada T, et al. Tokyo Guidelines 2018: diagnostic criteria and severity grading of acute cholecystitis (with videos). J Hepatobiliary Pancreat Sci. 2018;25(1):41-54.",
       "Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855.",
       "Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125.",
-      "World Health Organization. WHO Guidelines for Safe Surgery 2009: Safe Surgery Saves Lives. Geneva: WHO; 2009 (Surgical Safety Checklist implementation manual).",
+      "World Health Organization. Implementation Manual: WHO Surgical Safety Checklist 2009 — Safe Surgery Saves Lives. Geneva: WHO; 2009 (with the WHO Guidelines for Safe Surgery 2009).",
       "Acquisto NM, Mosier JM, Bittner EA, et al. Society of Critical Care Medicine clinical practice guidelines for rapid sequence intubation in the critically ill adult patient. Crit Care Med. 2023;51(10):1411-1430.",
-      "DICOM PS3.3, section C.7.6.2: Image Plane Module (Patient Orientation). NEMA."
+      "DICOM PS3.3, section C.7.6.2: Image Plane Module (Image Orientation (Patient), Image Position (Patient)). NEMA."
     ],
     "notice": {
       "zh-CN": "技术样例的流程评分，非已验证的医疗能力评分；真实模型性能尚未测量。",
@@ -6114,8 +6181,8 @@
         "revealAt": 1.0,
         "appearsAs": {
           "default": {
-            "zh-CN": "韧带后方一根粗大、发蓝的静脉",
-            "en": "a large bluish vein behind the ligament"
+            "zh-CN": "韧带深部、胆管与动脉后方一根粗大、发蓝的静脉",
+            "en": "a large bluish vein deep in the ligament, behind the duct and the artery"
           },
           "when": []
         },
@@ -6527,8 +6594,8 @@
         "surgeonSide": "left",
         "provenance": "published-case",
         "note": {
-          "zh-CN": "原文：A孔脐下缘1 cm置10 mm Trocar（观察孔）；B孔剑突下偏左、C孔左锁骨中线肋下2 cm（主操作孔），均为5 mm。术者在体外交叉双手操作。",
-          "en": "Source: port A 1 cm below the umbilicus, 10 mm (camera); B below the xiphoid slightly left and C at the left midclavicular line 2 cm below the costal margin (main port), both 5 mm. The surgeon worked with crossed hands."
+          "zh-CN": "原文：A孔脐下缘1 cm置10 mm Trocar（观察孔）；B孔剑突下偏左、C孔左锁骨中线肋下2 cm（主操作孔），均为5 mm。术者在体外交叉双手操作。左右手与操作孔的对应为教学设定，原文未记载。",
+          "en": "Source: port A 1 cm below the umbilicus, 10 mm (camera); B below the xiphoid slightly left and C at the left midclavicular line 2 cm below the costal margin (main port), both 5 mm. The surgeon worked with crossed hands. Which hand works which port is authored; the report does not say."
         },
         "ports": [
           {
@@ -6998,8 +7065,8 @@
           "en": "Dense fibrosis of the triangle (a \"frozen\" triangle)"
         },
         "summary": {
-          "zh-CN": "严重慢性炎症使胆囊三角致密纤维化：解剖到一半层次就分不开，关键安全视野无法安全建立。继续分离会撕裂胆总管；正确的做法是停下来，选择胆囊次全切除（开窗式或重建式）或中转开腹。与原报告（无粘连）相反，属于假设情境。",
-          "en": "Severe chronic inflammation has left the triangle densely fibrotic: halfway through, the planes stop separating and the critical view cannot be reached safely. Dissecting on tears the common bile duct; the right course is to stop and choose a subtotal cholecystectomy (fenestrating or reconstituting) or conversion. Counterfactual: the report found no adhesions."
+          "zh-CN": "严重慢性炎症使胆囊三角致密纤维化：解剖到一半层次就分不开，关键安全视野无法安全建立。继续分离会撕裂胆总管；正确的做法是停下来，选择胆囊次全切除（开窗式或重建式）或中转开腹。与原报告（无明显粘连）相反，属于假设情境。",
+          "en": "Severe chronic inflammation has left the triangle densely fibrotic: halfway through, the planes stop separating and the critical view cannot be reached safely. Dissecting on tears the common bile duct; the right course is to stop and choose a subtotal cholecystectomy (fenestrating or reconstituting) or conversion. Counterfactual: the report found no obvious adhesions."
         },
         "provenance": "authored",
         "references": [
@@ -7684,7 +7751,7 @@
     {
       "id": "induction-before-sign-in",
       "label": {
-        "zh-CN": "未完成麻醉前核对即诱导",
+        "zh-CN": "未完成麻醉前核查即诱导",
         "en": "Induction before the Sign In"
       },
       "when": {
@@ -7737,8 +7804,8 @@
     {
       "id": "bile-leak",
       "label": {
-        "zh-CN": "胆囊管残端漏",
-        "en": "Cystic stump leak"
+        "zh-CN": "胆漏（胆囊管残端或胆囊床小胆管）",
+        "en": "Bile leak (cystic duct stump or a small duct in the gallbladder bed)"
       },
       "when": {
         "procedure": {

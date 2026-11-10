@@ -23,7 +23,7 @@
   },
   "sc-anaesthesia-pendant": {
     "uri": "models/sc-anaesthesia-pendant.glb",
-    "sha256": "cc4c84c4f872fd46d4f49390a34424694d8db6369eac7a3ae50904c7f4e6e33c",
+    "sha256": "56a6e0524c4d4a9e2f00cff552a410aa3b656c70835b3ee2ebeedb2651f3733b",
     "scale": 1,
     "offset": [
       0.0,
@@ -45,7 +45,7 @@
   },
   "sc-anaesthesia-workstation": {
     "uri": "models/sc-anaesthesia-workstation.glb",
-    "sha256": "1a5651fbd6891b2bc88a4424a073c2a8bbb208a667442944ce0d024c27d4e683",
+    "sha256": "f8ee702dc612b8d5b2b3b2b6b49fee5d6fe90858089816a46545547c09408a4c",
     "scale": 1,
     "offset": [
       0.002,
@@ -543,7 +543,7 @@
   },
   "sc-forced-air-warmer": {
     "uri": "models/sc-forced-air-warmer.glb",
-    "sha256": "fc5eea438a01d162c1b365df78309b89befe61e744187a3ec9827b664b738b60",
+    "sha256": "a621e08404607691f7d36edb6bbe248a136e611ca917f4561187881b7e49c15b",
     "scale": 1,
     "offset": [
       0.0,
@@ -565,12 +565,34 @@
   },
   "sc-gas-zone-valve": {
     "uri": "models/sc-gas-zone-valve.glb",
-    "sha256": "0b5ebdd6e6d9c7e847756cf957e692e13547251ecd9a5193970a3b1d0b00919b",
+    "sha256": "a6155902abeedfcf85a8d2d09a56d11a5ac2fc8f1d31531dc515b7ec5738f5b9",
     "scale": 1,
     "offset": [
       0.0,
       1.1,
-      -0.0375
+      -0.036
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-gauze-swab": {
+    "uri": "models/sc-gauze-swab.glb",
+    "sha256": "c63b45eacc71cd1d260936b086dd435830eadee8ae6a5cbc5c8fe1394fbc4a9c",
+    "scale": 1,
+    "offset": [
+      -0.0008,
+      0.0003,
+      0.0006
     ],
     "license": "MIT",
     "attribution": {
@@ -609,12 +631,12 @@
   },
   "sc-heart-lung-machine": {
     "uri": "models/sc-heart-lung-machine.glb",
-    "sha256": "c953a51435617bed7e1feab93e145929706526bdbe3eea258efd1f59fbe54181",
+    "sha256": "1eacec2183ed7a38b91bfaea25d05fa9d8f5e4d50915c46dc06811e097e1a601",
     "scale": 1,
     "offset": [
       0.0,
-      0.0007,
-      0.0
+      0.0,
+      0.0054
     ],
     "license": "MIT",
     "attribution": {
@@ -648,7 +670,7 @@
   },
   "sc-infant-warmer": {
     "uri": "models/sc-infant-warmer.glb",
-    "sha256": "3ebca2ca35774bacc5f593f6269af16d93b1ccebe6d29bf5065686b3ab6819dd",
+    "sha256": "e5797cc17213d061975ea69a828707400a14d77662502ace9ce4d1568cd13e46",
     "scale": 1,
     "offset": [
       0.005,
@@ -775,7 +797,7 @@
   },
   "sc-laparoscopy-tower": {
     "uri": "models/sc-laparoscopy-tower.glb",
-    "sha256": "cdfec4c31d4463d4ebce46072f9883482c63ef0114ff4399d444ef3b487ee11a",
+    "sha256": "15b5cad5403bc850a3c825a437f3454fb7fcef0ea03d06d5643327b2e2f3cc84",
     "scale": 1,
     "offset": [
       0.0,
@@ -797,12 +819,12 @@
   },
   "sc-lead-apron": {
     "uri": "models/sc-lead-apron.glb",
-    "sha256": "9f28159b945d71f4f32eb5eab70aa068674ef370b01b525140c7692a4c7d8845",
+    "sha256": "d4ff290dcb3fa9179497e469f4f8cf1e80b907a0851abd4d92017d9628366b90",
     "scale": 1,
     "offset": [
       0.0,
-      0.03,
-      0.0
+      0.012,
+      0.0027
     ],
     "license": "MIT",
     "attribution": {
@@ -995,11 +1017,11 @@
   },
   "sc-rf-wand": {
     "uri": "models/sc-rf-wand.glb",
-    "sha256": "8283c8d4b099c0fd5c8cbd802e6663387cb78a4aaa3227cb141aed5cc83e1f85",
+    "sha256": "15e4931ae2383a9c152bcc837ff65938fe61ada0cc61b2356c907379a0bfc4b3",
     "scale": 1,
     "offset": [
+      -0.0027,
       0.0,
-      0.0025,
       0.0
     ],
     "license": "MIT",
@@ -1017,10 +1039,10 @@
   },
   "sc-robotic-c-arm": {
     "uri": "models/sc-robotic-c-arm.glb",
-    "sha256": "5e78961098ebb69704ff589bbd0d3e8fb2b0a4686db0f7fcd4ecdfc488f4195e",
+    "sha256": "d940d2ed7a150fa9842c56b45ac9cf053b695a39c6da28a471fce5060173d4a8",
     "scale": 1,
     "offset": [
-      -0.025,
+      -0.045,
       0.0,
       0.0375
     ],
@@ -1039,7 +1061,7 @@
   },
   "sc-robotic-console": {
     "uri": "models/sc-robotic-console.glb",
-    "sha256": "a4b04417291286889f201dd81a4e9d8dd63dd2b5f5e21e7d366ed4132933428a",
+    "sha256": "374813a7aa121dc2137d43c24134d890caf263be48d3ecc3dab684b6b91b9804",
     "scale": 1,
     "offset": [
       0.0,
@@ -1061,8 +1083,13 @@
   },
   "sc-robotic-patient-cart": {
     "uri": "models/sc-robotic-patient-cart.glb",
-    "sha256": "14147d87b40c3d587c62000fa4864b797fde758219b7170df6bb6737b9febfbe",
+    "sha256": "ed565e005b248637b80b74042a0e59898605e2bac5d33b07e8b490a170f7a691",
     "scale": 1,
+    "offset": [
+      0.0,
+      0.0,
+      0.0135
+    ],
     "license": "MIT",
     "attribution": {
       "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
@@ -1344,12 +1371,12 @@
   },
   "sc-surgical-microscope": {
     "uri": "models/sc-surgical-microscope.glb",
-    "sha256": "1bbff777c7ef5766767ba6dc294572b0b01b2486983db7c5f05e28bf3ba2421a",
+    "sha256": "1024d7957cb55373ba43013525cc559ba7c50ab927695a70ed63fd6f8b77738a",
     "scale": 1,
     "offset": [
       0.0,
-      0.0007,
-      0.02
+      0.001,
+      0.0052
     ],
     "license": "MIT",
     "attribution": {
@@ -1388,7 +1415,7 @@
   },
   "sc-surgical-pendant": {
     "uri": "models/sc-surgical-pendant.glb",
-    "sha256": "152828427a3cec76b5d96d76cd426551470d73cc99e236876e30b1c738c542ae",
+    "sha256": "94da3f470d6fd1594cc96121a4d74b87f2487bd7bc7a4bca6a4098a80ca2f199",
     "scale": 1,
     "offset": [
       0.0,

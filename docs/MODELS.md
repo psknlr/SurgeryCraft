@@ -1,23 +1,26 @@
 # Equipment models · 设备模型
 
 All equipment in the IMPF Surgery Hospital is drawn as 3D models instead of voxel boxes:
-885 placements. That is the pack's 74 types (476 placements) and the 62 ClinicalCraft built-in types
-the hospital places (409), whose models ship with ClinicalCraft. Every model was built in
+892 placements. That is the pack's 75 types (482 placements) and the 63 ClinicalCraft built-in types
+the hospital places (410), whose models ship with ClinicalCraft. Every model was built in
 Blender with ClinicalCraft's Blender bridge (ClinicalCraft
 [docs/BLENDER.md](https://github.com/psknlr/ClinicalCraft/blob/main/docs/BLENDER.md)), in its
 type's own frame, from the type's voxel parts. Working heights, screens and the surfaces
 things are put on stay where the world expects them, so every interaction works as before.
 The voxel parts remain the fallback, and the collider and aim box are still the footprint.
 
-> IMPF 外科医院中的全部设备（885 处摆放）都改用三维模型绘制：本内容包的 74 种设备（476 处）
-> 和医院用到的 62 种 ClinicalCraft 内置设备（409 处，模型随 ClinicalCraft 提供）。每个模型都用
+> IMPF 外科医院中的全部设备（892 处摆放）都改用三维模型绘制：本内容包的 75 种设备（482 处）
+> 和医院用到的 63 种 ClinicalCraft 内置设备（410 处，模型随 ClinicalCraft 提供）。每个模型都用
 > ClinicalCraft 的 Blender 桥接，在该设备类型自身的坐标系中、依据其体素部件在 Blender 中制作，
 > 工作高度、屏幕位置和放置物品的台面都与原来一致，所有交互不变；体素部件仍是后备，碰撞体与
 > 瞄准框仍是占地范围。
 
-![The pack's 74 models](img/models-sheet.jpg)
+![The pack's 75 models](img/models-sheet.jpg)
+*The pack's 75 models as the world draws them (ClinicalCraft `scripts/preview/render.mjs models`); the green quads
+are where the world draws its live screens.*
 
-In the hospital, before (voxel parts) → after (models), in `clinicalcraft serve`:
+In the hospital, in `clinicalcraft serve`: the first three figures put the voxel parts (left) beside the models
+(right); the last three were retaken on 2026-11-10 with the rebuilt models and show the models alone.
 
 ![Back table](img/models-or7-instruments.jpg)
 *OR 7 back table: safety scalpel, Mayo-Hegar needle holder (gold rings), DeBakey forceps,
@@ -34,28 +37,41 @@ absorber, breathing circuit, bag and mask. The patient monitor on top still show
 live vitals.*
 
 ![OR 2](img/models-or2-robotic.jpg)
-*OR 2 (robotic): the patient cart with its four arms, the vision cart, the surgical pendant.*
+*OR 2 (robotic), models only, retaken 2026-11-10 with the rebuilt robot: the patient cart with its four jointed
+arms over the table, the Mayo stand, the anaesthesia workstation and pendant, the surgical light.*
 
 ![OR 1](img/models-or1-hybrid.jpg)
-*OR 1 (hybrid): the hybrid table, the surgical light's two domed heads, the robotic C-arm, the
-anaesthesia workstation and pendants, the back table.*
+*OR 1 (hybrid), models only, retaken 2026-11-10 with the rebuilt angiography system: the robot on its turret
+holding the C by its back, detector above and tube below; behind it the hybrid table under the laminar-flow
+canopy, the ceiling display and the pendants.*
 
 ![PACU](img/models-pacu.jpg)
-*The PACU: beds, monitors, curtains, the nurses' station.*
+*The PACU, models only, retaken 2026-11-10 with ClinicalCraft's rebuilt ward bed: the beds with their side rails,
+foot-board controls and brake pedals, the wall gas panels marked in the ISO colours, monitors and curtains.*
 
 ## How they are made
 
-19 types have their own builder in `tools/blender/models.py`: the instruments, back table, Mayo
-stand, anaesthesia workstation, both pendants, laparoscopy tower, smoke evacuator, warmer,
-airway trolley, ceiling displays and the hybrid table. The other 55 are refined from their
-voxel parts by ClinicalCraft's `clinicalcraft_refine`:
+27 types have their own builder in `tools/blender/models.py`: the instruments, the swab pack and the
+single swab, the RF wand, the lead apron, back table, Mayo stand, anaesthesia workstation, both
+pendants, laparoscopy tower, smoke evacuator, warmer, airway trolley, ceiling displays, the hybrid
+table, the operating microscope, the heart-lung machine, the surgical robot's patient cart and surgeon
+console and the robotic angiography C-arm. The other 48 are refined from their voxel parts by
+ClinicalCraft's `clinicalcraft_refine`:
 - boxes get rounded edges, and thin bars and poles become cylinders;
 - small floor cubes become casters or glides;
 - circles drawn in voxels (lamp heads, clock faces) become discs;
 - each screen gets a dark housing for the live display;
 - foliage becomes rounded blobs.
 
-The pack's models total 130,624 triangles in 6.9 MB.
+The pack's models total 137,642 triangles in 7.4 MB; none is over 9,000 triangles and the newer
+builders stay under 5,000 (ClinicalCraft docs/BLENDER.md "Triangles").
+
+Where a colour is a code, the models keep it: every gas outlet, zone valve, flowmeter knob and cylinder
+carries its ISO 32 colour (white oxygen, blue nitrous oxide, black-and-white medical air, yellow vacuum,
+magenta AGSS; [STANDARDS.md](STANDARDS.md)), the two vaporisers are sevoflurane yellow and isoflurane
+purple, the soda lime in the absorber is white (fresh), the scissors' black rings mark a supercut edge and
+the needle holder's gold rings its tungsten-carbide jaws, and the heart-lung machine's lines are blue for
+venous return and red for the arterial line.
 
 Each model is one mesh with one material, plus one for glass where there is any. Colours are
 vertex colours; roughness, metalness and glow come from a small palette texture. Static
@@ -83,7 +99,7 @@ tools/blender/
   build.py      builds a model for every type of the catalog (or the ones named) and writes models.json
   models.py     the bespoke builders, in each type's frame (ClinicalCraft's shape kit); other types are refined
   models.json   the catalog references (sha256, offset, licence, source, use), read by content-gen
-  preview.py    Cycles previews of the built models (the sheet above)
+  preview.py    Cycles previews of the built models
 content/assets/models/<type>.glb   the models, served by `clinicalcraft serve` at /local-assets/models/
 ```
 
@@ -100,6 +116,13 @@ python3 tools/content-gen/build.py
 
 ```bash
 tools/check.sh ../ClinicalCraft
+```
+
+To look at the result as the world draws it, with the voxel parts beside each model and without
+Blender (from the ClinicalCraft checkout; `--focus x,y,z,radius` frames a close-up):
+
+```bash
+node scripts/preview/render.mjs models --catalogs packages/content/catalogs/materials.json,packages/content/catalogs/core-clinical.json,../SurgeryCraft/content/catalogs/surgerycraft-or.json --assets ../SurgeryCraft/content/assets --only sc-robotic-c-arm,sc-heart-lung-machine --compare 1 --out /tmp/models.png
 ```
 
 `build.py` takes type ids to rebuild only those (`-- sc-mayo-stand` after `-P …` with

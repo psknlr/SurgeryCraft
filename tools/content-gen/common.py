@@ -4,7 +4,7 @@ import json
 BASE_MATERIALS = {
     'ambulance-red', 'ambulance-white', 'asphalt', 'beacon-blue', 'beige', 'biohazard', 'black', 'blue', 'brick-red',
     'chrome', 'clin-blood-bag', 'clin-hose-blue', 'coal', 'cream', 'curtain', 'darkwood', 'dirt', 'dx-led-blue', 'floor',
-    'glass', 'gold', 'grass', 'green', 'hair', 'lamp', 'lead-glass', 'leaf', 'leaflight', 'led-amber', 'led-blue',
+    'gas-oxygen', 'glass', 'gold', 'grass', 'green', 'hair', 'lamp', 'lead-glass', 'leaf', 'leaflight', 'led-amber', 'led-blue',
     'led-green', 'led-red', 'lightbox', 'lino', 'mattress', 'mint', 'navy', 'orange', 'oxygen-green', 'paper', 'path',
     'pink', 'plastic', 'purple', 'red', 'roof', 'rubber', 'sand', 'screen', 'screen-dark', 'scrubs', 'skin', 'steel',
     'stone', 'teal', 'tile-blue', 'tile-white', 'vehicle-glass', 'warning-yellow', 'water', 'white', 'wood', 'yellow',
