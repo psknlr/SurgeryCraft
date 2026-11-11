@@ -108,8 +108,9 @@ state machine.
 ## 4. The rules
 
 Each is a precondition on an operation (`requires`), so a refusal is the world's own sentence
-with the way to what is missing — *"Place the camera port … needs the nearby "Lung-isolation
-cart" to be in one-lung ventilation …"* and the route to the cart.
+with the way to what is missing — *"Place the camera port needs the nearby "Lung-isolation cart
+(double-lumen tubes & flexible bronchoscope)" to be on one-lung ventilation (the operated lung
+down) (it is on both lungs)."* — and the route to the cart.
 
 1. **The airway before the turn, and again after.** The patient is turned only once the
    double-lumen tube's position has been confirmed with the bronchoscope; one-lung ventilation

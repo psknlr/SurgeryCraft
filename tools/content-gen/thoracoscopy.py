@@ -135,20 +135,21 @@ eq(ISOLATION, L("肺隔离用具车（双腔支气管导管与纤维支气管镜
    caps=["airway"], interaction="device", prompt=L("E · 肺隔离", "E · Lung isolation"), screen="text", portable="cart",
    tags=["or", "airway", "anaesthesia", "thoracic"],
    behavior={"initial": "two-lung",
-             "states": {"two-lung": st("双肺通气", "both lungs ventilated"),
-                        "tube-placed": st("双腔管已置入，位置未确认", "double-lumen tube placed, position not confirmed"),
-                        "confirmed": st("纤支镜已确认导管位置", "tube position confirmed with the bronchoscope"),
-                        "one-lung": st("单肺通气：术侧肺已萎陷", "one-lung ventilation: the lung on the operated side is down"),
-                        "re-expanded": st("直视下膨肺，已恢复双肺通气", "lung re-expanded under vision, both lungs ventilated again")},
+             # (names worded for the world's refusal: '… needs the nearby "…" to be {states} (it is {state}).')
+             "states": {"two-lung": st("双肺通气", "on both lungs"),
+                        "tube-placed": st("已置管（位置未确认）", "intubated (the tube's position not yet confirmed)"),
+                        "confirmed": st("导管位置已确认（纤支镜）", "confirmed (the tube's position, with the bronchoscope)"),
+                        "one-lung": st("单肺通气（术侧肺已萎陷）", "on one-lung ventilation (the operated lung down)"),
+                        "re-expanded": st("已恢复双肺通气（直视下膨肺）", "back on both lungs (re-expanded under vision)")},
              "operations": {
                  "place_tube": op("置入双腔支气管导管", "Place the double-lumen tube", ["two-lung"], "tube-placed", AT_HEAD, ANAESTHETIST, 120),
                  "confirm_position": op("纤支镜确认导管位置（蓝色套囊刚好可见，不疝过隆突）", "Confirm the tube's position with the bronchoscope (the blue cuff just visible, not herniating over the carina)",
                                         ["tube-placed"], "confirmed", AT_HEAD, ANAESTHETIST, 60),
                  # one lung only once the patient is on their side and the tube has been looked at again
-                 "isolate": op("侧卧位后再次确认导管位置，夹闭术侧管腔开始单肺通气", "Confirm the tube again in the lateral position, then clamp the operated side: one-lung ventilation",
+                 "isolate": op("再次确认导管位置，夹闭术侧管腔开始单肺通气", "Confirm the tube again, then clamp the operated side: one-lung ventilation",
                                ["confirmed"], "one-lung", [*AT_HEAD, near(POSITIONING, "checked", 8)], ANAESTHETIST, 90),
                  # the lung comes up again with the drain in and on its seal, watched through the scope
-                 "re_expand": op("胸管接好水封后，直视下缓慢膨肺，恢复双肺通气", "With the drain on its water seal, re-expand the lung slowly under vision: both lungs again",
+                 "re_expand": op("直视下缓慢膨肺，恢复双肺通气", "Re-expand the lung slowly under vision: both lungs again",
                                  ["one-lung"], "re-expanded", [*AT_HEAD, near(DRAINAGE, ["water-seal", "suction"], 8)], ANAESTHETIST, 60),
                  "reset": op("下一台手术：整理用具车", "Next case: restock the cart", ["re-expanded", "tube-placed", "confirmed"], "two-lung", [], ANAESTHETIST + ["nurse"], 30),
              }})
@@ -178,12 +179,12 @@ eq(POSITIONING, L("侧卧位体位用具车", "Lateral-positioning aids trolley"
            "Turn only after the tube's position is confirmed, with enough hands and the anaesthetist holding the head, neck and tube: operated side up, the axillary roll in place, both arms forward and abducted no more than 90° (the upper one on its support), the neck neutral, the lower leg flexed with padding between the knees, the hip secured. Flex the table to widen the intercostal spaces; then check — the neck in line, eyes and ears free, every pressure point padded, lines and tube running free."),
    interaction="device", prompt=L("E · 摆放侧卧位", "E · Lateral positioning"), portable="cart", tags=["or", "positioning", "thoracic"],
    behavior={"initial": "stowed",
-             "states": {"stowed": st("用具在车上（患者仰卧）", "aids on the trolley (patient supine)"),
-                        "lateral": st("已侧卧：术侧向上，腋下垫、托臂架、真空垫就位", "turned: operated side up, axillary roll, arm support and vacuum mattress in place"),
-                        "flexed": st("已折床，肋间隙张开", "table flexed, the intercostal spaces open"),
-                        "checked": st("体位已核对：颈部居中，受压点有垫，管线通畅", "position checked: neck in line, pressure points padded, lines and tube free")},
+             "states": {"stowed": st("未使用（患者仰卧）", "stowed (patient supine)"),
+                        "lateral": st("已侧卧（术侧向上，腋下垫、托臂架、真空垫就位）", "turned (operated side up; axillary roll, arm support and vacuum mattress in place)"),
+                        "flexed": st("已折床（肋间隙张开）", "flexed (the intercostal spaces open)"),
+                        "checked": st("体位已核对（颈部居中，受压点有垫，管线通畅）", "checked (neck in line, pressure points padded, lines and tube free)")},
              "operations": {
-                 "turn": op("翻身摆侧卧位（导管位置已确认后）", "Turn the patient to the lateral position (once the tube's position is confirmed)",
+                 "turn": op("翻身摆侧卧位", "Turn the patient to the lateral position",
                             ["stowed"], "lateral", [{"patientWithin": 2}, near(ISOLATION, ["confirmed", "one-lung"], 8)], TEAM, 300),
                  "flex_table": op("折床，张开肋间隙", "Flex the table to open the intercostal spaces", ["lateral"], "flexed", [{"patientWithin": 2}], TEAM, 60),
                  "check_position": op("核对体位：颈部、眼耳、受压点、管线", "Check the position: neck, eyes and ears, pressure points, lines", ["flexed"], "checked", [{"patientWithin": 2}], TEAM, 60),
@@ -211,11 +212,11 @@ eq(DRAINAGE, L("胸腔闭式引流装置（三腔，水封）", "Chest drainage 
            "Fill the water-seal chamber to its line first (2 cm in most units), then connect the chest tube; keep the unit upright and below the chest, the tubing free of kinks and dependent loops. Watch the volume and character of the drainage, the swing of the water column, and bubbling (an air leak). Suction only as prescribed: the ERAS Society / ESTS guideline for lung surgery advises against routine external suction and recommends digital drainage systems."),
    interaction="device", solid=False, prompt=L("E · 胸腔引流装置", "E · Chest drainage unit"), tags=["or", "thoracic", "drain", "single-use"],
    behavior={"initial": "sealed",
-             "states": {"sealed": st("包装完好", "in its sterile pack"),
-                        "primed": st("水封腔已注水到刻度线", "water seal filled to its line"),
-                        "water-seal": st("已接胸管：水封引流，水柱随呼吸波动", "connected: on water seal, the column swinging with breathing"),
-                        "suction": st("已接胸管：负压吸引（按医嘱）", "connected: on suction (as prescribed)"),
-                        "used": st("已使用，待处置", "used — for disposal", False)},
+             "states": {"sealed": st("未开封", "sealed (in its sterile pack)"),
+                        "primed": st("已注水封（水封腔注水到刻度线）", "primed (water seal filled to its line)"),
+                        "water-seal": st("水封引流中（已接胸管，水柱随呼吸波动）", "on water seal (connected; the column swings with breathing)"),
+                        "suction": st("负压吸引中（已接胸管，按医嘱）", "on suction (connected; as prescribed)"),
+                        "used": st("已使用（待处置）", "used (for disposal)", False)},
              "operations": {
                  "prime": op("开包，水封腔注水到刻度线（一般为 2 cm）", "Open the pack and fill the water seal to its line (2 cm in most units)", ["sealed"], "primed", [], TEAM, 60),
                  "connect": op("接胸管，装置置于胸腔水平以下", "Connect the chest tube, the unit below the level of the chest", ["primed"], "water-seal",
@@ -234,7 +235,7 @@ instrument(
     (0.48, 0.06, 0.04),
     [thin("chrome", 0.07, 0.018, 0, 0.34, 0.012, 0.012), thin("steel", -0.12, 0.018, 0, 0.05, 0.03, 0.03),
      thin("coal", -0.19, 0.025, 0, 0.1, 0.05, 0.045), thin("steel", -0.1, 0.018, 0.03, 0.014, 0.014, 0.035)],
-    {"insert": op("入镜探查（系统已白平衡）", "Insert the scope and look round (the system white-balanced)", ["sterile", "in-use"], "in-use",
+    {"insert": op("入镜探查", "Insert the scope and look round", ["sterile", "in-use"], "in-use",
                   [IN_HAND, *SCRUBBED, AT_TABLE, SCOPE_READY], SCRUB, 30)})
 
 instrument(
@@ -245,7 +246,7 @@ instrument(
       "Cut down onto the upper border of the lower rib (the intercostal vessels and nerve run in the groove under the rib above); sweep a finger inside for adhesions before the port goes in. Every further port is placed under vision."),
     (0.13, 0.045, 0.045),
     [thin("white", -0.02, 0.022, 0, 0.07, 0.03, 0.03), thin("steel", 0.04, 0.022, 0, 0.05, 0.018, 0.018), thin("blue", -0.055, 0.022, 0, 0.02, 0.04, 0.04)],
-    {"place": op("置入观察孔套管（暂停核查已完成，术侧肺已萎陷）", "Place the camera port (time-out done, the lung on the operated side down)", ["sterile", "in-use"], "in-use",
+    {"place": op("置入观察孔套管", "Place the camera port", ["sterile", "in-use"], "in-use",
                  [IN_HAND, *SCRUBBED, AT_TABLE, TIMED_OUT, LUNG_DOWN], SURGEON, 60)})
 
 instrument(
@@ -337,7 +338,7 @@ eq("sc-chest-tube", L("胸腔引流管（28 Fr）", "Chest tube (28 Fr)"), "surg
    tags=["or", "instrument", "single-use", "drain", "thoracic"],
    behavior={"initial": "sterile", "states": {"sterile": st("无菌", "sterile"), "placed": st("已置入并固定", "placed and secured")},
              "operations": {
-                 "place": op("经观察孔置入胸管，镜下确认位置后固定（引流装置已注水封）", "Place the tube through the camera port, confirm it under vision, secure it (the drainage unit primed)",
+                 "place": op("经观察孔置入胸管，镜下确认位置后固定", "Place the tube through the camera port, confirm it under vision, secure it",
                              ["sterile"], "placed", [IN_HAND, *SCRUBBED, AT_TABLE, near(DRAINAGE, ["primed", "water-seal", "suction"], 5)], SURGEON, 90),
              }})
 
@@ -410,13 +411,13 @@ eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training st
                  "place_camera_port": step("建立观察孔：位置低而靠前，约在膈顶水平、肺门与膈神经的前方（1 cm）；沿下位肋骨上缘进入，手指探查后置入套管",
                                            "Camera port: low and anterior, at about the level of the top of the diaphragm, in front of the hilum and the phrenic nerve (1 cm); in over the upper border of the lower rib, a finger sweep, then the port",
                                            "lung-down", "camera-port", [HOLDING("sc-thoracoport")]),
-                 "explore": step("入镜探查：胸膜、肺、膈肌和纵隔，有无粘连、积液和未预料的病变（系统已白平衡）",
-                                 "Scope in and look round: pleura, lung, diaphragm and mediastinum — adhesions, fluid, anything unexpected (the system white-balanced)",
+                 "explore": step("入镜探查：胸膜、肺、膈肌和纵隔，有无粘连、积液和未预料的病变",
+                                 "Scope in and look round: pleura, lung, diaphragm and mediastinum — adhesions, fluid, anything unexpected",
                                  "camera-port", "explored", [HOLDING("sc-thoracoscope"), SCOPE_READY], 90),
                  "place_working_ports": step("镜下直视建立操作口：第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），和与观察孔同一水平、更靠后（肩胛骨正下方）的 1.5 cm 操作孔；从胸腔内看着器械尖端穿入",
                                              "Working incisions under vision: the utility incision of about 5 cm in the 4th space just in front of latissimus dorsi (a wound protector, no rib spreading) and the 1.5 cm port at the camera port's level further back, straight down from the scapula — watch each tip come through from inside",
                                              "explored", "working-ports", [], 120),
-                 "free_adhesions": step("超声刀松解粘连、打开下肺韧带（排烟运行）", "Free the adhesions and divide the pulmonary ligament with the ultrasonic shears (smoke evacuation running)",
+                 "free_adhesions": step("超声刀松解粘连、打开下肺韧带", "Free the adhesions and divide the pulmonary ligament with the ultrasonic shears",
                                         "working-ports", "mobilised", [HOLDING("sc-ultrasonic-shears"), SMOKE], 180),
                  "dissect_hilum": step("打开纵隔胸膜，解剖肺门：直角钳游离静脉、动脉分支和支气管，逐一套带",
                                        "Open the mediastinal pleura and dissect the hilum: free the vein, the arterial branches and the bronchus with the right-angle dissector and pass a loop round each",
@@ -432,15 +433,15 @@ eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training st
                                           "bronchus-divided", "lobe-free", [HOLDING("sc-endo-stapler")], 120),
                  "retrieve_specimen": step("标本装袋，经操作口取出", "Bag the specimen and bring it out through the utility incision",
                                            "lobe-free", "specimen-out", [HOLDING("sc-specimen-bag")], 90),
-                 "take_nodes": step("清扫肺门与纵隔淋巴结（超声刀，排烟运行）", "Take the hilar and mediastinal lymph nodes (ultrasonic shears, smoke evacuation running)",
+                 "take_nodes": step("超声刀清扫肺门与纵隔淋巴结", "Take the hilar and mediastinal lymph nodes with the ultrasonic shears",
                                     "specimen-out", "nodes", [HOLDING("sc-ultrasonic-shears"), SMOKE], 300),
                  "leak_test": step("注温生理盐水浸没支气管残端，请麻醉医生膨肺并维持 20–30 cmH₂O：无气泡", "Cover the bronchial stump with warm saline and have the anaesthetist inflate the lung to a sustained 20–30 cmH₂O: no bubbles",
                                    "nodes", "leak-tested", [], 90),
-                 "place_drain": step("经观察孔置入一根胸管，镜下确认位置（引流装置已注水封）", "One chest tube through the camera port, its position confirmed under vision (the drainage unit primed)",
+                 "place_drain": step("经观察孔置入一根胸管，镜下确认位置", "One chest tube through the camera port, its position confirmed under vision",
                                      "leak-tested", "drained", [HOLDING("sc-chest-tube"), near(DRAINAGE, ["primed", "water-seal", "suction"], 6)], 90),
                  "re_expand": step("（模拟麻醉）直视下缓慢膨肺，确认各肺叶复张，恢复双肺通气", "(Simulated anaesthesia) re-expand the lung slowly under vision, see every lobe come up: both lungs ventilated again",
                                    "drained", "re-expanded"),
-                 "close": step("关胸前清点无误后，逐层关闭切口", "Close in layers, the count before closing correct",
+                 "close": step("逐层关闭切口", "Close in layers",
                                "re-expanded", "closed", [near("sc-count-board", ["cavity", "closing", "reconciled", "excluded"], 12)], 180),
                  "reset": op("下一位学员：复位训练台", "Next trainee: reset the station", ["closed"], "ready", [], TEAM, 30),
              }})

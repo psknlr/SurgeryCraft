@@ -163,7 +163,8 @@ describe("IMPF Surgery Hospital · thoracoscopy in the thoracic theatre (OR 5)",
     await timeOut(w);
     // timed out, both lungs still ventilated: the port would go into an inflated lung
     const inflated = await refused(w, A, "place", or5("vats-port"));
-    expect(inflated.message).toMatch(/Lung-isolation cart/);
+    // (the world's own sentence, as docs/THORACOSCOPY.md quotes it)
+    expect(inflated.message).toBe('Place the camera port needs the nearby "Lung-isolation cart (double-lumen tubes & flexible bronchoscope)" to be on one-lung ventilation (the operated lung down) (it is on both lungs).');
     expect(inflated.hint?.goal).toMatchObject({ id: or5("lung-isolation") });
     await lungDown(w);
     await done(w, A, "place", or5("vats-port"));
