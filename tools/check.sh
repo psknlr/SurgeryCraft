@@ -2,8 +2,10 @@
 # Validate the SurgeryCraft content pack with a ClinicalCraft checkout:
 #   1. `clinicalcraft facilities validate --all` with the pack in contentDirs (schemas, compiled facility,
 #      room templates, catalogs, overlaps, levels/connectors/zones, case capability gaps);
-#   2. the navigation & zoning test (tools/navcheck.test.ts) and the operating-room interaction test
-#      (tools/orflow.test.ts) on ClinicalCraft's world model;
+#   2. the navigation & zoning test (tools/navcheck.test.ts), the operating-room interaction test
+#      (tools/orflow.test.ts) and the thoracoscopy test — the thoracic theatre's rules on a patient in OR 5, the whole
+#      sequence on the training station in the simulation OR (tools/thoracoscopy.test.ts; docs/THORACOSCOPY.md) — on
+#      ClinicalCraft's world model;
 #   3. the project skills (.clinicalcraft/skills) and "pass me …" in an embodied session (tools/skills.test.ts);
 #   4. every equipment type has a model, and every model (content/assets/models) is checked against its catalog
 #      reference: `clinicalcraft assets inspect --type` (licence, use status, pinned hash, size against the footprint;
@@ -39,6 +41,7 @@ PACK="$(cd "$HERE/../content" && pwd)"
 CC="$(cd "${1:-$HERE/../../ClinicalCraft}" && pwd)"
 TEST="$CC/packages/world/src/zz-surgerycraft-nav.test.ts"
 FLOW="$CC/packages/world/src/zz-surgerycraft-orflow.test.ts"
+VATS="$CC/packages/world/src/zz-surgerycraft-thoracoscopy.test.ts"
 SKILLS="$CC/packages/agent/src/zz-surgerycraft-skills.test.ts"
 CASE126="$CC/packages/core/src/zz-surgerycraft-case126.test.ts"
 THEATRE="$CC/packages/agent/src/zz-surgerycraft-case126-theatre.test.ts"
@@ -52,7 +55,7 @@ FINAL="$CC/packages/agent/src/zz-surgerycraft-case126-final.test.ts"
 CHARS="$CC/packages/agent/src/zz-surgerycraft-case126-characters.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$VATS" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
 
 echo "== regression list (tools/regressions.tsv): every listed test present"
@@ -61,10 +64,11 @@ python3 -I "$HERE/check-regressions.py"
 echo "== facilities validate (ClinicalCraft at $CC)"
 (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- facilities validate --all)
 
-echo "== navigation & zoning, operating-room interactions"
+echo "== navigation & zoning, operating-room interactions, thoracoscopy"
 cp "$HERE/navcheck.test.ts" "$TEST"
 cp "$HERE/orflow.test.ts" "$FLOW"
-(cd "$CC" && SURGERYCRAFT_CONTENT="$PACK" npx vitest run "packages/world/src/zz-surgerycraft-nav.test.ts" "packages/world/src/zz-surgerycraft-orflow.test.ts")
+cp "$HERE/thoracoscopy.test.ts" "$VATS"
+(cd "$CC" && SURGERYCRAFT_CONTENT="$PACK" npx vitest run "packages/world/src/zz-surgerycraft-nav.test.ts" "packages/world/src/zz-surgerycraft-orflow.test.ts" "packages/world/src/zz-surgerycraft-thoracoscopy.test.ts")
 
 echo "== project skills and the OR team in a session"
 cp "$HERE/skills.test.ts" "$SKILLS"
@@ -136,7 +140,7 @@ cp "$HERE/case126-characters.test.ts" "$CHARS"
 echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
 python3 "$HERE/operative/build_suite_case126.py" --check
 OUT="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$VATS" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
 for agent in reference scripted-llm; do
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
 done

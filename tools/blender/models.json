@@ -175,6 +175,67 @@
     },
     "use": "cleared"
   },
+  "sc-chest-drainage-unit": {
+    "uri": "models/sc-chest-drainage-unit.glb",
+    "sha256": "45182c11bb4ed9e7ad6137d6a2301ae02196b4c6f515ff62deaa700c64737354",
+    "scale": 1,
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-chest-tube": {
+    "uri": "models/sc-chest-tube.glb",
+    "sha256": "d9f5a1b258b42023ffa997581a234eda1f57f48d093fe22e924c6a9964cb7238",
+    "scale": 1,
+    "offset": [
+      -0.0038,
+      -0.001,
+      0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-clip-applier": {
+    "uri": "models/sc-clip-applier.glb",
+    "sha256": "39d61197dd5f6c627f5b603a1de6dd8dc213079cf3061788187a9bd1d7877472",
+    "scale": 1,
+    "offset": [
+      0.0047,
+      -0.0021,
+      0.0014
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
   "sc-contrast-injector": {
     "uri": "models/sc-contrast-injector.glb",
     "sha256": "bb4f869fa8652c0d83a981ac436e09d80a504e4b2b76d00fe18ec27818ea4a0b",
@@ -271,6 +332,50 @@
       0.0135,
       0.001,
       0.0104
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-endo-dissector": {
+    "uri": "models/sc-endo-dissector.glb",
+    "sha256": "428a91119844e08d8b295adfda900ef759d62165c2b28afe0810f47b93d6cbb7",
+    "scale": 1,
+    "offset": [
+      -0.0042,
+      0.0,
+      0.0011
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-endo-stapler": {
+    "uri": "models/sc-endo-stapler.glb",
+    "sha256": "62e75ceff1bee390e8987d624dce8c07bd633eeb973b2920cfde77a2f1d9c23f",
+    "scale": 1,
+    "offset": [
+      0.0043,
+      0.0016,
+      -0.0165
     ],
     "license": "MIT",
     "attribution": {
@@ -817,6 +922,28 @@
     },
     "use": "cleared"
   },
+  "sc-lateral-positioning-set": {
+    "uri": "models/sc-lateral-positioning-set.glb",
+    "sha256": "5f3185de80559b26bf53e64ab129c10e05b518df9c8c717e03338f1ed922256e",
+    "scale": 1,
+    "offset": [
+      0.0,
+      0.0009,
+      0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
   "sc-lead-apron": {
     "uri": "models/sc-lead-apron.glb",
     "sha256": "d4ff290dcb3fa9179497e469f4f8cf1e80b907a0851abd4d92017d9628366b90",
@@ -847,6 +974,50 @@
       0.0125,
       1.205,
       0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-lung-forceps": {
+    "uri": "models/sc-lung-forceps.glb",
+    "sha256": "5f37dd1be187b468cebf84a29b011c7c72e1f98cfa82bcbdce312c23d94b3640",
+    "scale": 1,
+    "offset": [
+      0.0008,
+      0.0,
+      0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-lung-isolation-cart": {
+    "uri": "models/sc-lung-isolation-cart.glb",
+    "sha256": "7cdfa1d4ac52d1dd61af6a0030521172d6c6a1c67fff1dfa42cef065fa6c99cd",
+    "scale": 1,
+    "offset": [
+      0.0,
+      0.0009,
+      0.004
     ],
     "license": "MIT",
     "attribution": {
@@ -1147,6 +1318,28 @@
     },
     "use": "cleared"
   },
+  "sc-scope-display": {
+    "uri": "models/sc-scope-display.glb",
+    "sha256": "87c5a8432ca0c49a0e6f6ec9665492eb6b731fffe3e6ef1ebc4b9050c3135a2e",
+    "scale": 1,
+    "offset": [
+      0.0,
+      1.643,
+      0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
   "sc-scrub-trough": {
     "uri": "models/sc-scrub-trough.glb",
     "sha256": "cc4db4c9b8fb1eb9e5e89aaf7766433decd7d7d6f34c248b5ea829071dae67d7",
@@ -1221,6 +1414,28 @@
       0.0,
       0.0,
       0.011
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-specimen-bag": {
+    "uri": "models/sc-specimen-bag.glb",
+    "sha256": "24a56b014675bd2d25c2f249b2bd4c980e8de48fab512d1bcd6eb9d4b802ffbc",
+    "scale": 1,
+    "offset": [
+      -0.0005,
+      0.0,
+      0.0
     ],
     "license": "MIT",
     "attribution": {
@@ -1435,6 +1650,72 @@
     },
     "use": "cleared"
   },
+  "sc-thoracoport": {
+    "uri": "models/sc-thoracoport.glb",
+    "sha256": "c64451eae8737be44f1403b22096c00c420c3e327a7cfabf10ef231ebf8192a5",
+    "scale": 1,
+    "offset": [
+      0.0052,
+      -0.001,
+      0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-thoracoscope": {
+    "uri": "models/sc-thoracoscope.glb",
+    "sha256": "29216eb23475ca73a8e19026e3ef0909abd8fc5b43e0486057166e24e0b57365",
+    "scale": 1,
+    "offset": [
+      0.0014,
+      -0.002,
+      0.0085
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-thoracoscopy-tower": {
+    "uri": "models/sc-thoracoscopy-tower.glb",
+    "sha256": "df9dc1ed97e2d0472f8881ec4b8c3e27319e226c4879ac36c10dbf23f35d1a3d",
+    "scale": 1,
+    "offset": [
+      0.0285,
+      0.001,
+      0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
   "sc-tissue-forceps": {
     "uri": "models/sc-tissue-forceps.glb",
     "sha256": "abdaa2e0e5a8f6d5770072fb84e487295068d34d44196b7f8a648a6a77f04a04",
@@ -1443,6 +1724,50 @@
       -0.001,
       0.0,
       0.0
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-ultrasonic-shears": {
+    "uri": "models/sc-ultrasonic-shears.glb",
+    "sha256": "cce5fa36ce56a7f6cd6e529a98bfa9f74c19bd9dc7220b383144638dd7918cf8",
+    "scale": 1,
+    "offset": [
+      -0.0019,
+      0.0017,
+      -0.013
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
+  "sc-vats-trainer": {
+    "uri": "models/sc-vats-trainer.glb",
+    "sha256": "7a1817a03cfe69e91e95cce54b5eb93b213d8ce3701c5d6a957dc6038e538bbe",
+    "scale": 1,
+    "offset": [
+      -0.029,
+      0.0,
+      0.0315
     ],
     "license": "MIT",
     "attribution": {

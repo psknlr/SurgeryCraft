@@ -253,9 +253,9 @@ def anaesthesia_pendant(k: Kit, eq):
 
 
 @model("sc-ceiling-display")
-def ceiling_display(k: Kit, eq):
+def ceiling_display(k: Kit, eq, led: str = "led-blue"):
     """Ceiling-boom display: flange, drop column, hub and yoke; a slim monitor with sterile handles
-    (its screen is the world's display)."""
+    (its screen is the world's display); `led`: the colour of its status light."""
     k.cyl((0, 4.97, 0), 0.18, 0.06, "plastic", seg=36, bevel=0.012)
     k.cyl((0, 3.79, 0), 0.055, 2.30, "chrome", seg=24)
     k.cyl((0, 2.6, 0), 0.085, 0.12, "plastic", seg=32, bevel=0.02)
@@ -263,7 +263,7 @@ def ceiling_display(k: Kit, eq):
     k.box((0, 2.42, 0.07), (0.22, 0.16, 0.03), "sc-matte-black", r=0.008)
     k.box((0, 2.1, 0.12), (1.4, 0.82, 0.07), "sc-matte-black", r=0.02)
     k.screen_bezel(eq.screens()[0], "sc-matte-black", border=0.03, depth=0.012, r=0.006)
-    k.box((0.6, 1.72, 0.168), (0.04, 0.012, 0.004), "led-blue", r=0.002, seg=1)
+    k.box((0.6, 1.72, 0.168), (0.04, 0.012, 0.004), led, r=0.002, seg=1)
     handle_bar(k, (-0.3, 1.655, 0.15), (0.3, 1.655, 0.15), 0.0, r=0.012, m="plastic")
     for x in (-0.3, 0.3):
         k.tube((x, 1.69, 0.12), (x, 1.655, 0.15), 0.01, "plastic", seg=10)
@@ -842,3 +842,6 @@ def robotic_c_arm(k: Kit, eq):
     k.box((0.26, 0.905, 0.92), (0.26, 0.07, 0.26), "coal", r=0.02, seg=2)
     k.box((0.26, 0.943, 0.92), (0.16, 0.006, 0.16), "lead-glass", r=0.002, seg=1)
     k.box((0.26, 0.72, 1.132), (0.12, 0.06, 0.006), "warning-yellow", r=0.003, seg=1)
+
+
+import thoracic_models  # noqa: E402,F401  (the thoracoscopy models register themselves here)

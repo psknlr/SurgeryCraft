@@ -1,0 +1,127 @@
+{
+  "schema": "clinicalcraft/skill@1",
+  "id": "impf_thoracoscopy_setup",
+  "name": {
+    "zh-CN": "胸腔镜手术：开台前的设备准备",
+    "en": "Thoracoscopy: the room made ready"
+  },
+  "description": {
+    "zh-CN": "在本手术间（5 号胸腔镜手术间或模拟手术室）做好胸腔镜手术开台前的设备准备：胸腔镜系统开机自检、白平衡并温镜；烟雾排除器开启；胸腔闭式引流装置开包，水封腔注水到刻度线。之后镜头才有画面，超声刀才能激发，术毕置胸管时引流装置已经备好。",
+    "en": "In this theatre (the thoracic OR 5 or the simulation OR), make the equipment ready for a thoracoscopy: the thoracoscopy tower powered on, self-tested, white-balanced and the scope warming; the smoke evacuator running; the chest drainage unit opened and its water seal filled to its line. Only then is there a picture, the ultrasonic shears will fire, and the drain's unit is ready for the tube at the end."
+  },
+  "safety": "physical",
+  "steps": [
+    {
+      "id": "tower",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-thoracoscopy-tower",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "evacuator",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-smoke-evacuator",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "drain",
+      "tool": "find_objects",
+      "args": {
+        "type": "sc-chest-drainage-unit",
+        "room": "here",
+        "limit": 1
+      }
+    },
+    {
+      "id": "power_on",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.tower.data.entities.0.id}",
+        "operation": "power_on"
+      },
+      "when": {
+        "entityState": "${steps.tower.data.entities.0.id}",
+        "state": [
+          "off"
+        ]
+      }
+    },
+    {
+      "id": "white_balance",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.tower.data.entities.0.id}",
+        "operation": "white_balance"
+      },
+      "when": {
+        "entityState": "${steps.tower.data.entities.0.id}",
+        "state": [
+          "on"
+        ]
+      }
+    },
+    {
+      "id": "smoke",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.evacuator.data.entities.0.id}",
+        "operation": "switch_on"
+      },
+      "when": {
+        "entityState": "${steps.evacuator.data.entities.0.id}",
+        "state": [
+          "off"
+        ]
+      }
+    },
+    {
+      "id": "prime",
+      "tool": "interact_object",
+      "args": {
+        "target": "${steps.drain.data.entities.0.id}",
+        "operation": "prime"
+      },
+      "when": {
+        "entityState": "${steps.drain.data.entities.0.id}",
+        "state": [
+          "sealed"
+        ]
+      }
+    }
+  ],
+  "postconditions": [
+    {
+      "entityState": "${steps.tower.data.entities.0.id}",
+      "state": "balanced"
+    },
+    {
+      "entityState": "${steps.evacuator.data.entities.0.id}",
+      "state": "running"
+    },
+    {
+      "entityState": "${steps.drain.data.entities.0.id}",
+      "state": [
+        "primed",
+        "water-seal",
+        "suction"
+      ]
+    }
+  ],
+  "recovery": [
+    {
+      "on": [
+        "SPATIAL_REQUIREMENT_UNMET",
+        "NOT_IN_RANGE",
+        "NOT_VISIBLE",
+        "NO_INTERACTION_POINT"
+      ],
+      "strategy": "replan"
+    }
+  ]
+}

@@ -61,6 +61,30 @@ operative suite also need procedure variants and `bench operative` (the variants
 requirements in `case_status`, the board's prerequisites on `intervene`). The ISO 32 gas colours and the rebuilt
 models (the robot, the angiography C-arm, the heart-lung machine…) need the ClinicalCraft pinned in
 `tools/clinicalcraft.rev`: the palette's `gas-oxygen` and the shape kit's `pipe`, `hose` and `revolve`.
+Thoracoscopy needs the `thoracoscopy` screen ([psknlr/ClinicalCraft#25](https://github.com/psknlr/ClinicalCraft/pull/25)).
+
+## Thoracoscopy · 胸腔镜手术
+
+**OR 5 is the thoracic theatre**, set up for thoracoscopic (VATS) lung surgery, and the
+simulation OR holds a **thoracoscopy training station**:
+
+- a thoracoscopy tower and two endoscopy displays that show the picture a thoracoscope gives;
+- nine instruments on their own sterile table — 30° thoracoscope, port, lung forceps,
+  right-angle dissector, clip applier, ultrasonic shears, cutter-stapler, specimen bag, chest
+  tube;
+- lung isolation (double-lumen tubes, bronchoscope), the aids for the lateral position, a chest
+  drainage unit;
+- their rules as data: the tube confirmed before the patient is turned and again after, no port
+  before the lung is down, no picture before the white balance, energy with smoke evacuation,
+  the drain primed and connected before the lung is re-expanded;
+- on the training station, the seventeen steps of a thoracoscopic lobectomy in order, each with
+  its instrument in the hand.
+
+It has no thoracoscopic clinical case yet, and it is not clinician-reviewed. See
+**[docs/THORACOSCOPY.md](docs/THORACOSCOPY.md)**; what public surgical video datasets exist and
+under which terms: **[docs/DATASETS.md](docs/DATASETS.md)**.
+
+![The thoracoscopy training station](docs/img/thoracoscopy-station.jpg)
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 
@@ -72,9 +96,9 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
 
 * 8 ORs round a central sterile core: a **hybrid OR** with robotic angiography and its control
   room, a **robotic surgery** OR, two **Class I ultra-clean** laminar-flow ORs (cardiac &
-  transplant, arthroplasty & neuro), three **integrated digital** ORs (one held 24/7 for
-  emergency and obstetric surgery) and a **negative-pressure isolation** OR behind an
-  interlocked anteroom;
+  transplant, arthroplasty & neuro), a **thoracoscopic** OR, two **integrated digital** ORs
+  (one held 24/7 for emergency and obstetric surgery) and a **negative-pressure isolation** OR
+  behind an interlocked anteroom;
 * restricted / semi-restricted / unrestricted zoning enforced by access zones, one-way staff
   changing rooms, a patient transfer zone with a red line, scrub bays and sterile set-up rooms
   between the ORs, an 8-bay PACU and 5-bay pre-op holding;
@@ -90,8 +114,8 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
   checklist, count board with RF wand, smoke evacuator and generator, control panel,
   laparoscopy tower, lead shield, contrast injector, washer-disinfectors and sterilisers as
   state machines that gate each other ([docs/INTERACTIONS.md](docs/INTERACTIONS.md));
-* **real 3D equipment everywhere**: every piece of equipment in the hospital (892 placements: the
-  pack's 75 types and ClinicalCraft's built-in ones) is drawn as a model built in Blender from
+* **real 3D equipment everywhere**: every piece of equipment in the hospital (918 placements: the
+  pack's 90 types and ClinicalCraft's built-in ones) is drawn as a model built in Blender from
   its voxel parts: the instruments, anaesthesia workstation, pendants and surgical lights,
   robotic system, PACU beds, sterilisers, the exterior. Screens stay live and interactions are
   unchanged ([docs/MODELS.md](docs/MODELS.md)).
@@ -119,22 +143,25 @@ Design specification, room schedule and screenshots:
 
 ```
 content/
-  catalogs/surgerycraft-or.json      75 equipment types (19 with behaviours), 35 materials (bilingual)
-  templates/sc-*.json                15 room templates (ORs, scrub, set-up, PACU, pre-op, changing, …)
+  catalogs/surgerycraft-or.json      90 equipment types (33 with behaviours), 38 materials (bilingual)
+  templates/sc-*.json                16 room templates (ORs, scrub, set-up, PACU, pre-op, changing, …)
   facilities/impf-surgery-hospital.json   IMPF Surgery Hospital
-  assets/models/sc-*.glb             75 equipment models (Blender; MIT), served at /local-assets/models/
-.clinicalcraft/skills/impf-*.json    3 workflow skills (time-out, closing counts, CSSD cycle)
+  assets/models/sc-*.glb             90 equipment models (Blender; MIT), served at /local-assets/models/
+.clinicalcraft/skills/impf-*.json    4 workflow skills (time-out, closing counts, CSSD cycle, thoracoscopy set-up)
 docs/SURGICAL_FLOOR.md               design specification · docs/img/ figures
 docs/STANDARDS.md                    SG / EU / US / JP standards matrix and the targets chosen
 docs/INTERACTIONS.md                 people, instruments and devices: lifecycles, gates, skills, words
 docs/EXTERIOR.md                     the exterior: envelope, arrival, landscape, roof
 docs/MODELS.md                       the equipment models: how they are built, licensed and checked
+docs/THORACOSCOPY.md                 thoracoscopy: the thoracic theatre, its instruments and rules, the training station
+docs/DATASETS.md                     public surgical video datasets: what they are, their licences, what the pack uses
 tools/check.sh                       validate the pack and run the tests below against ClinicalCraft
 tools/navcheck.test.ts               navigation & zoning (run by check.sh)
 tools/orflow.test.ts                 the OR workflows on the world runtime (run by check.sh)
+tools/thoracoscopy.test.ts           thoracoscopy in OR 5 and on the training station (run by check.sh)
 tools/skills.test.ts                 the skills and "pass me" in a session (run by check.sh)
-tools/content-gen/                   Python generator that writes content/ (python3 build.py; exterior.py: the exterior)
-tools/blender/                       Blender builds of the models (build.py, models.py, models.json, preview.py)
+tools/content-gen/                   Python generator that writes content/ (python3 build.py; exterior.py: the exterior; thoracoscopy.py)
+tools/blender/                       Blender builds of the models (build.py, models.py, thoracic_models.py, models.json, preview.py)
 .mcp.json                            blender-mcp for Claude Code (telemetry off)
 dataset/                             150 CMCR surgical case-report archives (zip; source material)
 ```

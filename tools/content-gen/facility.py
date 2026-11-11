@@ -341,14 +341,16 @@ inst("or-4", "sc-or-ultraclean", 17.5, -14.5, 180, overrides={
     "name": L("4 号手术间 · 骨科关节与神经外科（超净）", "OR 4 · Orthopaedic & neurosurgery (ultra-clean)"),
     "sign": or_sign("4 号 · 关节/神经 · Ⅰ级超净", "OR 4 · Arthroplasty & neuro · Class I", "#2f7fd1"),
 })
-inst("or-5", "sc-or-integrated", -17.5, 2.5, 0, overrides={
+# OR 5 is the thoracic theatre, set up for thoracoscopy (docs/THORACOSCOPY.md); general and colorectal
+# minimally invasive surgery shares OR 6
+inst("or-5", "sc-or-thoracic", -17.5, 2.5, 0, overrides={
     **or_team_names("or-5"),
-    "name": L("5 号手术间 · 普外与结直肠腔镜", "OR 5 · General & colorectal MIS"),
-    "sign": or_sign("5 号 · 普外腔镜 · Ⅱ级", "OR 5 · General & colorectal MIS · Class II", SIGN_OR),
+    "name": L("5 号手术间 · 胸外科（胸腔镜）", "OR 5 · Thoracic surgery (thoracoscopy)"),
+    "sign": or_sign("5 号 · 胸腔镜 · Ⅱ级", "OR 5 · Thoracoscopy · Class II", SIGN_OR),
 })
 inst("or-6", "sc-or-integrated", -5.5, 2.5, 0, overrides={
     **or_team_names("or-6"),
-    "name": L("6 号手术间 · 泌尿/妇科/头颈腔镜", "OR 6 · Urology, gynaecology & head-and-neck MIS"),
+    "name": L("6 号手术间 · 普外/泌尿/妇科/头颈腔镜", "OR 6 · General, urology, gynaecology & head-and-neck MIS"),
     "sign": or_sign("6 号 · 腔镜 · Ⅱ级", "OR 6 · MIS · Class II", SIGN_OR),
 })
 inst("or-8", "sc-or-isolation", 21.5, 2.5, 0, overrides={
@@ -536,21 +538,25 @@ inst("l0-skills", "teaching-room", -27, 0, 0, L0, {
     "name": L("外科技能与模拟实训室", "Surgical skills & simulation lab"),
     "sign": {"text": L("技能实训", "Skills lab"), "color": "#a397bc"},
     "staff": {"attending": {"name": L("陈主任（外科教学）", "Dr Chen (surgical educator)"), "position": "educator",
-                            "greeting": L("先在模拟手术室把核查流程练熟，再上二层手术部。", "Rehearse the checklist in the simulation OR before you go up to theatres.")}},
+                            "greeting": L("先在模拟手术室把核查流程练熟，再上二层手术部；胸腔镜手术的整套步骤也可以在那里的训练台上按顺序演练。",
+                                          "Rehearse the checklist in the simulation OR before you go up to theatres — and the whole sequence of a thoracoscopic operation on the training station there.")}},
 })
 inst("l0-observation", "teaching-room", -17, 0, 0, L0, {
     "name": L("手术直播观摩与会议室", "OR live-video observation & conference room"),
     "sign": {"text": L("手术直播观摩", "OR live video"), "color": "#a397bc"},
     "omit": ["atlas", "attending"],
 })
-inst("l0-sim-or", "sc-or-integrated", -16.5, -8.5, 90, L0, {
-    "name": L("高仿真模拟手术室", "High-fidelity simulation OR"),
+# the simulation OR is equipped as the thoracic theatre; where the table would stand is the thoracoscopy training station
+inst("l0-sim-or", "sc-or-thoracic", -16.5, -8.5, 90, L0, {
+    "name": L("高仿真模拟手术室（胸腔镜模拟训练）", "High-fidelity simulation OR (thoracoscopy training)"),
     "staff": {"scrub-nurse": {"name": L("模拟教学护士（洗手）", "Sim faculty nurse (scrub)")},
               "circulating-nurse": {"name": L("模拟教学护士（巡回）", "Sim faculty nurse (circulating)")},
               "anaesthetist": {"name": L("模拟教学麻醉医生", "Sim faculty anaesthetist")}},
-    "sign": {"text": L("模拟手术室", "Simulation OR"), "color": "#a397bc"},
-    "omit": ["slot", "sterile"],
+    "sign": {"text": L("模拟手术室 · 胸腔镜训练", "Simulation OR · thoracoscopy training"), "color": "#a397bc"},
+    "omit": ["slot", "sterile", "table"],
 })
+# (template-local (0.5, 0.2) in a room turned 90°: world = centre + (local z, −local x))
+P("l0-sim-vats-trainer", "sc-vats-trainer", -16.5 + 0.2, -8.5 - 0.5, 90, "l0-sim-or", L("胸腔镜手术模拟训练台", "Thoracoscopy training station"))
 inst("l0-consult-1", "outpatient-consult", -18, 12, 180, L0, {"name": L("麻醉术前评估门诊 1", "Pre-anaesthesia assessment clinic 1"), "omit": ["slot"]})
 inst("l0-consult-2", "outpatient-consult", -12, 12, 180, L0, {"name": L("麻醉术前评估门诊 2", "Pre-anaesthesia assessment clinic 2"), "omit": ["slot"]})
 inst("l0-lab", "clinical-lab", 21, 12, 180, L0, {
