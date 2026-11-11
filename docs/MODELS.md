@@ -21,9 +21,9 @@ are where the world draws its live screens.*
 
 In the hospital, in `clinicalcraft serve`: the first three figures put the voxel parts (left) beside the models
 (right) and were taken with ClinicalCraft's earlier block figures; the last three show the models alone and
-were retaken on 2026-11-11, with the people and the hand as ClinicalCraft draws them now — figures of real
-proportions dressed for their position (theatre scrubs, cap and mask; the scrubbed in sterile gown and gloves),
-the player's hand holding a stethoscope.
+were retaken on 2026-11-11, with the people and the hands as ClinicalCraft draws them now — figures of real
+proportions dressed for their position (theatre scrubs, cap and mask; the scrubbed in sterile gown and gloves,
+one hand held over the other), the player's own hand pinching the chest piece of a stethoscope.
 
 ![Back table](img/models-or7-instruments.jpg)
 *OR 7 back table: safety scalpel, Mayo-Hegar needle holder (gold rings), DeBakey forceps,
