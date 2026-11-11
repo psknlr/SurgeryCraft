@@ -17,7 +17,7 @@
  */
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { compileFacility, parseCatalog, parseFacility, parseRoomTemplate, type FacilityDefinition, type RoomTemplate } from "@clinicalcraft/core";
+import { capabilityLabels, compileFacility, parseCatalog, parseFacility, parseRoomTemplate, type FacilityDefinition, type RoomTemplate } from "@clinicalcraft/core";
 import { PRIMARY_ACTOR, type NavGoal, type WorldActionResult } from "./contracts.js";
 import { makeWorld, type TestWorld } from "./__fixtures__/world.js";
 
@@ -125,6 +125,9 @@ describe("IMPF Surgery Hospital · thoracoscopy in the thoracic theatre (OR 5)",
     const byType = new Map(catalogs.flatMap((c) => c.equipment).map((e) => [e.id, e]));
     const screens = F.placements.filter((p) => p.room === "or-5" && byType.get(p.type)?.screen === "thoracoscopy").map((p) => p.id).sort();
     expect(screens).toEqual(["or-5.display-1", "or-5.display-2", "or-5.vats-tower"]);
+    // what the tower gives is named for what it is — an endoscope's camera and its light, not a laparoscope's
+    expect(capabilityLabels(byType.get("sc-thoracoscopy-tower")!.capabilities, "en")).toEqual(["an endoscopic camera", "a light source"]);
+    expect(capabilityLabels(byType.get("sc-thoracoscopy-tower")!.capabilities, "zh-CN")).toEqual(["内镜摄像系统", "冷光源"]);
   });
 
   it("the tube is confirmed before the patient is turned; one lung only after the position is checked", async () => {

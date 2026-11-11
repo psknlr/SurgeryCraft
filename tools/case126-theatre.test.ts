@@ -554,7 +554,7 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     expect(fetched.ok, fetched.output).toBe(true);
     expect(w.roomOf("eq:l1-spare-lap-tower")).toBe("or-7");
     expect(w.inspect(PRIMARY_ACTOR, "eq:l1-spare-lap-tower")?.state).toBe("on");
-    expect(spoken(t).join("\n")).toMatch(/Nurse [^:]+: I've switched the Spare laparoscopy tower on — we have a laparoscopic camera, a light source and an insufflator again\./u);
+    expect(spoken(t).join("\n")).toMatch(/Nurse [^:]+: I've switched the Spare laparoscopy tower on — we have an endoscopic camera, a light source and an insufflator again\./u);
     for (const step of [{ op: "insufflate", pressure: 12 }, { op: "insert", port: "A", instrument: "laparoscope" }]) {
       const r = await tool(t, "operate", step);
       expect(r.ok, `${step.op}: ${r.output}`).toBe(true);
@@ -594,7 +594,7 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     expect(plan.ok, plan.output).toBe(true);
     expect(w.inspect(PRIMARY_ACTOR, TOWER)?.state).toBe("on");
     expect(w.actor(CIRCULATOR)?.room).toBe("or-7");
-    expect(spoken(t).join("\n")).toMatch(/I've switched the 4K\/3D laparoscopy tower on — we have a laparoscopic camera, a light source and an insufflator again\./u);
+    expect(spoken(t).join("\n")).toMatch(/I've switched the 4K\/3D laparoscopy tower on — we have an endoscopic camera, a light source and an insufflator again\./u);
     expect(t.session.state.procedure!.supply).toMatchObject({ image: true, gas: true });
     for (const step of [{ op: "insufflate", pressure: 12 }, { op: "insert", port: "A", instrument: "laparoscope" }]) {
       const r = await tool(t, "operate", step);
