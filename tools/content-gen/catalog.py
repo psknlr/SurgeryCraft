@@ -1016,4 +1016,5 @@ eq("sc-ahu", L("手术部专用空调机组", "Dedicated OR air-handling unit"),
 
 
 import interactions  # noqa: E402,F401  (instruments, wearables and device behaviours — appends to EQUIPMENT)
+import thoracoscopy  # noqa: E402,F401  (thoracoscopy: tower, displays, instruments, lung isolation, positioning, drainage, the simulator)
 import exterior  # noqa: E402,F401  (the exterior: materials and envelope / landscape / roof elements)

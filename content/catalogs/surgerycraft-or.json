@@ -24,6 +24,9 @@
     {"id": "sc-gas-n2o", "color": "#3a64b5", "pattern": "flat", "variance": 0.02},
     {"id": "sc-gas-agss", "color": "#b5479a", "pattern": "flat", "variance": 0.02},
     {"id": "sc-matte-black", "color": "#25292c", "pattern": "flat", "variance": 0.01, "roughness": 0.5},
+    {"id": "sc-clear-tube", "color": "#e7efe9", "pattern": "flat", "variance": 0.01, "opacity": 0.5, "roughness": 0.15, "castShadow": false},
+    {"id": "sc-manikin", "color": "#d7b697", "pattern": "flat", "variance": 0.015, "roughness": 0.7},
+    {"id": "sc-vacuum-mat", "color": "#56778f", "pattern": "noise", "variance": 0.04, "roughness": 0.85},
     {"id": "sc-ext-panel", "color": "#ecedea", "pattern": "grid", "variance": 0.015, "roughness": 0.55},
     {"id": "sc-ext-spandrel", "color": "#2d353c", "pattern": "flat", "variance": 0.01, "roughness": 0.22, "metalness": 0.35},
     {"id": "sc-ext-frame", "color": "#2a2f34", "pattern": "flat", "variance": 0.01, "roughness": 0.35, "metalness": 0.45},
@@ -2060,6 +2063,487 @@
         {"m": "led-green", "p": [-0.12, 0.048, 0], "s": [0.03, 0.004, 0.02]}
       ],
       "model": {"uri": "models/sc-rf-wand.glb", "sha256": "15e4931ae2383a9c152bcc837ff65938fe61ada0cc61b2356c907379a0bfc4b3", "scale": 1, "offset": [-0.0027, 0.0, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-thoracoscopy-tower",
+      "name": {"zh-CN": "4K 胸腔镜系统", "en": "4K thoracoscopy tower"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "胸腔镜塔：4K 摄像主机、LED 冷光源、超声刀/高级双极能量平台、影像记录和 32 英寸监视器；侧面挂镜架和保温防雾杯（温无菌水浸泡镜头，入镜前防雾）。胸腔镜手术靠单肺通气让术侧肺萎陷来获得空间，一般不需要气腹机。",
+        "en": "Thoracoscopy tower: 4K camera control unit, LED light source, an ultrasonic / advanced-bipolar energy platform, image recorder and a 32-inch monitor; at its side a scope holder and a warming flask (the tip stands in warm sterile water so that it does not fog). Thoracoscopy gets its working space from one-lung ventilation — the lung on the operated side collapses — so no insufflator is routinely needed."
+      },
+      "usage": {
+        "zh-CN": "接好光缆和摄像头，对白纱布做白平衡并调焦，镜头在保温杯里温好再入镜；镜头起雾或沾血时退出擦拭，不在胸腔内盲目操作。",
+        "en": "Connect the light cable and the camera, white-balance on a white swab and focus, and warm the tip in the flask before it goes in; when the picture fogs or is smeared, take the scope out and clean it — never work blind in the chest."
+      },
+      "capabilities": ["endoscopic-camera", "light-source"],
+      "footprint": {"w": 0.75, "d": 0.7, "h": 2.15},
+      "solid": true,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 胸腔镜系统", "en": "E · Thoracoscopy tower"}},
+      "screen": "thoracoscopy",
+      "tags": ["or", "mis", "thoracic", "endoscopy", "display"],
+      "portable": "cart",
+      "behavior": {"initial": "off", "states": {"off": {"name": {"zh-CN": "关闭", "en": "off"}, "supplies": []}, "on": {"name": {"zh-CN": "开机自检完成", "en": "on (self-test passed)"}, "supplies": ["endoscopic-camera", "light-source"]}, "balanced": {"name": {"zh-CN": "已白平衡、调焦，镜头已温", "en": "white-balanced and focused, the scope warm"}, "supplies": ["endoscopic-camera", "light-source"]}}, "operations": {"power_on": {"name": {"zh-CN": "开机自检", "en": "Power on and self-test"}, "from": ["off"], "to": "on", "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}, "white_balance": {"name": {"zh-CN": "白平衡、调焦，镜头入保温杯", "en": "White balance, focus, the scope into the warming flask"}, "from": ["on"], "to": "balanced", "durationSeconds": 20, "roles": ["clinician", "attending", "nurse"]}, "power_off": {"name": {"zh-CN": "关机", "en": "Power off"}, "from": ["on", "balanced"], "to": "off", "durationSeconds": 5, "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "rubber", "p": [-0.315, 0.04, -0.29], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [-0.315, 0.04, 0.29], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [0.315, 0.04, -0.29], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [0.315, 0.04, 0.29], "s": [0.08, 0.08, 0.08]},
+        {"m": "plastic", "p": [0, 0.15, 0], "s": [0.7, 0.06, 0.64]},
+        {"m": "chrome", "p": [-0.32, 0.9, -0.28], "s": [0.04, 1.5, 0.04]},
+        {"m": "chrome", "p": [0.32, 0.9, -0.28], "s": [0.04, 1.5, 0.04]},
+        {"m": "chrome", "p": [-0.32, 0.9, 0.28], "s": [0.04, 1.5, 0.04]},
+        {"m": "chrome", "p": [0.32, 0.9, 0.28], "s": [0.04, 1.5, 0.04]},
+        {"m": "steel", "p": [0, 0.42, 0], "s": [0.68, 0.03, 0.62]},
+        {"m": "plastic", "p": [0, 0.52, 0], "s": [0.6, 0.16, 0.5]},
+        {"m": "steel", "p": [0, 0.72, 0], "s": [0.68, 0.03, 0.62]},
+        {"m": "plastic", "p": [0, 0.82, 0], "s": [0.6, 0.16, 0.5]},
+        {"m": "led-amber", "p": [0.18, 0.82, 0.255], "s": [0.08, 0.03, 0.01]},
+        {"m": "steel", "p": [0, 1.02, 0], "s": [0.68, 0.03, 0.62]},
+        {"m": "plastic", "p": [0, 1.12, 0], "s": [0.6, 0.16, 0.5]},
+        {"m": "led-green", "p": [-0.18, 1.12, 0.255], "s": [0.1, 0.06, 0.01]},
+        {"m": "white", "p": [0.15, 1.12, 0.255], "s": [0.06, 0.06, 0.01]},
+        {"m": "steel", "p": [0, 1.32, 0], "s": [0.68, 0.03, 0.62]},
+        {"m": "plastic", "p": [0, 1.4, 0], "s": [0.6, 0.12, 0.5]},
+        {"m": "led-blue", "p": [0.18, 1.4, 0.255], "s": [0.08, 0.03, 0.01]},
+        {"m": "sc-matte-black", "p": [0, 1.86, 0.02], "s": [0.72, 0.44, 0.06]},
+        {"m": "screen-dark", "p": [0, 1.86, 0.054], "s": [0.66, 0.38, 0.006], "name": "screen"},
+        {"m": "steel", "p": [0, 1.6, -0.05], "s": [0.12, 0.08, 0.12]},
+        {"m": "chrome", "p": [0.36, 1, 0.12], "s": [0.03, 0.34, 0.03]},
+        {"m": "steel", "p": [0.375, 0.9, 0.12], "s": [0.07, 0.16, 0.07]}
+      ],
+      "model": {"uri": "models/sc-thoracoscopy-tower.glb", "sha256": "df9dc1ed97e2d0472f8881ec4b8c3e27319e226c4879ac36c10dbf23f35d1a3d", "scale": 1, "offset": [0.0285, 0.001, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-scope-display",
+      "name": {"zh-CN": "吊臂式内镜显示器", "en": "Ceiling-boom endoscopy display"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "吊臂悬挂的 55 英寸 4K 医用显示器，由一体化手术室视频系统接到内镜摄像主机：术者和助手各看一台，都正对自己的视线，不必扭头。",
+        "en": "55-inch 4K surgical display on a ceiling spring arm, routed by the integrated-OR video system to the endoscopic camera: the surgeon and the assistant each look at one straight ahead, without turning the head."
+      },
+      "capabilities": [],
+      "footprint": {"w": 1.6, "d": 0.6, "h": 5},
+      "solid": false,
+      "interaction": {"kind": "none"},
+      "screen": "thoracoscopy",
+      "tags": ["or", "ceiling", "display", "integrated-or", "thoracic"],
+      "parts": [
+        {"m": "plastic", "p": [0, 4.97, 0], "s": [0.4, 0.06, 0.4]},
+        {"m": "chrome", "p": [0, 3.78, 0], "s": [0.12, 2.34, 0.12]},
+        {"m": "plastic", "p": [0, 2.6, 0], "s": [0.18, 0.12, 0.18]},
+        {"m": "chrome", "p": [0, 2.53, 0.06], "s": [0.08, 0.1, 0.08]},
+        {"m": "sc-matte-black", "p": [0, 2.1, 0.12], "s": [1.4, 0.82, 0.08]},
+        {"m": "sc-matte-black", "p": [0, 2.1, 0.162], "s": [1.36, 0.78, 0.006]},
+        {"m": "screen-dark", "p": [0, 2.1, 0.166], "s": [1.3, 0.72, 0.006], "name": "screen"},
+        {"m": "led-green", "p": [0.6, 1.72, 0.165], "s": [0.04, 0.02, 0.006]}
+      ],
+      "model": {"uri": "models/sc-scope-display.glb", "sha256": "87c5a8432ca0c49a0e6f6ec9665492eb6b731fffe3e6ef1ebc4b9050c3135a2e", "scale": 1, "offset": [0.0, 1.643, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-lung-isolation-cart",
+      "name": {"zh-CN": "肺隔离用具车（双腔支气管导管与纤维支气管镜）", "en": "Lung-isolation cart (double-lumen tubes & flexible bronchoscope)"},
+      "category": "resuscitation",
+      "description": {
+        "zh-CN": "麻醉侧的肺隔离用具车：各型号双腔支气管导管（常用左侧管：左主支气管较长，安全范围更大；支气管套囊和它的指示球囊为蓝色，气管套囊的为透明）、支气管封堵器、导管夹和接头；顶部挂纤维支气管镜及其显示屏，用于确认导管位置。",
+        "en": "Lung-isolation cart at the anaesthetic end: double-lumen tubes in every size (a left-sided tube is the usual choice: the left main bronchus is longer, the margin of safety greater; the bronchial cuff and its pilot balloon are blue, the tracheal ones clear), bronchial blockers, tube clamps and connectors; on top a flexible bronchoscope with its screen, for confirming where the tube lies."
+      },
+      "usage": {
+        "zh-CN": "置管后用纤维支气管镜确认位置：从气管腔看，蓝色支气管套囊充气后刚好可见，不疝出到隆突上。患者体位每次改变后都要再确认——摆好侧卧位后导管可能已经移位。",
+        "en": "After placing the tube, confirm its position with the flexible bronchoscope: seen down the tracheal lumen, the blue bronchial cuff, inflated, is just visible and does not herniate over the carina. Confirm it again whenever the patient's position has been changed — the tube may have moved once the patient is on their side."
+      },
+      "capabilities": ["airway"],
+      "footprint": {"w": 0.6, "d": 0.5, "h": 1.5},
+      "solid": true,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 肺隔离", "en": "E · Lung isolation"}},
+      "screen": "text",
+      "tags": ["or", "airway", "anaesthesia", "thoracic"],
+      "portable": "cart",
+      "behavior": {"initial": "two-lung", "states": {"two-lung": {"name": {"zh-CN": "双肺通气", "en": "both lungs ventilated"}}, "tube-placed": {"name": {"zh-CN": "双腔管已置入，位置未确认", "en": "double-lumen tube placed, position not confirmed"}}, "confirmed": {"name": {"zh-CN": "纤支镜已确认导管位置", "en": "tube position confirmed with the bronchoscope"}}, "one-lung": {"name": {"zh-CN": "单肺通气：术侧肺已萎陷", "en": "one-lung ventilation: the lung on the operated side is down"}}, "re-expanded": {"name": {"zh-CN": "直视下膨肺，已恢复双肺通气", "en": "lung re-expanded under vision, both lungs ventilated again"}}}, "operations": {"place_tube": {"name": {"zh-CN": "置入双腔支气管导管", "en": "Place the double-lumen tube"}, "from": ["two-lung"], "to": "tube-placed", "requires": [{"patientWithin": 2.5}], "durationSeconds": 120, "roles": ["attending", "clinician"]}, "confirm_position": {"name": {"zh-CN": "纤支镜确认导管位置（蓝色套囊刚好可见，不疝过隆突）", "en": "Confirm the tube's position with the bronchoscope (the blue cuff just visible, not herniating over the carina)"}, "from": ["tube-placed"], "to": "confirmed", "requires": [{"patientWithin": 2.5}], "durationSeconds": 60, "roles": ["attending", "clinician"]}, "isolate": {"name": {"zh-CN": "侧卧位后再次确认导管位置，夹闭术侧管腔开始单肺通气", "en": "Confirm the tube again in the lateral position, then clamp the operated side: one-lung ventilation"}, "from": ["confirmed"], "to": "one-lung", "requires": [{"patientWithin": 2.5}, {"nearbyState": {"type": "sc-lateral-positioning-set", "state": "checked", "within": 8}}], "durationSeconds": 90, "roles": ["attending", "clinician"]}, "re_expand": {"name": {"zh-CN": "胸管接好水封后，直视下缓慢膨肺，恢复双肺通气", "en": "With the drain on its water seal, re-expand the lung slowly under vision: both lungs again"}, "from": ["one-lung"], "to": "re-expanded", "requires": [{"patientWithin": 2.5}, {"nearbyState": {"type": "sc-chest-drainage-unit", "state": ["water-seal", "suction"], "within": 8}}], "durationSeconds": 60, "roles": ["attending", "clinician"]}, "reset": {"name": {"zh-CN": "下一台手术：整理用具车", "en": "Next case: restock the cart"}, "from": ["re-expanded", "tube-placed", "confirmed"], "to": "two-lung", "durationSeconds": 30, "roles": ["attending", "clinician", "nurse"]}}},
+      "parts": [
+        {"m": "rubber", "p": [-0.24, 0.04, -0.19], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [-0.24, 0.04, 0.19], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [0.24, 0.04, -0.19], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [0.24, 0.04, 0.19], "s": [0.08, 0.08, 0.08]},
+        {"m": "plastic", "p": [0, 0.5, 0], "s": [0.56, 0.8, 0.46]},
+        {"m": "white", "p": [0, 0.76, 0.232], "s": [0.5, 0.16, 0.01]},
+        {"m": "white", "p": [0, 0.56, 0.232], "s": [0.5, 0.16, 0.01]},
+        {"m": "white", "p": [0, 0.36, 0.232], "s": [0.5, 0.16, 0.01]},
+        {"m": "blue", "p": [-0.17, 0.76, 0.24], "s": [0.1, 0.05, 0.006]},
+        {"m": "chrome", "p": [0.05, 0.76, 0.242], "s": [0.18, 0.02, 0.01]},
+        {"m": "chrome", "p": [0.05, 0.56, 0.242], "s": [0.18, 0.02, 0.01]},
+        {"m": "chrome", "p": [0.05, 0.36, 0.242], "s": [0.18, 0.02, 0.01]},
+        {"m": "steel", "p": [0, 0.92, 0], "s": [0.6, 0.04, 0.5]},
+        {"m": "sc-clear-tube", "p": [-0.08, 0.96, 0.08], "s": [0.36, 0.03, 0.04]},
+        {"m": "blue", "p": [0.07, 0.96, 0.08], "s": [0.03, 0.035, 0.045]},
+        {"m": "chrome", "p": [0.22, 1.15, -0.16], "s": [0.03, 0.42, 0.03]},
+        {"m": "plastic", "p": [0.18, 1.4, -0.14], "s": [0.22, 0.16, 0.04]},
+        {"m": "screen-dark", "p": [0.18, 1.4, -0.118], "s": [0.19, 0.12, 0.004], "name": "screen"},
+        {"m": "black", "p": [0.27, 1.12, -0.1], "s": [0.02, 0.4, 0.02]},
+        {"m": "coal", "p": [0.27, 1.34, -0.1], "s": [0.04, 0.1, 0.04]}
+      ],
+      "model": {"uri": "models/sc-lung-isolation-cart.glb", "sha256": "7cdfa1d4ac52d1dd61af6a0030521172d6c6a1c67fff1dfa42cef065fa6c99cd", "scale": 1, "offset": [0.0, 0.0009, 0.004], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-lateral-positioning-set",
+      "name": {"zh-CN": "侧卧位体位用具车", "en": "Lateral-positioning aids trolley"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "侧卧位用具：真空塑形垫（抽气后贴合躯干固定）、腋下垫（放在腋窝下方的胸壁下，保护臂丛和腋血管）、上臂托架、头圈、两膝之间的软枕、髋部固定带和各受压点的凝胶垫。",
+        "en": "Aids for the lateral position: a vacuum mattress (moulded round the trunk, then evacuated), the axillary roll (under the chest wall below the armpit, to protect the brachial plexus and the axillary vessels), a support for the upper arm, a head ring, a pillow for between the knees, a strap across the hip and gel pads for every pressure point."
+      },
+      "usage": {
+        "zh-CN": "导管位置确认后再翻身，多人协同、麻醉医生护住头颈和导管：术侧向上，腋下垫到位，双臂向前、外展不超过 90°（上臂放托架），颈部居中，下腿屈曲、两膝之间加垫，髋部固定。折床让肋间隙张开；最后核对颈部居中、眼耳不受压、各受压点有垫、管线通畅。",
+        "en": "Turn only after the tube's position is confirmed, with enough hands and the anaesthetist holding the head, neck and tube: operated side up, the axillary roll in place, both arms forward and abducted no more than 90° (the upper one on its support), the neck neutral, the lower leg flexed with padding between the knees, the hip secured. Flex the table to widen the intercostal spaces; then check — the neck in line, eyes and ears free, every pressure point padded, lines and tube running free."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.9, "d": 0.55, "h": 1.15},
+      "solid": true,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 摆放侧卧位", "en": "E · Lateral positioning"}},
+      "screen": "none",
+      "tags": ["or", "positioning", "thoracic"],
+      "portable": "cart",
+      "behavior": {"initial": "stowed", "states": {"stowed": {"name": {"zh-CN": "用具在车上（患者仰卧）", "en": "aids on the trolley (patient supine)"}}, "lateral": {"name": {"zh-CN": "已侧卧：术侧向上，腋下垫、托臂架、真空垫就位", "en": "turned: operated side up, axillary roll, arm support and vacuum mattress in place"}}, "flexed": {"name": {"zh-CN": "已折床，肋间隙张开", "en": "table flexed, the intercostal spaces open"}}, "checked": {"name": {"zh-CN": "体位已核对：颈部居中，受压点有垫，管线通畅", "en": "position checked: neck in line, pressure points padded, lines and tube free"}}}, "operations": {"turn": {"name": {"zh-CN": "翻身摆侧卧位（导管位置已确认后）", "en": "Turn the patient to the lateral position (once the tube's position is confirmed)"}, "from": ["stowed"], "to": "lateral", "requires": [{"patientWithin": 2}, {"nearbyState": {"type": "sc-lung-isolation-cart", "state": ["confirmed", "one-lung"], "within": 8}}], "durationSeconds": 300, "roles": ["clinician", "attending", "nurse"]}, "flex_table": {"name": {"zh-CN": "折床，张开肋间隙", "en": "Flex the table to open the intercostal spaces"}, "from": ["lateral"], "to": "flexed", "requires": [{"patientWithin": 2}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "check_position": {"name": {"zh-CN": "核对体位：颈部、眼耳、受压点、管线", "en": "Check the position: neck, eyes and ears, pressure points, lines"}, "from": ["flexed"], "to": "checked", "requires": [{"patientWithin": 2}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "return_supine": {"name": {"zh-CN": "术毕放平手术床，撤除用具，转回仰卧位", "en": "At the end: level the table, remove the aids, turn back supine"}, "from": ["lateral", "flexed", "checked"], "to": "stowed", "durationSeconds": 180, "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "rubber", "p": [-0.39, 0.04, -0.215], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [-0.39, 0.04, 0.215], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [0.39, 0.04, -0.215], "s": [0.08, 0.08, 0.08]},
+        {"m": "rubber", "p": [0.39, 0.04, 0.215], "s": [0.08, 0.08, 0.08]},
+        {"m": "chrome", "p": [-0.41, 0.52, -0.235], "s": [0.03, 0.88, 0.03]},
+        {"m": "chrome", "p": [0.41, 0.52, -0.235], "s": [0.03, 0.88, 0.03]},
+        {"m": "chrome", "p": [-0.41, 0.52, 0.235], "s": [0.03, 0.88, 0.03]},
+        {"m": "chrome", "p": [0.41, 0.52, 0.235], "s": [0.03, 0.88, 0.03]},
+        {"m": "steel", "p": [0, 0.2, 0], "s": [0.84, 0.03, 0.5]},
+        {"m": "steel", "p": [0, 0.72, 0], "s": [0.86, 0.03, 0.52]},
+        {"m": "sc-vacuum-mat", "p": [0, 0.36, 0], "s": [0.74, 0.28, 0.4]},
+        {"m": "coal", "p": [-0.2, 0.36, 0.204], "s": [0.04, 0.29, 0.008]},
+        {"m": "coal", "p": [0.2, 0.36, 0.204], "s": [0.04, 0.29, 0.008]},
+        {"m": "white", "p": [-0.2, 0.79, 0.1], "s": [0.38, 0.1, 0.26]},
+        {"m": "teal", "p": [-0.24, 0.775, -0.16], "s": [0.22, 0.07, 0.18]},
+        {"m": "sc-vacuum-mat", "p": [0.2, 0.795, -0.14], "s": [0.36, 0.11, 0.12]},
+        {"m": "navy", "p": [0.2, 0.79, 0.1], "s": [0.38, 0.06, 0.15]},
+        {"m": "chrome", "p": [0.36, 0.93, 0.1], "s": [0.03, 0.36, 0.03]}
+      ],
+      "model": {"uri": "models/sc-lateral-positioning-set.glb", "sha256": "5f3185de80559b26bf53e64ab129c10e05b518df9c8c717e03338f1ed922256e", "scale": 1, "offset": [0.0, 0.0009, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-chest-drainage-unit",
+      "name": {"zh-CN": "胸腔闭式引流装置（三腔，水封）", "en": "Chest drainage unit (three chambers, water seal)"},
+      "category": "therapy",
+      "description": {
+        "zh-CN": "一次性三腔胸腔引流装置：带刻度的集液腔、水封腔（注水到刻度线，一般为 2 cm：气体只出不进，水柱随呼吸波动，持续冒泡提示漏气）和负压调节；带挂钩和落地支架，始终放在胸腔水平以下。",
+        "en": "Single-use three-chamber chest drainage unit: a graduated collection chamber, the water-seal chamber (filled to its line, 2 cm in most units: air leaves and cannot return, the column swings with breathing, and steady bubbling means an air leak) and a suction regulator; with hangers and a floor stand, always kept below the level of the chest."
+      },
+      "usage": {
+        "zh-CN": "先向水封腔注水到刻度线（一般为 2 cm），再接胸管；装置低于胸腔、保持直立，管路不打折、不下垂成圈。观察：引流量与性状、水柱波动、有无冒泡（漏气）。是否加负压按医嘱：ERAS 学会与欧洲胸外科医师学会（ESTS）的肺手术加速康复指南建议不常规加外部负压吸引，并推荐使用数字化引流系统。",
+        "en": "Fill the water-seal chamber to its line first (2 cm in most units), then connect the chest tube; keep the unit upright and below the chest, the tubing free of kinks and dependent loops. Watch the volume and character of the drainage, the swing of the water column, and bubbling (an air leak). Suction only as prescribed: the ERAS Society / ESTS guideline for lung surgery advises against routine external suction and recommends digital drainage systems."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.36, "d": 0.25, "h": 0.62},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 胸腔引流装置", "en": "E · Chest drainage unit"}},
+      "screen": "none",
+      "tags": ["or", "thoracic", "drain", "single-use"],
+      "behavior": {"initial": "sealed", "states": {"sealed": {"name": {"zh-CN": "包装完好", "en": "in its sterile pack"}}, "primed": {"name": {"zh-CN": "水封腔已注水到刻度线", "en": "water seal filled to its line"}}, "water-seal": {"name": {"zh-CN": "已接胸管：水封引流，水柱随呼吸波动", "en": "connected: on water seal, the column swinging with breathing"}}, "suction": {"name": {"zh-CN": "已接胸管：负压吸引（按医嘱）", "en": "connected: on suction (as prescribed)"}}, "used": {"name": {"zh-CN": "已使用，待处置", "en": "used — for disposal"}, "available": false}}, "operations": {"prime": {"name": {"zh-CN": "开包，水封腔注水到刻度线（一般为 2 cm）", "en": "Open the pack and fill the water seal to its line (2 cm in most units)"}, "from": ["sealed"], "to": "primed", "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "connect": {"name": {"zh-CN": "接胸管，装置置于胸腔水平以下", "en": "Connect the chest tube, the unit below the level of the chest"}, "from": ["primed"], "to": "water-seal", "requires": [{"nearbyState": {"type": "sc-chest-tube", "state": "placed", "within": 4}}], "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}, "apply_suction": {"name": {"zh-CN": "接负压吸引（按医嘱）", "en": "Apply suction (as prescribed)"}, "from": ["water-seal"], "to": "suction", "durationSeconds": 15, "roles": ["clinician", "attending", "nurse"]}, "to_water_seal": {"name": {"zh-CN": "停负压，改水封引流", "en": "Stop suction: back to water seal"}, "from": ["suction"], "to": "water-seal", "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "dispose": {"name": {"zh-CN": "拔管或更换后：按医疗废物处置", "en": "After the drain is out or the unit changed: dispose of it as clinical waste"}, "from": ["water-seal", "suction", "primed"], "to": "used", "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "plastic", "p": [0, 0.04, 0], "s": [0.34, 0.08, 0.24]},
+        {"m": "white", "p": [0, 0.3, 0], "s": [0.3, 0.38, 0.09]},
+        {"m": "sc-clear-tube", "p": [-0.07, 0.29, 0.047], "s": [0.13, 0.32, 0.006]},
+        {"m": "sc-clear-tube", "p": [0.045, 0.34, 0.047], "s": [0.05, 0.16, 0.006]},
+        {"m": "blue", "p": [0.045, 0.2, 0.047], "s": [0.05, 0.1, 0.006]},
+        {"m": "orange", "p": [0.115, 0.38, 0.05], "s": [0.05, 0.05, 0.012]},
+        {"m": "white", "p": [0, 0.52, 0], "s": [0.14, 0.04, 0.03]},
+        {"m": "chrome", "p": [-0.1, 0.5, -0.03], "s": [0.02, 0.06, 0.02]},
+        {"m": "chrome", "p": [0.1, 0.5, -0.03], "s": [0.02, 0.06, 0.02]},
+        {"m": "sc-clear-tube", "p": [-0.12, 0.55, 0.02], "s": [0.02, 0.12, 0.02]}
+      ],
+      "model": {"uri": "models/sc-chest-drainage-unit.glb", "sha256": "45182c11bb4ed9e7ad6137d6a2301ae02196b4c6f515ff62deaa700c64737354", "scale": 1, "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-thoracoscope",
+      "name": {"zh-CN": "30° 胸腔镜（10 mm 硬镜）", "en": "30° thoracoscope (10 mm rigid telescope)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "10 mm、30° 斜视硬质胸腔镜，接 4K 摄像头和导光束；斜视镜转动导光束接口就能绕过肺和器械看到肺门前后与胸顶、膈面。UDI 直接标记，可高压蒸汽或低温等离子灭菌（按厂家说明）。",
+        "en": "10 mm rigid thoracoscope with a 30° oblique view, coupled to the 4K camera head and the light cable; turning the light post swings the view round the lung and the instruments — in front of and behind the hilum, up to the apex, down onto the diaphragm. UDI direct-marked; steam or low-temperature plasma sterilisation as its maker allows."
+      },
+      "usage": {
+        "zh-CN": "入镜前白平衡、调焦并温好镜头；由扶镜手持镜，保持地平线水平、术野居中。",
+        "en": "White-balance, focus and warm the tip before it goes in; the camera holder keeps the horizon level and the working point in the middle of the picture."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.48, "d": 0.06, "h": 0.04},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"insert": {"name": {"zh-CN": "入镜探查（系统已白平衡）", "en": "Insert the scope and look round (the system white-balanced)"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}, {"nearbyState": {"type": "sc-thoracoscopy-tower", "state": "balanced", "within": 7}}], "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.07, 0.018, 0], "s": [0.34, 0.012, 0.012]},
+        {"m": "steel", "p": [-0.12, 0.018, 0], "s": [0.05, 0.03, 0.03]},
+        {"m": "coal", "p": [-0.19, 0.025, 0], "s": [0.1, 0.05, 0.045]},
+        {"m": "steel", "p": [-0.1, 0.018, 0.03], "s": [0.014, 0.014, 0.035]}
+      ],
+      "model": {"uri": "models/sc-thoracoscope.glb", "sha256": "29216eb23475ca73a8e19026e3ef0909abd8fc5b43e0486057166e24e0b57365", "scale": 1, "offset": [0.0014, -0.002, 0.0085], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-thoracoport",
+      "name": {"zh-CN": "胸腔穿刺套管（10.5 mm，钝头）", "en": "Thoracic port (10.5 mm, blunt)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "胸腔镜用短套管与钝头内芯：胸壁薄、不需要密封气体，所以套管短而无阀；用于观察孔，镜头经它进出不沾血。",
+        "en": "Short cannula with a blunt obturator for thoracoscopy: the chest wall is thin and no gas has to be held in, so the port is short and has no valve; it lines the camera port so that the scope goes in and out clean."
+      },
+      "usage": {
+        "zh-CN": "切口沿下位肋骨上缘（肋间血管神经走在上位肋骨下缘的肋沟里）；先用手指探查有无粘连，再置入套管。其余操作孔在镜下直视置入。",
+        "en": "Cut down onto the upper border of the lower rib (the intercostal vessels and nerve run in the groove under the rib above); sweep a finger inside for adhesions before the port goes in. Every further port is placed under vision."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.13, "d": 0.045, "h": 0.045},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"place": {"name": {"zh-CN": "置入观察孔套管（暂停核查已完成，术侧肺已萎陷）", "en": "Place the camera port (time-out done, the lung on the operated side down)"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}, {"nearbyState": {"type": "sc-who-checklist", "state": ["timed-out", "signed-out"], "within": 7}}, {"nearbyState": {"type": "sc-lung-isolation-cart", "state": "one-lung", "within": 8}}], "durationSeconds": 60, "roles": ["clinician", "attending"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "white", "p": [-0.02, 0.022, 0], "s": [0.07, 0.03, 0.03]},
+        {"m": "steel", "p": [0.04, 0.022, 0], "s": [0.05, 0.018, 0.018]},
+        {"m": "blue", "p": [-0.055, 0.022, 0], "s": [0.02, 0.04, 0.04]}
+      ],
+      "model": {"uri": "models/sc-thoracoport.glb", "sha256": "c64451eae8737be44f1403b22096c00c420c3e327a7cfabf10ef231ebf8192a5", "scale": 1, "offset": [0.0052, -0.001, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-lung-forceps",
+      "name": {"zh-CN": "腔镜肺钳（卵圆钳）", "en": "Thoracoscopic lung grasping forceps (ring forceps)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "长柄卵圆形开窗钳口的无损伤肺钳，双关节设计可在小切口内张开；轻夹肺组织牵拉显露，也可夹持纱布球或“花生米”剥离子做钝性分离。ISO 7153-1 不锈钢，UDI 直接标记。",
+        "en": "Long atraumatic lung forceps with oval fenestrated jaws and a double joint that opens inside a small incision; they hold the lung gently for exposure, and carry a swab or a peanut dissector for blunt dissection. ISO 7153-1 stainless steel, UDI direct-marked."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.3, "d": 0.05, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"retract": {"name": {"zh-CN": "轻夹肺叶牵拉显露", "en": "Hold the lung gently for exposure"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 10, "roles": ["clinician", "attending", "nurse"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.03, 0.008, -0.005], "s": [0.2, 0.008, 0.008]},
+        {"m": "chrome", "p": [0.03, 0.008, 0.005], "s": [0.2, 0.008, 0.008]},
+        {"m": "steel", "p": [-0.115, 0.01, 0], "s": [0.05, 0.012, 0.06]},
+        {"m": "chrome", "p": [0.135, 0.008, 0], "s": [0.03, 0.008, 0.022]}
+      ],
+      "model": {"uri": "models/sc-lung-forceps.glb", "sha256": "5f37dd1be187b468cebf84a29b011c7c72e1f98cfa82bcbdce312c23d94b3640", "scale": 1, "offset": [0.0008, 0.0, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-endo-dissector",
+      "name": {"zh-CN": "腔镜直角分离钳", "en": "Thoracoscopic right-angle dissector"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "长柄直角分离钳：分离肺门血管与支气管后方，穿过后带出血管牵引带（硅胶带）环绕结构，为切割缝合器开出通道。ISO 7151 关节器械，UDI 直接标记。",
+        "en": "Long right-angle dissecting forceps: they open the plane behind a hilar vessel or the bronchus and draw a vessel loop (a silicone sling) round it, making the tunnel the stapler will pass through. An articulated instrument to ISO 7151, UDI direct-marked."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.34, "d": 0.055, "h": 0.03},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"dissect": {"name": {"zh-CN": "分离肺门结构并套带", "en": "Dissect a hilar structure and pass a loop round it"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 60, "roles": ["clinician", "attending"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.03, 0.008, -0.005], "s": [0.24, 0.008, 0.008]},
+        {"m": "chrome", "p": [0.03, 0.008, 0.005], "s": [0.24, 0.008, 0.008]},
+        {"m": "steel", "p": [-0.135, 0.01, 0], "s": [0.05, 0.012, 0.06]},
+        {"m": "chrome", "p": [0.16, 0.012, 0.012], "s": [0.012, 0.012, 0.03]}
+      ],
+      "model": {"uri": "models/sc-endo-dissector.glb", "sha256": "428a91119844e08d8b295adfda900ef759d62165c2b28afe0810f47b93d6cbb7", "scale": 1, "offset": [-0.0042, 0.0, 0.0011], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-clip-applier",
+      "name": {"zh-CN": "腔镜施夹钳（结扎夹）", "en": "Endoscopic clip applier (ligating clips)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "腔镜施夹钳，施放带锁扣的高分子结扎夹或钛夹：用于细小的血管分支；夹子要完全跨过血管、锁扣闭合，近端留足够的残端。",
+        "en": "Endoscopic applier for locking polymer or titanium ligating clips: for small vessel branches — the clip right across the vessel, its lock closed, and enough of a stump left on the side that stays."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.42, "d": 0.08, "h": 0.03},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 器械", "en": "E · Instrument"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "sterile", "udi"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌（UDI 可追溯）", "en": "sterile (UDI-traceable)"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "used": {"name": {"zh-CN": "已使用，待再处理", "en": "used — to the CSSD"}}}, "operations": {"apply_clip": {"name": {"zh-CN": "夹闭血管分支", "en": "Clip a vessel branch"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 15, "roles": ["clinician", "attending"]}, "finish": {"name": {"zh-CN": "用毕放回待再处理", "en": "Finished with — mark for reprocessing"}, "from": ["in-use"], "to": "used", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}, "reprocess": {"name": {"zh-CN": "消毒供应中心再处理（清洗消毒→检查包装→灭菌）", "en": "Reprocess in the CSSD (wash → inspect & pack → sterilise)"}, "from": ["used"], "to": "sterile", "requires": [{"nearbyState": {"type": "sc-washer-disinfector", "state": "complete", "within": 12}}, {"nearbyState": {"type": "sc-steam-steriliser", "state": "released", "within": 12}}], "durationSeconds": 120, "roles": ["nurse", "porter", "lab-tech", "clinician", "attending"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.06, 0.01, 0], "s": [0.3, 0.01, 0.01]},
+        {"m": "sc-matte-black", "p": [-0.14, 0.012, 0], "s": [0.1, 0.02, 0.07]},
+        {"m": "gold", "p": [0.2, 0.01, 0], "s": [0.02, 0.012, 0.014]}
+      ],
+      "model": {"uri": "models/sc-clip-applier.glb", "sha256": "39d61197dd5f6c627f5b603a1de6dd8dc213079cf3061788187a9bd1d7877472", "scale": 1, "offset": [0.0047, -0.0021, 0.0014], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-ultrasonic-shears",
+      "name": {"zh-CN": "超声刀（36 cm）", "en": "Ultrasonic shears (36 cm)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "一次性超声切割止血刀头，接胸腔镜塔上的能量平台：刀头高频振动同时切割和凝闭小血管，用于松解粘连、打开纵隔胸膜和下肺韧带、清扫淋巴结。工作刀头很热，离开血管壁和支气管膜部使用，烟雾经排烟系统排出。",
+        "en": "Single-use ultrasonic shears on the tower's energy platform: the active blade vibrates, cutting and sealing small vessels at once — for freeing adhesions, opening the mediastinal pleura and the pulmonary ligament, and taking lymph nodes. The active blade is hot: keep it off vessel walls and the membranous bronchus, and evacuate the plume."
+      },
+      "usage": {
+        "zh-CN": "烟雾排除器运行、能量平台开机后才能激发（AORN：所有手术烟雾都应排出并过滤）。",
+        "en": "Activates only with the smoke evacuator running and the energy platform on (AORN: evacuate and filter all surgical smoke)."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.5, "d": 0.14, "h": 0.04},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 超声刀", "en": "E · Ultrasonic shears"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "single-use", "energy", "thoracic"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌", "en": "sterile"}}, "in-use": {"name": {"zh-CN": "使用中", "en": "in use"}}, "discarded": {"name": {"zh-CN": "已丢弃", "en": "discarded"}, "available": false}}, "operations": {"activate": {"name": {"zh-CN": "切割 / 凝闭", "en": "Cut / seal"}, "from": ["sterile", "in-use"], "to": "in-use", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}, {"nearbyState": {"type": "sc-thoracoscopy-tower", "state": ["on", "balanced"], "within": 7}}, {"nearbyState": {"type": "sc-smoke-evacuator", "state": "running", "within": 6}}], "durationSeconds": 20, "roles": ["clinician", "attending"]}, "discard": {"name": {"zh-CN": "用毕丢弃", "en": "Discard after use"}, "from": ["in-use"], "to": "discarded", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.08, 0.016, 0], "s": [0.32, 0.01, 0.01]},
+        {"m": "white", "p": [-0.15, 0.018, 0], "s": [0.14, 0.034, 0.05]},
+        {"m": "white", "p": [-0.16, 0.018, -0.055], "s": [0.05, 0.03, 0.06]},
+        {"m": "blue", "p": [-0.1, 0.018, 0.03], "s": [0.03, 0.03, 0.02]},
+        {"m": "steel", "p": [0.24, 0.016, 0], "s": [0.02, 0.008, 0.012]}
+      ],
+      "model": {"uri": "models/sc-ultrasonic-shears.glb", "sha256": "cce5fa36ce56a7f6cd6e529a98bfa9f74c19bd9dc7220b383144638dd7918cf8", "scale": 1, "offset": [-0.0019, 0.0017, -0.013], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-endo-stapler",
+      "name": {"zh-CN": "腔镜直线切割缝合器", "en": "Endoscopic linear cutter-stapler"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "一次性腔镜直线切割缝合器：钉砧与钉仓夹闭组织后击发，两侧各打数排缝钉、中间切开。钉仓按组织厚度选择——肺血管用薄组织（血管）钉仓，支气管和肺实质用更厚的钉仓（各厂家的颜色标识不同，按说明书选择）；钳口上有刻度线，组织不得超过。",
+        "en": "Single-use endoscopic linear cutter-stapler: anvil and cartridge close on the tissue and, fired, lay rows of staples on each side and cut between them. The reload is chosen for the thickness of the tissue — a thin-tissue (vascular) reload for the pulmonary vessels, thicker ones for the bronchus and the lung itself (makers code them in different colours: follow the instructions for use); the tissue must not pass the mark on the jaws."
+      },
+      "usage": {
+        "zh-CN": "击发前：钳口内只有要切断的结构，尖端完全穿出，周围的血管、神经和导管不在钳口里。夹闭支气管后先请麻醉医生膨肺，确认余肺能通气，再击发。",
+        "en": "Before firing: only the structure to be divided lies in the jaws, the tip is clear beyond it, and no neighbouring vessel, nerve or tube is caught. On the bronchus, close the jaws and have the anaesthetist inflate the lung first — the lobes that stay must ventilate — then fire."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.52, "d": 0.13, "h": 0.045},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 切割缝合器", "en": "E · Stapler"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "single-use", "stapler", "thoracic"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌，未装钉仓", "en": "sterile, no reload in"}}, "loaded": {"name": {"zh-CN": "已装钉仓", "en": "reload in"}}, "fired": {"name": {"zh-CN": "已击发（换钉仓可再用）", "en": "fired (takes a fresh reload)"}}, "discarded": {"name": {"zh-CN": "已丢弃", "en": "discarded"}, "available": false}}, "operations": {"load": {"name": {"zh-CN": "装钉仓（按组织厚度选择）", "en": "Load a reload (chosen for the tissue's thickness)"}, "from": ["sterile", "fired"], "to": "loaded", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}], "durationSeconds": 20, "roles": ["clinician", "attending", "nurse"]}, "fire": {"name": {"zh-CN": "夹闭、核对钳口内容后击发", "en": "Close, check what is in the jaws, fire"}, "from": ["loaded"], "to": "fired", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 30, "roles": ["clinician", "attending"]}, "discard": {"name": {"zh-CN": "用毕丢弃", "en": "Discard after use"}, "from": ["fired", "loaded"], "to": "discarded", "requires": [{"state": "held"}], "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "chrome", "p": [0.1, 0.02, 0], "s": [0.26, 0.014, 0.014]},
+        {"m": "steel", "p": [0.265, 0.02, 0], "s": [0.07, 0.016, 0.014]},
+        {"m": "purple", "p": [0.27, 0.011, 0], "s": [0.06, 0.008, 0.012]},
+        {"m": "white", "p": [-0.12, 0.022, 0], "s": [0.18, 0.04, 0.05]},
+        {"m": "white", "p": [-0.15, 0.02, -0.055], "s": [0.06, 0.036, 0.07]},
+        {"m": "coal", "p": [-0.09, 0.02, -0.04], "s": [0.04, 0.03, 0.04]}
+      ],
+      "model": {"uri": "models/sc-endo-stapler.glb", "sha256": "62e75ceff1bee390e8987d624dce8c07bd633eeb973b2920cfde77a2f1d9c23f", "scale": 1, "offset": [0.0043, 0.0016, -0.0165], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-specimen-bag",
+      "name": {"zh-CN": "腔镜标本取出袋", "en": "Endoscopic specimen retrieval bag"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "一次性标本袋：切下的肺叶或肺组织在胸腔内装袋，收口后经操作口取出，标本不接触切口，避免肿瘤细胞污染切口。",
+        "en": "Single-use specimen bag: the resected lobe or wedge is bagged inside the chest and, the mouth drawn shut, brought out through the utility incision without touching the wound — so that no tumour cells are left in it."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.18, "d": 0.1, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 标本袋", "en": "E · Specimen bag"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "single-use", "thoracic"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌", "en": "sterile"}}, "used": {"name": {"zh-CN": "已装标本取出", "en": "used: specimen out"}, "available": false}}, "operations": {"retrieve": {"name": {"zh-CN": "胸腔内装袋，经操作口取出标本", "en": "Bag the specimen inside the chest and bring it out through the utility incision"}, "from": ["sterile"], "to": "used", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}], "durationSeconds": 60, "roles": ["clinician", "attending"]}}},
+      "parts": [
+        {"m": "sc-clear-tube", "p": [0.01, 0.008, 0], "s": [0.15, 0.012, 0.09]},
+        {"m": "blue", "p": [-0.075, 0.009, 0], "s": [0.02, 0.014, 0.05]}
+      ],
+      "model": {"uri": "models/sc-specimen-bag.glb", "sha256": "24a56b014675bd2d25c2f249b2bd4c980e8de48fab512d1bcd6eb9d4b802ffbc", "scale": 1, "offset": [-0.0005, 0.0, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-chest-tube",
+      "name": {"zh-CN": "胸腔引流管（28 Fr）", "en": "Chest tube (28 Fr)"},
+      "category": "surgery",
+      "description": {
+        "zh-CN": "一次性透明胸腔引流管，带侧孔和 X 线显影线；术毕经观察孔置入一根（指南建议一根而不是两根）、缝线固定，接水封引流装置。",
+        "en": "Single-use clear chest tube with side holes and a radiopaque line; at the end of the operation one tube (the guideline advises one, not two) goes in through the camera port, is stitched to the skin and connected to the water-seal drainage unit."
+      },
+      "usage": {
+        "zh-CN": "引流装置先注好水封再置管；镜下确认管尖位置、所有侧孔都在胸腔内，然后固定并接引流装置。",
+        "en": "Prime the drainage unit before the tube goes in; confirm through the scope where the tip lies and that every side hole is inside the chest, then secure it and connect the unit."
+      },
+      "capabilities": [],
+      "footprint": {"w": 0.45, "d": 0.03, "h": 0.02},
+      "solid": false,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 胸管", "en": "E · Chest tube"}},
+      "screen": "none",
+      "tags": ["or", "instrument", "single-use", "drain", "thoracic"],
+      "portable": "handheld",
+      "reach": 1.2,
+      "behavior": {"initial": "sterile", "states": {"sterile": {"name": {"zh-CN": "无菌", "en": "sterile"}}, "placed": {"name": {"zh-CN": "已置入并固定", "en": "placed and secured"}}}, "operations": {"place": {"name": {"zh-CN": "经观察孔置入胸管，镜下确认位置后固定（引流装置已注水封）", "en": "Place the tube through the camera port, confirm it under vision, secure it (the drainage unit primed)"}, "from": ["sterile"], "to": "placed", "requires": [{"state": "held"}, {"handsClean": true}, {"actorHolding": "sc-sterile-gown"}, {"actorHolding": "sc-sterile-gloves"}, {"patientWithin": 1.4}, {"nearbyState": {"type": "sc-chest-drainage-unit", "state": ["primed", "water-seal", "suction"], "within": 5}}], "durationSeconds": 90, "roles": ["clinician", "attending"]}}},
+      "parts": [
+        {"m": "sc-clear-tube", "p": [0, 0.008, 0], "s": [0.44, 0.012, 0.012]},
+        {"m": "blue", "p": [0.05, 0.015, 0], "s": [0.3, 0.003, 0.003]},
+        {"m": "white", "p": [-0.205, 0.008, 0], "s": [0.03, 0.016, 0.016]}
+      ],
+      "model": {"uri": "models/sc-chest-tube.glb", "sha256": "d9f5a1b258b42023ffa997581a234eda1f57f48d093fe22e924c6a9964cb7238", "scale": 1, "offset": [-0.0038, -0.001, 0.0], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
+    },
+    {
+      "id": "sc-vats-trainer",
+      "name": {"zh-CN": "胸腔镜手术模拟训练台", "en": "Thoracoscopy (VATS) training station"},
+      "category": "teaching",
+      "description": {
+        "zh-CN": "胸腔镜肺叶切除的模拟训练台：躯干模型取侧卧位（左侧向上）固定在折起的床面和真空垫上，上臂放在托架上，铺巾后露出侧胸壁；胸壁上是标准化三孔前入路的三个切口——第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），位置低而靠前、约在膈顶水平的 1 cm 观察孔（套管里是 10 mm 30° 胸腔镜），以及同一水平更靠后、肩胛骨正下方的 1.5 cm 操作孔；床头的显示器接镜头。从核对体位到关胸，按顺序演练下肺叶切除的每一步（静脉、动脉、支气管；不同肺叶的顺序不同）。",
+        "en": "A simulator for thoracoscopic lobectomy: a torso in the lateral position (left side up) on a flexed top and a vacuum mattress, the upper arm on its support, draped to leave the side of the chest bare; on the chest wall the three incisions of the standardized three-port anterior approach — the utility incision of about 5 cm in the 4th intercostal space just in front of latissimus dorsi (a wound protector in it, the ribs not spread), the 1 cm camera port low and anterior at about the level of the top of the diaphragm (the 10 mm 30° thoracoscope stands in its port), and a 1.5 cm port at the same level further back, straight down from the scapula; the monitor at the head shows the camera's picture. Every step of a lower lobectomy is rehearsed in order, from the position check to the closure (vein, artery, bronchus — the order differs from lobe to lobe)."
+      },
+      "usage": {
+        "zh-CN": "拿好这一步要用的器械，在训练台前按顺序操作；每一步的前提不满足时，训练台会说明还缺什么。演练的是流程和安全要点，不是手感。",
+        "en": "Take the instrument the step needs and work through the steps in order at the station; when a step's conditions are not met, the station says what is missing. It rehearses the sequence and its safety points, not the feel of tissue."
+      },
+      "capabilities": [],
+      "footprint": {"w": 2.1, "d": 1, "h": 1.8},
+      "solid": true,
+      "interaction": {"kind": "device", "prompt": {"zh-CN": "E · 胸腔镜模拟训练", "en": "E · Thoracoscopy training"}},
+      "screen": "thoracoscopy",
+      "tags": ["simulation", "thoracic", "mis", "trainer", "teaching"],
+      "behavior": {"initial": "ready", "states": {"ready": {"name": {"zh-CN": "待训练", "en": "ready"}}, "positioned": {"name": {"zh-CN": "体位已核对（侧卧、腋下垫、托臂、折床）", "en": "position checked (lateral, axillary roll, arm support, table flexed)"}}, "lung-down": {"name": {"zh-CN": "导管位置已再次确认，术侧肺已萎陷", "en": "tube position confirmed again, the lung on the operated side down"}}, "camera-port": {"name": {"zh-CN": "观察孔已置入", "en": "camera port in"}}, "explored": {"name": {"zh-CN": "已探查胸腔", "en": "chest explored"}}, "working-ports": {"name": {"zh-CN": "操作口已在镜下建立", "en": "working incisions made under vision"}}, "mobilised": {"name": {"zh-CN": "粘连已松解，下肺韧带已打开", "en": "adhesions freed, pulmonary ligament divided"}}, "hilum": {"name": {"zh-CN": "肺门已解剖，结构已套带", "en": "hilum dissected, the structures looped"}}, "vein-divided": {"name": {"zh-CN": "下肺静脉已切断", "en": "inferior pulmonary vein divided"}}, "artery-divided": {"name": {"zh-CN": "肺动脉分支已切断", "en": "arterial branches divided"}}, "bronchus-divided": {"name": {"zh-CN": "下叶支气管已切断", "en": "lower lobe bronchus divided"}}, "lobe-free": {"name": {"zh-CN": "叶间裂已切开，肺叶游离", "en": "fissure completed, the lobe free"}}, "specimen-out": {"name": {"zh-CN": "标本已装袋取出", "en": "specimen out in its bag"}}, "nodes": {"name": {"zh-CN": "淋巴结已清扫", "en": "lymph nodes taken"}}, "leak-tested": {"name": {"zh-CN": "注水膨肺试验无漏气", "en": "no leak under water"}}, "drained": {"name": {"zh-CN": "胸管已置入", "en": "chest tube in"}}, "re-expanded": {"name": {"zh-CN": "肺已在直视下复张", "en": "lung re-expanded under vision"}}, "closed": {"name": {"zh-CN": "已关胸", "en": "closed"}}}, "operations": {"check_position": {"name": {"zh-CN": "核对体位：术侧向上，腋下垫在腋窝下方的胸壁下，上臂在托架上，折床张开肋间隙，受压点有垫", "en": "Check the position: operated side up, the axillary roll under the chest wall below the armpit, the upper arm on its support, the table flexed to open the spaces, pressure points padded"}, "from": ["ready"], "to": "positioned", "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "isolate_lung": {"name": {"zh-CN": "（模拟麻醉）侧卧位后再次用纤支镜确认双腔管位置，夹闭术侧管腔：单肺通气，术侧肺萎陷", "en": "(Simulated anaesthesia) confirm the double-lumen tube again with the bronchoscope now that the torso is on its side, clamp the operated side: one-lung ventilation, the lung comes down"}, "from": ["positioned"], "to": "lung-down", "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "place_camera_port": {"name": {"zh-CN": "建立观察孔：位置低而靠前，约在膈顶水平、肺门与膈神经的前方（1 cm）；沿下位肋骨上缘进入，手指探查后置入套管", "en": "Camera port: low and anterior, at about the level of the top of the diaphragm, in front of the hilum and the phrenic nerve (1 cm); in over the upper border of the lower rib, a finger sweep, then the port"}, "from": ["lung-down"], "to": "camera-port", "requires": [{"actorHolding": "sc-thoracoport"}], "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "explore": {"name": {"zh-CN": "入镜探查：胸膜、肺、膈肌和纵隔，有无粘连、积液和未预料的病变（系统已白平衡）", "en": "Scope in and look round: pleura, lung, diaphragm and mediastinum — adhesions, fluid, anything unexpected (the system white-balanced)"}, "from": ["camera-port"], "to": "explored", "requires": [{"actorHolding": "sc-thoracoscope"}, {"nearbyState": {"type": "sc-thoracoscopy-tower", "state": "balanced", "within": 7}}], "durationSeconds": 90, "roles": ["clinician", "attending", "nurse"]}, "place_working_ports": {"name": {"zh-CN": "镜下直视建立操作口：第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），和与观察孔同一水平、更靠后（肩胛骨正下方）的 1.5 cm 操作孔；从胸腔内看着器械尖端穿入", "en": "Working incisions under vision: the utility incision of about 5 cm in the 4th space just in front of latissimus dorsi (a wound protector, no rib spreading) and the 1.5 cm port at the camera port's level further back, straight down from the scapula — watch each tip come through from inside"}, "from": ["explored"], "to": "working-ports", "durationSeconds": 120, "roles": ["clinician", "attending", "nurse"]}, "free_adhesions": {"name": {"zh-CN": "超声刀松解粘连、打开下肺韧带（排烟运行）", "en": "Free the adhesions and divide the pulmonary ligament with the ultrasonic shears (smoke evacuation running)"}, "from": ["working-ports"], "to": "mobilised", "requires": [{"actorHolding": "sc-ultrasonic-shears"}, {"nearbyState": {"type": "sc-smoke-evacuator", "state": "running", "within": 6}}], "durationSeconds": 180, "roles": ["clinician", "attending", "nurse"]}, "dissect_hilum": {"name": {"zh-CN": "打开纵隔胸膜，解剖肺门：直角钳游离静脉、动脉分支和支气管，逐一套带", "en": "Open the mediastinal pleura and dissect the hilum: free the vein, the arterial branches and the bronchus with the right-angle dissector and pass a loop round each"}, "from": ["mobilised"], "to": "hilum", "requires": [{"actorHolding": "sc-endo-dissector"}], "durationSeconds": 300, "roles": ["clinician", "attending", "nurse"]}, "divide_vein": {"name": {"zh-CN": "切断下肺静脉：血管钉仓，钳口内只有静脉、尖端完全穿出后击发", "en": "Divide the inferior pulmonary vein: a vascular reload; fire only with the vein alone in the jaws and the tip clear beyond it"}, "from": ["hilum"], "to": "vein-divided", "requires": [{"actorHolding": "sc-endo-stapler"}], "durationSeconds": 120, "roles": ["clinician", "attending", "nurse"]}, "divide_artery": {"name": {"zh-CN": "切断肺动脉分支：血管钉仓；细小分支用结扎夹", "en": "Divide the arterial branches: vascular reloads; clips for the small ones"}, "from": ["vein-divided"], "to": "artery-divided", "requires": [{"any": [{"actorHolding": "sc-endo-stapler"}, {"actorHolding": "sc-clip-applier"}]}], "durationSeconds": 180, "roles": ["clinician", "attending", "nurse"]}, "divide_bronchus": {"name": {"zh-CN": "切断下叶支气管：缝合器夹闭在预定位置后，先请麻醉医生膨肺，确认余肺通气，再击发", "en": "Divide the lower lobe bronchus: close the stapler where it is to fire, have the anaesthetist inflate — the lobe that stays must ventilate — then fire"}, "from": ["artery-divided"], "to": "bronchus-divided", "requires": [{"actorHolding": "sc-endo-stapler"}], "durationSeconds": 120, "roles": ["clinician", "attending", "nurse"]}, "complete_fissure": {"name": {"zh-CN": "切割缝合器切开叶间裂，肺叶游离", "en": "Complete the fissure with the stapler: the lobe is free"}, "from": ["bronchus-divided"], "to": "lobe-free", "requires": [{"actorHolding": "sc-endo-stapler"}], "durationSeconds": 120, "roles": ["clinician", "attending", "nurse"]}, "retrieve_specimen": {"name": {"zh-CN": "标本装袋，经操作口取出", "en": "Bag the specimen and bring it out through the utility incision"}, "from": ["lobe-free"], "to": "specimen-out", "requires": [{"actorHolding": "sc-specimen-bag"}], "durationSeconds": 90, "roles": ["clinician", "attending", "nurse"]}, "take_nodes": {"name": {"zh-CN": "清扫肺门与纵隔淋巴结（超声刀，排烟运行）", "en": "Take the hilar and mediastinal lymph nodes (ultrasonic shears, smoke evacuation running)"}, "from": ["specimen-out"], "to": "nodes", "requires": [{"actorHolding": "sc-ultrasonic-shears"}, {"nearbyState": {"type": "sc-smoke-evacuator", "state": "running", "within": 6}}], "durationSeconds": 300, "roles": ["clinician", "attending", "nurse"]}, "leak_test": {"name": {"zh-CN": "注温生理盐水浸没支气管残端，请麻醉医生膨肺并维持 20–30 cmH₂O：无气泡", "en": "Cover the bronchial stump with warm saline and have the anaesthetist inflate the lung to a sustained 20–30 cmH₂O: no bubbles"}, "from": ["nodes"], "to": "leak-tested", "durationSeconds": 90, "roles": ["clinician", "attending", "nurse"]}, "place_drain": {"name": {"zh-CN": "经观察孔置入一根胸管，镜下确认位置（引流装置已注水封）", "en": "One chest tube through the camera port, its position confirmed under vision (the drainage unit primed)"}, "from": ["leak-tested"], "to": "drained", "requires": [{"actorHolding": "sc-chest-tube"}, {"nearbyState": {"type": "sc-chest-drainage-unit", "state": ["primed", "water-seal", "suction"], "within": 6}}], "durationSeconds": 90, "roles": ["clinician", "attending", "nurse"]}, "re_expand": {"name": {"zh-CN": "（模拟麻醉）直视下缓慢膨肺，确认各肺叶复张，恢复双肺通气", "en": "(Simulated anaesthesia) re-expand the lung slowly under vision, see every lobe come up: both lungs ventilated again"}, "from": ["drained"], "to": "re-expanded", "durationSeconds": 60, "roles": ["clinician", "attending", "nurse"]}, "close": {"name": {"zh-CN": "关胸前清点无误后，逐层关闭切口", "en": "Close in layers, the count before closing correct"}, "from": ["re-expanded"], "to": "closed", "requires": [{"nearbyState": {"type": "sc-count-board", "state": ["cavity", "closing", "reconciled", "excluded"], "within": 12}}], "durationSeconds": 180, "roles": ["clinician", "attending", "nurse"]}, "reset": {"name": {"zh-CN": "下一位学员：复位训练台", "en": "Next trainee: reset the station"}, "from": ["closed"], "to": "ready", "durationSeconds": 30, "roles": ["clinician", "attending", "nurse"]}}},
+      "parts": [
+        {"m": "plastic", "p": [0, 0.04, 0], "s": [0.7, 0.08, 0.6]},
+        {"m": "sc-robot", "p": [0, 0.42, 0], "s": [0.36, 0.68, 0.4]},
+        {"m": "steel", "p": [-0.5, 0.8, 0], "s": [1, 0.05, 0.56]},
+        {"m": "steel", "p": [0.5, 0.8, 0], "s": [1, 0.05, 0.56]},
+        {"m": "sc-vacuum-mat", "p": [-0.1, 0.87, 0], "s": [1.5, 0.09, 0.58]},
+        {"m": "sc-manikin", "p": [-0.75, 1.02, 0], "s": [0.2, 0.22, 0.2]},
+        {"m": "sc-manikin", "p": [-0.25, 1.1, 0], "s": [0.6, 0.36, 0.26]},
+        {"m": "sc-drape", "p": [0.5, 1.04, 0], "s": [0.9, 0.3, 0.36]},
+        {"m": "sc-drape", "p": [-0.25, 1.29, 0], "s": [0.7, 0.02, 0.3]},
+        {"m": "chrome", "p": [-0.55, 1.2, 0.34], "s": [0.03, 0.5, 0.03]},
+        {"m": "navy", "p": [-0.55, 1.42, 0.34], "s": [0.4, 0.06, 0.14]},
+        {"m": "sc-manikin", "p": [-0.55, 1.48, 0.34], "s": [0.36, 0.07, 0.09]},
+        {"m": "white", "p": [-0.38, 1.26, 0.08], "s": [0.08, 0.02, 0.05]},
+        {"m": "white", "p": [-0.2, 1.3, 0.07], "s": [0.03, 0.06, 0.03]},
+        {"m": "white", "p": [-0.2, 1.3, -0.09], "s": [0.03, 0.04, 0.03]},
+        {"m": "chrome", "p": [-0.12, 1.46, 0.09], "s": [0.02, 0.3, 0.02]},
+        {"m": "coal", "p": [-0.1, 1.64, 0.1], "s": [0.05, 0.08, 0.05]},
+        {"m": "chrome", "p": [-0.9, 1.25, -0.42], "s": [0.04, 0.9, 0.04]},
+        {"m": "sc-matte-black", "p": [-0.62, 1.5, -0.42], "s": [0.56, 0.36, 0.05]},
+        {"m": "screen-dark", "p": [-0.62, 1.5, -0.392], "s": [0.5, 0.3, 0.006], "name": "screen"}
+      ],
+      "model": {"uri": "models/sc-vats-trainer.glb", "sha256": "7a1817a03cfe69e91e95cce54b5eb93b213d8ce3701c5d6a957dc6038e538bbe", "scale": 1, "offset": [-0.029, 0.0, 0.0315], "license": "MIT", "attribution": {"zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）", "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"}, "source": {"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft", "version": "Blender 5.0.1", "changes": "modelled procedurally from the type's voxel parts and footprint"}, "use": "cleared"}
     },
     {
       "id": "sc-ext-fins",

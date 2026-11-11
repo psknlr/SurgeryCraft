@@ -21,7 +21,7 @@ mechanics:
 
 ## The team · 手术团队
 
-Each OR has its own team at their posts (40 staff in the hospital). The learner operates; the
+Each OR has its own team at their posts (41 staff in the hospital). The learner operates; the
 team passes, counts and anaesthetises.
 
 | OR | scrub nurse · 洗手护士 | circulating nurse · 巡回护士 | anaesthetist · 麻醉医生 |
@@ -30,8 +30,8 @@ team passes, counts and anaesthetises.
 | OR 2 · robotic | Nurse Tan | Nurse Fatimah | Dr Andersen |
 | OR 3 · cardiac & transplant | Nurse Yamamoto | Nurse Laurent | Dr Kumar |
 | OR 4 · arthroplasty & neuro | Nurse Ng | Nurse Rossi | Dr Schmidt |
-| OR 5 · general & colorectal MIS | Nurse Wong | Nurse O'Connor | Dr Suzuki |
-| OR 6 · urology, gynaecology & ENT | Nurse Rahman | Nurse van den Berg | Dr Lee |
+| OR 5 · thoracic (thoracoscopy) | Nurse Wong | Nurse O'Connor | Dr Suzuki |
+| OR 6 · general, urology, gynaecology & head-and-neck MIS | Nurse Rahman | Nurse van den Berg | Dr Lee |
 | OR 7 · emergency & obstetric | Nurse Lim | Nurse Aisyah | Dr Tanaka |
 | OR 8 · isolation | Nurse Takahashi | Nurse García | Dr Menon |
 | simulation OR (ground floor) | sim faculty nurse | sim faculty nurse | sim faculty anaesthetist |
@@ -88,6 +88,15 @@ the Sign Out reads the same record. Only the boards in the patient's own room sh
 Gates are scoped so that a device in the neighbouring room never satisfies them: tools/orflow.test.ts
 checks every gate in every OR resolves only to its own room's device.
 
+## Thoracoscopy · 胸腔镜
+
+OR 5 and the simulation OR add what a thoracoscopic operation needs — nine instruments on their own table, the
+thoracoscopy tower, lung isolation, the aids for the lateral position, the chest drainage unit — and, in the
+simulation OR, a training station on which the whole sequence is rehearsed. Their lifecycles and gates (the tube
+confirmed before the patient is turned and again after, no port before the lung is down, no picture before the
+white balance, energy with smoke evacuation, the drain primed and connected before the lung is re-expanded) are
+in [THORACOSCOPY.md](THORACOSCOPY.md).
+
 ## A case, start to finish
 
 1. Change, cap and mask; **wash your hands** at the scrub bay's trough (valid 30 simulated min).
@@ -111,7 +120,7 @@ board.
 
 ## Skills · 技能
 
-`.clinicalcraft/skills/` holds three declarative workflows (`clinicalcraft/skill@1`). They run
+`.clinicalcraft/skills/` holds four declarative workflows (`clinicalcraft/skill@1`). They run
 through the caller's own tool path and succeed only when their postconditions hold in the world:
 
 | skill | steps | postcondition |
@@ -119,6 +128,7 @@ through the caller's own tool path and succeed only when their postconditions ho
 | `impf_surgical_time_out` | to the patient's OR → find this room's checklist and board → Sign in → baseline count → Time out | the checklist timed out |
 | `impf_closing_counts` | before closure: to the patient's OR → cavity and closing counts → take the RF wand → scan the patient → final count → put the wand down (the Sign Out is on the checklist board, after closure) | board reconciled |
 | `impf_cssd_cycle` | the nearest washer-disinfector: load, cycle; the nearest steriliser: Bowie-Dick, cycle, release | washer complete, load released |
+| `impf_thoracoscopy_setup` | in the theatre the caller stands in (OR 5, the simulation OR): the thoracoscopy tower on and white-balanced, the smoke evacuator on, the chest drainage unit primed | tower white-balanced, evacuator running, drainage unit primed |
 
 Project skills load only from a **trusted** project: from a ClinicalCraft checkout, run
 `npm run cc -- trust --cwd ../SurgeryCraft` once, then start sessions with `--cwd ../SurgeryCraft`

@@ -1,6 +1,7 @@
 """SurgeryCraft room templates (template-local frame: origin at the room centre, door on local south +Z)."""
 from common import L, num
 import footprints as fp
+import thoracoscopy
 
 TEMPLATES = []
 ISSUES = []
@@ -241,6 +242,50 @@ template(
     zones=[zone("sterile", L("手术间（限制区）", "Operating room (restricted)"), W9, D9, OR_ROLES)],
     caps=OR_CAPS + ["ultrasound", "echocardiography"],
     tags=["surgery", "restricted", "integrated-or", "class-ii"],
+)
+
+# OR · thoracoscopic (VATS): the integrated OR set up for thoracoscopy (docs/THORACOSCOPY.md). The tower stands across
+# the patient from the surgeon; the scrub nurse works in the corner of two tables set in an L, the second laid with
+# the thoracoscopy instruments; lung isolation is at the north wall towards the head, the positioning aids at the west
+# wall, the drainage unit on the floor at the foot of the table.
+VATS_TABLE = (3.55, 2.05)
+
+
+def vats_layout(x, z, rot=0, prefix=""):
+    """The thoracoscopy instruments on their draped table standing at (x, z) and turned `rot` (0 or 90)."""
+    out = []
+    for id, type, dx, dz, label in thoracoscopy.VATS_ITEMS:
+        wx, wz = (x + dx, z + dz) if rot == 0 else (x + dz, z - dx)
+        out.append(P(f"{prefix}{id}", type, wx, wz, rot, label, y=SETUP_TOP))
+    return out
+
+
+template(
+    "sc-or-thoracic",
+    L("胸腔镜手术室（Ⅱ级洁净）", "Thoracoscopic (VATS) OR (Class II)"),
+    L("9 × 9 m 一体化数字手术室，按胸腔镜（VATS）手术布置：4K 胸腔镜塔立在手术床一侧、术者对面，两台吊臂内镜显示器让术者和助手各自平视镜头画面；洗手护士站在两张成 L 形摆放的器械台之间，第二张专放胸腔镜器械（30° 胸腔镜、套管、肺钳、直角分离钳、超声刀、施夹钳、切割缝合器、标本袋、胸管）；靠麻醉一侧是肺隔离用具车（双腔支气管导管与纤维支气管镜），墙边是侧卧位体位用具车，床尾地面放胸腔闭式引流装置。层流、吊塔、核查与清点同一体化手术室（GB 50333 Ⅱ级、ASHRAE 170）。",
+      "9 × 9 m integrated digital OR set up for thoracoscopy (VATS): the 4K thoracoscopy tower stands beside the table, across the patient from the surgeon, and two ceiling-boom endoscopy displays give surgeon and assistant the camera's picture straight ahead; the scrub nurse works in the corner of two tables set in an L, the second laid with the thoracoscopy instruments (30° thoracoscope, port, lung forceps, right-angle dissector, ultrasonic shears, clip applier, cutter-stapler, specimen bag, chest tube); towards the anaesthetic end the lung-isolation cart (double-lumen tubes and a flexible bronchoscope), at the wall the lateral-positioning aids, and on the floor at the foot of the table the chest drainage unit. Ventilation, pendants, checklist and counts as in the integrated OR (GB 50333 Class II, ASHRAE 170)."),
+    "operating-room", (W9, D9), "sc-or-floor", or_partitions(),
+    {"text": L("手术室 · 胸腔镜 · Ⅱ级", "OR · Thoracoscopy · Class II"), "color": "#3f8f5a"},
+    OR_LIGHTS,
+    or_skeleton("sc-laminar-canopy") + [
+        # set up before the list: on, white-balanced, the scope warming in its flask
+        P("vats-tower", "sc-thoracoscopy-tower", 0.5, -1.35, label=L("4K 胸腔镜系统", "4K thoracoscopy tower"), state="balanced"),
+        P("display-1", "sc-scope-display", 1.6, 2.6, 180, L("吊臂内镜显示器 1", "Endoscopy display 1")),
+        P("display-2", "sc-scope-display", -0.6, -2.7, label=L("吊臂内镜显示器 2", "Endoscopy display 2")),
+        P("vats-table", "sc-sterile-setup-table", VATS_TABLE[0], VATS_TABLE[1], 90, L("胸腔镜器械台", "Thoracoscopy instrument table")),
+        *vats_layout(VATS_TABLE[0], VATS_TABLE[1], 90),
+        P("chest-drain", "sc-chest-drainage-unit", 1.9, 0.15, 90, L("胸腔闭式引流装置", "Chest drainage unit")),
+        on_n("lung-isolation", "sc-lung-isolation-cart", -0.3, D9, L("肺隔离用具车（双腔管 / 纤支镜）", "Lung-isolation cart (double-lumen tubes / bronchoscope)")),
+        on_n("ultrasound", "ultrasound-machine", 1.2, D9, L("超声（神经阻滞 / 经食道超声）", "Ultrasound (nerve blocks / TOE)")),
+        on_n("airway", "sc-difficult-airway-trolley", -1.4, D9, L("困难气道车", "Difficult airway trolley")),
+        on_w("positioning", "sc-lateral-positioning-set", 1.0, W9, L("侧卧位体位用具车", "Lateral-positioning aids")),
+    ],
+    slots=[slot("table", "monitor", 0, -0.3, 90)],
+    staff=OR_TEAM_9,
+    zones=[zone("sterile", L("手术间（限制区）", "Operating room (restricted)"), W9, D9, OR_ROLES)],
+    caps=OR_CAPS + ["ultrasound", "echocardiography"],
+    tags=["surgery", "restricted", "integrated-or", "class-ii", "thoracic", "vats"],
 )
 
 # OR · ultra-clean (UCV / Class I / DIN Ia) for arthroplasty, cardiac, transplant

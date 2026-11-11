@@ -24,17 +24,17 @@ and patient bay can be walked to and that every workflow runs (see [§8](#8-vali
 
 | | |
 |---|---|
-| Operating rooms | 8: hybrid (robotic angiography), robotic, 2 × Class I ultra-clean, 3 × integrated digital (one held 24/7 for emergency & obstetric surgery), 1 × negative-pressure isolation |
+| Operating rooms | 8: hybrid (robotic angiography), robotic, 2 × Class I ultra-clean, thoracoscopic ([THORACOSCOPY.md](THORACOSCOPY.md)), 2 × integrated digital (one held 24/7 for emergency & obstetric surgery), 1 × negative-pressure isolation |
 | Perioperative | 8-bay PACU, 5-bay pre-op holding, patient transfer zone (换床间), theatre control desk |
 | OR support | 6 scrub bays, 6 sterile set-up (lay-up) rooms, 58 × 8 m sterile core with clean lift, hybrid control room, anaesthesia workroom (satellite blood fridge, blood gas), frozen-section lab, theatre pharmacy, equipment store, soiled utility with dirty lift |
 | Staff areas | one-way changing rooms (women / men) with step-over benches and scrub dispensers, staff lounge, staff corridor |
 | OR teams | a scrub nurse, a circulating nurse and an anaesthetist in each OR and the simulation OR, by name |
-| Interactions | 12 handheld instruments and wearables with lifecycles; 19 operable state machines (64 operations) gated by hand hygiene, worn apparel, roles and the state of nearby devices; "pass me …" to any colleague; 3 workflow skills |
-| Ground floor | main hall & admissions, family lounge, day surgery, 2 pre-anaesthesia clinics, perioperative lab, blood bank, CSSD (decontamination → packing & sterilising → sterile store), skills lab, OR live-video room, simulation OR + debrief, AHU plant room, stores |
+| Interactions | 21 handheld instruments and wearables with lifecycles; 33 state machines in all (120 operations) gated by hand hygiene, worn apparel, roles and the state of nearby devices; "pass me …" to any colleague; 4 workflow skills |
+| Ground floor | main hall & admissions, family lounge, day surgery, 2 pre-anaesthesia clinics, perioperative lab, blood bank, CSSD (decontamination → packing & sterilising → sterile store), skills lab, OR live-video room, simulation OR with the thoracoscopy training station + debrief, AHU plant room, stores |
 | Vertical links | 2 bed lifts, clean lift (CSSD → sterile core), dirty lift (soiled utility → decontamination), main stairs, escape stairs |
 | Exterior | white rainscreen volume with ribbon glazing, a double-height glass lantern at the entrance, timber-look fin screen on the operating floor, floating canopy with the IMPF letters and a covered walkway, granite arrival plaza with a reflecting pool and tree bosque, rooftop helipad, PV, plant screen and staff gardens ([EXTERIOR.md](EXTERIOR.md)) |
-| Size | building 64 × 44 m, two 5 m storeys; 69 rooms (46 on L1), 885 placements (577 on L1, 101 of them handheld, 63 exterior), 21 patient slots, 40 staff, 22 access zones |
-| Content | 1 facility, 15 room templates, 1 catalog with 75 equipment types and 35 materials, 3 skills (all bilingual zh-CN / en) |
+| Size | building 64 × 44 m, two 5 m storeys; 69 rooms (46 on L1), 918 placements (610 on L1; 125 handheld, 63 exterior), 21 patient slots, 41 staff, 22 access zones |
+| Content | 1 facility, 16 room templates, 1 catalog with 90 equipment types and 38 materials, 4 skills (all bilingual zh-CN / en) |
 
 ## 中文概要
 
@@ -57,7 +57,8 @@ IMPF 外科医院按新加坡、欧洲、美国和日本规范中每一项最严
 
 手术室类型：1 号复合手术室（机器人落地式血管造影、碳纤维浮动手术床、Ⅰ级层流、铅防护、控制室）、
 2 号机器人手术室、3 号心脏/移植与 4 号骨科关节/神经外科超净层流手术室（3.2 × 3.2 m 送风天花）、
-5、6、7 号一体化数字手术室（7 号为 24 小时急诊与产科手术间，配新生儿复苏台与自体血回收）、
+5 号胸腔镜手术室（胸腔镜塔与两台内镜显示器、胸腔镜器械台、肺隔离用具车、侧卧位用具、胸腔闭式引流装置，见 [THORACOSCOPY.md](THORACOSCOPY.md)）、
+6、7 号一体化数字手术室（7 号为 24 小时急诊与产科手术间，配新生儿复苏台与自体血回收）、
 8 号负压隔离手术室（经互锁门缓冲间进出）。每间手术室配麻醉吊塔、外科吊塔、高级麻醉工作站、
 监护仪、4K 吊臂显示器、环境控制面板（温湿度、压差、层流状态、气体报警）、WHO 手术安全核查板和
 对角下回风口。房间、设备和标识全部中英双语。
@@ -114,8 +115,8 @@ Sizes are room rectangles (walls are 0.35 m, so clear dimensions are ≈ 0.35 m 
 | OR 2 · Robotic surgery | 2 号机器人手术室 | 9 × 9 (≈ 75 m² clear) | `sc-or-robotic` | patient-side cart docked at the table, surgeon console with sight of the field, vision cart |
 | OR 3 · Cardiac & transplant | 3 号心脏/移植 | 9 × 9 | `sc-or-ultraclean` | Class I 3.2 × 3.2 m canopy; + heart-lung machine, cell salvage |
 | OR 4 · Arthroplasty & neuro | 4 号骨科关节/神经 | 9 × 9 | `sc-or-ultraclean` | Class I canopy, mobile C-arm; + optical navigation, operating microscope |
-| OR 5 · General & colorectal MIS | 5 号普外腔镜 | 9 × 9 | `sc-or-integrated` | 4K/3D laparoscopy tower, Class II canopy |
-| OR 6 · Urology, gynaecology & ENT MIS | 6 号腔镜 | 9 × 9 | `sc-or-integrated` | as OR 5 |
+| OR 5 · Thoracic surgery (thoracoscopy) | 5 号胸外科（胸腔镜） | 9 × 9 | `sc-or-thoracic` | 4K thoracoscopy tower and two endoscopy displays, the thoracoscopy instrument table, lung-isolation cart, lateral-positioning aids, chest drainage unit; Class II canopy ([THORACOSCOPY.md](THORACOSCOPY.md)) |
+| OR 6 · General, urology, gynaecology & head-and-neck MIS | 6 号腔镜 | 9 × 9 | `sc-or-integrated` | 4K/3D laparoscopy tower, Class II canopy |
 | OR 7 · Emergency & obstetric (24/7) | 7 号急诊/产科 | 9 × 9 | `sc-or-integrated` | + neonatal resuscitation warmer, cell salvage; first slot for operating-room cases |
 | OR 8 · Negative-pressure isolation | 8 号负压隔离 | 9 × 9 | `sc-or-isolation` | entered only through its anteroom; pressure monitor; no core or corridor door |
 | OR 8 anteroom | 缓冲间 | 3 × 9 | `sc-or-anteroom` | interlocked doors, scrub trough, PPE donning station, pressure monitor |
@@ -166,6 +167,7 @@ set-up table, Mayo stand, infusion pump and warmer — with at least 1.3 m clear
 | **Robotic** (`sc-or-robotic`) | robotic-assisted urology, gynaecology, colorectal, thoracic | patient-side cart with four arms, surgeon console, vision cart |
 | **Ultra-clean** (`sc-or-ultraclean`) | arthroplasty, spine, cardiac, transplant | 3.2 × 3.2 m TAV / UCV canopy with skirts (GB 50333 Class I · DIN 1946-4 class Ia · HTM 03-01 UCV); the second back table sits inside the protected zone; mobile C-arm |
 | **Integrated digital** (`sc-or-integrated`) | general, MIS, emergency | 4K/3D laparoscopy tower, ultrasound/TOE, difficult-airway trolley (GB 50333 Class II) |
+| **Thoracoscopic** (`sc-or-thoracic`) | thoracoscopic (VATS) lung and pleural surgery | the integrated OR set up for the chest: thoracoscopy tower across the patient from the surgeon and two endoscopy displays, a second sterile table for the thoracoscopy instruments set in an L with the first, lung isolation (double-lumen tubes, bronchoscope) towards the head, aids for the lateral position, the chest drainage unit at the foot of the table ([THORACOSCOPY.md](THORACOSCOPY.md)) |
 | **Isolation** (`sc-or-isolation`) | airborne/droplet-transmitted infection | switchable pressure, entered only through an interlocked anteroom that holds the corridor → anteroom → OR cascade; HEPA-filtered exhaust; pressure monitors at both doors |
 
 OR 7 adds a neonatal resuscitation warmer (O₂, suction, T-piece, Apgar timer) and cell
@@ -206,8 +208,9 @@ east to west in one direction: decontamination (dirty lift, washer-disinfectors 
 → inspection, packing & sterilisation (6 benches, low-temperature steriliser, pass-through
 steam sterilisers in the wall) → sterile store (24 racks, dispatch, clean lift). The west wing
 is the surgical skills & simulation centre — skills lab with the anatomy atlas and case board,
-an OR live-video room, a high-fidelity simulation OR (an integrated OR without a patient slot)
-and its debrief room behind an observation window — and the OR air-handling plant room with
+an OR live-video room, a high-fidelity simulation OR (equipped as the thoracoscopic theatre, with the
+thoracoscopy training station where the table would stand and no patient slot) and its debrief room
+behind an observation window — and the OR air-handling plant room with
 three dedicated AHUs.
 
 ## 6. Gameplay
@@ -218,7 +221,7 @@ three dedicated AHUs.
   be completed here: every capability it needs is on the floor (anaesthesia, airway,
   ventilator, monitoring, infusion, echo at the bedside; blood bank, blood gas and haematology
   in the suite and the lab). `facilities validate` reports no capability gap.
-* **Staff** (40): an OR team — scrub nurse, circulating nurse, anaesthetist — in each of the 8
+* **Staff** (41): an OR team — scrub nurse, circulating nurse, anaesthetist — in each of the 8
   ORs and the simulation OR; charge nurse (theatre coordinator) and duty anaesthetist at the
   control desk, porter in the lobby, PACU and pre-op nurses, interventional radiologist,
   pathologist, theatre pharmacist; on the ground floor the admissions receptionist, day-surgery
@@ -253,7 +256,7 @@ tools/check.sh ../ClinicalCraft
 runs, against a ClinicalCraft checkout (nothing is left behind in it):
 
 1. `clinicalcraft facilities validate --all` with this pack in `contentDirs` — catalog,
-   15 templates and the compiled facility: **0 errors, 0 warnings**, no capability gaps;
+   16 templates and the compiled facility: **0 errors, 0 warnings**, no capability gaps;
 2. `tools/navcheck.test.ts` on ClinicalCraft's world model — 5 checks: the case starts in
    OR 7 one storey up; a bed takes a bed lift; **every interactive placement** (instruments
    included) is reachable by a clinician from the spawn; all 21 patient slots are reachable;
@@ -264,9 +267,15 @@ runs, against a ClinicalCraft checkout (nothing is left behind in it):
    time-out and operating mode; the scrub nurse passes the needle holder and only its holder
    uses it; energy needs the electrode monitored and smoke evacuation; the counts, RF scan and
    sign-out; a used scalpel reprocessed in the CSSD; no injection without lead;
-4. `tools/skills.test.ts` in an embodied ClinicalCraft session — the pack's skills run through
-   the learner's tool path and verify against the world, and "Pass me the needle holder" to
-   Nurse Lim ends with it in the learner's hands.
+4. `tools/thoracoscopy.test.ts` on the world runtime — the thoracic theatre's rules on a patient in
+   OR 5 (the tube confirmed before turning, one lung only after the position check, no port before
+   the time-out and the lung down, no picture before the white balance, energy with smoke
+   evacuation, the drain primed, connected and on its seal before the lung is re-expanded) and the
+   whole sequence on the training station ([THORACOSCOPY.md](THORACOSCOPY.md));
+5. `tools/skills.test.ts` in an embodied ClinicalCraft session — the pack's skills run through
+   the learner's tool path and verify against the world (the thoracoscopy set-up in OR 5 and in
+   the simulation OR among them), and "Pass me the needle holder" to Nurse Lim ends with it in
+   the learner's hands.
 
 ## 9. Gallery
 

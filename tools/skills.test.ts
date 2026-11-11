@@ -2,7 +2,8 @@
  * IMPF Surgery Hospital: the pack's project skills (`.clinicalcraft/skills/*.json`) — loaded as ClinicalCraft loads a
  * trusted project's skills, then run in an embodied session of the operating-room case in OR 7 through the learner's
  * own tool path (authority, reach, preconditions), succeeding only when their postconditions hold in the world; and
- * "Pass me the needle holder" said to the scrub nurse by name. `tools/check.sh` copies this file into
+ * "Pass me the needle holder" said to the scrub nurse by name; the thoracoscopy set-up in OR 5 and in the simulation OR
+ * (docs/THORACOSCOPY.md). `tools/check.sh` copies this file into
  * `<ClinicalCraft>/packages/agent/src/` for the run and removes it afterwards.
  *
  * The repository root comes from $SURGERYCRAFT_ROOT.
@@ -40,6 +41,26 @@ describe("IMPF Surgery Hospital · project skills and the OR team", () => {
     // the counts and the scan before closure; the Sign Out is the board's, after closure (not the skill's)
     expect(w.inspect(PRIMARY_ACTOR, "eq:or-7.checklist")?.state).toBe("timed-out");
     expect(w.inspect(PRIMARY_ACTOR, "eq:or-7.count-board")?.state).toBe("reconciled");
+    await t.session.close();
+  });
+
+  it("the thoracoscopy set-up runs as a skill in the theatre the learner stands in: OR 5, then the simulation OR", async () => {
+    const t = await theatre();
+    const w = t.session.world()!;
+    for (const [room, prefix] of [["or-5", "or-5"], ["l0-sim-or", "l0-sim-or"]] as const) {
+      await t.session.run({ type: "world_action", request: { actionId: `wa-${room}`, actorId: PRIMARY_ACTOR, operation: "navigate", goal: { kind: "room", id: room } } });
+      // the evacuator is off and the drainage unit still in its pack; the tower was white-balanced before the list
+      expect(w.inspect(PRIMARY_ACTOR, `eq:${prefix}.smoke-evac`)?.state).toBe("off");
+      expect(w.inspect(PRIMARY_ACTOR, `eq:${prefix}.chest-drain`)?.state).toBe("sealed");
+      const run = await command(t, "skill", "project:impf_thoracoscopy_setup");
+      expect(run.ok, run.text).toBe(true);
+      expect(run.data.skill).toMatchObject({ status: "succeeded" });
+      expect(w.inspect(PRIMARY_ACTOR, `eq:${prefix}.vats-tower`)?.state).toBe("balanced");
+      expect(w.inspect(PRIMARY_ACTOR, `eq:${prefix}.smoke-evac`)?.state).toBe("running");
+      expect(w.inspect(PRIMARY_ACTOR, `eq:${prefix}.chest-drain`)?.state).toBe("primed");
+    }
+    // the neighbouring theatre's evacuator was not touched: the skill works in the room it is run in
+    expect(w.inspect(PRIMARY_ACTOR, "eq:or-6.smoke-evac")?.state).toBe("off");
     await t.session.close();
   });
 
