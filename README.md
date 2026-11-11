@@ -58,7 +58,9 @@ found and the voxel parts are drawn. Case 126 needs a ClinicalCraft with the ope
 ([psknlr/ClinicalCraft#13](https://github.com/psknlr/ClinicalCraft/pull/13)). Its variants and
 operative suite also need procedure variants and `bench operative` (the variants round), and Case 126
 2.3.0 needs ClinicalCraft's audit round (explicit holds, `clock.worldTime`, `npcs[].corrections`, the
-requirements in `case_status`, the board's prerequisites on `intervene`).
+requirements in `case_status`, the board's prerequisites on `intervene`). The ISO 32 gas colours and the rebuilt
+models (the robot, the angiography C-arm, the heart-lung machine…) need the ClinicalCraft pinned in
+`tools/clinicalcraft.rev`: the palette's `gas-oxygen` and the shape kit's `pipe`, `hose` and `revolve`.
 
 ## IMPF Surgery Hospital · IMPF 外科医院
 
@@ -80,16 +82,21 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
   the sterile store; plus admissions, day surgery, the perioperative lab, blood bank and a
   surgical skills & simulation centre;
 * **interactive people, instruments and devices**: an OR team in every OR who pass what you
-  call for ("Scalpel.", "把手术刀递给我"); instruments, gowns, gloves and lead aprons you pick up,
+  call for ("Scalpel.", "把手术刀递给我") and are dressed for their position — the scrub nurse
+  in cap, mask, sterile gown and gloves with one hand held over the other in front, the circulating nurse
+  and the anaesthetist in theatre scrubs, cap and mask (ClinicalCraft draws a `position`'s
+  attire; nobody stands in theatre in a white coat); instruments, gowns, gloves and lead aprons you pick up,
   wear and hand over, each with a lifecycle (sterile → in use → used → CSSD); the WHO
   checklist, count board with RF wand, smoke evacuator and generator, control panel,
   laparoscopy tower, lead shield, contrast injector, washer-disinfectors and sterilisers as
   state machines that gate each other ([docs/INTERACTIONS.md](docs/INTERACTIONS.md));
-* **real 3D equipment everywhere**: every piece of equipment in the hospital (885 placements: the
-  pack's 74 types and ClinicalCraft's built-in ones) is drawn as a model built in Blender from
+* **real 3D equipment everywhere**: every piece of equipment in the hospital (892 placements: the
+  pack's 75 types and ClinicalCraft's built-in ones) is drawn as a model built in Blender from
   its voxel parts: the instruments, anaesthesia workstation, pendants and surgical lights,
   robotic system, PACU beds, sterilisers, the exterior. Screens stay live and interactions are
   unchanged ([docs/MODELS.md](docs/MODELS.md)).
+
+![The team in OR 7](docs/img/theatre-team-or7.jpg)
 
 ![Back table, before and after](docs/img/models-or7-instruments.jpg)
 
@@ -112,10 +119,10 @@ Design specification, room schedule and screenshots:
 
 ```
 content/
-  catalogs/surgerycraft-or.json      74 equipment types (19 with behaviours), 35 materials (bilingual)
+  catalogs/surgerycraft-or.json      75 equipment types (19 with behaviours), 35 materials (bilingual)
   templates/sc-*.json                15 room templates (ORs, scrub, set-up, PACU, pre-op, changing, …)
   facilities/impf-surgery-hospital.json   IMPF Surgery Hospital
-  assets/models/sc-*.glb             74 equipment models (Blender; MIT), served at /local-assets/models/
+  assets/models/sc-*.glb             75 equipment models (Blender; MIT), served at /local-assets/models/
 .clinicalcraft/skills/impf-*.json    3 workflow skills (time-out, closing counts, CSSD cycle)
 docs/SURGICAL_FLOOR.md               design specification · docs/img/ figures
 docs/STANDARDS.md                    SG / EU / US / JP standards matrix and the targets chosen

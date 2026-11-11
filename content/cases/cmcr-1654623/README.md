@@ -5,7 +5,7 @@
 | Setting / facility | Operating department, IMPF Surgery Hospital (OR 7) |
 | Difficulty / duration | 3/5 / about 45 minutes |
 | Specialty / languages | General surgery / zh-CN + en |
-| Review | AI-assisted editorial review, 2026-11-03 (2.4.0: the 2.3.0 interaction audit's repairs). **Not clinician-reviewed.** |
+| Review | AI-assisted editorial review, 2026-11-10 (2.5.1: a clinical-accuracy pass over the authored texts, the source report re-read; 2.4.0: the 2.3.0 interaction audit's repairs). **Not clinician-reviewed.** |
 | Scope | Whole encounter: presentation, records, diagnosis, perioperative risk, WHO checklist, the operation itself, recovery, then review of the reported course |
 | Source | Dataset item 126; published case report, pp. 180–181 (citation below) |
 
@@ -93,7 +93,8 @@ gallbladder neck.
 **Critical view of safety.** It is judged on the field:
 - the triangle is cleared;
 - the lower third of the gallbladder is off the cystic plate;
-- two and only two structures enter the gallbladder.
+- every structure entering the gallbladder is seen and free — normally two and only two (three with a
+  second cystic artery) — and nothing else appears to enter.
 
 The safety pause records the operator's claims against what the field shows.
 
@@ -243,6 +244,18 @@ not recorded. The generator is `tools/case-gen/build_case_1654623.py` (on top of
 
 ## Changelog
 
+- 2026-11-10, 2.5.1 (a clinical-accuracy pass over the authored texts; scores, gates and the operative suite unchanged;
+  the table is in docs/CASE_126.md "2.5.1"):
+  - bowel sounds in English: "no high-pitched tinkling (gas-through-fluid) sounds", not a succussion splash;
+  - the ECG in dextrocardia: arm leads reversed and right-sided chest leads;
+  - the WHO Sign In, Time Out and Sign Out carry the checklist's own items (machine and medication check; prophylaxis
+    given within 60 minutes, imaging displayed, introductions and concerns; needle count, the specimen label read
+    aloud, equipment problems);
+  - what an ASA class is assigned from; the portal vein inside the ligament; the bile-leak gate named for what it
+    covers; the critical view as the case scores it (every entering structure free, normally two);
+  - the teaching corrections no longer fire on reversing a neuromuscular block, on ECG leads or defibrillator pads,
+    on "reason" and "person", or on "oxygenation is fine";
+  - the checklist steps are 核查 in Chinese; the simulated study profiles are in the evidence ledger.
 - 2026-11-03, 2.4.0 (the 2.3.0 interaction audit; needs ClinicalCraft's repairs 1–5):
   - the swab count is one record by identity (the board, the RF wand, the Sign Out, the team and the score read it);
     closure on an open count is a safety-critical unsafe progression, never erased; new scenarios `swab-extra`,

@@ -39,13 +39,23 @@ GUIDE = L('教学设计，依据所引指南；不是原报告记载。', 'Teach
 case = copy.deepcopy(base.case)
 
 # ------------------------------------------------------------------ case card
-case['version'] = '2.5.0'
+case['version'] = '2.5.1'
+
+# 2.5.1 (clinical-accuracy pass): three wordings of the v3 base corrected here, the base file itself staying as it was.
+# The source's "无气过水音" is the high-pitched sound of gas through fluid heard in obstruction, not a succussion splash (振水音).
+next(x for x in case['exam'] if x['id'] == 'bowel')['finding']['en'] = 'Bowel sounds 3–4/min; no high-pitched tinkling (gas-through-fluid) sounds.'
+# v3 was a review of records; v4 anaesthetises and operates
+case['patient']['triageNote'] = L('84岁男性，因上腹痛、发热十多天住院。', '84-year-old man admitted with upper abdominal pain and fever for more than ten days.')
+next(x for x in case['decisions'] if x['id'] == 'safety')['prompt'] = L('手术开始前，应采用哪项安全原则？', 'Which safety principle applies before the operation begins?')
+case['provenance']['review'] = dict(case['provenance']['review'], reviewedAt='2026-11-10', guidelines=[
+    *case['provenance']['review']['guidelines'], 'Tokyo Guidelines 2018 (diagnostic criteria of acute cholecystitis)',
+    'ASA Physical Status Classification System (approved examples)'])
 
 # the swab count (in-world: kept by item identity, docs/TEAM.md §4.3): open while a swab is missing or one is not in the
 # count, until it is reconciled or — escalated — a clear RF scan excludes a retained swab. No record (text mode): not open.
 COUNT_OPEN = {'count': {'status': ['baseline', 'discrepancy', 'unresolved']}}
 case['summary'] = L(
-    '84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核对，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。',
+    '84岁男性，上腹痛、发热十多天。从问诊、查体和资料核对开始，完成术前评估、手术安全核查，并在病例相关的参考解剖上亲手完成腹腔镜手术，再回看原报告的手术与随访。',
     'An 84-year-old man with upper abdominal pain and fever for more than ten days. Take the history, examine, review the records, '
     'assess perioperative risk, run the surgical safety checklist and perform the laparoscopic operation yourself on case-informed '
     'reference anatomy, then review the operation and follow-up the source reports.')
@@ -65,7 +75,7 @@ case['learningOutcomes'] = case.get('learningOutcomes', []) + [
 case['clock'] = {'mode': 'simulated', 'startTime': '08:00', 'worldTime': 'actual',
                  'actionCosts': {'ask': 1, 'examine': 1, 'order': 1, 'read': 1, 'intervene': 2, 'answer': 0}}
 case['provenance']['notes'] = L(
-    '依据dataset第126例PDF改编。v4增加：东京指南框架的诊断决策、围术期风险评估、WHO安全核对、在参考解剖上的交互式手术（关键安全视野由术野状态判定），以及标注为模拟值的术中生理。'
+    '依据dataset第126例PDF改编。v4增加：东京指南框架的诊断决策、围术期风险评估、WHO手术安全核查、在参考解剖上的交互式手术（关键安全视野由术野状态判定），以及标注为模拟值的术中生理。'
     '化名、医院场景、参考解剖和术中生理为教学设定；原报告的事实未改动。',
     'Adapted from dataset item 126. v4 adds a Tokyo-Guidelines diagnostic decision, perioperative risk assessment, the WHO checklist, '
     'an interactive operation on reference anatomy (the critical view of safety is judged on the field) and intra-operative physiology '
@@ -80,7 +90,7 @@ case['phases'] = [
     case['phases'][0],
     dict(id='preop', label=L('术前评估与计划', 'Preoperative assessment and planning'), learnerSwitchable=False,
          enterWhen={'objective': 'plan'}),
-    dict(id='theatre', label=L('手术室：安全核对与麻醉', 'Theatre: safety checks and anaesthesia'), learnerSwitchable=False,
+    dict(id='theatre', label=L('手术室：安全核查与麻醉', 'Theatre: safety checks and anaesthesia'), learnerSwitchable=False,
          enterWhen={'decided': 'risk'}),
     dict(id='operation', label=L('腹腔镜胆囊切除', 'Laparoscopic cholecystectomy'), learnerSwitchable=False,
          enterWhen={'all': [{'intervened': 'time-out', 'valid': True}, {'decided': 'diagnosis'}, {'decided': 'planning'}, {'decided': 'risk'}]}),
@@ -136,8 +146,8 @@ def missing_record(id, zh, en, why_zh, why_en, phase='preop'):
                 results={phase: dict(available=False, text=L(why_zh, why_en), source=UNKNOWN)})
 
 case['investigations'] += [
-    missing_record('ecg-record', '查阅心电图', 'Review the ECG', '病历中没有心电图记录。右位心时需按镜像位置放置胸导联，结果才可解读。',
-                   'No ECG is recorded. With dextrocardia the chest leads must be placed in mirror positions for a readable tracing.'),
+    missing_record('ecg-record', '查阅心电图', 'Review the ECG', '病历中没有心电图记录。右位心时需把左右上肢导联对调，并按镜像位置放置胸导联（右胸导联 V1R–V6R），结果才可解读。',
+                   'No ECG is recorded. With dextrocardia the arm leads must be reversed and the chest leads placed in mirror-image (right-sided, V1R–V6R) positions for a readable tracing.'),
     missing_record('pft-record', '查阅肺功能', 'Review lung function tests', '病历中没有肺功能或血气记录。', 'No lung function tests or blood gases are recorded.'),
     missing_record('cxr-record', '查阅胸片', 'Review the chest X-ray', '病历中没有胸片记录；心胸位置见CT冠状位。', 'No chest X-ray is recorded; cardiothoracic position is shown on the coronal CT.'),
 ]
@@ -178,9 +188,9 @@ case['decisions'].append(dict(
             '抗血小板/抗凝药', 'Antiplatelet or anticoagulant therapy'),
         opt('function', True, '既往卒中后的后遗症、吞咽与活动能力影响误吸风险和术后康复。', 'Residual stroke deficits, swallowing and mobility affect aspiration risk and recovery.',
             '神经功能后遗症、吞咽与活动能力', 'Residual neurological deficit, swallowing and mobility'),
-        opt('dextrocardia', True, '右位心：心电图胸导联与除颤电极要按镜像位置放置。', 'Dextrocardia: ECG chest leads and defibrillator pads go in mirror positions.',
+        opt('dextrocardia', True, '右位心：心电图导联（左右上肢导联对调、胸导联置于右胸）与除颤电极要按镜像位置放置。', 'Dextrocardia: ECG leads (arm leads reversed, chest leads on the right chest) and defibrillator pads go in mirror positions.',
             '右位心对监护和除颤的影响', 'What dextrocardia means for monitoring and defibrillation'),
-        opt('asa', False, '病例没有ASA分级、肺功能或心功能资料，不能凭年龄和诊断名称补出分级。', 'The case gives no ASA class, lung or cardiac function; a class cannot be filled in from age and diagnoses.',
+        opt('asa', False, 'ASA分级由麻醉医生在麻醉当日评估患者后确定，依据的是全身疾病的严重程度和功能受限，不是年龄或某项检查。按ASA示例，慢阻肺和3个月以上的卒中史属III级，3个月内的卒中属IV级；本例卒中时间和功能状态均未记录，不能照现有病历直接定级。', 'The ASA class is assigned by the anaesthetist after assessing the patient on the day, from the severity of systemic disease and functional limitation — not from age or a test result. By the ASA\'s examples COPD and a stroke more than 3 months ago are class III and a stroke within 3 months is class IV; here the date of the stroke and his functional status are not recorded, so a class cannot be assigned from this record.',
             '根据现有记录直接定ASA分级', 'Assign an ASA class from the record as it stands'),
         opt('no-lap', False, '慢阻肺不是腹腔镜手术的绝对禁忌；需要的是评估和较低气腹压等调整。', 'COPD does not rule out laparoscopy; it calls for assessment and adjustments such as lower insufflation pressure.',
             '慢阻肺禁止腹腔镜手术', 'COPD rules out laparoscopy'),
@@ -204,7 +214,7 @@ case['decisions'].append(dict(
             '先通过饮水试验或吞咽造影（VFSS）再拔管', 'Keep him intubated until he passes a water-swallow test or VFSS'),
         opt('oral-once-extubated', False, '能拔管不等于能安全吞咽；既往卒中者可能隐性误吸，进食前要先做吞咽评估。',
             'Being fit for extubation is not the same as swallowing safely; after a stroke aspiration can be silent, so oral intake waits for a swallowing assessment.',
-            '拔管成功就可以经口饮水进食', 'Once extubated he can drink and eat: extubation shows his airway is protected'),
+            '拔管成功就可以经口饮水进食：能拔管说明气道已有保护', 'Once extubated he can drink and eat: extubation shows his airway is protected'),
     ]))
 
 case['decisions'].append(dict(
@@ -250,35 +260,35 @@ ELECTIVE_MILESTONES = [{'decided': 'diagnosis'}, {'decided': 'planning'}, {'deci
 SIGN_IN_CHECKS = {'all': [*ELECTIVE_MILESTONES, {'intervened': 'attach-monitor'}, {'asked': 'allergies'}, {'asked': 'fasting'}]}
 case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-historical-review'] + [
     iv('attach-monitor', 'monitoring', '连接监护：脉搏血氧、心电（镜像导联）与无创血压', 'Attach the monitor: pulse oximetry, ECG (mirror leads), non-invasive blood pressure',
-       '监护已连接：脉搏血氧有波形、读数可靠；右位心——心电图胸导联按镜像位置放置；无创血压按设定间隔测量。这只是连接监护，不是麻醉前核对。',
-       'Monitoring attached: the pulse oximeter shows a good trace and reads reliably; dextrocardia — ECG chest leads in mirror positions; non-invasive blood pressure cycling. This is the monitor only, not the Sign In.',
+       '监护已连接：脉搏血氧有波形、读数可靠；右位心——心电图电极按镜像位置放置（左右上肢电极对调，胸前电极置于右胸）；无创血压按设定间隔测量。这只是连接监护，不是麻醉前核查。',
+       'Monitoring attached: the pulse oximeter shows a good trace and reads reliably; dextrocardia — ECG electrodes in mirror positions (arm electrodes reversed, chest electrodes on the right chest); non-invasive blood pressure cycling. This is the monitor only, not the Sign In.',
        indicated={'phase': 'theatre'}),
-    iv('sign-in', 'consult', 'WHO 麻醉前核对（Sign In）', 'WHO Sign In before induction',
-       '团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录：团队逐项说明已知情况，不明的仍为不明。',
-       'The team checks identity, procedure, consent and site: the gallbladder is on the patient\'s LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient\'s own left, with no "reversing" of sides; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source: the team states what is known of each, and an unknown stays unknown.',
+    iv('sign-in', 'consult', 'WHO 麻醉前核查（Sign In）', 'WHO Sign In before induction',
+       '团队核对身份、手术、知情同意与部位：胆囊位于患者左侧（全内脏反位）——CT 的方位标记和皮肤标记都以患者自身的左侧核对，不做“左右反过来”的换算；麻醉机与药品检查已完成；脉搏血氧已在患者身上且工作正常；右位心——心电图导联与除颤电极按镜像放置；过敏、气道与误吸风险、预计失血原报告未记录：团队逐项说明已知情况，不明的仍为不明。',
+       'The team checks identity, procedure, consent and site: the gallbladder is on the patient\'s LEFT (situs inversus totalis) — the CT orientation marker and the skin marking are both checked against the patient\'s own left, with no "reversing" of sides; the anaesthesia machine and medication check is complete; the pulse oximeter is on the patient and working; dextrocardia — ECG leads and defibrillator pads in mirror positions; allergies, airway and aspiration risk and expected blood loss are not recorded in the source: the team states what is known of each, and an unknown stays unknown.',
        indicated={'all': [{'phase': 'theatre'}, SIGN_IN_CHECKS]}, contra={'not': SIGN_IN_CHECKS},
-       harm=('核对项尚未落实就做麻醉前核对：已记录为无效。择期手术先要明确诊断、制定手术计划并评估手术风险；再连接监护（脉搏血氧工作正常），问清过敏与禁食（误吸风险），然后 Sign In。',
+       harm=('核查项尚未落实就做麻醉前核查：已记录为无效。择期手术先要明确诊断、制定手术计划并评估手术风险；再连接监护（脉搏血氧工作正常），问清过敏与禁食（误吸风险），然后 Sign In。',
              'A Sign In before its checks: recorded as invalid. An elective operation needs the diagnosis made, the operation planned and the operative risk assessed first; then attach the monitor (a working pulse oximeter) and ask about allergies and fasting (aspiration risk), and sign in.'),
        checklist=True),
     iv('induction', 'airway', '全身麻醉诱导与气管插管', 'Induce general anaesthesia and intubate',
        '充分预充氧（以呼气末氧浓度判断，而非呼末二氧化碳）；先给镇静催眠药使患者意识消失，再给肌松药，绝不在没有足够催眠的情况下肌松；插管后以持续的呼末二氧化碳波形确认导管位置，机械通气。（教学步骤：不涉及具体药物与剂量。）',
        'Preoxygenated (judged by end-tidal oxygen, not end-tidal CO₂); the hypnotic first, to unconsciousness, then the neuromuscular blocker — never paralysis without adequate hypnosis; tube position confirmed by sustained capnography; ventilated. (Teaching step: no drug or dose is modelled.)',
        risk='high', indicated={'intervened': 'sign-in', 'valid': True}, contra={'not': {'intervened': 'sign-in', 'valid': True}},
-       harm=('未完成麻醉前核对就诱导：过敏、气道和部位风险未经团队确认。', 'Induction before the Sign In: allergy, airway and site risks were not confirmed by the team.')),
-    iv('time-out', 'consult', 'WHO 切皮前暂停核对（Time Out）', 'WHO Time Out before incision',
-       '团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧（影像方位标记与皮肤标记均以患者自身左侧核对）；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）、抗菌药与影像已就位；如解剖不清将暂停、求助或改变术式。',
-       'The team confirms the patient, a laparoscopic cholecystectomy and the pathology on the patient\'s left (image orientation marker and skin marking both checked against the patient\'s own left); the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety), antibiotics and imaging are ready; if the anatomy is unclear the team will stop, call for help or change approach.',
+       harm=('未完成麻醉前核查就诱导：过敏、气道和部位风险未经团队确认。', 'Induction before the Sign In: allergy, airway and site risks were not confirmed by the team.')),
+    iv('time-out', 'consult', 'WHO 切皮前暂停核查（Time Out）', 'WHO Time Out before incision',
+       '团队成员互报姓名与角色；团队确认：患者、手术为腹腔镜胆囊切除、病变在患者左侧（影像方位标记与皮肤标记均以患者自身左侧核对）；术者讲解预计关键步骤（镜像解剖、关键安全视野后才夹闭）；麻醉医生说明患者的特殊问题，护士确认灭菌合格、设备无问题；预防性抗菌药已在切皮前60分钟内给予（或经确认不适用），必要的影像已展示；如解剖不清将暂停、求助或改变术式。',
+       'Team members introduce themselves by name and role. The team confirms the patient, a laparoscopic cholecystectomy and the pathology on the patient\'s left (image orientation marker and skin marking both checked against the patient\'s own left); the surgeon states the critical steps (mirror-image anatomy, nothing clipped before the critical view of safety); the anaesthetist states the patient-specific concerns and the nurses confirm sterility and equipment; antibiotic prophylaxis has been given within the last 60 minutes (or is confirmed not applicable) and the essential imaging is displayed; if the anatomy is unclear the team will stop, call for help or change approach.',
        # after a valid Sign In and under anaesthesia (an induction out of order is still an induction: its own gate shows the order)
        indicated={'all': [{'intervened': 'sign-in', 'valid': True}, {'intervened': 'induction'}]},
        contra={'not': {'all': [{'intervened': 'sign-in', 'valid': True}, {'intervened': 'induction'}]}},
-       harm=('麻醉前核对与诱导完成之前就进行切皮前核对，顺序不对：已记录为无效，手术仍未开始，需在两者之后重新核对。', 'A Time Out before a valid Sign In and induction is out of order: recorded as invalid; the operation stays locked until a Time Out after both.'), checklist=True),
+       harm=('麻醉前核查与诱导完成之前就进行切皮前暂停核查，顺序不对：已记录为无效，手术仍未开始，需在两者之后重新核查。', 'A Time Out before a valid Sign In and induction is out of order: recorded as invalid; the operation stays locked until a Time Out after both.'), checklist=True),
     # 2.4.0: the Sign Out reads the count record (by item identity) — a count that is not settled is not signed out
-    iv('sign-out', 'consult', 'WHO 离开手术室前核对（Sign Out）', 'WHO Sign Out before leaving theatre',
-       '确认实施的手术、器械与纱布清点、标本标记、需关注的问题（包括任何术中并发症）并交接恢复室。',
-       'The procedure performed, instrument and swab counts, specimen labelling and concerns for recovery (including any intra-operative complication) are confirmed and handed over.',
+    iv('sign-out', 'consult', 'WHO 离室前核查（Sign Out）', 'WHO Sign Out before leaving theatre',
+       '确认实施的手术名称，器械、纱布与缝针清点完成，标本标签（朗读，含患者姓名），有无需要处理的设备问题，以及恢复期需关注的问题（包括任何术中并发症），并交接恢复室。',
+       'The name of the procedure, completion of the instrument, swab and needle counts, specimen labelling (read aloud, with the patient\'s name), any equipment problems to be addressed and the key concerns for recovery (including any intra-operative complication) are confirmed and handed over.',
        indicated={'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'not': COUNT_OPEN}]},
        contra={'not': {'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'not': COUNT_OPEN}]}},
-       harm=('手术尚未结束，或纱布清点尚未相符（也未上报并扫描排除体内遗留）就做离室核对：已记录为无效，需在手术结束、清点相符后重新核对。',
+       harm=('手术尚未结束，或纱布清点尚未相符（也未上报并扫描排除体内遗留）就做离室前核查：已记录为无效，需在手术结束、清点相符后重新核查。',
              'Sign Out before the operation has ended, or while the swab count is not reconciled (nor escalated with a clear scan excluding a retained swab): recorded as invalid; repeat it once the operation has ended and the count is settled.'), checklist=True),
     iv('pacu-handover', 'monitoring', '恢复室交接', 'Hand over in the recovery room',
        '交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；需观察的问题。',
@@ -349,10 +359,10 @@ case['objectives'] = [
     obj('plan', '诊断、解剖与计划', 'Diagnosis, anatomy and plan', '先说清楚证据支持什么诊断、器官在哪一侧，再定个体化计划。',
         'State what diagnosis the evidence supports and which side the organs are on, then make an individualised plan.',
         {'all': [{'decided': 'diagnosis'}, {'decided': 'anatomy'}, {'decided': 'planning'}, {'decided': 'safety'}]}, target='board'),
-    obj('periop', '术前评估与安全核对', 'Perioperative assessment and checks', '弄清楚高龄、慢阻肺与卒中带来的风险；连接监护，问清过敏与禁食，再做麻醉前核对、诱导和切皮前暂停核对。',
+    obj('periop', '术前评估与安全核查', 'Perioperative assessment and checks', '弄清楚高龄、慢阻肺与卒中带来的风险；连接监护，问清过敏与禁食，再做麻醉前核查、诱导和切皮前暂停核查。',
         'Clarify the risks of age, COPD and stroke; attach the monitor and ask about allergies and fasting, then the Sign In, induction and the Time Out.',
         {'all': [{'decided': 'risk'}, {'intervened': 'attach-monitor'}, {'intervened': 'sign-in', 'valid': True}, {'intervened': 'induction'}, {'intervened': 'time-out', 'valid': True}]}, target='board'),
-    obj('operate', '完成手术', 'Perform the operation', '布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后决定拔管与进食，再离室核对。',
+    obj('operate', '完成手术', 'Perform the operation', '布孔、牵拉、解剖到真正的关键安全视野，再夹闭离断；做不到就选择安全的替代方式。结束后决定拔管与进食，再离室前核查。',
         'Ports, traction, dissection to a true critical view of safety, then clips and division — or a safe alternative if it cannot be reached. Then decide extubation and oral intake, and the Sign Out.',
         {'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'decided': 'emergence'}, {'intervened': 'sign-out', 'valid': True}]}, target='patient'),
     obj('review', '术后与原报告回看', 'Recovery and the reported course', '交接恢复室、定观察重点，再回看原报告的手术、病理和随访。',
@@ -436,7 +446,7 @@ structures = [
     part('proper-hepatic-artery', '肝固有动脉', 'Proper hepatic artery', 'artery', 'critical', region='hepatoduodenal-ligament', reveal=0.5,
          joins=('common-hepatic-artery',), appears=looks('肝十二指肠韧带内一根搏动的动脉', 'a pulsating artery in the hepatoduodenal ligament')),
     part('portal-vein', '门静脉', 'Portal vein', 'vein', 'critical', region='hepatoduodenal-ligament', reveal=1.0,
-         appears=looks('韧带后方一根粗大、发蓝的静脉', 'a large bluish vein behind the ligament')),
+         appears=looks('韧带深部、胆管与动脉后方一根粗大、发蓝的静脉', 'a large bluish vein deep in the ligament, behind the duct and the artery')),
     part('common-hepatic-artery', '肝总动脉', 'Common hepatic artery', 'artery', 'critical', region='hepatoduodenal-ligament', reveal=1.0,
          appears=looks('韧带下方深处一根搏动的动脉', 'a pulsating artery deep below the ligament')),
     part('gastroduodenal-artery', '胃十二指肠动脉', 'Gastroduodenal artery', 'artery', 'critical', region='hepatoduodenal-ligament', reveal=1.0,
@@ -491,8 +501,8 @@ case['procedure'] = dict(
     portPlans=[
         dict(id='three-port-left', name=L('原报告的三孔法：术者与助手位于患者左侧', 'The report\'s three ports: surgeon and assistant on the patient\'s left'),
              surgeonSide='left', provenance='published-case',
-             note=L('原文：A孔脐下缘1 cm置10 mm Trocar（观察孔）；B孔剑突下偏左、C孔左锁骨中线肋下2 cm（主操作孔），均为5 mm。术者在体外交叉双手操作。',
-                    'Source: port A 1 cm below the umbilicus, 10 mm (camera); B below the xiphoid slightly left and C at the left midclavicular line 2 cm below the costal margin (main port), both 5 mm. The surgeon worked with crossed hands.'),
+             note=L('原文：A孔脐下缘1 cm置10 mm Trocar（观察孔）；B孔剑突下偏左、C孔左锁骨中线肋下2 cm（主操作孔），均为5 mm。术者在体外交叉双手操作。左右手与操作孔的对应为教学设定，原文未记载。',
+                    'Source: port A 1 cm below the umbilicus, 10 mm (camera); B below the xiphoid slightly left and C at the left midclavicular line 2 cm below the costal margin (main port), both 5 mm. The surgeon worked with crossed hands. Which hand works which port is authored; the report does not say.'),
              ports=[dict(site='A', role='camera', sizeMm=10), dict(site='B', role='working', sizeMm=5, hand='left'), dict(site='C', role='working', sizeMm=5, hand='right')]),
         dict(id='mirror-four-port', name=L('镜像四孔法：术者位于患者右侧', 'Mirrored four ports: surgeon on the patient\'s right'),
              surgeonSide='right', provenance='authored',
@@ -588,8 +598,8 @@ case['procedure']['variants'] = [
                         appears=looks('一根约2 mm的管道，从胆囊颈后方的肝脏发出，向下走向肝总管', 'a duct about 2 mm across coming out of the liver behind the gallbladder neck and running down to the common duct',
                                       [dict(cleared=T, below=1, text=L('一根细小的管道，似乎进入胆囊颈后方', 'a small duct that seems to run into the back of the gallbladder neck'), appearsToEnter='gallbladder')]))]),
     dict(id='hostile-triangle', name=L('胆囊三角致密纤维化（“冰冻”三角）', 'Dense fibrosis of the triangle (a "frozen" triangle)'),
-         summary=L('严重慢性炎症使胆囊三角致密纤维化：解剖到一半层次就分不开，关键安全视野无法安全建立。继续分离会撕裂胆总管；正确的做法是停下来，选择胆囊次全切除（开窗式或重建式）或中转开腹。与原报告（无粘连）相反，属于假设情境。',
-                   'Severe chronic inflammation has left the triangle densely fibrotic: halfway through, the planes stop separating and the critical view cannot be reached safely. Dissecting on tears the common bile duct; the right course is to stop and choose a subtotal cholecystectomy (fenestrating or reconstituting) or conversion. Counterfactual: the report found no adhesions.'),
+         summary=L('严重慢性炎症使胆囊三角致密纤维化：解剖到一半层次就分不开，关键安全视野无法安全建立。继续分离会撕裂胆总管；正确的做法是停下来，选择胆囊次全切除（开窗式或重建式）或中转开腹。与原报告（无明显粘连）相反，属于假设情境。',
+                   'Severe chronic inflammation has left the triangle densely fibrotic: halfway through, the planes stop separating and the critical view cannot be reached safely. Dissecting on tears the common bile duct; the right course is to stop and choose a subtotal cholecystectomy (fenestrating or reconstituting) or conversion. Counterfactual: the report found no obvious adhesions.'),
          provenance='authored', references=[REF_TG18_SAFE, REF_SUBTOTAL, REF_SAGES],
          regions=[dict(id=T, fibrosis=dict(safeTo=0.5, injures='common-bile-duct',
                                            finding=L('致密、质硬的纤维化组织：层次分不开，任何结构都无法安全游离', 'dense, woody fibrosis: the tissue planes do not separate and nothing can be freed safely')))]),
@@ -741,9 +751,9 @@ case['rubric'] = [
     # anatomical orientation and operative set-up — 15
     item('r-anatomy', 'diagnosis', 6, '正确判断器官侧别', 'Laterality identified correctly', {'decidedFirstTry': 'anatomy'}, critical=True),
     # by committed order (two acts in one simulated minute keep their order), not merely both done
-    item('r-signin', 'safety', 2, '诱导前完成麻醉前核对', 'Sign In before induction',
+    item('r-signin', 'safety', 2, '诱导前完成麻醉前核查', 'Sign In before induction',
          {'inOrder': ['sign-in', 'induction']}, scored={'intervened': 'induction'}),
-    item('r-timeout', 'safety', 2, '切皮前暂停核对（在诱导之后、切皮之前）', 'Time Out before incision (after induction)',
+    item('r-timeout', 'safety', 2, '切皮前暂停核查（在诱导之后、切皮之前）', 'Time Out before incision (after induction)',
          {'all': [{'intervened': 'time-out', 'valid': True}, {'not': {'intervened': 'time-out', 'valid': False}}]}),
     item('r-ports', 'management', 2, '选择能到达左侧胆囊三角的布孔', 'A port plan that works the left-sided triangle',
          {'any': [P(plan='three-port-left'), P(plan='mirror-four-port')]}, scored={'any': [P(plan='three-port-left'), P(plan='mirror-four-port'), P(plan='habitual')]}),
@@ -769,7 +779,7 @@ case['rubric'] = [
     item('r-clips', 'management', 3, '胆囊管与胆囊动脉可靠夹闭后再离断', 'Cystic duct and artery secured before division',
          {'all': [P(clipped='cystic-duct', minCount=2), P(clipped='cystic-artery', minCount=2), {'not': P(injury='bleeding')}, {'not': P(injury='bile-leak')}]},
          scored={'any': [P(divided='cystic-duct'), P(divided='cystic-artery')]}),
-    item('r-specimen', 'management', 2, '标本装袋经脐孔取出，或选择了替代方式', 'Specimen bagged and removed, or an alternative chosen',
+    item('r-specimen', 'management', 2, '标本装袋经脐孔取出，或选择了替代方式', 'Specimen bagged and removed through the umbilical port, or an alternative chosen',
          {'any': [P(specimen='extracted'), P(bailout='subtotal-fenestrating'), P(bailout='subtotal-reconstituting'), P(bailout='convert-open')]}, scored={'any': [OPERATED, P(bailout='any'), OPENED]}),
     # the operation's own end, credited from the field (a count or a device never closes it)
     item('r-closed', 'management', 1, '手术在术野中完成：取出标本或次全切除后关腹，或中转开腹', 'The operation finished on the field: closed after the specimen or a subtotal, or converted',
@@ -781,7 +791,7 @@ case['rubric'] = [
     item('r-bleeding', 'management', 2, '出血得到控制', 'Bleeding controlled', {'not': P(bleeding='any', controlled=False)}, scored=P(bleeding='any')),
     item('r-spill', 'management', 2, '溢出的胆汁和结石已吸净', 'Spilled bile and stones cleared', P(spillage='bile', cleared=True), scored=P(spillage='bile')),
     # postoperative management and documentation — 5
-    item('r-signout', 'safety', 1, '手术结束后、离室前核对', 'Sign Out after the operation, before leaving', {'intervened': 'sign-out', 'valid': True}),
+    item('r-signout', 'safety', 1, '手术结束后、离室前核查', 'Sign Out after the operation, before leaving', {'intervened': 'sign-out', 'valid': True}),
     item('r-emergence', 'safety', 1, '拔管与经口进食分开决定：拔管看通气与气道保护，吞咽评估在拔管后、进食前', 'Extubation and oral intake decided apart: extubation on ventilation and airway protection, swallowing assessed after extubation and before eating', {'decidedFirstTry': 'emergence'}),
     item('r-postop', 'management', 1, '术后观察重点', 'Postoperative priorities', {'decidedFirstTry': 'postop'}),
     item('r-records', 'investigations', 1, '回看手术与病理记录', 'Operation and histology records reviewed', {'all': [{'read': 'operation-record'}, {'read': 'pathology-record'}]}),
@@ -820,14 +830,14 @@ case['safetyGates'] = [
     dict(id='continued-after-injury', label=L('发现损伤后仍继续推进', 'Carried on after a visible injury'), when=P(unsafe='continued-after-injury'), verdict='safety-critical', capPercent=50),
     dict(id='thermal', label=L('热损伤（可能术后才表现）', 'Thermal injury (may present after surgery)'), when=P(injury='thermal-injury'), verdict='safety-critical', capPercent=50),
     # the WHO checklist's order: anaesthesia induced before the team's Sign In (a real act, out of order)
-    dict(id='induction-before-sign-in', label=L('未完成麻醉前核对即诱导', 'Induction before the Sign In'), when={'intervened': 'induction', 'valid': False},
+    dict(id='induction-before-sign-in', label=L('未完成麻醉前核查即诱导', 'Induction before the Sign In'), when={'intervened': 'induction', 'valid': False},
          verdict='safety-critical', capPercent=70),
     # 2.4.0: closure while the swab count was not settled — recorded for the debrief, never erased by a later count
     dict(id='closed-on-open-count', label=L('纱布清点未相符即关闭（不安全推进）', 'Closed while the swab count was not settled (unsafe progression)'),
          when={'count': {'unsafe': True}}, verdict='safety-critical', capPercent=50),
     dict(id='perforation', label=L('胆囊破裂、胆汁或结石溢出', 'Gallbladder perforation, bile or stone spillage'), when=P(injury='perforation'), verdict='complication'),
     dict(id='bleeding', label=L('术中出血', 'Intra-operative bleeding'), when=P(injury='bleeding'), verdict='complication'),
-    dict(id='bile-leak', label=L('胆囊管残端漏', 'Cystic stump leak'), when=P(injury='bile-leak'), verdict='complication'),
+    dict(id='bile-leak', label=L('胆漏（胆囊管残端或胆囊床小胆管）', 'Bile leak (cystic duct stump or a small duct in the gallbladder bed)'), when=P(injury='bile-leak'), verdict='complication'),
 ]
 
 # ------------------------------------------------------------------ team and unknowns
@@ -843,12 +853,12 @@ LITTLE_HYPNOTIC = ['no hypnotic', 'without a hypnotic', 'without hypnotic', 'lit
                    '不用镇静', '不给镇静', '少量或不用', '不用诱导药', '无需镇静', '不用催眠', '少用镇静', '不给催眠', '几乎不用镇静']
 RSI = correction('rsi-hypnotic', '快速顺序诱导时可以不给或只给很少的镇静催眠药就直接肌松。', 'In a rapid-sequence induction the hypnotic can be omitted or minimal before the neuromuscular blocker.',
                  [NMB, LITTLE_HYPNOTIC],
-                 '纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以减量、换药、缓慢滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。',
+                 '纠正：快速顺序诱导中，镇静催眠药（诱导药）一定先给或与肌松药同时给，剂量要让患者意识消失——对衰弱的84岁老人可以换药、减量并滴定，但不能省略；没有足够催眠就肌松，会造成术中知晓。血流动力学脆弱改变的是选什么药、给多少，不是给不给。',
                  'Correction: in a rapid-sequence induction the hypnotic (the induction agent) always goes in before or with the neuromuscular blocker, in a dose that makes him unconscious — in a frail 84-year-old you choose and titrate it, you never omit it; paralysis without adequate hypnosis means awareness. Haemodynamic fragility changes which hypnotic and how much, not whether one is given.',
                  ['awareness', 'unconscious', 'never omit', 'must not be omitted', '知晓', '意识消失', '不能省略'])
 PREOX = correction('preox-etco2', '呼末二氧化碳高于40 mmHg说明预充氧充分。', 'An end-tidal CO₂ above 40 mmHg shows adequate preoxygenation.',
                    [['etco2', 'etco₂', 'end-tidal co2', 'end tidal co2', 'end-tidal co₂', 'end-tidal carbon dioxide', 'capnograph', '呼末二氧化碳', '呼气末二氧化碳', '呼末co2'],
-                    ['preoxygen', 'pre-oxygen', 'denitrogen', 'oxygenation', '预充氧', '预给氧', '去氮', '氧合']],
+                    ['preoxygen', 'pre-oxygen', 'denitrogen', '预充氧', '预给氧', '去氮']],
                    '纠正：预充氧是否充分看呼气末氧浓度（呼出氧分数约0.9以上），不是看呼末二氧化碳。呼末二氧化碳用来确认导管位置和监测通气；高于40 mmHg 说明不了氧储备，对慢阻肺患者反而可能提示二氧化碳潴留。',
                    'Correction: preoxygenation is judged by end-tidal OXYGEN (an expired oxygen fraction of about 0.9 or more), not by end-tidal CO₂. Capnography confirms the tube position and monitors ventilation; a value above 40 mmHg says nothing about oxygen stores — in a COPD patient it may mean CO₂ retention.',
                    ['end-tidal oxygen', 'expired oxygen', 'eto2', 'eto₂', 'feo2', '呼气末氧', '呼末氧'])
@@ -858,19 +868,21 @@ EXTUBATION = correction('extubation-swallow', '拔管前必须先通过饮水试
                         'Correction: extubation and oral intake are two decisions. Extubate on ventilation, reversal of neuromuscular block, consciousness, an effective cough, secretion handling and airway protection; a formal swallowing assessment comes after extubation and before anything by mouth — a drinking test or VFSS cannot be done with a tube in and is not an extubation criterion.',
                         ['two decisions', 'separate decision', 'after extubation', '两个决定', '拔管之后', '拔管后'])
 LATERALITY = correction('laterality-reverse', '因为内脏反位，要把患者的左右再反过来理解。', 'Because of situs inversus, reverse the patient\'s left and right again.',
-                        [['reverse', 'swap', 'flip', 'invert left', 'opposite side', '反过来', '颠倒', '互换', '左右反', '对调'], ['left', 'right', '左', '右']],
+                        [['reverse', 'swap', 'flip', 'invert left', 'opposite side', '反过来', '颠倒', '互换', '左右反', '对调'], ['left', 'right', '左', '右'],
+                         # about the anatomy or the images, not ECG leads, defibrillator pads or reversing a neuromuscular block
+                         ['situs', 'gallbladder', 'the liver', 'organ', 'image', 'film', 'scan', 'marker', 'marking', '反位', '胆囊', '肝脏', '肝胆', '脏器', '器官', '影像', '读片', '片子', '标记']],
                         '纠正：左右永远指患者自己的左右。全内脏反位反的是器官，不是词：胆囊就在患者左侧。读片时核对影像的方位标记，核对皮肤标记，都以患者左侧为准——不要在脑子里再“反过来”一次。',
                         'Correction: left and right are always the patient\'s own. In situs inversus the organs are mirrored, not the words: the gallbladder is on the patient\'s LEFT. Check the image\'s orientation marker and the skin marking against the patient\'s left — never "reverse" sides in your head.',
                         ["patient's left", 'patient’s left', "patient's own", '患者左侧', '患者自己的左右'])
 HYPOTHETICAL = correction('hypothetical-history', '把“如果家属说用过退热药和抗生素”这一假设当成了真实的家属陈述。', 'A teaching "what if the family reported antipyretics and antibiotics" became an actual family report.',
-                          [['family', 'relative', 'daughter', 'son', 'wife', '家属', '家人', '女儿', '儿子', '老伴'],
+                          [['family', 'relatives', 'daughter', 'his son', 'her son', "patient's son", 'patient’s son', 'wife', '家属', '家人', '女儿', '儿子', '老伴'],
                            ['antipyretic', 'antibiotic', 'paracetamol', 'fever medicine', '退烧药', '退热药', '抗生素', '消炎药']],
                           '纠正：没有人询问过家属。入院前是否用过退热药或抗生素，是一个教学上的假设问题，不是家属的陈述；病历里没有记录，在真正问到家属之前仍然是未知。',
                           'Correction: no family member has been interviewed. Whether he took antipyretics or antibiotics before admission was a teaching what-if, not a report; the record does not say, and it stays unknown until someone actually asks the family.',
                           ['what-if', 'what if', 'hypothetical', 'not been interviewed', 'not a report', '假设', '没有人询问', '没有询问'])
 
 ANAESTHETIST_KNOWLEDGE = L(
-    '负责连接监护、麻醉前核对、诱导、通气与监护。知道慢阻肺患者在气腹下易有二氧化碳潴留，常用较低气腹压；病例未记录肺功能、ASA分级与用药，需当场核实。'
+    '负责连接监护、麻醉前核查、诱导、通气与监护。知道慢阻肺患者在气腹下易有二氧化碳潴留，常用较低气腹压；病例未记录肺功能、ASA分级与用药，需当场核实。'
     '快速顺序诱导：先给镇静催眠药使意识消失，再给肌松药，从不省略催眠；预充氧看呼气末氧浓度，呼末二氧化碳用于确认导管和监测通气。'
     '不同意诱导时用 place_hold 记录理由；重新评估后用 release_hold 记录结论（可以是“在明确的不确定性下继续”）；资料缺失本身不是暂缓的理由，但要说明怎么处理。'
     '拔管与进食分开：拔管看通气、肌松恢复、意识、咳嗽、分泌物和气道保护；吞咽评估在拔管后、进食前。左右永远指患者自己的左右。不解释手术解剖。',
@@ -910,7 +922,7 @@ d['keyReasoning'] = [
     *d['keyReasoning'],
     L('镜像解剖中，三角的显露靠把胆囊颈向患者左侧牵拉；沿用常规（向右）牵拉会关闭三角，并让胆总管看起来像汇入胆囊颈。',
       'In mirror-image anatomy the triangle opens by pulling the neck towards the patient\'s left; the habitual pull to the right closes it and makes the common bile duct look as if it runs into the gallbladder neck.'),
-    L('关键安全视野由术野判定，而非勾选：三角清空、胆囊板可见、只有两根结构进入胆囊。', 'The critical view of safety is judged on the field, not by ticking: triangle cleared, cystic plate seen, two and only two structures entering the gallbladder.'),
+    L('关键安全视野由术野判定，而非勾选：三角清空、胆囊板可见、进入胆囊的结构全部游离可见（通常只有两根），且没有其他结构看似进入。', 'The critical view of safety is judged on the field, not by ticking: triangle cleared, cystic plate seen, every structure entering the gallbladder seen and free (normally two and only two), nothing else appearing to enter.'),
 ]
 d['boundaries'] = L(
     '三维解剖为参考解剖（BodyParts3D与Layered Human程序化模型），不是患者CT重建；组织力学为状态模型，未经标定；术中生命体征为模拟值，未经临床标定；评分为教学流程检查，未经效度验证，也不是GOALS评分；未经外科、麻醉或影像专家审核。',
@@ -934,9 +946,9 @@ for r in [
     'Yokoe M, Hata J, Takada T, et al. Tokyo Guidelines 2018: diagnostic criteria and severity grading of acute cholecystitis (with videos). J Hepatobiliary Pancreat Sci. 2018;25(1):41-54.',
     'Brunt LM, Deziel DJ, Telem DA, et al. Safe cholecystectomy multi-society practice guideline and state-of-the-art consensus conference on prevention of bile duct injury during cholecystectomy. Surg Endosc. 2020;34(7):2827-2855.',
     'Strasberg SM, Hertl M, Soper NJ. An analysis of the problem of biliary injury during laparoscopic cholecystectomy. J Am Coll Surg. 1995;180(1):101-125.',
-    'World Health Organization. WHO Guidelines for Safe Surgery 2009: Safe Surgery Saves Lives. Geneva: WHO; 2009 (Surgical Safety Checklist implementation manual).',
+    'World Health Organization. Implementation Manual: WHO Surgical Safety Checklist 2009 — Safe Surgery Saves Lives. Geneva: WHO; 2009 (with the WHO Guidelines for Safe Surgery 2009).',
     'Acquisto NM, Mosier JM, Bittner EA, et al. Society of Critical Care Medicine clinical practice guidelines for rapid sequence intubation in the critically ill adult patient. Crit Care Med. 2023;51(10):1411-1430.',
-    'DICOM PS3.3, section C.7.6.2: Image Plane Module (Patient Orientation). NEMA.',
+    'DICOM PS3.3, section C.7.6.2: Image Plane Module (Image Orientation (Patient), Image Position (Patient)). NEMA.',
 ]:
     if r not in refs:
         refs.append(r)
@@ -1048,6 +1060,10 @@ values = [
       for e in case['physiology']['events']],
     dict(fact='insufflation_pressure_mmHg', value=None, provenance='unknown',
          simulationOverride=dict(enabled=True, value={'usual': 12, 'max': 15}, classification='synthetic', requiresClinicalReview=True)),
+    # the teaching profiles of the investigations ordered in this encounter (2.5.0): none of them is the patient's own result
+    *[dict(fact=f'study_{st["code"]}', value=None, provenance='unknown',
+           simulationOverride=dict(enabled=True, value=st['model'], classification='synthetic', requiresClinicalReview=True))
+      for st in case['studies']],
     dict(fact='biliary_and_arterial_course', value=None, provenance='unknown', note='Source: no vascular variation found at operation. Geometry is reference anatomy.',
          simulationOverride=dict(enabled=True, value=f'assets/cases/{CASE_ID}/anatomy.json', classification='reference', requiresClinicalReview=True)),
 ]

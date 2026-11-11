@@ -368,8 +368,35 @@ Dr Mori takes the neck grasper, then leaves the table, and the dock shows the re
 "exposure none") before the operator's next step; saved and reloaded, the dock shows the same field. Screenshots and
 `browser-demos.json` go to `browser-demos/` (a local build; not yet run on the deployed build).
 
-The case version is 2.5.0; the score export carries the case version, the engine version, `finished` and whether the
+The score export carries the case version, the engine version, `finished` and whether the
 encounter was `source-only` or `expanded` (new investigations ordered), which a benchmark reports apart.
+
+## 2.5.1: a clinical-accuracy pass over the authored texts
+
+An editorial pass (AI-assisted, with the source report re-read; still not a clinician's review) corrected the
+authored clinical wording. Scores, gates and the operative suite are unchanged; the case version is 2.5.1.
+
+| what | was | now |
+|---|---|---|
+| Bowel sounds (examination, English) | "no succussion splash" for the report's 无气过水音 | "no high-pitched tinkling (gas-through-fluid) sounds": 气过水音 is the sound of obstruction; a succussion splash is 振水音, a different sign |
+| ECG in dextrocardia (records, risk decision, monitor) | chest leads in mirror positions | arm leads reversed **and** right-sided chest leads (V1R–V6R), as ClinicalCraft's own ECG study says: with the chest leads alone lead I stays inverted |
+| WHO Sign In | six items | the seventh too: the anaesthesia machine and medication check |
+| WHO Time Out | "antibiotics and imaging are ready" | the checklist's own questions: introductions by name and role, the anaesthetist's and nurses' concerns, antibiotic prophylaxis **given** within the last 60 minutes (or not applicable), essential imaging **displayed** |
+| WHO Sign Out (and the board's labels) | instrument and swab counts, specimen labelling | instrument, swab and needle counts, the specimen label read aloud with the patient's name, equipment problems, concerns for recovery |
+| The ASA option's rationale | "no ASA class, lung or cardiac function; cannot be filled in from age and diagnoses" | what a class is assigned from (the anaesthetist's assessment of systemic disease and functional limitation on the day), and why the record does not carry one here |
+| Portal vein on the field | "behind the ligament" | "deep in the ligament, behind the duct and the artery" (behind the ligament lies the vena cava) |
+| Safety gate `bile-leak` | "Cystic stump leak" | "Bile leak (cystic duct stump or a small duct in the gallbladder bed)": the gate also fires for the subvesical duct |
+| Debrief and facilitator guide, critical view | "two and only two structures" | every structure entering seen and free, normally two (three with a second cystic artery): the criterion the case scores |
+| Teaching corrections | the laterality correction also fired on "reverse the block right now", on reversed ECG arm leads and on mirrored defibrillator pads; the family-report correction on "reason" and "person"; the preoxygenation correction on "oxygenation is fine" | each needs its own subject: anatomy or images for laterality, a family member for the report, preoxygenation for the end-tidal CO₂ misconception |
+| Checklist steps in Chinese | 核对 | 核查, the term of ClinicalCraft's glossary and of the hospital's board |
+| Evidence ledger | the simulated ECG, blood-test and chest-film profiles were not listed | each is a `simulationOverride` (`study_<code>`), synthetic and needing review, like every other simulated value |
+| Port plan note | — | which hand works which port is authored; the report gives the ports and the crossed hands only |
+| Stale v3 wording | the triage note said the scene simulates no anaesthesia; the safety decision spoke of a "historical operation review" | both describe v4 |
+
+Two findings of the same pass were **not** applied, because they change scoring and need measuring first: in the
+`subvesical-duct` variant the rubric item on clips (`r-clips`) fails together with the variant's own item when the
+subvesical duct leaks, and the synthetic haemoglobin and bilirubin changes after an injury appear at once rather
+than over hours. Both are listed below.
 
 ## Validation still required (not done)
 
@@ -390,7 +417,13 @@ encounter was `source-only` or `expanded` (new investigations ordered), which a 
   - the synthetic physiology;
   - the five variants' geometry, appearance texts and expected courses;
   - the expert trajectories of the operative suite.
-- **Physiology calibration.** The intra-operative values are illustrative, not calibrated.
+- **Physiology calibration.** The intra-operative values are illustrative, not calibrated. The haemoglobin fall
+  after a bleed and the bilirubin rise after a duct injury are applied at once; a real fall lags haemodilution and
+  bilirubin rises over 24–72 hours.
+- **The clip item in the `subvesical-duct` variant.** `r-clips` fails together with `r-v-subvesical` when the
+  subvesical duct leaks, although the cystic duct and artery were secured: the engine records one `bile-leak` for
+  any unclipped duct. Telling them apart needs a structure filter on the injury predicate in ClinicalCraft, and the
+  blind-replay figures measured again.
 - **Simulation validity.** Face, content and construct validity, inter-rater reliability.
 - **Teaching corrections and holds.** An anaesthetist should review the induction and emergence corrections, the
   extubation decision and when the attending or anaesthetist places a hold; the corrections are authored teaching
