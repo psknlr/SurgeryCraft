@@ -82,7 +82,10 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
   the sterile store; plus admissions, day surgery, the perioperative lab, blood bank and a
   surgical skills & simulation centre;
 * **interactive people, instruments and devices**: an OR team in every OR who pass what you
-  call for ("Scalpel.", "把手术刀递给我"); instruments, gowns, gloves and lead aprons you pick up,
+  call for ("Scalpel.", "把手术刀递给我") and are dressed for their position — the scrub nurse
+  in cap, mask, sterile gown and gloves with the hands held in front, the circulating nurse
+  and the anaesthetist in theatre scrubs, cap and mask (ClinicalCraft draws a `position`'s
+  attire; nobody stands in theatre in a white coat); instruments, gowns, gloves and lead aprons you pick up,
   wear and hand over, each with a lifecycle (sterile → in use → used → CSSD); the WHO
   checklist, count board with RF wand, smoke evacuator and generator, control panel,
   laparoscopy tower, lead shield, contrast injector, washer-disinfectors and sterilisers as
@@ -92,6 +95,8 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
   its voxel parts: the instruments, anaesthesia workstation, pendants and surgical lights,
   robotic system, PACU beds, sterilisers, the exterior. Screens stay live and interactions are
   unchanged ([docs/MODELS.md](docs/MODELS.md)).
+
+![The team in OR 7](docs/img/theatre-team-or7.jpg)
 
 ![Back table, before and after](docs/img/models-or7-instruments.jpg)
 

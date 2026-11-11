@@ -20,7 +20,10 @@ The voxel parts remain the fallback, and the collider and aim box are still the 
 are where the world draws its live screens.*
 
 In the hospital, in `clinicalcraft serve`: the first three figures put the voxel parts (left) beside the models
-(right); the last three were retaken on 2026-11-10 with the rebuilt models and show the models alone.
+(right) and were taken with ClinicalCraft's earlier block figures; the last three show the models alone and
+were retaken on 2026-11-11, with the people and the hand as ClinicalCraft draws them now — figures of real
+proportions dressed for their position (theatre scrubs, cap and mask; the scrubbed in sterile gown and gloves),
+the player's hand holding a stethoscope.
 
 ![Back table](img/models-or7-instruments.jpg)
 *OR 7 back table: safety scalpel, Mayo-Hegar needle holder (gold rings), DeBakey forceps,
@@ -37,17 +40,17 @@ absorber, breathing circuit, bag and mask. The patient monitor on top still show
 live vitals.*
 
 ![OR 2](img/models-or2-robotic.jpg)
-*OR 2 (robotic), models only, retaken 2026-11-10 with the rebuilt robot: the patient cart with its four jointed
-arms over the table, the Mayo stand, the anaesthesia workstation and pendant, the surgical light.*
+*OR 2 (robotic), models only: the patient cart with its four jointed arms beside the table, the Mayo stand, the
+anaesthesia workstation and pendant, the surgical light; the anaesthetist at the machine in theatre scrubs,
+cap and mask.*
 
 ![OR 1](img/models-or1-hybrid.jpg)
-*OR 1 (hybrid), models only, retaken 2026-11-10 with the rebuilt angiography system: the robot on its turret
-holding the C by its back, detector above and tube below; behind it the hybrid table under the laminar-flow
-canopy, the ceiling display and the pendants.*
+*OR 1 (hybrid), models only: the angiography robot on its turret holding the C by its back, detector above and
+tube below; behind it the hybrid table under the laminar-flow canopy, the ceiling display and the pendants.*
 
 ![PACU](img/models-pacu.jpg)
-*The PACU, models only, retaken 2026-11-10 with ClinicalCraft's rebuilt ward bed: the beds with their side rails,
-foot-board controls and brake pedals, the wall gas panels marked in the ISO colours, monitors and curtains.*
+*The PACU, models only: ClinicalCraft's ward beds with their side rails, foot-board controls and brake pedals,
+the wall gas panels marked in the ISO colours, monitors and curtains.*
 
 ## How they are made
 

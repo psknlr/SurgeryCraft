@@ -273,7 +273,10 @@ runs, against a ClinicalCraft checkout (nothing is left behind in it):
 The exterior has its own page and gallery: [EXTERIOR.md](EXTERIOR.md).
 
 Screenshots from ClinicalCraft's world harness (`world-harness.html`) and, for the
-interactions, from the web world served with the pack (`clinicalcraft serve`).
+interactions, from the web world served with the pack (`clinicalcraft serve`). They were
+taken with the voxel equipment and the block figures of the time; the rooms as they are drawn
+now — equipment as 3D models, people of real proportions dressed for their position — are in
+[MODELS.md](MODELS.md).
 
 | | |
 |---|---|
