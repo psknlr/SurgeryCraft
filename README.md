@@ -63,7 +63,9 @@ models (the robot, the angiography C-arm, the heart-lung machine…) need the Cl
 `tools/clinicalcraft.rev`: the palette's `gas-oxygen` and the shape kit's `pipe`, `hose` and `revolve`.
 Thoracoscopy needs the `thoracoscopy` screen ([psknlr/ClinicalCraft#25](https://github.com/psknlr/ClinicalCraft/pull/25))
 and, for the training station's patient simulator, an equipment type's `manikin` — a body the world draws
-with its own figures ([psknlr/ClinicalCraft#26](https://github.com/psknlr/ClinicalCraft/pull/26)).
+with its own figures ([psknlr/ClinicalCraft#26](https://github.com/psknlr/ClinicalCraft/pull/26)); for the
+station to follow the operation, a look for each state — a model's layers, a screen's picture, the manikin's
+cover and breathing ([psknlr/ClinicalCraft#27](https://github.com/psknlr/ClinicalCraft/pull/27)).
 
 ## Thoracoscopy · 胸腔镜手术
 
