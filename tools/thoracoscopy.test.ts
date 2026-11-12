@@ -12,13 +12,18 @@
  *      re-expanded only with the drain on its seal;
  *   4. the training station: every step in order, each with the instrument it needs in the hand, the camera
  *      white-balanced, smoke evacuation running, the drainage unit primed and the count done before closing — and
- *      its patient simulator: the world's own figure on its side, not a shape of the model.
+ *      its patient simulator: the world's own figure on its side, not a shape of the model;
+ *   5. what is drawn of the station follows the operation (ClinicalCraft docs/FACILITIES.md "A look for each state"):
+ *      each step has a look — the simulator under a blanket or draped, ventilated on both lungs or one, the monitor
+ *      dark or showing the scope's picture, the layers of the model (marks, ports, scope, drain, dressings) — the
+ *      model has exactly those layers, and whoever moves the station on, the learner or a colleague, the look is the
+ *      state's.
  *
  * The pack directory comes from $SURGERYCRAFT_CONTENT.
  */
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { capabilityLabels, compileFacility, parseCatalog, parseFacility, parseRoomTemplate, type FacilityDefinition, type RoomTemplate } from "@clinicalcraft/core";
+import { capabilityLabels, compileFacility, lookLayers, lookOf, parseCatalog, parseFacility, parseGlb, parseRoomTemplate, type EquipmentType, type FacilityDefinition, type RoomTemplate } from "@clinicalcraft/core";
 import { PRIMARY_ACTOR, type NavGoal, type WorldActionResult } from "./contracts.js";
 import { makeWorld, type TestWorld } from "./__fixtures__/world.js";
 
@@ -237,6 +242,9 @@ describe("IMPF Surgery Hospital · thoracoscopy in the thoracic theatre (OR 5)",
 describe("IMPF Surgery Hospital · the thoracoscopy training station (simulation OR)", () => {
   const T = eq("l0-sim-vats-trainer");
   const item = (name: string) => sim(`vats-${name}`);
+  const trainer = (): EquipmentType => catalogs.flatMap((c) => c.equipment).find((e) => e.id === "sc-vats-trainer")!;
+  /** The station's steps in order, as its behaviour lists them. */
+  const STEPS = ["ready", "positioned", "lung-down", "camera-port", "explored", "working-ports", "mobilised", "hilum", "vein-divided", "artery-divided", "bronchus-divided", "lobe-free", "specimen-out", "nodes", "leak-tested", "drained", "re-expanded", "closed"];
 
   it("stands where the simulation OR's table would, with the theatre's thoracoscopy equipment round it and no patient place", () => {
     const station = F.placements.find((p) => p.id === "l0-sim-vats-trainer");
@@ -246,10 +254,11 @@ describe("IMPF Surgery Hospital · the thoracoscopy training station (simulation
     for (const id of ["vats-tower", "chest-drain", "smoke-evac", "count-board", "vats-port", "vats-scope", "vats-stapler"]) expect(F.placements.some((p) => p.id === `l0-sim-or.${id}`), id).toBe(true);
   });
 
-  it("its patient simulator is the world's own figure, not a shape of the model: on its right side over the break of the flexed table, draped, asleep", () => {
-    const type = catalogs.flatMap((c) => c.equipment).find((e) => e.id === "sc-vats-trainer")!;
+  it("its patient simulator is the world's own figure, not a shape of the model: on its right side over the break of the flexed table, asleep — found under a blanket, ventilated on both lungs", () => {
+    const type = trainer();
     // one of the figures the people of the world are drawn as (ClinicalCraft docs/FACILITIES.md "A body drawn with equipment")
-    expect(type.manikin).toMatchObject({ posture: "lateral", sideUp: "left", draped: true, flex: 9, asleep: true, rot: 90 });
+    expect(type.manikin).toMatchObject({ posture: "lateral", sideUp: "left", cover: "blanket", breathing: "both", flex: 9, asleep: true, rot: 90 });
+    expect(type.manikin).not.toHaveProperty("draped");
     const m = type.manikin!;
     // on the station: inside its footprint, on the mattress, the head towards the anaesthetic end (−x of the type)
     expect(Math.abs(m.x)).toBeLessThan(type.footprint.w / 2);
@@ -266,10 +275,81 @@ describe("IMPF Surgery Hospital · the thoracoscopy training station (simulation
     expect(type.screen).toBe("thoracoscopy");
   });
 
+  it("what is drawn of it follows the operation: a look for each step — the cover, the breathing, the monitor, the layers of its model", () => {
+    const type = trainer();
+    expect(Object.keys(type.behavior!.states)).toEqual(STEPS);
+    for (const s of STEPS) expect(type.behavior!.states[s]!.look, s).toBeDefined();
+    // the model has the layers the looks show, and no other (tools/blender/thoracic_models.py builds them)
+    const info = parseGlb(new Uint8Array(readFileSync(`${SC}assets/${type.model!.uri}`)));
+    expect(info.layers).toEqual(lookLayers(type));
+    expect(info.layers).toHaveLength(12);
+    const look = (s: string) => lookOf(type, s);
+    // a blanket and both lungs before and after; draped from the moment the lung is let down; one lung until it is up again
+    expect(STEPS.map((s) => `${look(s).manikin!.cover} ${look(s).manikin!.breathing}`)).toEqual([
+      "blanket both", "blanket both",
+      ...Array(14).fill("drapes one-lung"),
+      "drapes both", "blanket both",
+    ]);
+    // the monitor shows the scope's picture while the scope is in the chest — from the look round to the lung re-expanded
+    expect(STEPS.filter((s) => look(s).screen === "thoracoscopy")).toEqual(STEPS.slice(STEPS.indexOf("explored"), STEPS.indexOf("re-expanded") + 1));
+    expect(STEPS.filter((s) => look(s).screen === "none")).toEqual(["ready", "positioned", "lung-down", "camera-port", "closed"]);
+    // what a step puts on the chest stays until a later step takes it away
+    const span = (layer: string) => STEPS.filter((s) => look(s).layers.includes(layer));
+    const from = (a: string, b: string) => STEPS.slice(STEPS.indexOf(a), STEPS.indexOf(b) + 1);
+    expect(span("lines")).toEqual(from("positioned", "closed"));
+    expect(span("site-camera")).toEqual(["positioned", "lung-down"]);
+    expect(span("site-working")).toEqual(from("positioned", "explored"));
+    expect(span("camera-port")).toEqual(from("camera-port", "leak-tested"));
+    expect(span("scope")).toEqual(from("explored", "leak-tested"));
+    expect(span("working-ports")).toEqual(from("working-ports", "re-expanded"));
+    expect(span("retractor")).toEqual([...from("mobilised", "lobe-free"), "nodes"]);
+    expect(span("mayo")).toEqual(from("lung-down", "re-expanded"));
+    expect(span("specimen")).toEqual(from("specimen-out", "re-expanded"));
+    expect(span("chest-tube")).toEqual(from("drained", "closed"));
+    expect(span("scope-utility")).toEqual(["drained", "re-expanded"]);
+    expect(span("dressings")).toEqual(["closed"]);
+    for (const s of STEPS) {
+      const l = look(s).layers;
+      // one scope at a time; the drain takes the camera port's incision; a site marked is a site not yet cut
+      expect(l.includes("scope") && l.includes("scope-utility"), s).toBe(false);
+      expect(l.includes("camera-port") && l.includes("chest-tube"), s).toBe(false);
+      expect(l.includes("site-camera") && l.includes("camera-port"), s).toBe(false);
+      expect(l.includes("site-working") && l.includes("working-ports"), s).toBe(false);
+      // the body stays where the model was built round it: a step covers it differently and changes its breathing, never moves it
+      for (const k of Object.keys(type.behavior!.states[s]!.look?.manikin ?? {})) expect(["cover", "breathing", "asleep"], `${s}.${k}`).toContain(k);
+    }
+  });
+
+  it("a colleague moves it on the same way, and the look is the state's: the faculty nurse checks the position, the faculty anaesthetist lets the lung down", async () => {
+    const type = trainer();
+    const w = world("or-7.slot");
+    const seen: string[] = [];
+    w.runtime.subscribe((e) => {
+      if (e.type === "entity.state" && e.entityId === T) seen.push(`${e.actorId}: ${e.from} → ${e.to}`);
+    });
+    expect(w.runtime.stateOf(T)).toBe("ready");
+    await done(w, "staff:l0-sim-or.circulating-nurse", "check_position", T);
+    expect(lookOf(type, w.runtime.stateOf(T))).toMatchObject({ layers: ["lines", "site-camera", "site-working"], screen: "none", manikin: { cover: "blanket", breathing: "both" } });
+    await done(w, "staff:l0-sim-or.anaesthetist", "isolate_lung", T);
+    expect(lookOf(type, w.runtime.stateOf(T))).toMatchObject({ screen: "none", manikin: { cover: "drapes", breathing: "one-lung" } });
+    // the events a scene follows say who moved it on; the learner carries on from there
+    expect(seen).toEqual(["staff:l0-sim-or.circulating-nurse: ready → positioned", "staff:l0-sim-or.anaesthetist: positioned → lung-down"]);
+    await take(w, item("port"));
+    await done(w, A, "place_camera_port", T);
+    expect(seen.at(-1)).toBe(`${A}: lung-down → camera-port`);
+    expect(lookOf(type, w.runtime.stateOf(T)).layers).toContain("camera-port");
+  });
+
   it("the whole sequence in order — each step with its instrument in hand, the camera ready, smoke evacuated, the drain primed, the count done", async () => {
     // the case's patient is upstairs in OR 7: the station needs none
     const w = world("or-7.slot");
-    const step = (operation: string) => done(w, A, operation, T);
+    // the station's state after each step, as the world has it (`stateOf`: what the scene draws) and as its inspection says
+    const passed: string[] = [];
+    const step = async (operation: string) => {
+      await done(w, A, operation, T);
+      expect(w.runtime.stateOf(T)).toBe(state(w, T));
+      passed.push(w.runtime.stateOf(T)!);
+    };
     expect(state(w, T)).toBe("ready");
     // a step out of order is not offered
     expect((await w.act({ actorId: A, operation: "explore", targetId: T })).status).toBe("failed");
@@ -340,7 +420,11 @@ describe("IMPF Surgery Hospital · the thoracoscopy training station (simulation
     await done(w, A, "cavity_count", sim("count-board"));
     await step("close");
     expect(state(w, T)).toBe("closed");
+    // every step drawn in turn, each once
+    expect(passed).toEqual(STEPS.slice(1));
     await step("reset");
     expect(state(w, T)).toBe("ready");
+    // the next trainee finds it as the first did: under a blanket, nothing on the chest, the monitor dark
+    expect(lookOf(trainer(), w.runtime.stateOf(T))).toMatchObject({ layers: [], screen: "none", manikin: { cover: "blanket", breathing: "both" } });
   });
 });

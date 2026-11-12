@@ -3,10 +3,15 @@
  *
  * The thoracoscopy station's body is not part of its model: the world draws it with its own figure kit (the type's
  * `manikin`, ClinicalCraft docs/FACILITIES.md), the same figures as the people of the world. The model — table,
- * mattress, supports, ports, scope — is built in Blender round that body, so it needs to know where the body's
- * surface and joints are. This tool asks the pinned ClinicalCraft's own code and writes what it says, in the
- * type's frame (metres; x right, y up, z front; origin at the footprint centre on the floor), to
- * tools/blender/fit/<type>.json, which tools/blender/thoracic_models.py reads.
+ * mattress, supports, and what each step of the operation puts on the chest: marks, ports, scope, drain,
+ * dressings — is built in Blender round that body, so it needs to know where the body's surface and joints are.
+ * This tool asks the pinned ClinicalCraft's own code and writes what it says, in the type's frame (metres; x
+ * right, y up, z front; origin at the footprint centre on the floor), to tools/blender/fit/<type>.json, which
+ * tools/blender/thoracic_models.py reads.
+ *
+ * The station's look follows its state (a state's `look`): the body is covered differently and breathes
+ * differently from step to step, but it is one body in one position — measured here as it is draped — and a
+ * look that turned or bent it would leave the model fitted to another body: that is refused.
  *
  *   cd <ClinicalCraft checkout> && npx tsx --conditions=source <pack>/tools/figure-fit.mts <pack> [--check]
  *
@@ -34,6 +39,7 @@ const { LATERAL } = await from("packages/web/src/world/figure/anatomy.ts");
 const { CHEST_FIELD } = await from("packages/web/src/world/figure/dress.ts");
 const { HEAD_CENTRE, MOUTH_Y } = await from("packages/web/src/world/figure/skull.ts");
 const { EquipmentManikinSchema } = await from("packages/core/src/schema/facility.ts");
+const { drawnManikin } = await from("packages/core/src/engine/looks.ts");
 
 /**
  * The sites on the chest wall of the standardized three-port anterior approach (docs/THORACOSCOPY.md), by height
@@ -49,13 +55,23 @@ const LINES = { anterior: 0.5, mid: 0, posterior: -0.5 } as const;
 const r4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const arr = (v: Vec): number[] => [r4(v.x), r4(v.y), r4(v.z)];
 
-const catalog = JSON.parse(fs.readFileSync(path.join(pack, "content/catalogs/surgerycraft-or.json"), "utf8")) as { equipment: { id: string; manikin?: unknown }[] };
+/** What a state's look may change of the body without moving it. */
+const CLOTH_ONLY = new Set(["cover", "breathing", "asleep"]);
+
+const catalog = JSON.parse(fs.readFileSync(path.join(pack, "content/catalogs/surgerycraft-or.json"), "utf8")) as {
+  equipment: { id: string; manikin?: unknown; behavior?: { states?: Record<string, { look?: { manikin?: Record<string, unknown> } }> } }[];
+};
 let stale = 0;
 for (const type of catalog.equipment) {
   if (!type.manikin) continue;
   const m = EquipmentManikinSchema.parse(type.manikin);
   if (m.posture !== "lateral") throw new Error(`${type.id}: this tool fits a body on its side`);
-  const rig = buildManikin(m, { x: 0, y: 0, z: 0, rot: 0 }, type.id);
+  for (const [state, st] of Object.entries(type.behavior?.states ?? {})) {
+    const moved = Object.keys(st.look?.manikin ?? {}).filter((k) => !CLOTH_ONLY.has(k));
+    if (moved.length) throw new Error(`${type.id}: state "${state}" changes the manikin's ${moved.join(", ")} — the model is built round one body in one position`);
+  }
+  // the body as it is operated on: under the drapes (their sheet is measured too); the cloth changes with the state, the body does not
+  const rig = buildManikin({ ...drawnManikin(m), cover: "drapes" }, { x: 0, y: 0, z: 0, rot: 0 }, type.id);
   const up = m.sideUp === "right" ? -1 : 1;
   const at = (p: V3): Vec => placedPoint(rig, p);
   const frame = rig.frame;
@@ -69,6 +85,28 @@ for (const type of catalog.equipment) {
     const round = skin(y, d + 0.04).sub(skin(y, d - 0.04)).normalize();
     const n = skin(y, d, 0.02).sub(p).normalize();
     return { p: arr(p), n: arr(n), along: arr(along), round: arr(round) };
+  };
+
+  const apart = (a: Vec, b: Vec): number => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+  /**
+   * The skin either way round the chest from a site, a frame every `step` metres of it: `back` frames towards the
+   * back, the site itself, `front` frames towards the front — what lies along the skin (an incision's mark, a
+   * dressing, a drain on its way down) is laid from these.
+   */
+  const strip = (y: number, d: number, back: number, front: number, step = 0.01) => {
+    const walk = (dir: 1 | -1, count: number) => {
+      const out: ReturnType<typeof site>[] = [];
+      let a = d, gone = 0, last = skin(y, d);
+      while (out.length < count) {
+        a += dir * 0.001;
+        const p = skin(y, a);
+        gone += apart(p, last);
+        last = p;
+        if (gone >= (out.length + 1) * step) out.push(site(y, a));
+      }
+      return out;
+    };
+    return [...walk(-1, back).reverse(), site(y, d), ...walk(1, front)];
   };
 
   /** A limb's joints (the right side's are the mirror of what the skeleton holds). */
@@ -105,10 +143,25 @@ for (const type of catalog.equipment) {
     lines[name] = [];
     for (let y = CHEST_FIELD.low + 0.012; y <= CHEST_FIELD.high - 0.012 + 1e-9; y += 0.0165) lines[name]!.push(arr(skin(y, d, 0.0012)));
   }
+  // the cloth over the hips and the legs (the drapes' sheet): how high it lies along the foot half of the table —
+  // what stands over the legs (an instrument tray) has to clear it
+  rig.root.updateMatrixWorld(true);
+  const cloth = { hips: -Infinity, legs: -Infinity };
+  rig.root.traverse((o: { isMesh?: boolean; userData: { figure?: boolean }; geometry: { getAttribute(name: string): { count: number; getX(i: number): number; getY(i: number): number; getZ(i: number): number } }; matrixWorld: { elements: number[] } }) => {
+    if (!o.isMesh || !o.userData.figure) return;
+    const pos = o.geometry.getAttribute("position"), e = o.matrixWorld.elements;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+      const wx = e[0]! * x + e[4]! * y + e[8]! * z + e[12]!, wy = e[1]! * x + e[5]! * y + e[9]! * z + e[13]!;
+      const s = wx - m.x; // along the table from the break (towards the feet: positive)
+      if (s > 0.12 && s <= 0.4) cloth.hips = Math.max(cloth.hips, wy);
+      else if (s > 0.4 && s <= 1.0) cloth.legs = Math.max(cloth.legs, wy);
+    }
+  });
   const fit = {
     type: type.id,
     note: "written by tools/figure-fit.mts from the pinned ClinicalCraft's figure kit; do not edit by hand",
-    manikin: m,
+    manikin: type.manikin,
     table: {
       break: [r4(m.x), r4(m.y), r4(m.z)],
       flex: m.flex,
@@ -118,8 +171,12 @@ for (const type of catalog.equipment) {
       foot: r4(LATERAL.break - LATERAL.foot),
     },
     field: { low: arr(skin(CHEST_FIELD.low, 0)), high: arr(skin(CHEST_FIELD.high, 0)) },
-    sites: Object.fromEntries(Object.entries(SITES).map(([name, [y, d]]) => [name, site(y, d)])),
+    // each site's frame, and the skin 5 cm either way round the chest from it (11 frames a centimetre apart: `strip[5]` is the site)
+    sites: Object.fromEntries(Object.entries(SITES).map(([name, [y, d]]) => [name, { ...site(y, d), strip: strip(y, d, 5, 5) }])),
+    // the way of a chest drain from the camera port's site round the front of the chest: a frame every 1.5 cm
+    drain: strip(SITES.camera[0], SITES.camera[1], 0, 9, 0.015),
     lines,
+    cloth: { hips: r4(cloth.hips), legs: r4(cloth.legs) },
     trunk: {
       // the body's own middle line at the break, the shoulder and the hip that lie on the mattress, the back and the front where bolsters go
       axis: arr(at([0, LATERAL.break, 0])),
@@ -132,7 +189,8 @@ for (const type of catalog.equipment) {
     arms: { upper: { ...arms.upper, hand: hand(rig.skeleton.arms[upperIndex], upperIndex === 1) }, lower: { ...arms.lower, hand: hand(rig.skeleton.arms[lowerIndex], lowerIndex === 1) } },
     head: { centre: arr(headCentre), under: arr(headUnder), crown: arr(crown), mouth: arr(mouth), mouthOut: arr(mouthOut) },
   };
-  const text = JSON.stringify(fit, null, 1) + "\n";
+  // (a list of numbers on one line: the file is read by people too)
+  const text = JSON.stringify(fit, null, 1).replace(/\[\n\s+(-?[\d.e+-]+(?:,\n\s+-?[\d.e+-]+)*)\n\s+\]/g, (_all, inner: string) => `[${inner.replace(/,\n\s+/g, ", ")}]`) + "\n";
   const file = path.join(pack, "tools/blender/fit", `${type.id}.json`);
   if (check) {
     const now = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";

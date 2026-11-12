@@ -47,6 +47,7 @@ def build(type_id: str) -> dict:
     eq = cc.load_type(type_id, content=[CONTENT])
     k = Kit(eq)
     (MODELS.get(type_id) or refine)(k, eq)
+    layers = k.triangles()
     ob = k.finish()
     tris = sum(len(p.vertices) - 2 for p in ob.data.polygons)
     ref = cc.export_model(
@@ -54,7 +55,9 @@ def build(type_id: str) -> dict:
         source={"name": "SurgeryCraft tools/blender", "url": "https://github.com/psknlr/SurgeryCraft",
                 "version": f"Blender {bpy.app.version_string}", "changes": "modelled procedurally from the type's voxel parts and footprint"},
     )
-    print(f"{type_id}: {tris} triangles, {len(ob.data.materials)} materials, {(OUT / f'{type_id}.glb').stat().st_size} B")
+    # a model in layers (drawn by state: ClinicalCraft docs/BLENDER.md "Layers"): what is always drawn, and each layer
+    shown = "".join(f" + {name} {n}" for name, n in layers.items() if name)
+    print(f"{type_id}: {tris} triangles{shown}, {len(ob.data.materials)} materials, {(OUT / f'{type_id}.glb').stat().st_size} B")
     return ref
 
 

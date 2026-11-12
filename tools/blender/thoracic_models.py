@@ -400,15 +400,19 @@ def lateral_positioning_set(k: Kit, eq):
 @model("sc-vats-trainer")
 def vats_trainer(k: Kit, eq):
     """Thoracoscopy training station, built round a body that is not in the model: the world draws the station's
-    patient simulator with its own figure kit (the type's `manikin`) — on its right side, draped, over a table
-    flexed under the chest — and tools/figure-fit.mts measures that body for this model (fit/sc-vats-trainer.json).
-    Here: the pedestal table and its two halves, the vacuum mattress moulded up against the back and the front of
-    the trunk, the pillow and head ring that keep the neck in line, the axillary roll, the board the lower arm
-    lies on and the padded gutter under the upper forearm, the double-lumen tube at the mouth — and on the skin
-    of the bare field the axillary lines and the three incisions of the standardized three-port anterior approach:
-    the utility incision with its wound protector and a lung forceps through it, the camera port low and anterior
-    with the 30° scope standing in it on a holder, the third port at the same level further back. The monitor at
-    the back shows the camera's picture (the world's display). The towels and the sheet are the figure's own."""
+    patient simulator with its own figure kit (the type's `manikin`) — on its right side over a table flexed
+    under the chest, under a blanket or draped as the step has it — and tools/figure-fit.mts measures that body
+    for this model (fit/sc-vats-trainer.json).
+    Always there: the pedestal table and its two halves, the vacuum mattress moulded up against the back and the
+    front of the trunk, the pillow and head ring that keep the neck in line, the axillary roll, the board the
+    lower arm lies on and the padded gutter under the upper forearm, the double-lumen tube at the mouth, the
+    monitor at the back (its picture is the world's display).
+    In layers, each drawn in the states whose look names it: the axillary lines and the three incisions marked on
+    the skin; the camera port low and anterior; the 30° scope standing in it on its holder; the utility incision
+    with its wound protector and the third port further back; a lung grasper through that port; an instrument
+    tray over the draped legs with the specimen bowl, and the lobe in its bag in it; the chest tube through the
+    camera port's incision with its tubing down to the floor, and the scope watching from the utility incision
+    meanwhile; the dressings. The towels, the sheet and the blanket are the figure's own."""
     fit = body_fit(eq.id)
     bx, top, bz = fit["table"]["break"]
     flex = fit["table"]["flex"]
@@ -509,55 +513,168 @@ def vats_trainer(k: Kit, eq):
     k.box(clamp, (0.05, 0.06, 0.04), "coal", r=0.008, seg=2)
     k.path([clamp, (clamp[0], pad[1] - 0.05, clamp[2] + 0.02), (pad[0] + 0.04, pad[1] - 0.016, pad[2])], 0.012, "chrome", seg=10)
 
-    # ---- the field: the side of the chest that is up, bare between the figure's towels ----
+    # ---- the field: the side of the chest that is up ----
+    # What follows is in layers (ClinicalCraft docs/BLENDER.md "Layers"): each is drawn only in the states of the
+    # station whose look names it (tools/content-gen/thoracoscopy.py TRAINER_LOOKS), so the table shows where the
+    # operation is — the skin marked, the first port, the scope, the working incisions, the lung held, the lobe
+    # out, the drain, the dressings.
     def off(site, out=0.0, up=0.0, front=0.0):
         """A point by a site on the skin: `out` of the skin, `up` the body (towards the head), `front` round it (towards the front)."""
         p, n, al, ro = site["p"], site["n"], site["along"], site["round"]
         return tuple(p[i] + n[i] * out + al[i] * up + ro[i] * front for i in range(3))
 
-    # on the skin, in a skin marker's violet: the anterior, mid- and posterior axillary lines
-    for line in fit["lines"].values():
-        k.hose([tuple(q) for q in line], 0.0014, "purple", seg=4, steps=1)
+    def skin(site, cm, out=0.0):
+        """The skin `cm` centimetres round the chest from a site (+ towards the front), `out` of it: between the frames of the site's strip."""
+        strip = site["strip"]
+        t = max(0.0, min(len(strip) - 1.0, cm + (len(strip) - 1) / 2))
+        i = min(int(t), len(strip) - 2)
+        a, b, w = strip[i], strip[i + 1], t - i
+        return tuple(a["p"][j] * (1 - w) + b["p"][j] * w + (a["n"][j] * (1 - w) + b["n"][j] * w) * out for j in range(3))
 
-    # utility incision — 4th space, just in front of latissimus dorsi: its wound protector (the incision runs
-    # along the space, round the chest), a lung forceps through it
-    u = fit["sites"]["utility"]
-    k.hose([off(u, 0.0028, 0.019 * math.sin(t), 0.032 * math.cos(t)) for t in (math.radians(22.5 * i) for i in range(18))], 0.0045, "white", seg=8, steps=1)
-    f0, f1 = off(u, -0.04, 0.012, -0.012), off(u, 0.23, -0.05, 0.13)
-    k.tube(f0, f1, 0.0035, "chrome", seg=8)
-    for sgn in (-1, 1):
-        k.torus((f1[0] + sgn * 0.012, f1[1] + 0.012, f1[2] + 0.008), 0.011, 0.0026, "steel", axis="z", seg=14, ring=5, rot=(-35, 0, 0))
+    def shift(p, d, by):
+        return tuple(p[i] + d[i] * by for i in range(3))
 
-    # camera port — low and anterior, at about the level of the top of the diaphragm: the port, the scope standing
-    # in it towards the apex, the camera head with the light cable and the camera cable falling away behind
-    c = fit["sites"]["camera"]
-    k.tube(off(c, -0.01), off(c, 0.012), 0.0085, "white", seg=14)
-    k.tube(off(c, 0.012), off(c, 0.03), 0.014, "white", seg=16)
-    ux, uy, uz = 0.5, 0.78, 0.36                    # the scope's line out of the chest: up, towards the feet and the front
-    n = math.sqrt(ux * ux + uy * uy + uz * uz)
-    ux, uy, uz = ux / n, uy / n, uz / n
-    cp = off(c, 0.02)
-    along_scope = lambda d: (cp[0] + ux * d, cp[1] + uy * d, cp[2] + uz * d)  # noqa: E731
-    k.tube(along_scope(-0.075), along_scope(0.3), 0.005, "chrome", seg=10)
-    k.tube(along_scope(0.295), along_scope(0.32), 0.014, "steel", seg=14)
-    k.tube(along_scope(0.322), along_scope(0.385), 0.02, "plastic", seg=14)
-    post = along_scope(0.27)
-    k.tube(post, (post[0], post[1], post[2] - 0.035), 0.006, "steel", seg=8)
-    back = along_scope(0.387)
-    floor_back = at(0.3, -0.16, -0.34)
-    k.hose([back, (back[0] + 0.05, back[1] + 0.02, back[2] - 0.08), (back[0] + 0.04, back[1] - 0.2, bz - 0.3), floor_back], 0.0045, "coal", seg=6, steps=3)
-    k.hose([(post[0], post[1], post[2] - 0.04), (cp[0] + 0.1, cp[1] + 0.12, bz - 0.22), (floor_back[0] - 0.08, floor_back[1], floor_back[2])], 0.004, "coal", seg=6, steps=3)
-    # the scope holder: clamped to the back rail just above the sheet, an arm up and over to the scope
-    hold = at(0.06, -0.1, -0.285)
-    k.box(hold, (0.05, 0.06, 0.04), "coal", r=0.008, seg=2)
-    grip = along_scope(0.23)
-    k.path([hold, (hold[0], hold[1] + 0.42, hold[2] - 0.01), (hold[0] + 0.03, grip[1] + 0.1, (hold[2] + grip[2]) / 2), grip], 0.009, "chrome", seg=10)
-    k.ball(grip, 0.016, "coal", seg=10)
+    sites = fit["sites"]
+    u, c, p3 = sites["utility"], sites["camera"], sites["posterior"]
+    marker = k.paint("skin-marker", "purple", color="#7d5fa6", roughness=0.9)
+    wound = k.paint("wound", "brick-red", color="#742f2b", roughness=0.75)
 
-    # the third port, at the camera port's level further back: straight down from the scapula
-    p3 = fit["sites"]["posterior"]
-    k.tube(off(p3, -0.008), off(p3, 0.01), 0.0075, "white", seg=12)
-    k.tube(off(p3, 0.01), off(p3, 0.024), 0.011, "white", seg=14)
+    # the skin marked once the position is checked: the anterior, mid- and posterior axillary lines …
+    with k.layer("lines"):
+        for line in fit["lines"].values():
+            k.hose([tuple(q) for q in line], 0.0014, marker, seg=4, steps=1)
+    # … and where each incision will be, along its intercostal space: the camera port's centimetre,
+    with k.layer("site-camera"):
+        k.hose([skin(c, t, 0.0012) for t in (-0.55, 0, 0.55)], 0.0016, marker, seg=4, steps=1)
+    # the utility incision's five and the third port's one and a half
+    with k.layer("site-working"):
+        k.hose([skin(u, t, 0.0012) for t in (-2.5, -1.5, -0.5, 0.5, 1.5, 2.5)], 0.0016, marker, seg=4, steps=1)
+        k.hose([skin(p3, t, 0.0012) for t in (-0.8, 0, 0.8)], 0.0016, marker, seg=4, steps=1)
+
+    # camera port — low and anterior, at about the level of the top of the diaphragm
+    with k.layer("camera-port"):
+        k.tube(off(c, -0.01), off(c, 0.012), 0.0085, "white", seg=14)
+        k.tube(off(c, 0.012), off(c, 0.03), 0.014, "white", seg=16)
+
+    def scope_in(entry, out, clamp_s, cable_s):
+        """The 30° scope standing in an incision at `entry`, `out` its line out of the chest: the shaft, the eyepiece
+        and the camera head, the light cable and the camera cable falling away behind the table (to `cable_s` along
+        the top, below the back rail), and the holder — clamped to the back rail at `clamp_s`, an arm up and over to
+        the scope."""
+        o = _unit(out)
+        on = lambda d: shift(entry, o, d)  # noqa: E731
+        k.tube(on(-0.075), on(0.3), 0.005, "chrome", seg=10)
+        k.tube(on(0.295), on(0.32), 0.014, "steel", seg=14)
+        k.tube(on(0.322), on(0.385), 0.02, "plastic", seg=14)
+        post = on(0.27)
+        k.tube(post, (post[0], post[1], post[2] - 0.035), 0.006, "steel", seg=8)
+        back = on(0.387)
+        floor_back = at(cable_s, -0.16, -0.34)
+        toward = 0.35 * (floor_back[0] - back[0])
+        k.hose([back, (back[0] + 0.3 * toward, back[1] + 0.02, back[2] - 0.08), (back[0] + toward, back[1] - 0.2, bz - 0.3), floor_back], 0.0045, "coal", seg=6, steps=3)
+        k.hose([(post[0], post[1], post[2] - 0.04), (post[0] + toward, entry[1] + 0.12, bz - 0.22), (floor_back[0] - 0.08 * math.copysign(1, floor_back[0] - post[0]), floor_back[1], floor_back[2])], 0.004, "coal", seg=6, steps=3)
+        hold = at(clamp_s, -0.1, -0.285)
+        k.box(hold, (0.05, 0.06, 0.04), "coal", r=0.008, seg=2)
+        grip = on(0.23)
+        k.path([hold, (hold[0], hold[1] + 0.42, hold[2] - 0.01), (hold[0] + (grip[0] - hold[0]) * 0.35, grip[1] + 0.1, (hold[2] + grip[2]) / 2), grip], 0.009, "chrome", seg=10)
+        k.ball(grip, 0.016, "coal", seg=10)
+
+    # the scope in its port, looking towards the apex: out of the chest it stands up, towards the feet and the front
+    with k.layer("scope"):
+        scope_in(off(c, 0.02), (0.5, 0.78, 0.36), 0.06, 0.3)
+
+    # the working incisions, made under vision: the utility incision — 4th space, just in front of latissimus
+    # dorsi — held open by its wound protector (the ribs are not spread), and the third port at the camera port's
+    # level further back, straight down from the scapula
+    with k.layer("working-ports"):
+        ring = [off(u, 0.0028, 0.019 * math.sin(t), 0.032 * math.cos(t)) for t in (math.radians(22.5 * i) for i in range(18))]
+        k.hose(ring, 0.0045, "white", seg=8, steps=1)
+        # (the incision open inside the ring: a dark slit along the space)
+        slit_rot, _, _ = turned(u["round"], u["n"])
+        k.box(off(u, 0.0008), (0.05, 0.002, 0.022), wound, r=0.0006, seg=1, rot=slit_rot)
+        k.tube(off(p3, -0.008), off(p3, 0.01), 0.0075, "white", seg=12)
+        k.tube(off(p3, 0.01), off(p3, 0.024), 0.011, "white", seg=14)
+
+    # the lung held out of the way through the third port: a lung grasper, its rings up towards the head and the back
+    with k.layer("retractor"):
+        g = _unit((p3["n"][0] - 0.5, p3["n"][1], p3["n"][2] - 0.12))
+        g0, g1 = shift(off(p3, 0.012), g, -0.07), shift(off(p3, 0.012), g, 0.24)
+        k.tube(g0, g1, 0.0032, "chrome", seg=8)
+        k.tube(shift(g1, g, -0.035), g1, 0.0052, "steel", seg=8)
+        side = _unit(_cross(g, (0.0, 1.0, 0.0)))
+        ring_rot, _, _ = turned(g, _cross(g, side))     # the rings' axis across the plane of the shaft and its side
+        for sgn in (-1, 1):
+            k.torus(shift(shift(g1, g, 0.016), side, sgn * 0.013), 0.011, 0.0026, "steel", axis="y", seg=14, ring=5, rot=ring_rot)
+
+    # an instrument tray over the draped legs (a Mayo stand: its foot under the table from the back, its tray under
+    # a sterile cover), a steel bowl on it for the specimen
+    tray_y = fit["cloth"]["legs"] + 0.075
+    tx, tz = bx + 0.9, bz - 0.05
+    post_z = bz - 0.37
+    with k.layer("mayo"):
+        for dx in (-0.2, 0.2):
+            k.box((tx + dx, 0.022, post_z + 0.2), (0.035, 0.026, 0.52), "chrome", r=0.008, seg=1)
+        k.box((tx, 0.03, post_z), (0.44, 0.04, 0.05), "chrome", r=0.01, seg=1)
+        k.tube((tx, 0.04, post_z), (tx, tray_y - 0.03, post_z), 0.017, "chrome", seg=12)
+        k.box((tx, tray_y - 0.022, (post_z + tz) / 2 - 0.04), (0.04, 0.024, abs(tz - post_z)), "steel", r=0.006, seg=1)
+        k.box((tx, tray_y - 0.006, tz), (0.46, 0.012, 0.31), "steel", r=0.01, seg=2)
+        # its cover: a drape over the tray, hanging a hand's breadth at the front and the sides
+        k.box((tx, tray_y + 0.002, tz), (0.47, 0.006, 0.32), "sc-drape", r=0.003, seg=1)
+        k.box((tx, tray_y - 0.025, tz + 0.161), (0.47, 0.06, 0.004), "sc-drape", r=0.002, seg=1)
+        for sgn in (-1, 1):
+            k.box((tx + sgn * 0.236, tray_y - 0.025, tz), (0.004, 0.06, 0.32), "sc-drape", r=0.002, seg=1)
+        # the bowl, and a folded swab beside it
+        bowl = (tx + 0.1, tray_y + 0.005, tz + 0.02)
+        k.lathe([(0.0, 0.0), (0.045, 0.0), (0.062, 0.012), (0.074, 0.04), (0.078, 0.042), (0.07, 0.038), (0.058, 0.014), (0.04, 0.006), (0.0, 0.006)], bowl, "steel", seg=22)
+        k.box((tx - 0.13, tray_y + 0.011, tz - 0.04), (0.09, 0.012, 0.09), "white", r=0.004, seg=1)
+    # the lobe out, in its bag in the bowl: the pouch drawn shut, its string over the rim
+    with k.layer("specimen"):
+        lung = k.paint("lung", "pink", color="#a8727c", roughness=0.6)
+        k.ball((bowl[0], bowl[1] + 0.034, bowl[2]), 0.05, lung, seg=14, squash=(1.15, 0.62, 0.95))
+        k.ball((bowl[0], bowl[1] + 0.036, bowl[2]), 0.056, "sc-clear-tube", seg=14, squash=(1.15, 0.62, 0.95))
+        k.torus((bowl[0] - 0.062, bowl[1] + 0.05, bowl[2]), 0.012, 0.0024, "blue", axis="x", seg=14, ring=5)
+        k.hose([(bowl[0] - 0.066, bowl[1] + 0.05, bowl[2]), (bowl[0] - 0.085, bowl[1] + 0.046, bowl[2] + 0.01), (bowl[0] - 0.1, bowl[1] + 0.006, bowl[2] + 0.03)], 0.0012, "white", seg=5, steps=2)
+
+    # the drain: one chest tube through the camera port's incision, stitched to the skin; round the front of the
+    # chest to its connector on the mattress, and the drainage tubing over the edge of the table to the floor
+    drain = fit["drain"]
+    with k.layer("chest-tube"):
+        lie = lambda i, out=0.0125: tuple(drain[i]["p"][j] + drain[i]["n"][j] * out for j in range(3))  # noqa: E731
+        m_top = at(along(c["p"][0]), 0.0)[1]            # the mattress's top in front of the chest
+        joint = (c["p"][0] - 0.004, m_top + 0.008, bz + 0.2)
+        d7 = drain[7]["p"]
+        route = [off(c, -0.035), off(c, 0.004), lie(1, 0.011), lie(3), lie(5), lie(6, 0.014),
+                 (d7[0], d7[1] - 0.02, d7[2] + 0.04), (joint[0], m_top + 0.1, bz + 0.13), (joint[0], m_top + 0.03, bz + 0.18), joint]
+        k.hose(route, 0.0047, "sc-clear-tube", seg=10, steps=3)
+        # its blue radiopaque line, along the side that faces the room (the tube lies along x: the line is on its +x side)
+        k.hose([(q[0] + 0.0043, q[1], q[2]) for q in route[1:]], 0.0011, "blue", seg=4, steps=3)
+        k.box(off(c, 0.002, 0.0, 0.004), (0.016, 0.003, 0.03), "white", r=0.001, seg=1, rot=turned(c["round"], c["n"])[0])
+        k.tube(joint, (joint[0], joint[1], joint[2] + 0.04), 0.0068, "blue", seg=10)
+        edge_z = bz + half + 0.012
+        floor_run = [(joint[0], joint[1], joint[2] + 0.04), (joint[0], m_top + 0.004, edge_z - 0.02), (joint[0] + 0.01, m_top - 0.06, edge_z + 0.012),
+                     (joint[0] + 0.03, 0.4, edge_z + 0.03), (joint[0] + 0.06, 0.03, edge_z + 0.05), (joint[0] + 0.2, 0.012, edge_z + 0.09), (joint[0] + 0.42, 0.012, edge_z + 0.1)]
+        k.hose(floor_run, 0.006, "sc-clear-tube", seg=8, steps=3)
+        k.tube(floor_run[-1], (floor_run[-1][0] + 0.04, 0.012, floor_run[-1][2]), 0.0085, "blue", seg=10)
+
+    # with the drain in the camera port's incision the scope watches from the utility incision: out of the chest
+    # it stands up and towards the head
+    with k.layer("scope-utility"):
+        scope_in(off(u, 0.006), (-0.5, 0.78, 0.26), -0.16, -0.3)
+
+    # closed: a dressing over each wound, the drain's round where it comes out
+    def dressing(site, back, front, width, m="white", out=0.0018, thick=0.0042):
+        """A dressing along the skin over a wound: from `back` to `front` centimetres round the chest from the site,
+        `width` across; thick enough (from just under the skin) that the chest breathing under it never covers it."""
+        for i in range(back, front + 1):
+            f = site["strip"][5 + i]
+            k.box(off(f, out), (0.0108, thick, width), m, r=0.0008, seg=1, rot=turned(f["round"], f["n"])[0])
+
+    with k.layer("dressings"):
+        dressing(u, -4, 4, 0.042)
+        dressing(u, -3, 3, 0.02, "paper", out=0.0042, thick=0.0012)
+        dressing(p3, -2, 2, 0.04)
+        dressing(p3, -1, 1, 0.018, "paper", out=0.0042, thick=0.0012)
+        dressing(c, -2, 2, 0.05)
 
     # the monitor on its pole behind the head end
     scr = eq.screens()[0]

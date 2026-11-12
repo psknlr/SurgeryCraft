@@ -81,8 +81,10 @@ simulation OR holds a **thoracoscopy training station**:
   the drain primed and connected before the lung is re-expanded;
 - on the training station, the seventeen steps of a thoracoscopic lobectomy in order, each with
   its instrument in the hand — on a patient simulator that is one of the world's own figures (the
-  proportions, the face and the hands of the people of the world), lying on its side, draped, the
-  station's supports, ports and scope built round it.
+  proportions, the face and the hands of the people of the world), lying on its side, the
+  station's supports built round it; what is drawn of it follows each step, whoever takes it —
+  under a blanket, then draped and on one lung, the ports, the scope, the drain and the dressings
+  coming and going, the monitor on while the scope is in.
 
 It has no thoracoscopic clinical case yet, and it is not clinician-reviewed. See
 **[docs/THORACOSCOPY.md](docs/THORACOSCOPY.md)**; what public surgical video datasets exist and

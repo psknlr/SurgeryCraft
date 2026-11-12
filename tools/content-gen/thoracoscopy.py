@@ -350,16 +350,75 @@ def step(zh, en, frm, to, requires=(), seconds=60):
 
 
 # The body on the station's table is the world's own figure (ClinicalCraft docs/FACILITIES.md "A body drawn with
-# equipment"), not a part of the model: on its right side, the left side up, draped for an operation on the chest,
-# asleep, over a table flexed 9° each way. `x`, `z`: the middle of the table where it breaks (under the chest);
-# `y`: the top of the mattress there. tools/figure-fit.mts measures this body for the model built round it.
-TRAINER_BODY = {"posture": "lateral", "sideUp": "left", "draped": True, "flex": 9, "asleep": True,
+# equipment"), not a part of the model: on its right side, the left side up, asleep, over a table flexed 9° each
+# way — as the station is found: under a blanket to the waist, ventilated on both lungs (each step's look changes
+# that: TRAINER_LOOKS). `x`, `z`: the middle of the table where it breaks (under the chest); `y`: the top of the
+# mattress there. tools/figure-fit.mts measures this body (draped, as it is operated on) for the model built round it.
+TRAINER_BODY = {"posture": "lateral", "sideUp": "left", "cover": "blanket", "breathing": "both", "flex": 9, "asleep": True,
                 "x": -0.27, "z": -0.13, "y": 0.93, "rot": 90,
                 "appearance": {"skin": "#d9b596", "hair": "#2b2420", "hairStyle": "short", "build": "average", "presentation": "neutral"}}
 
+# What is drawn of the station at each step (ClinicalCraft docs/FACILITIES.md "A look for each state"): the layers of
+# its model that show (tools/blender/thoracic_models.py builds them), the picture on its monitor, and what the step
+# changes of the simulator — under a blanket or draped, ventilated on both lungs or on the one underneath. The look
+# follows the station's state, whoever moved it on: the learner at the station, a colleague, an agent — each through
+# the same operation. docs/THORACOSCOPY.md "The station follows the operation" shows it step by step.
+TRAINER_LAYERS = {
+    "lines": "the anterior, mid- and posterior axillary lines marked on the skin",
+    "site-camera": "the camera port's site marked (1 cm)",
+    "site-working": "the utility incision's and the third port's sites marked (5 cm, 1.5 cm)",
+    "camera-port": "the camera port in its incision",
+    "scope": "the 30° scope standing in the camera port on its holder, its cables",
+    "working-ports": "the utility incision with its wound protector, the third port",
+    "retractor": "a lung grasper through the third port, holding the lung",
+    "mayo": "an instrument tray over the draped legs, a bowl on it",
+    "specimen": "the lobe in its bag in the bowl",
+    "chest-tube": "the chest tube through the camera port's incision, its tubing down to the drainage unit",
+    "scope-utility": "the scope watching from the utility incision while the drain goes in",
+    "dressings": "a dressing over each wound",
+}
+ONE_LUNG = {"cover": "drapes", "breathing": "one-lung"}       # draped, the lung on the operated side down
+TWO_LUNGS = {"cover": "drapes", "breathing": "both"}          # draped, the lung up again
+MARKED = ["lines", "site-camera", "site-working"]
+IN_THE_CHEST = ["lines", "camera-port", "scope", "working-ports", "mayo"]
+
+
+def look(layers, screen="none", manikin=None):
+    """A state's look: the layers shown (every other layer of the model is hidden), the monitor's picture
+    (`thoracoscopy` while the scope is in, else dark), what changes of the simulator."""
+    unknown = [layer for layer in layers if layer not in TRAINER_LAYERS]
+    assert not unknown, ("layers the station's model does not have", unknown)
+    return {"layers": list(layers), "screen": screen, **({"manikin": dict(manikin)} if manikin else {})}
+
+
+TRAINER_LOOKS = {
+    # on the table under a blanket, both lungs ventilated; once the position is checked, the skin is marked
+    "ready": look([]),
+    "positioned": look(MARKED),
+    # prepared and draped, the tray over the legs; the lung is let down
+    "lung-down": look(MARKED + ["mayo"], manikin=ONE_LUNG),
+    "camera-port": look(["lines", "site-working", "camera-port", "mayo"], manikin=ONE_LUNG),
+    # the scope in: the monitor shows the chest
+    "explored": look(["lines", "site-working", "camera-port", "scope", "mayo"], "thoracoscopy", ONE_LUNG),
+    "working-ports": look(IN_THE_CHEST, "thoracoscopy", ONE_LUNG),
+    # the lung held through the third port while the lobe is freed and its vein, artery and bronchus divided
+    **{state: look(IN_THE_CHEST + ["retractor"], "thoracoscopy", ONE_LUNG)
+       for state in ("mobilised", "hilum", "vein-divided", "artery-divided", "bronchus-divided", "lobe-free")},
+    # the lobe out in its bag; the lung held again for the nodes; the leak test
+    "specimen-out": look(IN_THE_CHEST + ["specimen"], "thoracoscopy", ONE_LUNG),
+    "nodes": look(IN_THE_CHEST + ["retractor", "specimen"], "thoracoscopy", ONE_LUNG),
+    "leak-tested": look(IN_THE_CHEST + ["specimen"], "thoracoscopy", ONE_LUNG),
+    # the drain through the camera port's incision, watched from the utility incision; then the lung up again
+    "drained": look(["lines", "working-ports", "chest-tube", "scope-utility", "mayo", "specimen"], "thoracoscopy", ONE_LUNG),
+    "re-expanded": look(["lines", "working-ports", "chest-tube", "scope-utility", "mayo", "specimen"], "thoracoscopy", TWO_LUNGS),
+    # closed: the dressings on, the drapes off, a blanket again; the drain stays
+    "closed": look(["lines", "chest-tube", "dressings"]),
+}
+assert sorted({layer for lk in TRAINER_LOOKS.values() for layer in lk["layers"]}) == sorted(TRAINER_LAYERS), "a layer of the model that no step shows"
+
 eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training station"), "teaching",
-   L("胸腔镜肺叶切除的模拟训练台：模拟人取侧卧位（左侧向上），躺在折起的床面和真空垫上——头枕头圈，颈部与躯干成一直线；下方手臂前伸放在托手板上，上方手臂前屈放在带垫托架上；下腿屈髋屈膝，两腿之间垫枕；腋下垫置于腋窝下方的胸壁下。铺巾后露出侧胸壁，口角固定着双腔气管导管。胸壁上是标准化三孔前入路的三个切口——第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），位置低而靠前、约在膈顶水平的 1 cm 观察孔（套管里是 10 mm 30° 胸腔镜），以及同一水平更靠后、肩胛骨正下方的 1.5 cm 操作孔；床头后方的显示器接镜头。从核对体位到关胸，按顺序演练下肺叶切除的每一步（静脉、动脉、支气管；不同肺叶的顺序不同）。",
-     "A simulator for thoracoscopic lobectomy: a full-body patient simulator in the lateral position (left side up) on a flexed top and a vacuum mattress — the head on a ring so that the neck lies in line with the trunk, the lower arm out in front on its board, the upper arm forward on a padded support, the lower leg bent at hip and knee with a pillow between the legs, the axillary roll under the chest wall below the armpit — draped to leave the side of the chest bare, the double-lumen tube taped at the mouth; on the chest wall the three incisions of the standardized three-port anterior approach — the utility incision of about 5 cm in the 4th intercostal space just in front of latissimus dorsi (a wound protector in it, the ribs not spread), the 1 cm camera port low and anterior at about the level of the top of the diaphragm (the 10 mm 30° thoracoscope stands in its port), and a 1.5 cm port at the same level further back, straight down from the scapula; the monitor behind the head end shows the camera's picture. Every step of a lower lobectomy is rehearsed in order, from the position check to the closure (vein, artery, bronchus — the order differs from lobe to lobe)."),
+   L("胸腔镜肺叶切除的模拟训练台：模拟人取侧卧位（左侧向上），躺在折起的床面和真空垫上——头枕头圈，颈部与躯干成一直线；下方手臂前伸放在托手板上，上方手臂前屈放在带垫托架上；下腿屈髋屈膝，两腿之间垫枕；腋下垫置于腋窝下方的胸壁下；口角固定着双腔气管导管。台上的样子随步骤变化：刚开始时盖着毯子、双肺通气；核对体位后皮肤上画好腋前线、腋中线、腋后线和切口位置；铺巾后术侧肺萎陷；随后标准化三孔前入路的切口按各自的步骤出现——位置低而靠前、约在膈顶水平的 1 cm 观察孔（10 mm 30° 胸腔镜立在其中），第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），以及与观察孔同一水平、更靠后（肩胛骨正下方）的 1.5 cm 操作孔（经此用肺钳牵开肺）；标本装袋放在器械台的弯盘里，胸管经观察孔切口置入，肺复张，最后贴好敷料、重新盖上毯子。胸腔镜在胸腔内时，床头后方的显示器显示镜头画面。从核对体位到关胸，按顺序演练下肺叶切除的每一步（静脉、动脉、支气管；不同肺叶的顺序不同）。",
+     "A simulator for thoracoscopic lobectomy: a full-body patient simulator in the lateral position (left side up) on a flexed top and a vacuum mattress — the head on a ring so that the neck lies in line with the trunk, the lower arm out in front on its board, the upper arm forward on a padded support, the lower leg bent at hip and knee with a pillow between the legs, the axillary roll under the chest wall below the armpit — the double-lumen tube taped at the mouth. What lies on it follows the steps: under a blanket and ventilated on both lungs as it is found; the axillary lines and the sites of the incisions marked once the position is checked; draped, the lung on the operated side down; then the incisions of the standardized three-port anterior approach, each as its step makes it — the 1 cm camera port low and anterior at about the level of the top of the diaphragm (the 10 mm 30° thoracoscope stands in it), the utility incision of about 5 cm in the 4th intercostal space just in front of latissimus dorsi (a wound protector in it, the ribs not spread) and a 1.5 cm port at the camera port's level further back, straight down from the scapula (a lung grasper through it holds the lung); the lobe out in its bag in the bowl on the instrument tray, the chest tube through the camera port's incision, the lung up again, and at the end the dressings and a blanket. The monitor behind the head end shows the camera's picture while the scope is in. Every step of a lower lobectomy is rehearsed in order, from the position check to the closure (vein, artery, bronchus — the order differs from lobe to lobe)."),
    (2.1, 1.15, 1.8),
    [
        # (the fallback when the model is not loaded; the body is the world's own figure either way: TRAINER_BODY)
@@ -388,7 +447,7 @@ eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training st
    interaction="device", prompt=L("E · 胸腔镜模拟训练", "E · Thoracoscopy training"), screen="thoracoscopy",
    tags=["simulation", "thoracic", "mis", "trainer", "teaching"], manikin=TRAINER_BODY,
    behavior={"initial": "ready",
-             "states": {
+             "states": {state: {**spec, "look": TRAINER_LOOKS[state]} for state, spec in {
                  "ready": st("待训练", "ready"),
                  "positioned": st("体位已核对（侧卧、腋下垫、托臂、折床）", "position checked (lateral, axillary roll, arm support, table flexed)"),
                  "lung-down": st("导管位置已再次确认，术侧肺已萎陷", "tube position confirmed again, the lung on the operated side down"),
@@ -407,7 +466,7 @@ eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training st
                  "drained": st("胸管已置入", "chest tube in"),
                  "re-expanded": st("肺已在直视下复张", "lung re-expanded under vision"),
                  "closed": st("已关胸", "closed"),
-             },
+             }.items()},
              "operations": {
                  "check_position": step("核对体位：术侧向上，腋下垫在腋窝下方的胸壁下，上臂在托架上，折床张开肋间隙，受压点有垫",
                                         "Check the position: operated side up, the axillary roll under the chest wall below the armpit, the upper arm on its support, the table flexed to open the spaces, pressure points padded",
