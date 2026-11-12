@@ -32,7 +32,7 @@ EQUIPMENT = []
 
 
 def eq(id, name, category, description, footprint, parts, *, usage=None, caps=(), solid=True, interaction="none",
-       prompt=None, screen="none", light=None, tags=(), portable=None, reach=None, points=None, behavior=None):
+       prompt=None, screen="none", light=None, tags=(), portable=None, reach=None, points=None, behavior=None, manikin=None):
     w, d, h = footprint
     tol = 0.05
     for i, p in enumerate(parts):
@@ -65,6 +65,10 @@ def eq(id, name, category, description, footprint, parts, *, usage=None, caps=()
         e["interactionPoints"] = points
     if behavior:
         e["behavior"] = behavior
+    if manikin:
+        # a body the world draws with the equipment (its own figures): it lies inside the footprint
+        assert abs(manikin.get("x", 0)) <= w / 2 and abs(manikin.get("z", 0)) <= d / 2 and manikin.get("y", 0) <= h, (id, "manikin", manikin)
+        e["manikin"] = manikin
     e["parts"] = parts
     EQUIPMENT.append(e)
     return e

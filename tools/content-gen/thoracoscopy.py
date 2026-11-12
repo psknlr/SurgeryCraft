@@ -22,9 +22,8 @@ from interactions import AT_TABLE, IN_HAND, SCRUB, SCRUBBED, SURGEON, TEAM, inst
 ANAESTHETIST = ["attending", "clinician"]
 
 THORACIC_MATERIALS = [
-    # clear tubing and chambers (PVC, silicone), a simulator's skin, a vacuum mattress
+    # clear tubing and chambers (PVC, silicone), a vacuum mattress (the simulator on the station is the world's own figure)
     {"id": "sc-clear-tube", "color": "#e7efe9", "pattern": "flat", "variance": 0.01, "opacity": 0.5, "roughness": 0.15, "castShadow": False},
-    {"id": "sc-manikin", "color": "#d7b697", "pattern": "flat", "variance": 0.015, "roughness": 0.7},
     {"id": "sc-vacuum-mat", "color": "#56778f", "pattern": "noise", "variance": 0.04, "roughness": 0.85},
 ]
 catalog.MATERIALS.extend(THORACIC_MATERIALS)
@@ -350,36 +349,44 @@ def step(zh, en, frm, to, requires=(), seconds=60):
     return op(zh, en, [frm], to, requires, TEAM, seconds)
 
 
+# The body on the station's table is the world's own figure (ClinicalCraft docs/FACILITIES.md "A body drawn with
+# equipment"), not a part of the model: on its right side, the left side up, draped for an operation on the chest,
+# asleep, over a table flexed 9° each way. `x`, `z`: the middle of the table where it breaks (under the chest);
+# `y`: the top of the mattress there. tools/figure-fit.mts measures this body for the model built round it.
+TRAINER_BODY = {"posture": "lateral", "sideUp": "left", "draped": True, "flex": 9, "asleep": True,
+                "x": -0.27, "z": -0.13, "y": 0.93, "rot": 90,
+                "appearance": {"skin": "#d9b596", "hair": "#2b2420", "hairStyle": "short", "build": "average", "presentation": "neutral"}}
+
 eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training station"), "teaching",
-   L("胸腔镜肺叶切除的模拟训练台：躯干模型取侧卧位（左侧向上）固定在折起的床面和真空垫上，上臂放在托架上，铺巾后露出侧胸壁；胸壁上是标准化三孔前入路的三个切口——第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），位置低而靠前、约在膈顶水平的 1 cm 观察孔（套管里是 10 mm 30° 胸腔镜），以及同一水平更靠后、肩胛骨正下方的 1.5 cm 操作孔；床头的显示器接镜头。从核对体位到关胸，按顺序演练下肺叶切除的每一步（静脉、动脉、支气管；不同肺叶的顺序不同）。",
-     "A simulator for thoracoscopic lobectomy: a torso in the lateral position (left side up) on a flexed top and a vacuum mattress, the upper arm on its support, draped to leave the side of the chest bare; on the chest wall the three incisions of the standardized three-port anterior approach — the utility incision of about 5 cm in the 4th intercostal space just in front of latissimus dorsi (a wound protector in it, the ribs not spread), the 1 cm camera port low and anterior at about the level of the top of the diaphragm (the 10 mm 30° thoracoscope stands in its port), and a 1.5 cm port at the same level further back, straight down from the scapula; the monitor at the head shows the camera's picture. Every step of a lower lobectomy is rehearsed in order, from the position check to the closure (vein, artery, bronchus — the order differs from lobe to lobe)."),
-   (2.1, 1.0, 1.8),
+   L("胸腔镜肺叶切除的模拟训练台：模拟人取侧卧位（左侧向上），躺在折起的床面和真空垫上——头枕头圈，颈部与躯干成一直线；下方手臂前伸放在托手板上，上方手臂前屈放在带垫托架上；下腿屈髋屈膝，两腿之间垫枕；腋下垫置于腋窝下方的胸壁下。铺巾后露出侧胸壁，口角固定着双腔气管导管。胸壁上是标准化三孔前入路的三个切口——第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），位置低而靠前、约在膈顶水平的 1 cm 观察孔（套管里是 10 mm 30° 胸腔镜），以及同一水平更靠后、肩胛骨正下方的 1.5 cm 操作孔；床头后方的显示器接镜头。从核对体位到关胸，按顺序演练下肺叶切除的每一步（静脉、动脉、支气管；不同肺叶的顺序不同）。",
+     "A simulator for thoracoscopic lobectomy: a full-body patient simulator in the lateral position (left side up) on a flexed top and a vacuum mattress — the head on a ring so that the neck lies in line with the trunk, the lower arm out in front on its board, the upper arm forward on a padded support, the lower leg bent at hip and knee with a pillow between the legs, the axillary roll under the chest wall below the armpit — draped to leave the side of the chest bare, the double-lumen tube taped at the mouth; on the chest wall the three incisions of the standardized three-port anterior approach — the utility incision of about 5 cm in the 4th intercostal space just in front of latissimus dorsi (a wound protector in it, the ribs not spread), the 1 cm camera port low and anterior at about the level of the top of the diaphragm (the 10 mm 30° thoracoscope stands in its port), and a 1.5 cm port at the same level further back, straight down from the scapula; the monitor behind the head end shows the camera's picture. Every step of a lower lobectomy is rehearsed in order, from the position check to the closure (vein, artery, bronchus — the order differs from lobe to lobe)."),
+   (2.1, 1.15, 1.8),
    [
-       B("plastic", 0, 0.04, 0, 0.7, 0.08, 0.6),
-       B("sc-robot", 0, 0.42, 0, 0.36, 0.68, 0.4),
-       B("steel", -0.5, 0.8, 0, 1.0, 0.05, 0.56),
-       B("steel", 0.5, 0.8, 0, 1.0, 0.05, 0.56),
-       B("sc-vacuum-mat", -0.1, 0.87, 0, 1.5, 0.09, 0.58),
-       B("sc-manikin", -0.75, 1.02, 0, 0.2, 0.22, 0.2),
-       B("sc-manikin", -0.25, 1.1, 0, 0.6, 0.36, 0.26),
-       B("sc-drape", 0.5, 1.04, 0, 0.9, 0.3, 0.36),
-       B("sc-drape", -0.25, 1.29, 0, 0.7, 0.02, 0.3),
-       B("chrome", -0.55, 1.2, 0.34, 0.03, 0.5, 0.03),
-       B("navy", -0.55, 1.42, 0.34, 0.4, 0.06, 0.14),
-       B("sc-manikin", -0.55, 1.48, 0.34, 0.36, 0.07, 0.09),
-       B("white", -0.38, 1.26, 0.08, 0.08, 0.02, 0.05),
-       B("white", -0.2, 1.3, 0.07, 0.03, 0.06, 0.03),
-       B("white", -0.2, 1.3, -0.09, 0.03, 0.04, 0.03),
-       B("chrome", -0.12, 1.46, 0.09, 0.02, 0.3, 0.02),
-       B("coal", -0.1, 1.64, 0.1, 0.05, 0.08, 0.05),
-       B("chrome", -0.9, 1.25, -0.42, 0.04, 0.9, 0.04),
-       B("sc-matte-black", -0.62, 1.5, -0.42, 0.56, 0.36, 0.05),
-       B("screen-dark", -0.62, 1.5, -0.392, 0.5, 0.3, 0.006, name="screen"),
+       # (the fallback when the model is not loaded; the body is the world's own figure either way: TRAINER_BODY)
+       B("plastic", 0, 0.04, -0.13, 0.7, 0.08, 0.6),
+       B("sc-robot", -0.07, 0.42, -0.13, 0.36, 0.68, 0.4),
+       B("steel", -0.635, 0.8, -0.13, 0.74, 0.05, 0.54),
+       B("steel", 0.37, 0.75, -0.13, 1.28, 0.05, 0.54),
+       B("sc-vacuum-mat", -0.635, 0.855, -0.13, 0.72, 0.06, 0.58),
+       B("sc-vacuum-mat", 0.37, 0.805, -0.13, 1.26, 0.06, 0.58),
+       B("white", -0.69, 0.93, -0.19, 0.3, 0.08, 0.34),
+       B("teal", -0.69, 0.985, -0.19, 0.17, 0.04, 0.17),
+       B("navy", -0.5, 0.89, 0.35, 0.16, 0.03, 0.44),
+       B("chrome", -0.64, 1.0, 0.17, 0.03, 0.3, 0.03),
+       B("navy", -0.64, 1.17, 0.13, 0.4, 0.05, 0.14),
+       B("white", -0.37, 1.275, -0.14, 0.07, 0.012, 0.05),
+       B("white", -0.234, 1.265, -0.13, 0.03, 0.03, 0.03),
+       B("white", -0.234, 1.265, -0.26, 0.03, 0.03, 0.03),
+       B("chrome", -0.16, 1.42, -0.07, 0.02, 0.3, 0.02),
+       B("coal", -0.07, 1.57, -0.02, 0.05, 0.08, 0.05),
+       B("chrome", -0.94, 1.2, -0.445, 0.04, 0.9, 0.04),
+       B("sc-matte-black", -0.68, 1.56, -0.5, 0.56, 0.36, 0.05),
+       B("screen-dark", -0.68, 1.56, -0.472, 0.5, 0.3, 0.006, name="screen"),
    ],
    usage=L("拿好这一步要用的器械，在训练台前按顺序操作；每一步的前提不满足时，训练台会说明还缺什么。演练的是流程和安全要点，不是手感。",
            "Take the instrument the step needs and work through the steps in order at the station; when a step's conditions are not met, the station says what is missing. It rehearses the sequence and its safety points, not the feel of tissue."),
    interaction="device", prompt=L("E · 胸腔镜模拟训练", "E · Thoracoscopy training"), screen="thoracoscopy",
-   tags=["simulation", "thoracic", "mis", "trainer", "teaching"],
+   tags=["simulation", "thoracic", "mis", "trainer", "teaching"], manikin=TRAINER_BODY,
    behavior={"initial": "ready",
              "states": {
                  "ready": st("待训练", "ready"),
@@ -406,7 +413,7 @@ eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training st
                                         "Check the position: operated side up, the axillary roll under the chest wall below the armpit, the upper arm on its support, the table flexed to open the spaces, pressure points padded",
                                         "ready", "positioned"),
                  "isolate_lung": step("（模拟麻醉）侧卧位后再次用纤支镜确认双腔管位置，夹闭术侧管腔：单肺通气，术侧肺萎陷",
-                                      "(Simulated anaesthesia) confirm the double-lumen tube again with the bronchoscope now that the torso is on its side, clamp the operated side: one-lung ventilation, the lung comes down",
+                                      "(Simulated anaesthesia) confirm the double-lumen tube again with the bronchoscope now that the manikin is on its side, clamp the operated side: one-lung ventilation, the lung comes down",
                                       "positioned", "lung-down"),
                  "place_camera_port": step("建立观察孔：位置低而靠前，约在膈顶水平、肺门与膈神经的前方（1 cm）；沿下位肋骨上缘进入，手指探查后置入套管",
                                            "Camera port: low and anterior, at about the level of the top of the diaphragm, in front of the hilum and the phrenic nerve (1 cm); in over the upper border of the lower rib, a finger sweep, then the port",
