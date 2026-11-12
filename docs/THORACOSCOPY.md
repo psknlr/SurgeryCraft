@@ -22,10 +22,10 @@ displays on their booms, all on one camera; lung isolation and the airway trolle
 | Picture | thoracoscopy tower, two ceiling-boom endoscopy displays, the training station's own monitor: ClinicalCraft's `thoracoscopy` screen |
 | Instruments | 30° thoracoscope, thoracic port, lung forceps, right-angle dissector, clip applier, ultrasonic shears, cutter-stapler, specimen bag, chest tube — nine handheld types on their own sterile table |
 | Devices | lung-isolation cart (double-lumen tubes, bronchoscope), lateral-positioning aids, chest drainage unit |
-| Training station | a patient simulator in the lateral position — one of the world's own figures, drawn as its people are — with the three incisions of the standardized three-port anterior approach; 17 steps from the position check to the closure |
+| Training station | a patient simulator in the lateral position — one of the world's own figures, drawn as its people are — on which the three incisions of the standardized three-port anterior approach are made; 17 steps from the position check to the closure, and what is drawn of it follows each one: under a blanket, then draped and on one lung; the marks, the ports, the scope, the lung held, the specimen, the drain, the dressings; the monitor dark or showing the picture |
 | Rules | the tube confirmed before turning and again after; no port before the time-out and the lung down; no picture before the white balance; energy with smoke evacuation; the drain primed, connected, and on its seal before the lung is re-expanded |
 | Skill | `impf_thoracoscopy_setup`: tower on and white-balanced, smoke evacuator on, drainage unit primed |
-| Checked by | `tools/thoracoscopy.test.ts` (8 tests), the gate and navigation tests, `tools/skills.test.ts`, `tools/figure-fit.mts --check` — all run by `tools/check.sh` |
+| Checked by | `tools/thoracoscopy.test.ts` (10 tests), the gate and navigation tests, `tools/skills.test.ts`, `tools/figure-fit.mts --check`, the station's model against its looks (`assets inspect --type`) — all run by `tools/check.sh` |
 
 ## 中文概要
 
@@ -42,8 +42,12 @@ IMPF 外科医院新增了胸腔镜（VATS）肺手术所需的全部内容：**
   已置入的胸管后才能在直视下膨肺。
 * **模拟训练台**：台上是一位侧卧位的**模拟人**（左侧向上，折床、真空垫、头圈、腋下垫、托手板和托臂架），
   由 ClinicalCraft 用绘制世界里所有人物的同一套方法画出——同样的身体比例、面部、双手和手术帽，而不是模型
-  里的几块几何体；铺巾后露出侧胸壁，胸壁上是标准化三孔前入路的三个切口。17 个步骤，每一步都要手里拿着
-  对应的器械，前提不满足时会说明还缺什么。
+  里的几块几何体。17 个步骤，每一步都要手里拿着对应的器械，前提不满足时会说明还缺什么。
+* **台上的样子随步骤变化**：刚开始盖着毯子、双肺通气；核对体位后皮肤上画好腋线和切口位置；铺巾后术侧肺
+  萎陷（模拟人只有下侧胸廓起伏）；观察孔、胸腔镜、操作口、经后方操作孔牵开肺的肺钳、器械台弯盘里的标本、
+  经观察孔切口的胸管依次出现；膨肺后恢复双肺通气；关胸后贴好敷料、撤去手术巾、重新盖上毯子。只有胸腔镜
+  在胸腔内时，床头显示器才显示画面。无论是学员、同事还是智能体推进步骤，用的都是同一个操作，画面跟随训练台
+  在世界中的状态——以后由大模型驱动的团队成员或带教老师介入时也一样。
 * 参考用的手术画面、器械和手术室图片只用于建模和绘制时对照，**没有任何一张收入本仓库**。
 * 尚未包含胸腔镜手术的临床病例；病例中的卧位患者仍画成仰卧（侧卧位目前只画在训练台的模拟人身上）；
   训练台旁没有画出术者——操作的人是学员自己。详见[局限](#9-limits)。
@@ -156,8 +160,9 @@ In OR 5, with a patient on the table (the rules need one):
 ## 6. The training station
 
 ![The training station in the simulation OR](img/thoracoscopy-station.jpg)
-*The simulation OR: the training station with its own monitor, the tower behind it and the
-boom display above, all showing the camera's picture; in front, the Mayo stand.*
+*The simulation OR mid-operation (step 6, the lung being freed): the training station with its
+own monitor, the tower behind it and the boom display above, all showing the camera's picture;
+the instrument tray over the draped legs, the scrub nurse at the instrument table.*
 
 The station is a simulator, not a patient. On its table lies a full-body patient simulator on
 its right side (left side up), on a flexed top and a vacuum mattress: the head on a ring and a
@@ -166,20 +171,23 @@ board with the palm up, the upper arm straight forward over it on a padded suppo
 height — no further from the trunk than a right angle, the face and the airway free — the leg
 underneath bent at hip and knee with a pillow between the legs, an axillary roll under the
 chest wall below the armpit, the trunk bent sideways over the break of the table, the
-double-lumen tube taped at the mouth. Hips and legs are under a sheet. On the bare side of the
-chest, inside four towels, are the three axillary lines in a skin marker's violet and the three
-incisions of the standardized three-port anterior approach of Hansen and Petersen:
+double-lumen tube taped at the mouth. It is found under a blanket; once the position is checked,
+the three axillary lines and the sites of the incisions are marked on the skin in a skin marker's
+violet, and from the moment the lung is let down it is draped — four towels round the bare side
+of the chest, a sheet over the hips and the legs. The steps then make the three incisions of the
+standardized three-port anterior approach of Hansen and Petersen:
 
-* the **utility incision**, about 5 cm, in the 4th intercostal space just in front of
-  latissimus dorsi — a wound protector in it, the ribs not spread, a lung forceps through it;
 * the **camera port**, 1 cm, low and anterior at about the level of the top of the diaphragm —
   the 10 mm 30° thoracoscope stands in it on a holder;
-* the **third port**, 1.5 cm, at the same level further back, straight down from the scapula.
+* the **utility incision**, about 5 cm, in the 4th intercostal space just in front of
+  latissimus dorsi — a wound protector in it, the ribs not spread;
+* the **third port**, 1.5 cm, at the camera port's level further back, straight down from the
+  scapula — a lung grasper through it holds the lung out of the way.
 
 ![The field](img/thoracoscopy-station-field.jpg)
-*The field from the surgeon's side: both arms forward on their supports, the lung forceps
-through the utility incision, the scope in the low anterior port on its holder; the monitor
-shows what the scope sees.*
+*The field from the surgeon's side at step 6: both arms forward on their supports, the wound
+protector in the utility incision, the scope in the low anterior port on its holder and the
+grasper's rings beside it; the monitor shows what the scope sees, the tray stands over the legs.*
 
 ![The position](img/thoracoscopy-station-head.jpg)
 *From the anaesthetic end: the head on its ring with the double-lumen tube, the lower arm on
@@ -198,16 +206,17 @@ proportions, their skin, their face and their hands, and it changes with them wh
 design is refined. What the type says about it is data:
 
 ```json
-"manikin": { "posture": "lateral", "sideUp": "left", "draped": true, "flex": 9, "asleep": true,
+"manikin": { "posture": "lateral", "sideUp": "left", "cover": "blanket", "breathing": "both", "flex": 9, "asleep": true,
              "x": -0.27, "z": -0.13, "y": 0.93, "rot": 90,
              "appearance": { "skin": "#d9b596", "hair": "#2b2420", "hairStyle": "short", "build": "average", "presentation": "neutral" } }
 ```
 
-On its side, the left side up, undressed and draped for an operation on that side of the chest
-(the towels round the field and the sheet over the hips and the legs are the figure's own
-cloth), bent over a table flexed 9° each way, the eyes shut; a body that is neither a woman's
-nor a man's in particular, and nobody's: it has no name, no record, nothing to examine and
-nothing to say, and the aim finds the station, not the body.
+On its side, the left side up, undressed, bent over a table flexed 9° each way, the eyes shut,
+its chest moving with the ventilator; a body that is neither a woman's nor a man's in
+particular, and nobody's: it has no name, no record, nothing to examine and nothing to say, and
+the aim finds the station, not the body. The blanket, and later the towels round the field and
+the sheet over the hips and the legs, are the figure's own cloth: each step says which
+(below, "The station follows the operation").
 
 Everything else is the model, and it is **built round that body**: `tools/figure-fit.mts` asks
 the pinned ClinicalCraft's figure kit where the body's surface and joints are — the three sites
@@ -215,8 +224,12 @@ on the chest wall by height and by angle from the mid-axillary line, the axillar
 arms' elbows, wrists and hands, the side of the head, the mouth, the trunk's back and front —
 and writes them to `tools/blender/fit/sc-vats-trainer.json`; `tools/blender/thoracic_models.py`
 builds the table, the mattress moulded up against the trunk, the axillary roll, the ring and
-pillow, the arm board and the padded gutter, the tube at the mouth, the wound protector, the
-ports and the scope from those numbers. `tools/check.sh` runs the tool with `--check`: if the
+pillow, the arm board and the padded gutter and the tube at the mouth from those numbers — and,
+in layers, what the steps put on the chest: the marks, the ports, the wound protector, the
+scope, the grasper, the drain, the dressings (the tool also measures the skin either side of
+each site, the drain's way round the front of the chest, and how high the sheet lies over the
+legs, which the instrument tray clears). The body is measured draped: a step changes its cover
+and its breathing, never where it lies, and the tool refuses a look that would move it. `tools/check.sh` runs the tool with `--check`: if the
 figure kit's body ever changes shape, the file is stale, the check fails and the model is
 rebuilt — a support is never left under an arm that has moved.
 
@@ -255,6 +268,55 @@ to feel.
 The structures its steps name — fissure, vein, artery, bronchus, lymph nodes — are also the
 phase names of a public video dataset of thoracoscopic lung resection
 ([DATASETS.md](DATASETS.md)).
+
+### The station follows the operation
+
+![Four steps in the simulation OR](img/thoracoscopy-station-steps.jpg)
+*The same station from the same place at four of its steps: as it is found; the position
+checked and the skin marked; draped, one lung ventilated, the scope in and the monitor on; closed.*
+
+What is drawn of the station is its state's: each of its 18 states has a **look** (ClinicalCraft
+docs/FACILITIES.md "A look for each state") — the layers of its model that show, what its
+monitor shows, how the simulator is covered and how it breathes. The look decides nothing; the
+state does, and the world draws the station as the state is.
+
+![Every state of the station](img/thoracoscopy-storyboard.jpg)
+*Every state in order, as the world draws it (ClinicalCraft `scripts/preview/render.mjs models
+--states all`).*
+
+| states | the simulator | on the table | the monitor |
+|---|---|---|---|
+| ready | under a blanket, both lungs | — | dark |
+| positioned | under a blanket, both lungs | the axillary lines and the three sites marked | dark |
+| lung-down | draped, one lung (the chest wall that is up all but still) | the marks; the instrument tray over the legs | dark |
+| camera-port | draped, one lung | the camera port | dark |
+| explored | draped, one lung | the scope in the camera port, on its holder | the scope's picture |
+| working-ports | draped, one lung | the wound protector in the utility incision, the third port | the scope's picture |
+| mobilised → lobe-free (six steps) | draped, one lung | a lung grasper through the third port | the scope's picture |
+| specimen-out | draped, one lung | the lobe in its bag in the bowl on the tray | the scope's picture |
+| nodes | draped, one lung | the grasper again | the scope's picture |
+| leak-tested | draped, one lung | the grasper out | the scope's picture |
+| drained | draped, one lung | the chest tube through the camera port's incision, its tubing to the floor; the scope moved to the utility incision | the scope's picture |
+| re-expanded | draped, both lungs | as before | the scope's picture |
+| closed | under a blanket again, both lungs | a dressing on each wound, the drain | dark |
+
+**Who moves it on.** Whoever does a step does it by the station's operation, under the same
+rules — the instrument in the hand, the tower white-balanced, smoke evacuation running, the
+count done: the learner at the station, a colleague (the simulation OR's faculty nurse or
+anaesthetist, `tools/thoracoscopy.test.ts` has them check the position and let the lung down),
+an agent through `interact_object`. The world records the state, and every scene follows it
+(ClinicalCraft docs/EMBODIED.md §8.1). A model-driven member of the team or a facilitator
+stepping in later needs no path of their own: they act through the same operations, and the
+station shows what they did.
+
+**When the workflow changes.** The station is data: a step is a state and an operation in
+`tools/content-gen/thoracoscopy.py`, its look an entry of `TRAINER_LOOKS`, and anything new on
+the table a layer — a `with k.layer("…")` block in `tools/blender/thoracic_models.py` and a line
+of `TRAINER_LAYERS`. To change the sequence (another lobe's order, a uniportal approach, a step
+added), change those, then `tools/blender/build.py sc-vats-trainer` and `tools/content-gen/build.py`.
+The checks keep them in step: the generator refuses a look naming a layer the model does not
+have and a layer no step shows; `assets inspect --type` fails when the model lacks a layer a
+look names; `tools/thoracoscopy.test.ts` walks the sequence and checks the story of the looks.
 
 ## 7. The picture
 
@@ -304,15 +366,21 @@ Three things they show are named here but not built:
   back. In OR 5 the lateral position is a state of the positioning aids; it is seen as a body
   only on the training station, whose simulator the world draws on its side.
 * **Nobody is drawn operating.** The learner is the operator and sees their own hand; the scope
-  stands in its port on a holder and the forceps in the utility incision. The simulation OR's
-  faculty stand at their own places.
-* **The simulator is still.** It does not breathe, its lung does not come down, and nothing on
-  it changes with the steps: the station's state is read on its panel.
+  stands in its port on a holder and the grasper in the third port. The simulation OR's
+  faculty stand at their own places, and walk to the station only when asked to do a step.
+* **A step is drawn when it is done, not while it is done.** Each look appears at once with its
+  state: nothing is animated going in or coming out, the dissection inside the chest is not
+  drawn, and the six steps from freeing the lung to the free lobe look alike on the table (the
+  station's panel says which). A change of cover builds the simulator anew: a short pause.
+* **The breathing is a sign, not physiology.** Both lungs or one lung is the look of the state
+  — the simulator has no vital signs, and nothing measures the lung's collapse or its
+  re-expansion.
 * **No operative field for the chest.** The operable anatomy of Case 126
   ([CASE_126.md](CASE_126.md)) is ClinicalCraft's procedure model, whose instruments, gas and
   injuries are those of a laparoscopic cholecystectomy. A lung, a bronchus and a stapler in that
   model would be engine work.
-* **One frame on the monitors**, the same everywhere; it does not follow the tower's state.
+* **One frame on the monitors**, the same everywhere. The station's monitor is dark until the
+  scope is in, but the tower's and the booms' do not follow the tower's state.
 * **A traditional drainage unit.** The unit modelled is a three-chamber water-seal unit; the
   guideline cited below recommends digital drainage systems and no routine external suction.
 * **Not clinician-reviewed.** The texts follow the sources below; they are teaching content
@@ -329,15 +397,19 @@ tools/check.sh ../ClinicalCraft
   position check; the port after the time-out and the lung down, the scope after the white
   balance; energy with smoke evacuation and one firing per reload; the drain primed, connected
   and on its seal before re-expansion; the station where the table would stand; its simulator
-  the world's own figure (on its side, draped, asleep, inside the footprint) and no shape of
-  the model; the whole sequence on the station with every refusal along the way.
+  the world's own figure (on its side, asleep, inside the footprint, found under a blanket) and
+  no shape of the model; a look for each of its 18 states and the model's twelve layers exactly
+  the ones the looks show, the story of the looks (cover, breathing, monitor, what each step
+  puts on the table and takes away); a colleague moving it on the same way as the learner; the
+  whole sequence on the station with every refusal along the way, each state reached in turn.
 * `tools/figure-fit.mts --check` — the measurements the station's model was built from are
   what the pinned ClinicalCraft's figure kit says the body is.
 * `tools/orflow.test.ts` — every gate in OR 5 and the simulation OR is met only by its own
   room's device; `tools/navcheck.test.ts` — everything interactive can be reached.
 * `tools/skills.test.ts` — `impf_thoracoscopy_setup` in OR 5 and in the simulation OR, and
   never in the theatre next door.
-* every model against its catalog reference (licence, hash, size against the footprint).
+* every model against its catalog reference (licence, hash, size against the footprint; the
+  station's layers against its looks).
 
 ## Sources
 

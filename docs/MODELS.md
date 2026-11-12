@@ -71,10 +71,12 @@ their voxel parts by ClinicalCraft's `clinicalcraft_refine`:
 - each screen gets a dark housing for the live display;
 - foliage becomes rounded blobs.
 
-The pack's models total 179,638 triangles in 9.5 MB; none is over 9,000 triangles and the newer
-builders stay under 5,000 (ClinicalCraft docs/BLENDER.md "Triangles") — but for three of the
-thoracoscopy models, which carry more: the tower (7,348), the training station (6,164) and the
-lung-isolation cart (5,420).
+The pack's models total 184,496 triangles in 9.9 MB; none draws more than 9,000 triangles at a
+time and the newer builders stay under 5,000 (ClinicalCraft docs/BLENDER.md "Triangles") — but for
+three of the thoracoscopy models, which carry more: the tower (7,348), the lung-isolation cart
+(5,420) and the training station, whose model is in layers drawn step by step — 4,184 triangles
+always drawn and twelve layers (11,022 in the file, at most 8,334 drawn at once: with the drain in
+and the scope moved to the utility incision).
 
 One model is built round something that is not in it. The training station's patient simulator is
 drawn by the world with its own figure kit (the type's `manikin`: one of the figures the people of
@@ -83,6 +85,11 @@ ports and the scope — fitted to that body's measurements, which `tools/figure-
 the pinned ClinicalCraft and writes to `tools/blender/fit/sc-vats-trainer.json`
 ([THORACOSCOPY.md](THORACOSCOPY.md) "The body on the table"). After a change of the figure kit:
 `tools/figure-fit.mts`, then `tools/blender/build.py sc-vats-trainer`, then the content generator.
+It is also the one model in **layers** (ClinicalCraft docs/BLENDER.md "Layers"): the marks, the
+ports, the scope, the grasper, the tray and the specimen, the drain and the dressings are drawn in
+the steps whose look names them ([THORACOSCOPY.md](THORACOSCOPY.md) "The station follows the
+operation"), and the check of every model against its catalog reference fails when a layer a step
+shows is missing from the file.
 
 Where a colour is a code, the models keep it: every gas outlet, zone valve, flowmeter knob and cylinder
 carries its ISO 32 colour (white oxygen, blue nitrous oxide, black-and-white medical air, yellow vacuum,

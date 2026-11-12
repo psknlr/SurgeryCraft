@@ -8,9 +8,10 @@
 #      ClinicalCraft's world model;
 #   3. the project skills (.clinicalcraft/skills) and "pass me …" in an embodied session (tools/skills.test.ts);
 #   4. every equipment type has a model, and every model (content/assets/models) is checked against its catalog
-#      reference: `clinicalcraft assets inspect --type` (licence, use status, pinned hash, size against the footprint;
-#      docs/MODELS.md); the training station's model was built round the body the world draws on its table
-#      (tools/figure-fit.mts --check: the measurements on file are the pinned figure kit's);
+#      reference: `clinicalcraft assets inspect --type` (licence, use status, pinned hash, size against the footprint,
+#      and the training station's layers against the looks of its steps; docs/MODELS.md); the training station's model
+#      was built round the body the world draws on its table (tools/figure-fit.mts --check: the measurements on file
+#      are the pinned figure kit's);
 #   5. Case 126 (content/cases/cmcr-1654623): `cases validate --strict`, `cases verify` (reference path, utterance corpus),
 #      the anatomy asset (tools/blender/verify_anatomy_1654623.py), the case's fidelity, safety and variant scenarios
 #      (tools/case126.test.ts; docs/CASE_126.md) and, embodied in OR 7, the operating-site check and the WHO board
