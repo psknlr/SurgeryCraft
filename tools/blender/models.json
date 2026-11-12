@@ -1762,12 +1762,12 @@
   },
   "sc-vats-trainer": {
     "uri": "models/sc-vats-trainer.glb",
-    "sha256": "7a1817a03cfe69e91e95cce54b5eb93b213d8ce3701c5d6a957dc6038e538bbe",
+    "sha256": "824d404323df684251bca0e204a80800ab2d24319da4097e4c83d13a50e382f4",
     "scale": 1,
     "offset": [
-      -0.029,
+      0.0049,
       0.0,
-      0.0315
+      0.0328
     ],
     "license": "MIT",
     "attribution": {

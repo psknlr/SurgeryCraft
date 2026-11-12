@@ -11,7 +11,8 @@
  *   3. the drain: the unit primed before the tube goes in, connected only to a tube that is in, and the lung
  *      re-expanded only with the drain on its seal;
  *   4. the training station: every step in order, each with the instrument it needs in the hand, the camera
- *      white-balanced, smoke evacuation running, the drainage unit primed and the count done before closing.
+ *      white-balanced, smoke evacuation running, the drainage unit primed and the count done before closing — and
+ *      its patient simulator: the world's own figure on its side, not a shape of the model.
  *
  * The pack directory comes from $SURGERYCRAFT_CONTENT.
  */
@@ -243,6 +244,26 @@ describe("IMPF Surgery Hospital · the thoracoscopy training station (simulation
     expect(F.placements.some((p) => p.id === "l0-sim-or.table")).toBe(false);
     expect(F.patientSlots.some((s) => s.room === "l0-sim-or")).toBe(false);
     for (const id of ["vats-tower", "chest-drain", "smoke-evac", "count-board", "vats-port", "vats-scope", "vats-stapler"]) expect(F.placements.some((p) => p.id === `l0-sim-or.${id}`), id).toBe(true);
+  });
+
+  it("its patient simulator is the world's own figure, not a shape of the model: on its right side over the break of the flexed table, draped, asleep", () => {
+    const type = catalogs.flatMap((c) => c.equipment).find((e) => e.id === "sc-vats-trainer")!;
+    // one of the figures the people of the world are drawn as (ClinicalCraft docs/FACILITIES.md "A body drawn with equipment")
+    expect(type.manikin).toMatchObject({ posture: "lateral", sideUp: "left", draped: true, flex: 9, asleep: true, rot: 90 });
+    const m = type.manikin!;
+    // on the station: inside its footprint, on the mattress, the head towards the anaesthetic end (−x of the type)
+    expect(Math.abs(m.x)).toBeLessThan(type.footprint.w / 2);
+    expect(Math.abs(m.z)).toBeLessThan(type.footprint.d / 2);
+    expect(m.y).toBeGreaterThan(0.85);
+    expect(m.y).toBeLessThan(1.05);
+    // it is nobody: no particular woman or man, nothing of a case
+    expect(m.appearance?.presentation).toBe("neutral");
+    // and the model has no body of its own any more: no part in a manikin's material, no such material in the pack
+    expect(type.parts.some((p) => /manikin/.test(p.m))).toBe(false);
+    expect(catalogs.flatMap((c) => c.materials).some((mat) => /manikin/.test(mat.id))).toBe(false);
+    // the station is still a device of the world, and still no patient's place
+    expect(type.interaction.kind).toBe("device");
+    expect(type.screen).toBe("thoracoscopy");
   });
 
   it("the whole sequence in order — each step with its instrument in hand, the camera ready, smoke evacuated, the drain primed, the count done", async () => {

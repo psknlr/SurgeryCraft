@@ -9,7 +9,8 @@
 #   3. the project skills (.clinicalcraft/skills) and "pass me …" in an embodied session (tools/skills.test.ts);
 #   4. every equipment type has a model, and every model (content/assets/models) is checked against its catalog
 #      reference: `clinicalcraft assets inspect --type` (licence, use status, pinned hash, size against the footprint;
-#      docs/MODELS.md);
+#      docs/MODELS.md); the training station's model was built round the body the world draws on its table
+#      (tools/figure-fit.mts --check: the measurements on file are the pinned figure kit's);
 #   5. Case 126 (content/cases/cmcr-1654623): `cases validate --strict`, `cases verify` (reference path, utterance corpus),
 #      the anatomy asset (tools/blender/verify_anatomy_1654623.py), the case's fidelity, safety and variant scenarios
 #      (tools/case126.test.ts; docs/CASE_126.md) and, embodied in OR 7, the operating-site check and the WHO board
@@ -73,6 +74,11 @@ cp "$HERE/thoracoscopy.test.ts" "$VATS"
 echo "== project skills and the OR team in a session"
 cp "$HERE/skills.test.ts" "$SKILLS"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-skills.test.ts")
+
+echo "== the body of the training station as the pinned figure kit draws it (tools/figure-fit.mts --check)"
+# the station's model is built round a body the world draws (its `manikin`): the measurements it was built from
+# must be what this ClinicalCraft's figures are (docs/THORACOSCOPY.md "The body on the table")
+(cd "$CC" && npx tsx --conditions=source "$HERE/figure-fit.mts" "$ROOT" --check)
 
 echo "== equipment models against their catalog references"
 # every equipment type of the pack is drawn as a model (docs/MODELS.md): a new type gets one before it ships

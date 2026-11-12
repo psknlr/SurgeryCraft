@@ -62,7 +62,8 @@ console and the robotic angiography C-arm. 15 are in `tools/blender/thoracic_mod
 thoracoscopy types ([THORACOSCOPY.md](THORACOSCOPY.md)): the tower and the endoscopy display, the
 thoracoscope with its camera head, the port, lung forceps, right-angle dissector, clip applier,
 ultrasonic shears, cutter-stapler, specimen bag and chest tube, the drainage unit, the lung-isolation
-cart, the positioning aids and the training station with its torso. The other 48 are refined from
+cart, the positioning aids and the training station (the table and everything that holds a body on
+its side — the body itself is the world's own figure). The other 48 are refined from
 their voxel parts by ClinicalCraft's `clinicalcraft_refine`:
 - boxes get rounded edges, and thin bars and poles become cylinders;
 - small floor cubes become casters or glides;
@@ -70,10 +71,18 @@ their voxel parts by ClinicalCraft's `clinicalcraft_refine`:
 - each screen gets a dark housing for the live display;
 - foliage becomes rounded blobs.
 
-The pack's models total 180,866 triangles in 9.6 MB; none is over 9,000 triangles and the newer
+The pack's models total 179,638 triangles in 9.5 MB; none is over 9,000 triangles and the newer
 builders stay under 5,000 (ClinicalCraft docs/BLENDER.md "Triangles") — but for three of the
-thoracoscopy models, which carry more: the training station (7,392), the tower (7,348) and the
+thoracoscopy models, which carry more: the tower (7,348), the training station (6,164) and the
 lung-isolation cart (5,420).
+
+One model is built round something that is not in it. The training station's patient simulator is
+drawn by the world with its own figure kit (the type's `manikin`: one of the figures the people of
+the world are), so the station's model is the table, the mattress, the supports, the tube, the
+ports and the scope — fitted to that body's measurements, which `tools/figure-fit.mts` takes from
+the pinned ClinicalCraft and writes to `tools/blender/fit/sc-vats-trainer.json`
+([THORACOSCOPY.md](THORACOSCOPY.md) "The body on the table"). After a change of the figure kit:
+`tools/figure-fit.mts`, then `tools/blender/build.py sc-vats-trainer`, then the content generator.
 
 Where a colour is a code, the models keep it: every gas outlet, zone valve, flowmeter knob and cylinder
 carries its ISO 32 colour (white oxygen, blue nitrous oxide, black-and-white medical air, yellow vacuum,
