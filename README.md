@@ -18,8 +18,11 @@ the monitor is its own task and the WHO Sign In waits for its checks; an anaesth
 who released it); the agent is told what is still needed and that the operation is done on the field, never with
 a count or a device; colleagues correct unsafe induction, extubation and laterality teaching; and one end-to-end
 acceptance run (history to recovery handover, with a reload before the board's Time Out) keeps the record, the
-WHO board and the score in agreement. See [docs/CASE_126.md](docs/CASE_126.md) for
-what is implemented, its sources and the validation still owed.
+WHO board and the score in agreement. **2.6.0** answers the audit of 12 November 2026: the patient speaks only once
+woken and extubated — never because of the Sign Out or a room —; he is taken to a recovery bay, awake or intubated,
+and handed over there, in person, to the recovery nurse, the advance report from theatre a record of its own; and a
+bile leak from the gallbladder bed no longer counts against the clipping of the cystic duct and artery. See
+[docs/CASE_126.md](docs/CASE_126.md) for what is implemented, its sources and the validation still owed.
 
 **Anatomical variants and an operative benchmark.** The case has five counterfactual anatomies, each
 labelled authored, never the default:
@@ -65,7 +68,11 @@ Thoracoscopy needs the `thoracoscopy` screen ([psknlr/ClinicalCraft#25](https://
 and, for the training station's patient simulator, an equipment type's `manikin` — a body the world draws
 with its own figures ([psknlr/ClinicalCraft#26](https://github.com/psknlr/ClinicalCraft/pull/26)); for the
 station to follow the operation, a look for each state — a model's layers, a screen's picture, the manikin's
-cover and breathing ([psknlr/ClinicalCraft#27](https://github.com/psknlr/ClinicalCraft/pull/27)).
+cover and breathing ([psknlr/ClinicalCraft#27](https://github.com/psknlr/ClinicalCraft/pull/27)); and, for the
+fixes of the 2026-11-12 audit, the round pinned in `tools/clinicalcraft.rev`: what an operation works with by instance
+(`uses`, `itemState`, `link`, `linked`), presets and a run per trainee (`sets`, `runs`, `newRun`, `assessed`), one view
+for every screen (`screenNeeds`), a hand-over at a place, in person (`at`, `receivers`, `handover`), arrivals in the
+record, the room kind `recovery`, and injuries attributed to their structure.
 
 ## Thoracoscopy · 胸腔镜手术
 
@@ -86,7 +93,13 @@ simulation OR holds a **thoracoscopy training station**:
   proportions, the face and the hands of the people of the world), lying on its side, the
   station's supports built round it; what is drawn of it follows each step, whoever takes it —
   under a blanket, then draped and on one lung, the ports, the scope, the drain and the dressings
-  coming and going, the monitor on while the scope is in.
+  coming and going, the monitor on while the scope is in;
+- since the audit of 12 November 2026, each trainee's run is its own and the station keeps the theatre's rules:
+  one view (the tower off, its light on standby or the scope withdrawn — every screen dark, every step under vision
+  waits), a reload for each firing of that stapler, each step by the role it is assessed for (assessment or practice
+  on the instructor's console; a stand-in recorded as a role substitution), the drainage unit connected to that chest
+  tube, no first incision before the drill's own Time Out and count, the instructor's presets put back for the next
+  trainee, and a run record of who did what with which instrument.
 
 It has no thoracoscopic clinical case yet, and it is not clinician-reviewed. See
 **[docs/THORACOSCOPY.md](docs/THORACOSCOPY.md)**; what public surgical video datasets exist and
@@ -122,8 +135,8 @@ US and Japanese requirements for each topic ([docs/STANDARDS.md](docs/STANDARDS.
   checklist, count board with RF wand, smoke evacuator and generator, control panel,
   laparoscopy tower, lead shield, contrast injector, washer-disinfectors and sterilisers as
   state machines that gate each other ([docs/INTERACTIONS.md](docs/INTERACTIONS.md));
-* **real 3D equipment everywhere**: every piece of equipment in the hospital (918 placements: the
-  pack's 90 types and ClinicalCraft's built-in ones) is drawn as a model built in Blender from
+* **real 3D equipment everywhere**: every piece of equipment in the hospital (919 placements: the
+  pack's 93 types and ClinicalCraft's built-in ones) is drawn as a model built in Blender from
   its voxel parts: the instruments, anaesthesia workstation, pendants and surgical lights,
   robotic system, PACU beds, sterilisers, the exterior. Screens stay live and interactions are
   unchanged ([docs/MODELS.md](docs/MODELS.md)).
@@ -151,10 +164,10 @@ Design specification, room schedule and screenshots:
 
 ```
 content/
-  catalogs/surgerycraft-or.json      90 equipment types (33 with behaviours), 37 materials (bilingual)
+  catalogs/surgerycraft-or.json      93 equipment types (36 with behaviours), 37 materials (bilingual)
   templates/sc-*.json                16 room templates (ORs, scrub, set-up, PACU, pre-op, changing, …)
   facilities/impf-surgery-hospital.json   IMPF Surgery Hospital
-  assets/models/sc-*.glb             90 equipment models (Blender; MIT), served at /local-assets/models/
+  assets/models/sc-*.glb             91 equipment models (Blender; MIT), served at /local-assets/models/
 .clinicalcraft/skills/impf-*.json    4 workflow skills (time-out, closing counts, CSSD cycle, thoracoscopy set-up)
 docs/SURGICAL_FLOOR.md               design specification · docs/img/ figures
 docs/STANDARDS.md                    SG / EU / US / JP standards matrix and the targets chosen
@@ -167,6 +180,10 @@ tools/check.sh                       validate the pack and run the tests below a
 tools/navcheck.test.ts               navigation & zoning (run by check.sh)
 tools/orflow.test.ts                 the OR workflows on the world runtime (run by check.sh)
 tools/thoracoscopy.test.ts           thoracoscopy in OR 5 and on the training station (run by check.sh)
+tools/thoracoscopy-release.test.ts   the station's release scenario through the player's and an agent's interface (run by check.sh)
+tools/case126*.test.ts               Case 126: fidelity, theatre, team, count, studies, release, staff, final, characters,
+                                     the release acceptance run and the recovery (table to recovery bed) (run by check.sh)
+tools/regressions.tsv                every fixed interaction failure and the test that keeps it fixed (check-regressions.py)
 tools/skills.test.ts                 the skills and "pass me" in a session (run by check.sh)
 tools/content-gen/                   Python generator that writes content/ (python3 build.py; exterior.py: the exterior; thoracoscopy.py)
 tools/blender/                       Blender builds of the models (build.py, models.py, thoracic_models.py, models.json, preview.py)

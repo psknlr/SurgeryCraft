@@ -17,7 +17,9 @@ Imported at the end of catalog.py, after interactions.py (it appends to catalog.
 from common import B, L
 import catalog
 from catalog import eq, casters
-from interactions import AT_TABLE, IN_HAND, SCRUB, SCRUBBED, SURGEON, TEAM, instrument, near, op, st, thin
+import copy
+
+from interactions import AT_TABLE, CIRCULATOR, IN_HAND, LIFE, SCRUB, SCRUBBED, SURGEON, TEAM, instrument, near, op, st, thin
 
 ANAESTHETIST = ["attending", "clinician"]
 
@@ -36,9 +38,28 @@ POSITIONING = "sc-lateral-positioning-set"
 DRAINAGE = "sc-chest-drainage-unit"
 TRAINER = "sc-vats-trainer"
 
+SCOPE = "sc-thoracoscope"
+CHEST_TUBE = "sc-chest-tube"
+STAPLER = "sc-endo-stapler"
+CONSOLE = "sc-vats-console"
+TRAINING_CHECKLIST = "sc-training-checklist"
+TRAINING_COUNT = "sc-training-count-board"
+
 #: anaesthesia's work on the airway is done at the patient's head (the cart only holds what it takes)
 AT_HEAD = [{"patientWithin": 2.5}]
+#: the camera system ready for the scope: on, lit, white-balanced and focused
 SCOPE_READY = near(TOWER, "balanced", 7)
+
+
+def view(within):
+    """The thoracoscope's picture: the tower on, lit and white-balanced, and the scope in the chest. One rule for every
+    display of the picture and every step done under vision (ClinicalCraft `screenNeeds`, docs/THORACOSCOPY.md "One
+    view"): the tower switched off, its light on standby or the scope withdrawn, every screen is dark and every step
+    under vision is refused until the view is back."""
+    return [near(TOWER, "balanced", within), near(SCOPE, "in-chest", within)]
+
+
+VIEW = view(7)
 LUNG_DOWN = near(ISOLATION, "one-lung", 8)
 SMOKE = near("sc-smoke-evacuator", "running", 6)
 TIMED_OUT = near("sc-who-checklist", ["timed-out", "signed-out"], 7)
@@ -79,15 +100,23 @@ eq(TOWER, L("4K 胸腔镜系统", "4K thoracoscopy tower"), "surgery",
            "Connect the light cable and the camera, white-balance on a white swab and focus, and warm the tip in the flask before it goes in; when the picture fogs or is smeared, take the scope out and clean it — never work blind in the chest."),
    caps=["endoscopic-camera", "light-source"], interaction="device", prompt=L("E · 胸腔镜系统", "E · Thoracoscopy tower"),
    screen="thoracoscopy", portable="cart", tags=["or", "mis", "thoracic", "endoscopy", "display"],
-   # switched off the tower gives no picture; on (self-test passed) its camera and light work (the laparoscopy tower's rule)
+   # its monitor shows the chest only with the camera lit and white-balanced and the scope in it (`view`)
+   screen_needs=[{"state": "balanced"}, near(SCOPE, "in-chest", 7)],
+   # switched off the tower gives no picture; on (self-test passed) its camera and light work (the laparoscopy tower's
+   # rule); with the light source on standby the camera has nothing to see by
    behavior={"initial": "off",
              "states": {"off": st("关闭", "off", supplies=[]),
                         "on": st("开机自检完成", "on (self-test passed)", supplies=["endoscopic-camera", "light-source"]),
-                        "balanced": st("已白平衡、调焦，镜头已温", "white-balanced and focused, the scope warm", supplies=["endoscopic-camera", "light-source"])},
+                        "balanced": st("已白平衡、调焦，镜头已温，光源开", "white-balanced and focused, the scope warm, the light on", supplies=["endoscopic-camera", "light-source"]),
+                        "light-off": st("光源待机（没有照明）", "light source on standby (no illumination)", supplies=["endoscopic-camera"])},
              "operations": {
                  "power_on": op("开机自检", "Power on and self-test", ["off"], "on", [], TEAM, 30),
-                 "white_balance": op("白平衡、调焦，镜头入保温杯", "White balance, focus, the scope into the warming flask", ["on"], "balanced", [], TEAM, 20),
-                 "power_off": op("关机", "Power off", ["on", "balanced"], "off", [], TEAM, 5),
+                 # on a white swab with the scope out of the chest
+                 "white_balance": op("白平衡、调焦，镜头入保温杯（镜头在胸腔外）", "White balance and focus on a white swab, the scope into the warming flask (the scope out of the chest)",
+                                     ["on"], "balanced", [{"not": near(SCOPE, "in-chest", 7)}], TEAM, 20),
+                 "light_standby": op("光源待机", "Light source to standby", ["balanced"], "light-off", [], TEAM, 5),
+                 "light_on": op("开光源", "Light source on", ["light-off"], "balanced", [], TEAM, 5),
+                 "power_off": op("关机", "Power off", ["on", "balanced", "light-off"], "off", [], TEAM, 5),
              }})
 
 eq("sc-scope-display", L("吊臂式内镜显示器", "Ceiling-boom endoscopy display"), "surgery",
@@ -104,7 +133,7 @@ eq("sc-scope-display", L("吊臂式内镜显示器", "Ceiling-boom endoscopy dis
        B("screen-dark", 0, 2.1, 0.166, 1.3, 0.72, 0.006, name="screen"),
        B("led-green", 0.6, 1.72, 0.165, 0.04, 0.02, 0.006),
    ],
-   solid=False, screen="thoracoscopy", tags=["or", "ceiling", "display", "integrated-or", "thoracic"])
+   solid=False, screen="thoracoscopy", screen_needs=view(10), tags=["or", "ceiling", "display", "integrated-or", "thoracic"])
 
 # ------------------------------------------------------------------------------------------------ lung isolation
 eq(ISOLATION, L("肺隔离用具车（双腔支气管导管与纤维支气管镜）", "Lung-isolation cart (double-lumen tubes & flexible bronchoscope)"), "resuscitation",
@@ -148,8 +177,11 @@ eq(ISOLATION, L("肺隔离用具车（双腔支气管导管与纤维支气管镜
                  "isolate": op("再次确认导管位置，夹闭术侧管腔开始单肺通气", "Confirm the tube again, then clamp the operated side: one-lung ventilation",
                                ["confirmed"], "one-lung", [*AT_HEAD, near(POSITIONING, "checked", 8)], ANAESTHETIST, 90),
                  # the lung comes up again with the drain in and on its seal, watched through the scope
+                 # (the drainage unit on its seal and connected, by instance, to the chest tube that is in)
                  "re_expand": op("直视下缓慢膨肺，恢复双肺通气", "Re-expand the lung slowly under vision: both lungs again",
-                                 ["one-lung"], "re-expanded", [*AT_HEAD, near(DRAINAGE, ["water-seal", "suction"], 8)], ANAESTHETIST, 60),
+                                 ["one-lung"], "re-expanded",
+                                 [*AT_HEAD, {"nearbyState": {"type": DRAINAGE, "state": ["water-seal", "suction"], "within": 8, "linked": {"type": CHEST_TUBE, "state": "placed"}}}],
+                                 ANAESTHETIST, 60),
                  "reset": op("下一台手术：整理用具车", "Next case: restock the cart", ["re-expanded", "tube-placed", "confirmed"], "two-lung", [], ANAESTHETIST + ["nurse"], 30),
              }})
 
@@ -218,11 +250,16 @@ eq(DRAINAGE, L("胸腔闭式引流装置（三腔，水封）", "Chest drainage 
                         "used": st("已使用（待处置）", "used (for disposal)", False)},
              "operations": {
                  "prime": op("开包，水封腔注水到刻度线（一般为 2 cm）", "Open the pack and fill the water seal to its line (2 cm in most units)", ["sealed"], "primed", [], TEAM, 60),
-                 "connect": op("接胸管，装置置于胸腔水平以下", "Connect the chest tube, the unit below the level of the chest", ["primed"], "water-seal",
-                               [near("sc-chest-tube", "placed", 4)], TEAM, 30),
+                 # connected to that tube, by instance: the unit and the tube each know the other (ClinicalCraft `link`)
+                 "connect": {**op("接胸管，装置置于胸腔水平以下", "Connect the chest tube, the unit below the level of the chest", ["primed"], "water-seal", [], TEAM, 30),
+                             "link": {"type": CHEST_TUBE, "state": "placed", "within": 4}},
                  "apply_suction": op("接负压吸引（按医嘱）", "Apply suction (as prescribed)", ["water-seal"], "suction", [], TEAM, 15),
                  "to_water_seal": op("停负压，改水封引流", "Stop suction: back to water seal", ["suction"], "water-seal", [], TEAM, 10),
-                 "dispose": op("拔管或更换后：按医疗废物处置", "After the drain is out or the unit changed: dispose of it as clinical waste", ["water-seal", "suction", "primed"], "used", [], TEAM, 30),
+                 # clamped and taken off the tube: still primed, connected to nothing
+                 "disconnect": {**op("夹闭胸管后断开引流装置", "Clamp the tube and disconnect the unit", ["water-seal", "suction"], "primed", [], TEAM, 15),
+                                "unlink": CHEST_TUBE},
+                 "dispose": {**op("拔管或更换后：按医疗废物处置", "After the drain is out or the unit changed: dispose of it as clinical waste", ["water-seal", "suction", "primed"], "used", [], TEAM, 30),
+                             "unlink": True},
              }})
 
 # ------------------------------------------------------------------------------------------------ instruments
@@ -234,8 +271,13 @@ instrument(
     (0.48, 0.06, 0.04),
     [thin("chrome", 0.07, 0.018, 0, 0.34, 0.012, 0.012), thin("steel", -0.12, 0.018, 0, 0.05, 0.03, 0.03),
      thin("coal", -0.19, 0.025, 0, 0.1, 0.05, 0.045), thin("steel", -0.1, 0.018, 0.03, 0.014, 0.014, 0.035)],
-    {"insert": op("入镜探查", "Insert the scope and look round", ["sterile", "in-use"], "in-use",
-                  [IN_HAND, *SCRUBBED, AT_TABLE, SCOPE_READY], SCRUB, 30)})
+    {"insert": op("入镜探查", "Insert the scope and look round", ["sterile", "in-use"], "in-chest",
+                  [IN_HAND, *SCRUBBED, AT_TABLE, SCOPE_READY], SCRUB, 30),
+     # out to clean a fogged or smeared lens (or for the white balance): no picture until it is back in
+     "withdraw": op("退镜（擦拭镜头）", "Withdraw the scope (to clean the lens)", ["in-chest"], "in-use", [], TEAM, 10)})
+# the scope in the chest is a state of its own: what every picture of it needs (`view`)
+_scope = next(e for e in catalog.EQUIPMENT if e["id"] == SCOPE)
+_scope["behavior"]["states"] = {**LIFE, "in-chest": st("在胸腔内（观察孔中，扶镜或架在镜架上）", "in the chest (in the camera port, held or on its holder)")}
 
 instrument(
     "sc-thoracoport", L("胸腔穿刺套管（10.5 mm，钝头）", "Thoracic port (10.5 mm, blunt)"),
@@ -341,12 +383,104 @@ eq("sc-chest-tube", L("胸腔引流管（28 Fr）", "Chest tube (28 Fr)"), "surg
                              ["sterile"], "placed", [IN_HAND, *SCRUBBED, AT_TABLE, near(DRAINAGE, ["primed", "water-seal", "suction"], 5)], SURGEON, 90),
              }})
 
+# ------------------------------------------------------------------------------------------------ the training room
+# The simulation OR's checklist and count board are the drill's own (an isolated skills drill: no patient's record is
+# written there — the theatre boards are the case record's and belong to the patient's room): the theatre boards'
+# state machines, physical, drawn with the same models.
+def _training(of, id, name, prompt):
+    e = copy.deepcopy(next(x for x in catalog.EQUIPMENT if x["id"] == of))
+    e["id"], e["name"], e["_model_of"] = id, name, of
+    e["interaction"] = {**e["interaction"], "prompt": prompt}
+    b = e["behavior"]
+    b.pop("derived", None)
+    for state in b["states"].values():
+        state.pop("when", None)
+    for o in b["operations"].values():
+        o.pop("clinical", None)
+    e["tags"] = sorted(set(e["tags"]) | {"simulation", "teaching"})
+    e.pop("model", None)
+    catalog.EQUIPMENT.append(e)
+    return e
+
+
+_training("sc-who-checklist", TRAINING_CHECKLIST, L("WHO 手术安全核查板（训练用）", "WHO Surgical Safety Checklist (training)"), L("E · 核查（训练）", "E · Checklist (training)"))
+# the training count board: the count before the first incision, then before the cavity is closed and before the skin
+_count = _training("sc-count-board", TRAINING_COUNT, L("手术清点板（训练用）", "Surgical count board (training)"), L("E · 清点（训练）", "E · Count (training)"))
+# (no RF wand in the drill: its final count is the count aloud, settled without a scan)
+_count["behavior"]["operations"]["final_count"]["requires"] = [{"actorWithin": 2.5}]
+_count["behavior"]["operations"]["final_count"]["name"] = L("最终清点（训练台没有 RF 扫描）", "Final count (no RF scan in the drill)")
+_count["behavior"]["operations"]["reset"]["from"] = ["baseline", "cavity", "closing", "reconciled", "discrepancy", "unresolved", "excluded"]
+# the training checklist's Time Out needs the training count board's baseline; its Sign Out, the final count settled
+# (as the theatre's does)
+_who = next(x for x in catalog.EQUIPMENT if x["id"] == TRAINING_CHECKLIST)["behavior"]["operations"]
+_who["time_out"]["requires"] = [{"actorWithin": 3}, near(TRAINING_COUNT, ["baseline", "cavity", "closing", "reconciled"], 8)]
+_who["sign_out"]["requires"] = [{"actorWithin": 3}, near(TRAINING_COUNT, ["reconciled", "excluded"], 8)]
+_who["reset"]["from"] = ["signed-in", "timed-out", "signed-out"]
+
+# The instructor's console: assessment (the default) — each step only by the role it is assessed for — or practice,
+# where a colleague may take a step for the trainee and the run records it as a role substitution.
+eq(CONSOLE, L("胸腔镜训练台教学控制台", "Thoracoscopy training: instructor's console"), "teaching",
+   L("训练台旁的教学控制台：考核模式下每一步只能由考核的角色完成（术者的步骤由术者、模拟麻醉由麻醉医生）；练习模式下可以由同伴代做，但记录为角色替代、不计入考核。",
+     "The instructor's console beside the training station: in assessment mode each step is taken only by the role it is assessed for (the surgeon's steps by the surgeon, the simulated anaesthesia by the anaesthetist); in practice mode a colleague may take a step for the trainee, recorded as a role substitution and not assessed."),
+   (0.5, 0.4, 1.2),
+   [B("plastic", 0, 0.45, 0, 0.44, 0.9, 0.34), B("sc-matte-black", 0, 1.02, 0.02, 0.46, 0.3, 0.06),
+    B("screen-dark", 0, 1.02, 0.054, 0.4, 0.24, 0.006, name="screen"), B("led-green", 0.16, 0.84, 0.172, 0.04, 0.02, 0.006)],
+   interaction="device", solid=False, prompt=L("E · 教学控制台", "E · Instructor's console"), screen="text", tags=["simulation", "teaching", "thoracic"],
+   behavior={"initial": "assessment",
+             "states": {"assessment": st("考核模式（每一步由考核的角色完成）", "assessment (each step by the role it is assessed for)"),
+                        "practice": st("练习模式（可由同伴代做，记为角色替代）", "practice (a colleague may stand in; recorded as a role substitution)")},
+             "operations": {
+                 "set_practice": op("切换为练习模式", "Switch to practice mode", ["assessment"], "practice", [], ["attending", "nurse"], 5),
+                 "set_assessment": op("切换为考核模式", "Switch to assessment mode", ["practice"], "assessment", [], ["attending", "nurse"], 5),
+             }})
+
 # ------------------------------------------------------------------------------------------------ the simulator
 HOLDING = lambda type_id: {"actorHolding": type_id}  # noqa: E731
+#: what a simulated-anaesthesia step of the station is assessed for (the airway: the anaesthetist)
+ANAESTHESIA = ["attending", "clinician"]
+#: the instrument a step works with, by instance (ClinicalCraft `uses`): its own state moves as at the table in OR 5
+USED = {
+    "sc-thoracoport": {"item": "sc-thoracoport", "from": ["sterile", "in-use"], "to": "in-use"},
+    SCOPE: {"item": SCOPE, "from": ["sterile", "in-use"], "to": "in-chest"},
+    "sc-ultrasonic-shears": {"item": "sc-ultrasonic-shears", "from": ["sterile", "in-use"], "to": "in-use"},
+    "sc-endo-dissector": {"item": "sc-endo-dissector", "from": ["sterile", "in-use"], "to": "in-use"},
+    # one firing, one reload: a stapler with no reload in, or a spent one, divides nothing
+    STAPLER: {"item": STAPLER, "from": ["loaded"], "to": "fired"},
+    "sc-clip-applier": {"item": "sc-clip-applier", "from": ["sterile", "in-use"], "to": "in-use"},
+    "sc-specimen-bag": {"item": "sc-specimen-bag", "from": ["sterile"], "to": "used"},
+    # the tube stays in the chest, connected to the station: the drainage unit connects to that one
+    CHEST_TUBE: {"item": CHEST_TUBE, "from": ["sterile"], "to": "placed", "link": True},
+}
+#: the instructor's presets: what each run starts with (the station's reset puts them back for the next trainee; the
+#: room's placements start in them) — docs/THORACOSCOPY.md "Each trainee's run"
+DRILL_PRESETS = [
+    (TOWER, "balanced"),            # the camera system set up: on, white-balanced, the scope warming
+    (SCOPE, "sterile"), ("sc-thoracoport", "sterile"), ("sc-lung-forceps", "sterile"), ("sc-endo-dissector", "sterile"),
+    ("sc-clip-applier", "sterile"), ("sc-ultrasonic-shears", "sterile"),
+    (STAPLER, "sterile"),           # no reload in: the trainee loads one for each firing
+    ("sc-specimen-bag", "sterile"), (CHEST_TUBE, "sterile"),
+    (DRAINAGE, "sealed"),           # in its pack: the trainee primes it and connects it to the tube
+    ("sc-smoke-evacuator", "off"),
+    (TRAINING_CHECKLIST, "pending"),  # the Sign In and the Time Out are the trainee's, with the team
+    (TRAINING_COUNT, "not-started"),  # the count before the first incision is the trainee's
+]
+#: the station's states with the scope in the chest (from the look round to the lung re-expanded)
+VISION_STATES = ["explored", "working-ports", "mobilised", "hilum", "vein-divided", "artery-divided", "bronchus-divided", "lobe-free",
+                 "specimen-out", "nodes", "leak-tested", "drained", "re-expanded"]
+#: the devices whose operations go into each trainee's run with the station's own
+DRILL_DEVICES = sorted({type_id for type_id, _ in DRILL_PRESETS})
 
 
-def step(zh, en, frm, to, requires=(), seconds=60):
-    return op(zh, en, [frm], to, requires, TEAM, seconds)
+def step(zh, en, frm, to, requires=(), seconds=60, assessed=None, uses=None):
+    """A step of the station: offered to the team, taken in assessment mode only by the role it is assessed for (in
+    practice mode another role may stand in: a labelled substitution); `uses`: the instruments it works with."""
+    o = op(zh, en, [frm], to, list(requires), TEAM, seconds)
+    if assessed:
+        o["requires"] = [{"any": [{"role": list(assessed)}, near(CONSOLE, "practice", 12)]}, *o.get("requires", [])]
+        o["assessed"] = list(assessed)
+    if uses:
+        o["uses"] = [USED[u] for u in uses]
+    return o
 
 
 # The body on the station's table is the world's own figure (ClinicalCraft docs/FACILITIES.md "A body drawn with
@@ -446,7 +580,11 @@ eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training st
            "Take the instrument the step needs and work through the steps in order at the station; when a step's conditions are not met, the station says what is missing. It rehearses the sequence and its safety points, not the feel of tissue."),
    interaction="device", prompt=L("E · 胸腔镜模拟训练", "E · Thoracoscopy training"), screen="thoracoscopy",
    tags=["simulation", "thoracic", "mis", "trainer", "teaching"], manikin=TRAINER_BODY,
+   # its monitor shows the chest only while the scope gives a picture (`view`); the states' looks say when it may
+   screen_needs=view(7),
    behavior={"initial": "ready",
+             # each trainee's run is its own: the station's steps and the drill's devices, in order, from reset to reset
+             "runs": {"with": DRILL_DEVICES, "within": 12},
              "states": {state: {**spec, "look": TRAINER_LOOKS[state]} for state, spec in {
                  "ready": st("待训练", "ready"),
                  "positioned": st("体位已核对（侧卧、腋下垫、托臂、折床）", "position checked (lateral, axillary roll, arm support, table flexed)"),
@@ -473,43 +611,60 @@ eq(TRAINER, L("胸腔镜手术模拟训练台", "Thoracoscopy (VATS) training st
                                         "ready", "positioned"),
                  "isolate_lung": step("（模拟麻醉）侧卧位后再次用纤支镜确认双腔管位置，夹闭术侧管腔：单肺通气，术侧肺萎陷",
                                       "(Simulated anaesthesia) confirm the double-lumen tube again with the bronchoscope now that the manikin is on its side, clamp the operated side: one-lung ventilation, the lung comes down",
-                                      "positioned", "lung-down"),
-                 "place_camera_port": step("建立观察孔：位置低而靠前，约在膈顶水平、肺门与膈神经的前方（1 cm）；沿下位肋骨上缘进入，手指探查后置入套管",
-                                           "Camera port: low and anterior, at about the level of the top of the diaphragm, in front of the hilum and the phrenic nerve (1 cm); in over the upper border of the lower rib, a finger sweep, then the port",
-                                           "lung-down", "camera-port", [HOLDING("sc-thoracoport")]),
+                                      "positioned", "lung-down", assessed=ANAESTHESIA),
+                 # the first incision: after the team's Time Out, which needs the count before incision (a count entered
+                 # after it is never the baseline: the incision waits for it)
+                 "place_camera_port": step("建立观察孔：位置低而靠前，约在膈顶水平、肺门与膈神经的前方（1 cm）；沿下位肋骨上缘进入，手指探查后置入套管（需先完成切皮前清点与 Time out）",
+                                           "Camera port: low and anterior, at about the level of the top of the diaphragm, in front of the hilum and the phrenic nerve (1 cm); in over the upper border of the lower rib, a finger sweep, then the port (after the count before incision and the Time Out)",
+                                           "lung-down", "camera-port",
+                                           [near(TRAINING_CHECKLIST, ["timed-out", "signed-out"], 12), near(TRAINING_COUNT, ["baseline", "cavity", "closing", "reconciled"], 12)],
+                                           assessed=SURGEON, uses=["sc-thoracoport"]),
                  "explore": step("入镜探查：胸膜、肺、膈肌和纵隔，有无粘连、积液和未预料的病变",
                                  "Scope in and look round: pleura, lung, diaphragm and mediastinum — adhesions, fluid, anything unexpected",
-                                 "camera-port", "explored", [HOLDING("sc-thoracoscope"), SCOPE_READY], 90),
+                                 "camera-port", "explored", [SCOPE_READY], 90, assessed=SURGEON, uses=[SCOPE]),
+                 # the scope back in through its port (withdrawn to clean the lens, or for a white balance after the
+                 # tower lost power): the step the drill is at stays — only the view comes back
+                 "reinsert_scope": {**op("经观察孔重新入镜", "Put the scope back in through the camera port", VISION_STATES, None, [SCOPE_READY], TEAM, 20),
+                                    "uses": [USED[SCOPE]]},
+                 # every step from here to the lung re-expanded is done under vision: the view must be there (`view`)
                  "place_working_ports": step("镜下直视建立操作口：第 4 肋间、背阔肌前缘之前约 5 cm 的操作口（放切口保护套，不撑开肋骨），和与观察孔同一水平、更靠后（肩胛骨正下方）的 1.5 cm 操作孔；从胸腔内看着器械尖端穿入",
                                              "Working incisions under vision: the utility incision of about 5 cm in the 4th space just in front of latissimus dorsi (a wound protector, no rib spreading) and the 1.5 cm port at the camera port's level further back, straight down from the scapula — watch each tip come through from inside",
-                                             "explored", "working-ports", [], 120),
+                                             "explored", "working-ports", VIEW, 120, assessed=SURGEON),
                  "free_adhesions": step("超声刀松解粘连、打开下肺韧带", "Free the adhesions and divide the pulmonary ligament with the ultrasonic shears",
-                                        "working-ports", "mobilised", [HOLDING("sc-ultrasonic-shears"), SMOKE], 180),
+                                        "working-ports", "mobilised", [*VIEW, SMOKE], 180, assessed=SURGEON, uses=["sc-ultrasonic-shears"]),
                  "dissect_hilum": step("打开纵隔胸膜，解剖肺门：直角钳游离静脉、动脉分支和支气管，逐一套带",
                                        "Open the mediastinal pleura and dissect the hilum: free the vein, the arterial branches and the bronchus with the right-angle dissector and pass a loop round each",
-                                       "mobilised", "hilum", [HOLDING("sc-endo-dissector")], 300),
+                                       "mobilised", "hilum", VIEW, 300, assessed=SURGEON, uses=["sc-endo-dissector"]),
                  "divide_vein": step("切断下肺静脉：血管钉仓，钳口内只有静脉、尖端完全穿出后击发", "Divide the inferior pulmonary vein: a vascular reload; fire only with the vein alone in the jaws and the tip clear beyond it",
-                                     "hilum", "vein-divided", [HOLDING("sc-endo-stapler")], 120),
+                                     "hilum", "vein-divided", VIEW, 120, assessed=SURGEON, uses=[STAPLER]),
                  "divide_artery": step("切断肺动脉分支：血管钉仓；细小分支用结扎夹", "Divide the arterial branches: vascular reloads; clips for the small ones",
-                                       "vein-divided", "artery-divided", [{"any": [HOLDING("sc-endo-stapler"), HOLDING("sc-clip-applier")]}], 180),
+                                       "vein-divided", "artery-divided", VIEW, 180, assessed=SURGEON, uses=[STAPLER, "sc-clip-applier"]),
                  "divide_bronchus": step("切断下叶支气管：缝合器夹闭在预定位置后，先请麻醉医生膨肺，确认余肺通气，再击发",
                                          "Divide the lower lobe bronchus: close the stapler where it is to fire, have the anaesthetist inflate — the lobe that stays must ventilate — then fire",
-                                         "artery-divided", "bronchus-divided", [HOLDING("sc-endo-stapler")], 120),
+                                         "artery-divided", "bronchus-divided", VIEW, 120, assessed=SURGEON, uses=[STAPLER]),
                  "complete_fissure": step("切割缝合器切开叶间裂，肺叶游离", "Complete the fissure with the stapler: the lobe is free",
-                                          "bronchus-divided", "lobe-free", [HOLDING("sc-endo-stapler")], 120),
+                                          "bronchus-divided", "lobe-free", VIEW, 120, assessed=SURGEON, uses=[STAPLER]),
                  "retrieve_specimen": step("标本装袋，经操作口取出", "Bag the specimen and bring it out through the utility incision",
-                                           "lobe-free", "specimen-out", [HOLDING("sc-specimen-bag")], 90),
+                                           "lobe-free", "specimen-out", VIEW, 90, assessed=SURGEON, uses=["sc-specimen-bag"]),
                  "take_nodes": step("超声刀清扫肺门与纵隔淋巴结", "Take the hilar and mediastinal lymph nodes with the ultrasonic shears",
-                                    "specimen-out", "nodes", [HOLDING("sc-ultrasonic-shears"), SMOKE], 300),
+                                    "specimen-out", "nodes", [*VIEW, SMOKE], 300, assessed=SURGEON, uses=["sc-ultrasonic-shears"]),
                  "leak_test": step("注温生理盐水浸没支气管残端，请麻醉医生膨肺并维持 20–30 cmH₂O：无气泡", "Cover the bronchial stump with warm saline and have the anaesthetist inflate the lung to a sustained 20–30 cmH₂O: no bubbles",
-                                   "nodes", "leak-tested", [], 90),
+                                   "nodes", "leak-tested", VIEW, 90, assessed=SURGEON),
+                 # one tube through the camera port, watched from the utility incision; the unit primed beside the station
                  "place_drain": step("经观察孔置入一根胸管，镜下确认位置", "One chest tube through the camera port, its position confirmed under vision",
-                                     "leak-tested", "drained", [HOLDING("sc-chest-tube"), near(DRAINAGE, ["primed", "water-seal", "suction"], 6)], 90),
-                 "re_expand": step("（模拟麻醉）直视下缓慢膨肺，确认各肺叶复张，恢复双肺通气", "(Simulated anaesthesia) re-expand the lung slowly under vision, see every lobe come up: both lungs ventilated again",
-                                   "drained", "re-expanded"),
-                 "close": step("逐层关闭切口", "Close in layers",
-                               "re-expanded", "closed", [near("sc-count-board", ["cavity", "closing", "reconciled", "excluded"], 12)], 180),
-                 "reset": op("下一位学员：复位训练台", "Next trainee: reset the station", ["closed"], "ready", [], TEAM, 30),
+                                     "leak-tested", "drained", [*VIEW, near(DRAINAGE, ["primed", "water-seal", "suction"], 6)], 90, assessed=SURGEON, uses=[CHEST_TUBE]),
+                 # the lung comes up only with the drain on its seal: the unit connected to the tube in this chest
+                 "re_expand": step("（模拟麻醉）直视下缓慢膨肺，确认各肺叶复张，恢复双肺通气（引流装置已接上这根胸管、水封）",
+                                   "(Simulated anaesthesia) re-expand the lung slowly under vision, see every lobe come up: both lungs ventilated again (the drainage unit connected to this chest tube, on its seal)",
+                                   "drained", "re-expanded", [*VIEW, {"linked": {"type": DRAINAGE, "state": ["water-seal", "suction"], "via": CHEST_TUBE}}],
+                                   assessed=ANAESTHESIA),
+                 "close": step("逐层关闭切口（需关闭体腔前清点完成）", "Close in layers (after the count before closing the cavity)",
+                               "re-expanded", "closed", [near(TRAINING_COUNT, ["cavity", "closing", "reconciled", "excluded"], 12)], 180, assessed=SURGEON),
+                 # the next trainee: the station reset and the instructor's presets put back — a run of their own
+                 "reset": {**op("下一位学员：复位训练台，器械、引流装置、核查与清点按教师预设复位", "Next trainee: reset the station, and the instruments, the drainage unit, the checklist and the count to the instructor's presets",
+                                ["closed"], "ready", [], TEAM, 30),
+                           "sets": [{"type": type_id, "to": state, "within": 12} for type_id, state in DRILL_PRESETS],
+                           "unlink": True, "newRun": True},
              }})
 
 # ------------------------------------------------------------------------------------------------ the lay-out

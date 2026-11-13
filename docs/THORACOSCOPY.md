@@ -6,9 +6,10 @@ centre a **training station** stands where the simulation OR's table would, on w
 sequence of a thoracoscopic lobectomy is rehearsed step by step. The monitors show the picture a
 thoracoscope gives, which ClinicalCraft draws for them.
 
-Like everything else in the pack it is data: fifteen equipment types with their models, a theatre
-template, rules written as world predicates, one skill. A learner, an agent and a colleague act on
-all of it through the same action bus.
+Like everything else in the pack it is data: eighteen equipment types with their models (the drill's
+own checklist and count board drawn with the theatre boards'), a theatre template, rules written as
+world predicates, one skill. A learner, an agent and a colleague act on all of it through the same
+action bus.
 
 ![OR 5, the thoracic theatre](img/thoracoscopy-or5.jpg)
 *OR 5 from where the surgeon stands: the thoracoscopy tower across the table and the endoscopy
@@ -22,10 +23,10 @@ displays on their booms, all on one camera; lung isolation and the airway trolle
 | Picture | thoracoscopy tower, two ceiling-boom endoscopy displays, the training station's own monitor: ClinicalCraft's `thoracoscopy` screen |
 | Instruments | 30° thoracoscope, thoracic port, lung forceps, right-angle dissector, clip applier, ultrasonic shears, cutter-stapler, specimen bag, chest tube — nine handheld types on their own sterile table |
 | Devices | lung-isolation cart (double-lumen tubes, bronchoscope), lateral-positioning aids, chest drainage unit |
-| Training station | a patient simulator in the lateral position — one of the world's own figures, drawn as its people are — on which the three incisions of the standardized three-port anterior approach are made; 17 steps from the position check to the closure, and what is drawn of it follows each one: under a blanket, then draped and on one lung; the marks, the ports, the scope, the lung held, the specimen, the drain, the dressings; the monitor dark or showing the picture |
-| Rules | the tube confirmed before turning and again after; no port before the time-out and the lung down; no picture before the white balance; energy with smoke evacuation; the drain primed, connected, and on its seal before the lung is re-expanded |
+| Training station | a patient simulator in the lateral position — one of the world's own figures, drawn as its people are — on which the three incisions of the standardized three-port anterior approach are made; 17 steps from the position check to the closure, each by the role it is assessed for, with its instrument in hand, and what is drawn of it follows each one: under a blanket, then draped and on one lung; the marks, the ports, the scope, the lung held, the specimen, the drain, the dressings; the monitor dark or showing the picture. Each trainee's run is its own: the drill's own checklist and count board, the instructor's console (assessment or practice), the instructor's presets put back for the next trainee, a run record of who did what with which instrument |
+| Rules | the tube confirmed before turning and again after; no port before the time-out and the lung down; no picture before the white balance — and one view: the tower off, its light on standby or the scope withdrawn, every screen is dark and every step under vision waits; energy with smoke evacuation; a reload for each firing, that stapler's; the drain primed, connected to that chest tube, and on its seal before the lung is re-expanded |
 | Skill | `impf_thoracoscopy_setup`: tower on and white-balanced, smoke evacuator on, drainage unit primed |
-| Checked by | `tools/thoracoscopy.test.ts` (10 tests), the gate and navigation tests, `tools/skills.test.ts`, `tools/figure-fit.mts --check`, the station's model against its looks (`assets inspect --type`) — all run by `tools/check.sh` |
+| Checked by | `tools/thoracoscopy.test.ts` (15 tests) and `tools/thoracoscopy-release.test.ts` (the release scenario through the player's and an agent's interface), the gate and navigation tests, `tools/skills.test.ts`, `tools/figure-fit.mts --check`, the station's model against its looks (`assets inspect --type`) — all run by `tools/check.sh` |
 
 ## 中文概要
 
@@ -34,9 +35,9 @@ IMPF 外科医院新增了胸腔镜（VATS）肺手术所需的全部内容：**
 胸腔镜下肺叶切除。手术间和训练台的显示器显示胸腔镜画面（由 ClinicalCraft 用代码绘制：胸膜下的肋骨与
 肋间血管、带碳末沉着和叶间裂的萎陷肺、脂肪垫和一把肺钳）。
 
-* **设备与器械（15 种，均有三维模型）**：4K 胸腔镜塔与吊臂内镜显示器；30° 胸腔镜、胸腔穿刺套管、肺钳、
+* **设备与器械（18 种，均有三维模型）**：4K 胸腔镜塔与吊臂内镜显示器；30° 胸腔镜、胸腔穿刺套管、肺钳、
   直角分离钳、施夹钳、超声刀、腔镜直线切割缝合器、标本袋、胸管（共 9 种手持器械，摆在单独的胸腔镜器械台
-  上）；肺隔离用具车（双腔支气管导管与纤维支气管镜）、侧卧位体位用具车、胸腔闭式引流装置；模拟训练台。
+  上）；肺隔离用具车（双腔支气管导管与纤维支气管镜）、侧卧位体位用具车、胸腔闭式引流装置；模拟训练台，及其旁的教学控制台（考核/练习模式）和训练用的核查板与清点板（沿用手术间看板的模型）。
 * **规则（都是数据）**：导管位置确认后才能翻身，侧卧位核对完成后才能开始单肺通气；暂停核查完成且术侧肺
   萎陷后才能置入套管；白平衡后才能入镜；超声刀需要烟雾排除器运行；引流装置先注好水封才能置胸管，接上
   已置入的胸管后才能在直视下膨肺。
@@ -48,6 +49,11 @@ IMPF 外科医院新增了胸腔镜（VATS）肺手术所需的全部内容：**
   经观察孔切口的胸管依次出现；膨肺后恢复双肺通气；关胸后贴好敷料、撤去手术巾、重新盖上毯子。只有胸腔镜
   在胸腔内时，床头显示器才显示画面。无论是学员、同事还是智能体推进步骤，用的都是同一个操作，画面跟随训练台
   在世界中的状态——以后由大模型驱动的团队成员或带教老师介入时也一样。
+* **2026-11-12 审计后的修正**：同一个视野——摄像系统关机、光源待机或胸腔镜退出时，训练台、摄像系统和吊臂显示器
+  一律黑屏，直视下的步骤一律不能进行，视野恢复后才能继续；切割缝合器每击发一次都要装一个新钉仓，用的就是手里那一把；
+  考核模式下每一步只能由考核的角色完成（巡回护士不能代替术者），练习模式下的代做记为角色替代；引流装置按实例连接到
+  这根胸管上，只注水封不算连接，断开后不能膨肺；第一个切口之前必须完成切皮前清点和 Time out（训练用的核查板与
+  清点板，不写入任何患者的病历）；复位时按教师预设把器械、引流装置、核查与清点恢复原状，每位学员一份训练记录。
 * 参考用的手术画面、器械和手术室图片只用于建模和绘制时对照，**没有任何一张收入本仓库**。
 * 尚未包含胸腔镜手术的临床病例；病例中的卧位患者仍画成仰卧（侧卧位目前只画在训练台的模拟人身上）；
   训练台旁没有画出术者——操作的人是学员自己。详见[局限](#9-limits)。
@@ -88,17 +94,18 @@ chest tube, port and specimen bag along the other.*
 ## 3. Instruments and devices
 
 Every type has a model built in Blender (`tools/blender/thoracic_models.py`;
-[MODELS.md](MODELS.md)), a bilingual description and usage note, and — except the display — a
-state machine.
+[MODELS.md](MODELS.md)) — the drill's own checklist and count board are drawn with the theatre
+boards' —, a bilingual description and usage note, and — except the display — a state machine.
 
-![The fifteen models](img/thoracoscopy-models.jpg)
-*The fifteen new models as the world draws them (the green quads are where the live screens go).*
+![The sixteen models](img/thoracoscopy-models.jpg)
+*The sixteen models as the world draws them (the green quads are where the live screens go): the
+thoracic theatre's, the training station and, beside it, the instructor's console.*
 
 | type | states | operations (who) | needs |
 |---|---|---|---|
-| `sc-thoracoscopy-tower` · 4K 胸腔镜系统 | off → on → white-balanced | power on, white balance, power off (team) | — (off, it supplies no picture) |
-| `sc-scope-display` · 吊臂式内镜显示器 | — | — | shows the camera's picture |
-| `sc-thoracoscope` · 30° 胸腔镜 (10 mm) | sterile → in use → used → (CSSD) sterile | insert and look round (scrub team) | in hand, scrubbed, gowned and gloved, at the patient; **the tower white-balanced** |
+| `sc-thoracoscopy-tower` · 4K 胸腔镜系统 | off → on → white-balanced ↔ light on standby | power on, white balance, light source to standby and on again, power off (team) | white balance: **the scope out of the chest**; its picture: one view (rule 3) |
+| `sc-scope-display` · 吊臂式内镜显示器 | — | — | shows the camera's picture: one view (rule 3) |
+| `sc-thoracoscope` · 30° 胸腔镜 (10 mm) | sterile → in the chest ↔ in use → used → (CSSD) sterile | insert and look round, withdraw to clean the lens (scrub team) | insert: in hand, scrubbed, gowned and gloved, at the patient; **the tower white-balanced** |
 | `sc-thoracoport` · 胸腔穿刺套管 (10.5 mm, blunt) | same | place the camera port (surgeon) | in hand, scrubbed …, at the patient; **the WHO time-out done; one-lung ventilation** |
 | `sc-lung-forceps` · 腔镜肺钳 | same | hold the lung for exposure | in hand, scrubbed …, at the patient |
 | `sc-endo-dissector` · 腔镜直角分离钳 | same | dissect a hilar structure and pass a loop (surgeon) | in hand, scrubbed …, at the patient |
@@ -107,10 +114,13 @@ state machine.
 | `sc-endo-stapler` · 腔镜直线切割缝合器 (single use) | sterile → reload in → fired → discarded | load a reload (scrub team), fire (surgeon), discard | load: in hand, scrubbed …; fire: also at the patient — **one firing for each reload** |
 | `sc-specimen-bag` · 标本袋 (single use) | sterile → used | bag the specimen and bring it out (surgeon) | in hand, scrubbed …, at the patient |
 | `sc-chest-tube` · 胸腔引流管 (28 Fr, single use) | sterile → placed | place through the camera port (surgeon) | in hand, scrubbed …, at the patient; **the drainage unit primed** |
-| `sc-chest-drainage-unit` · 胸腔闭式引流装置 | in its pack → primed → on water seal ↔ on suction → used | prime, connect, apply suction, back to water seal, dispose (team) | connect: **a chest tube that is placed** |
-| `sc-lung-isolation-cart` · 肺隔离用具车 | both lungs → tube placed → position confirmed → one lung → re-expanded | place the tube, confirm with the bronchoscope, isolate, re-expand (anaesthetist) | all at the patient's head; isolate: **the position check done**; re-expand: **the drain on its seal** |
+| `sc-chest-drainage-unit` · 胸腔闭式引流装置 | in its pack → primed → on water seal ↔ on suction → used | prime, connect, apply suction, back to water seal, clamp and disconnect, dispose (team) | connect: **a chest tube that is placed**, connected to that tube by instance (rule 6) |
+| `sc-lung-isolation-cart` · 肺隔离用具车 | both lungs → tube placed → position confirmed → one lung → re-expanded | place the tube, confirm with the bronchoscope, isolate, re-expand (anaesthetist) | all at the patient's head; isolate: **the position check done**; re-expand: **the drain on its seal, connected to the chest tube that is in** |
 | `sc-lateral-positioning-set` · 侧卧位体位用具车 | stowed → turned → table flexed → checked | turn, flex the table, check the position, turn back supine (team) | at the patient; turn: **the tube's position confirmed** |
-| `sc-vats-trainer` · 胸腔镜手术模拟训练台 | 18 states, §6 | 17 steps and a reset | §6 |
+| `sc-vats-trainer` · 胸腔镜手术模拟训练台 | 18 states, §6 | 17 steps, putting the scope back in, and a reset | §6 |
+| `sc-vats-console` · 胸腔镜训练台教学控制台 | assessment ↔ practice | switch the mode (faculty: attending, nurse) | — (§6, "Each trainee's run") |
+| `sc-training-checklist` · WHO 手术安全核查板（训练用） | pending → signed in → timed out → signed out | as the theatre's board, with no case record (team) | Time Out: **the drill's count before incision**; Sign Out: **its final count** |
+| `sc-training-count-board` · 手术清点板（训练用） | not started → baseline → cavity → closing → reconciled | as the theatre's board, with no case record; the final count without an RF scan (team) | — |
 
 ## 4. The rules
 
@@ -125,14 +135,24 @@ down) (it is on both lungs)."* — and the route to the cart.
    the tube is looked at again, because it moves when a patient is moved.
 2. **No port into an inflated lung, and none before the time-out.** The camera port needs the
    WHO time-out (which needs the baseline count) and one-lung ventilation, besides hand hygiene,
-   gown and gloves.
-3. **No picture, no scope.** The thoracoscope goes in only with the tower on and white-balanced.
+   gown and gloves. On the training station too: its first incision waits for the drill's own
+   Time Out and count before incision (§6, "Each trainee's run").
+3. **No picture, no scope — and one view.** The thoracoscope goes in only with the tower on and
+   white-balanced. The picture is the tower on, lit and white-balanced *and* the scope in the
+   chest: switched off, its light source on standby or the scope withdrawn (to clean the lens),
+   the tower's monitor, both boom displays and the training station's monitor are dark at once,
+   and every step done under vision is refused until the view is back — the scope out for a
+   white balance after a power loss, then in again (ClinicalCraft `screenNeeds`).
 4. **Energy needs smoke evacuation** — the rule the electrosurgical pencil already has
    ([INTERACTIONS.md](INTERACTIONS.md)), here for the ultrasonic shears.
-5. **A stapler fires once per reload.** It is loaded before it fires, and a fired stapler takes
-   a fresh reload before it fires again.
-6. **The drain.** The drainage unit is primed before the tube goes in; it is connected only to a
-   tube that is in; the lung is re-expanded only with the drain on its water seal.
+5. **A stapler fires once per reload — that stapler.** It is loaded before it fires, and a fired
+   stapler takes a fresh reload before it fires again. A division on the training station is a
+   firing of the stapler in the hand: an empty or spent one divides nothing, and a division spends
+   its reload (ClinicalCraft `uses`).
+6. **The drain.** The drainage unit is primed before the tube goes in; it is connected, by
+   instance, only to a tube that is in — the unit and the tube each name the other; the lung is
+   re-expanded only with the drain on its water seal *and connected to that tube* (primed is not
+   connected; disconnected — clamped and taken off — the lung stays down).
 7. **The counts** close the operation as they close every other
    ([INTERACTIONS.md](INTERACTIONS.md)); the training station asks for the count before closing.
 
@@ -192,6 +212,53 @@ grasper's rings beside it; the monitor shows what the scope sees, the tray stand
 ![The position](img/thoracoscopy-station-head.jpg)
 *From the anaesthetic end: the head on its ring with the double-lumen tube, the lower arm on
 its board, the upper arm on the padded support over it, the table flexed under the trunk.*
+
+### Each trainee's run (the 2026-11-12 audit)
+
+An audit of the station on 12 November 2026 found that steps could be credited that the station
+did not support: a step under vision after the tower was switched off, a vein divided with an
+unloaded stapler (and by the circulating nurse), the lung re-expanded on a drain that was never
+connected, a baseline count entered after the operation, and the next trainee inheriting the count
+board and the drainage unit of the last. The station now keeps to the rules of the theatre, and
+each trainee's run is its own:
+
+* **One view** (rule 3): the station's monitor, the tower's and the boom displays read the same
+  view as the steps — the tower on, lit and white-balanced, the scope in the chest. Lost (power,
+  illumination, the scope withdrawn), every step from the working ports to the lung re-expanded
+  waits; `reinsert_scope` puts the scope back without moving the drill on.
+* **By the role it is assessed for.** The surgeon's steps are the surgeon's (`clinician`,
+  `attending`), the simulated anaesthesia steps the anaesthetist's; in **assessment** mode — the
+  default of the **instructor's console** beside the station — nobody else takes them. In
+  **practice** mode (the faculty switch it) a colleague may stand in: the step is done, and the
+  result and the run record call it a role substitution, not assessed.
+* **The instrument in the hand, by instance** (rule 5): each step works with that very
+  instrument and moves it on as the table does — the port and the scope in use, the scope in the
+  chest, the bag used, the chest tube placed and kept with the station, a reload spent at each
+  firing.
+* **The drain connected to that tube** (rule 6): re-expansion needs the drainage unit on its
+  seal, connected to the chest tube in the station's chest.
+* **The drill's own boards.** An isolated skills drill writes no patient's record, so the
+  simulation OR's checklist and count board are the training ones (the theatre boards' state
+  machines and models, no case record): the first incision waits for their Time Out, which waits
+  for the count before incision — a count after the incision can never stand in for it —, the
+  closure for the count before closing the cavity, and the Sign Out for the final count (with no RF
+  scan in the drill, the count aloud settles it). No theatre board is in that room, so an
+  instrument's own operation on a case patient (the skin incision, the camera port) is not done
+  there, and no theatre's board answers for it through a wall (`tools/orflow.test.ts`).
+* **The instructor's presets** — what every run starts with, which the station's reset puts back
+  for the next trainee (and the room's placements start in): the tower set up (on, white-balanced),
+  every instrument sterile — the stapler with no reload in —, a fresh drainage unit in its pack,
+  the smoke evacuator off, the checklist pending and the count not started; nothing connected.
+* **A run record.** The station records each run — its steps and the drill's devices (the
+  boards, the tower, the drainage unit, the smoke evacuator, the instruments) in the order they
+  were done, who did each in which role, when, the instrument used and what became of it, a
+  substitution — and the reset closes it and starts the next with the presets
+  (`WorldRuntime.runsOf`).
+
+The release scenario — the tower switched off after the scope went in; the view restored; an
+unloaded stapler presented — is checked through the player's interface (the world actions the
+browser sends) and an agent's (its tools), and in both the team is stopped at each fault before
+the operation advances (`tools/thoracoscopy-release.test.ts`).
 
 ### The body on the table
 
@@ -379,8 +446,15 @@ Three things they show are named here but not built:
   ([CASE_126.md](CASE_126.md)) is ClinicalCraft's procedure model, whose instruments, gas and
   injuries are those of a laparoscopic cholecystectomy. A lung, a bronchus and a stapler in that
   model would be engine work.
-* **One frame on the monitors**, the same everywhere. The station's monitor is dark until the
-  scope is in, but the tower's and the booms' do not follow the tower's state.
+* **One frame on the monitors**, the same everywhere: a representative picture, never the view
+  a learner holds — it cannot show whether the sightline is kept, where an instrument's tip is or
+  which hilar structure is which. What the monitors do follow is whether there is a view at all
+  (one view, rule 3).
+* **The leak test has one outcome** (no leak), and bleeding that calls for the team, a wrong
+  structure divided, and individually selectable hilar structures are not modelled: they would be
+  an operative field for the chest (below).
+* **The instructor's presets are fixed in the data.** A facilitator chooses assessment or practice
+  on the console; what each run starts with is the station's, not set per session.
 * **A traditional drainage unit.** The unit modelled is a three-chamber water-seal unit; the
   guideline cited below recommends digital drainage systems and no routine external suction.
 * **Not clinician-reviewed.** The texts follow the sources below; they are teaching content
@@ -401,7 +475,14 @@ tools/check.sh ../ClinicalCraft
   no shape of the model; a look for each of its 18 states and the model's twelve layers exactly
   the ones the looks show, the story of the looks (cover, breathing, monitor, what each step
   puts on the table and takes away); a colleague moving it on the same way as the learner; the
-  whole sequence on the station with every refusal along the way, each state reached in turn.
+  whole sequence on the station with every refusal along the way, each state reached in turn; the
+  2026-11-12 audit's findings each a test — one view (power, illumination, withdrawal), the
+  stapler (empty, spent, a role outside the assessed task, a labelled stand-in in practice), the
+  drain (primed is not connected; disconnected, handed over, reconnected), each trainee's run (no
+  incision before the Time Out and the count, the presets put back, the run record) — and the
+  release scenario (a loss of view, then an empty stapler).
+* `tools/thoracoscopy-release.test.ts` — the release scenario in an in-world session, through the
+  player's interface and through an agent's tools.
 * `tools/figure-fit.mts --check` — the measurements the station's model was built from are
   what the pinned ClinicalCraft's figure kit says the body is.
 * `tools/orflow.test.ts` — every gate in OR 5 and the simulation OR is met only by its own

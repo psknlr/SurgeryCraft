@@ -1,7 +1,7 @@
 # Equipment models · 设备模型
 
 All equipment in the IMPF Surgery Hospital is drawn as 3D models instead of voxel boxes:
-918 placements. That is the pack's 90 types (509 placements) and the 63 ClinicalCraft built-in types
+919 placements. That is the pack's 93 types (510 placements) and the 63 ClinicalCraft built-in types
 the hospital places (409), whose models ship with ClinicalCraft. Every model was built in
 Blender with ClinicalCraft's Blender bridge (ClinicalCraft
 [docs/BLENDER.md](https://github.com/psknlr/ClinicalCraft/blob/main/docs/BLENDER.md)), in its
@@ -9,14 +9,14 @@ type's own frame, from the type's voxel parts. Working heights, screens and the 
 things are put on stay where the world expects them, so every interaction works as before.
 The voxel parts remain the fallback, and the collider and aim box are still the footprint.
 
-> IMPF 外科医院中的全部设备（918 处摆放）都改用三维模型绘制：本内容包的 90 种设备（509 处）
+> IMPF 外科医院中的全部设备（919 处摆放）都改用三维模型绘制：本内容包的 93 种设备（510 处）
 > 和医院用到的 63 种 ClinicalCraft 内置设备（409 处，模型随 ClinicalCraft 提供）。每个模型都用
 > ClinicalCraft 的 Blender 桥接，在该设备类型自身的坐标系中、依据其体素部件在 Blender 中制作，
 > 工作高度、屏幕位置和放置物品的台面都与原来一致，所有交互不变；体素部件仍是后备，碰撞体与
 > 瞄准框仍是占地范围。
 
-![The pack's 90 models](img/models-sheet.jpg)
-*The pack's 90 models as the world draws them (ClinicalCraft `scripts/preview/render.mjs models`); the green quads
+![The pack's 91 models](img/models-sheet.jpg)
+*The pack's 91 models as the world draws them (ClinicalCraft `scripts/preview/render.mjs models`); the green quads
 are where the world draws its live screens.*
 
 In the hospital, in `clinicalcraft serve`: the first three figures put the voxel parts (left) beside the models
@@ -54,16 +54,18 @@ the wall gas panels marked in the ISO colours, monitors and curtains.*
 
 ## How they are made
 
-42 types have their own builder. 27 are in `tools/blender/models.py`: the instruments, the swab pack
+43 types have their own builder. 27 are in `tools/blender/models.py`: the instruments, the swab pack
 and the single swab, the RF wand, the lead apron, back table, Mayo stand, anaesthesia workstation, both
 pendants, laparoscopy tower, smoke evacuator, warmer, airway trolley, ceiling displays, the hybrid
 table, the operating microscope, the heart-lung machine, the surgical robot's patient cart and surgeon
-console and the robotic angiography C-arm. 15 are in `tools/blender/thoracic_models.py`, the
+console and the robotic angiography C-arm. 16 are in `tools/blender/thoracic_models.py`, the
 thoracoscopy types ([THORACOSCOPY.md](THORACOSCOPY.md)): the tower and the endoscopy display, the
 thoracoscope with its camera head, the port, lung forceps, right-angle dissector, clip applier,
 ultrasonic shears, cutter-stapler, specimen bag and chest tube, the drainage unit, the lung-isolation
-cart, the positioning aids and the training station (the table and everything that holds a body on
-its side — the body itself is the world's own figure). The other 48 are refined from
+cart, the positioning aids, the training station (the table and everything that holds a body on
+its side — the body itself is the world's own figure) and the instructor's console beside it. The
+drill's own checklist and count board are the theatre boards with no case record, and they are drawn
+with those boards' models: 93 types, 91 models. The other 48 are refined from
 their voxel parts by ClinicalCraft's `clinicalcraft_refine`:
 - boxes get rounded edges, and thin bars and poles become cylinders;
 - small floor cubes become casters or glides;
@@ -71,7 +73,7 @@ their voxel parts by ClinicalCraft's `clinicalcraft_refine`:
 - each screen gets a dark housing for the live display;
 - foliage becomes rounded blobs.
 
-The pack's models total 184,496 triangles in 9.9 MB; none draws more than 9,000 triangles at a
+The pack's models total 187,440 triangles in 10.0 MB; none draws more than 9,000 triangles at a
 time and the newer builders stay under 5,000 (ClinicalCraft docs/BLENDER.md "Triangles") — but for
 three of the thoracoscopy models, which carry more: the tower (7,348), the lung-isolation cart
 (5,420) and the training station, whose model is in layers drawn step by step — 4,184 triangles

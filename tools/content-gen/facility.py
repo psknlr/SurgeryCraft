@@ -3,6 +3,7 @@ from common import L, num
 import footprints as fp
 from templates import SEMI, OR_ROLES, CORE_ROLES, OR_WALL, CLEAN_WALL
 import exterior
+import thoracoscopy
 
 FACILITY_ID = "impf-surgery-hospital"
 ISSUES = []
@@ -554,9 +555,15 @@ inst("l0-sim-or", "sc-or-thoracic", -16.5, -8.5, 90, L0, {
               "anaesthetist": {"name": L("模拟教学麻醉医生", "Sim faculty anaesthetist")}},
     "sign": {"text": L("模拟手术室 · 胸腔镜训练", "Simulation OR · thoracoscopy training"), "color": "#a397bc"},
     "omit": ["slot", "sterile", "table"],
+    # a skills drill writes no patient's record: the checklist and the count board are the drill's own (thoracoscopy.py)
+    "placements": {"checklist": {"type": thoracoscopy.TRAINING_CHECKLIST, "label": L("WHO 手术安全核查板（训练用）", "WHO Surgical Safety Checklist (training)")},
+                   "count-board": {"type": thoracoscopy.TRAINING_COUNT, "label": L("手术清点板（训练用）", "Surgical count board (training)")}},
 })
 # (template-local (0.5, 0.2) in a room turned 90°: world = centre + (local z, −local x))
 P("l0-sim-vats-trainer", "sc-vats-trainer", -16.5 + 0.2, -8.5 - 0.5, 90, "l0-sim-or", L("胸腔镜手术模拟训练台", "Thoracoscopy training station"))
+# the instructor's console: assessment or practice — in the corner on the anaesthetic side, clear of every door
+# (template-local (−3.1, −2.9))
+P("l0-sim-vats-console", thoracoscopy.CONSOLE, -16.5 - 2.9, -8.5 + 3.1, 90, "l0-sim-or", L("胸腔镜训练教学控制台", "Thoracoscopy training: instructor's console"))
 inst("l0-consult-1", "outpatient-consult", -18, 12, 180, L0, {"name": L("麻醉术前评估门诊 1", "Pre-anaesthesia assessment clinic 1"), "omit": ["slot"]})
 inst("l0-consult-2", "outpatient-consult", -12, 12, 180, L0, {"name": L("麻醉术前评估门诊 2", "Pre-anaesthesia assessment clinic 2"), "omit": ["slot"]})
 inst("l0-lab", "clinical-lab", 21, 12, 180, L0, {

@@ -409,7 +409,7 @@ describe("Case 126 in OR 7 · who spoke, who it was said to, and whether the pat
     await c.session.close();
   });
 
-  it("under anaesthesia the patient cannot answer and nothing is credited; speech returns with emergence", async () => {
+  it("under anaesthesia the patient cannot answer and nothing is credited; speech returns once he is woken and extubated", async () => {
     const t = await theatre("count-correct");
     toTheTable(t);
     await learner(t, "navigate", { kind: "interact", id: patientId(t) });
@@ -418,12 +418,19 @@ describe("Case 126 in OR 7 · who spoke, who it was said to, and whether the pat
     expect(quiet.output).toMatch(/under general anaesthesia/);
     expect(t.session.state.asked).toEqual(before);
     expect(t.session.dispatch({ type: "ask", itemId: "pain-score", by: "system" }).rejected?.code).toBe("cannot-answer");
-    // emergence: the operation ended, extubation decided — the patient speaks again
+    // the operation ended and extubation decided — a decision, not an act: still no voice (2.6.0)
     const sol = t.session.caseDef.solution;
     const close = sol.findIndex((x) => x.type === "operate" && (x as { op?: { op?: string } }).op?.op === "close");
     for (const a of sol.slice(sol.findIndex((x) => x.type === "operate"), close)) t.session.dispatch({ ...a, by: "system" } as ClinicalAction);
     t.session.dispatch({ type: "operate", op: { op: "close" }, by: "system" } as ClinicalAction);
     expect(t.session.dispatch({ type: "answer", decisionId: "emergence", optionIds: ["criteria", "swallow-after"], by: "system" }).rejected).toBeUndefined();
+    expect(t.session.dispatch({ type: "ask", itemId: "pain-score", by: "system" }).rejected?.code).toBe("cannot-answer");
+    // woken (the anaesthetic reversed), the tube still in: awake, still no voice — and the narration says why
+    expect(t.session.dispatch({ type: "intervene", interventionId: "wake", by: "system" }).rejected).toBeUndefined();
+    expect(t.session.dispatch({ type: "ask", itemId: "pain-score", by: "system" }).rejected?.code).toBe("cannot-answer");
+    expect((await tool(t, "ask_patient", { question: "How is your pain?" })).output).toMatch(/tracheal tube is still in/);
+    // extubated: he speaks again
+    expect(t.session.dispatch({ type: "intervene", interventionId: "extubate", by: "system" }).rejected).toBeUndefined();
     expect(t.session.dispatch({ type: "ask", itemId: "pain-score", by: "system" }).rejected).toBeUndefined();
     await t.session.close();
   });

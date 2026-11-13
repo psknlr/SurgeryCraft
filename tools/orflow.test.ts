@@ -104,6 +104,10 @@ describe("IMPF Surgery Hospital · the operating room", () => {
       if (o.nearbyState) return [o.nearbyState as { type: string; within?: number }];
       return [...((o.all as unknown[]) ?? []), ...((o.any as unknown[]) ?? []), ...(o.not ? [o.not] : [])].flatMap(leaves);
     };
+    // The simulation OR's drill has boards of its own, with no case record (docs/THORACOSCOPY.md "Each trainee's run"):
+    // a theatre's checklist and count board are not there by design, so an instrument's own operation on a case patient
+    // (the incision, the camera port) is not done there — and no theatre's board may stand in for them through a wall.
+    const caseBoards = new Set(["sc-who-checklist", "sc-count-board"]);
     let gates = 0;
     const crossings: string[] = [];
     for (const p of F.placements.filter((x) => /^(or-\d|l0-sim-or)/.test(x.room ?? ""))) {
@@ -113,7 +117,8 @@ describe("IMPF Surgery Hospital · the operating room", () => {
         if (n.type === "sc-washer-disinfector" || n.type === "sc-steam-steriliser") continue;
         gates++;
         const near = w.runtime.nearby(eq(p.id), n.type, n.within);
-        if (!near.length) crossings.push(`${p.id} → no ${n.type}`);
+        const drillRoom = p.room === "l0-sim-or" && caseBoards.has(n.type);
+        if (!near.length && !drillRoom) crossings.push(`${p.id} → no ${n.type}`);
         for (const x of near) if (room.get(x.id) !== p.room) crossings.push(`${p.id} → ${x.id}`);
       }
     }

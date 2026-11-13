@@ -97,6 +97,16 @@ confirmed before the patient is turned and again after, no port before the lung 
 white balance, energy with smoke evacuation, the drain primed and connected before the lung is re-expanded) are
 in [THORACOSCOPY.md](THORACOSCOPY.md).
 
+Since the 2026-11-12 audit: the scope has a state of its own while it is **in the chest** (and `withdraw` to clean
+the lens); the tower's light source goes to **standby** and back; the tower, the boom displays and the training
+station's monitor show a picture only while there is one — the tower lit and white-balanced, the scope in the chest —
+and the steps under vision read the same (**one view**); the drainage unit **connects to that chest tube** by
+instance and **disconnects** (clamped, taken off: primed again). In the simulation OR the checklist and the count
+board are the **training** ones (the theatre boards' steps, no patient's record), and the **instructor's console**
+beside the station sets **assessment** (each step by the role it is assessed for) or **practice** (a colleague may
+stand in — recorded as a role substitution). The station's reset puts back the instructor's presets and starts the
+next trainee's own run record ([THORACOSCOPY.md](THORACOSCOPY.md) "Each trainee's run").
+
 ## A case, start to finish
 
 1. Change, cap and mask; **wash your hands** at the scrub bay's trough (valid 30 simulated min).
@@ -108,7 +118,9 @@ in [THORACOSCOPY.md](THORACOSCOPY.md).
    **cut** with the pencil.
 6. "Needle holder, please" → **load the needle**, **suture**.
 7. Before closure: **cavity count**, **closing count**; the circulator **scans the patient** with the RF wand;
-   **final count**; then close, and **Sign out**.
+   **final count**; then close, and **Sign out**. A case that goes on to recovery (Case 126) then calls recovery
+   ahead, takes the patient to a recovery bay — the recovery nurse meets them there — and **hands over at the bed, in
+   person**; OR 7's boards stay with OR 7.
 8. **Finish** with the instruments, close the set; take them down to the **CSSD**: washer cycle,
    steriliser test, cycle and release; **reprocess** — sterile again for the next case.
 

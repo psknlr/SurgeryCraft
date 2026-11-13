@@ -22,7 +22,8 @@
  *      and a reachable alternative, which then works;
  *   9. one result status for every role; named colleagues answer as themselves; equipment is not a treatment;
  *  10. the in-world demonstration (offline) works the whole case through the room — the board's prerequisites (the
- *      counts, the RF scan) met — every checklist step valid, 100 %;
+ *      counts, the RF scan) met — every checklist step valid, then takes him to recovery and hands him over there to the
+ *      recovery nurse, 100 %;
  *  11. teaching corrections: the anaesthetist and the attending correct unsafe induction advice, the nurse a
  *      hypothetical turned into history — offline, and when a model endorses the advice.
  *
@@ -471,9 +472,17 @@ describe("Case 126 in OR 7 · the room, the record and the score agree", () => {
     const s = t.session.state;
     expect(s.finished).toBe(true);
     expect(s.interventions.filter((r) => r.invalid)).toEqual([]);
-    // the counts the Time Out and the Sign Out need were taken on the count board, the RF wand scanned
-    expect(t.session.world()!.inspect(PRIMARY_ACTOR, COUNT)?.state).toBe("reconciled");
-    expect(t.session.world()!.inspect(PRIMARY_ACTOR, BOARD)?.state).toBe("signed-out");
+    // the counts the Time Out and the Sign Out need were taken on the count board, the RF wand scanned — the record
+    // says so, and the Sign Out was valid
+    expect(evaluate(t.session.caseDef, s, { count: { stage: "final", status: ["correct", "reconciled", "excluded"] } })).toBe(true);
+    expect(evaluate(t.session.caseDef, s, { intervened: "sign-out", valid: true })).toBe(true);
+    // then he left for recovery: arrived at a recovery bay, handed over there in person to the recovery nurse — and
+    // OR 7's boards, which belong to the patient's room, no longer show him
+    expect(t.session.world()!.patientPlace()).toMatchObject({ room: "pacu" });
+    expect(s.arrivals?.at(-1)).toMatchObject({ room: "pacu", kind: "recovery" });
+    expect(s.interventions.find((r) => r.interventionId === "pacu-handover")).toMatchObject({ place: { room: "pacu", kind: "recovery" }, receivedBy: "pacu.nurse" });
+    expect(t.session.world()!.inspect(PRIMARY_ACTOR, COUNT)?.state).toBe("not-started");
+    expect(t.session.world()!.inspect(PRIMARY_ACTOR, BOARD)?.state).toBe("pending");
     const a = assess(t.session.caseDef, s);
     expect(a.score.percent).toBe(100);
     expect(a.safety.verdict).toBe("clear");

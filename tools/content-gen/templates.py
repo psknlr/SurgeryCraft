@@ -571,7 +571,8 @@ template(
     L("麻醉后恢复室（8 床）", "Post-anaesthesia care unit (8 bays)"),
     L("8 床麻醉后恢复室（PACU，一期复苏），护士站居中可直视每张床：每床中心供氧/负压、监护仪（含呼气末二氧化碳）、输液泵与床间隔帘；配抢救车、除颤仪、呼吸机、困难气道车、床旁血气分析与保温设备。8 个手术间对应 8 个复苏床位（常用规划比例约 1:1–1.5:1）。",
       "8-bay post-anaesthesia care unit (Phase I recovery) with a central station in direct view of every bay: piped oxygen and suction, a monitor with capnography, an infusion pump and curtains at each bay; crash cart, defibrillator, ventilator, difficult airway trolley, point-of-care blood gas and warming. Eight bays for eight ORs (a common planning ratio is about 1–1.5 bays per OR)."),
-    "icu", (WP, DP), "sc-pacu-floor",
+    # a recovery room: where a patient is handed over after the operation (ClinicalCraft room kind `recovery`)
+    "recovery", (WP, DP), "sc-pacu-floor",
     [part("n", (), CLEAN_WALL), part("w", (), CLEAN_WALL), part("e", (), CLEAN_WALL), part("s", [door("double-door", 2.4, 0, 3)], CLEAN_WALL)],
     {"text": L("麻醉后恢复室 PACU", "Recovery · PACU"), "color": "#6d9fba"},
     grid_lights(WP, DP, 3, 2),

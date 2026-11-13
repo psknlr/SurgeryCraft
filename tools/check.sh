@@ -28,7 +28,12 @@
 #      (tools/case126-release.test.ts) — and staff working on their own: the ECG's work and the responsible
 #      anaesthetist answering a hypotension alarm on the staff's own clock (tools/case126-staff.test.ts) — and the
 #      final acceptance scenario in one session, from the pre-operative ECG to the conversion (tools/case126-final.test.ts)
-#      — and every character's own role: positions, role cards, model-driven team members (tools/case126-characters.test.ts);
+#      — and every character's own role: positions, role cards, model-driven team members (tools/case126-characters.test.ts)
+#      — and from the operating table to the recovery bed (the 2026-11-12 audit): speech that follows waking and
+#      extubation, never a checklist step or a room; the handover given at a recovery bed, in person, to the recovery
+#      nurse; an awake and an intubated transfer through an agent's tools and the learner's own actions
+#      (tools/case126-recovery.test.ts) — and the thoracoscopy station's release scenario, a loss of view then an empty
+#      stapler, through the player's and an agent's interface (tools/thoracoscopy-release.test.ts);
 #   6. the operative benchmark suite of Case 126 (content/operative/case126-v1): generated files up to date
 #      (tools/operative/build_suite_case126.py --check), then `clinicalcraft bench operative` with the reference and
 #      scripted-llm agents, both at 100 % with no hidden-state leak.
@@ -55,9 +60,11 @@ RELEASE="$CC/packages/agent/src/zz-surgerycraft-case126-release.test.ts"
 STAFF="$CC/packages/agent/src/zz-surgerycraft-case126-staff.test.ts"
 FINAL="$CC/packages/agent/src/zz-surgerycraft-case126-final.test.ts"
 CHARS="$CC/packages/agent/src/zz-surgerycraft-case126-characters.test.ts"
+RECOVERY="$CC/packages/agent/src/zz-surgerycraft-case126-recovery.test.ts"
+VATSREL="$CC/packages/agent/src/zz-surgerycraft-thoracoscopy-release.test.ts"
 ROOT="$(cd "$HERE/.." && pwd)"
 SETTINGS_HOME="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$VATS" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
+trap 'rm -rf "$SETTINGS_HOME"; rm -f "$TEST" "$FLOW" "$VATS" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS" "$RECOVERY" "$VATSREL"' EXIT
 printf '{"contentDirs": ["%s"]}\n' "$PACK" > "$SETTINGS_HOME/settings.json"
 
 echo "== regression list (tools/regressions.tsv): every listed test present"
@@ -143,11 +150,18 @@ cp "$HERE/case126-final.test.ts" "$FINAL"
 # card; with `characters.engine: "llm"` the nurses' moves decided by their models, grounded (tools/case126-characters.test.ts)
 cp "$HERE/case126-characters.test.ts" "$CHARS"
 (cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-characters.test.ts")
+# from the operating table to the recovery bed (the 2026-11-12 audit): speech follows waking and extubation; the
+# handover at a recovery bed, in person; the release scenario, awake and intubated (tools/case126-recovery.test.ts)
+cp "$HERE/case126-recovery.test.ts" "$RECOVERY"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-case126-recovery.test.ts")
+# the thoracoscopy station's release scenario through the player's and an agent's interface (tools/thoracoscopy-release.test.ts)
+cp "$HERE/thoracoscopy-release.test.ts" "$VATSREL"
+(cd "$CC" && SURGERYCRAFT_ROOT="$ROOT" npx vitest run "packages/agent/src/zz-surgerycraft-thoracoscopy-release.test.ts")
 
 echo "== Case 126: operative benchmark suite (reference and scripted-llm must be 100 %)"
 python3 "$HERE/operative/build_suite_case126.py" --check
 OUT="$(mktemp -d)"
-trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$VATS" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS"' EXIT
+trap 'rm -rf "$SETTINGS_HOME" "$OUT"; rm -f "$TEST" "$FLOW" "$VATS" "$SKILLS" "$CASE126" "$THEATRE" "$TEAM" "$COUNTREC" "$ACCEPT" "$STUDIES" "$RELEASE" "$STAFF" "$FINAL" "$CHARS" "$RECOVERY" "$VATSREL"' EXIT
 for agent in reference scripted-llm; do
   (cd "$CC" && CLINICALCRAFT_HOME="$SETTINGS_HOME" npm run -s cc -- bench operative --suite case126-v1 --agent "$agent" --seeds 1-8 --out "$OUT/$agent" --lang en 2>/dev/null)
 done

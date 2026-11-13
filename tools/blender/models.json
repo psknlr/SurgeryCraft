@@ -1760,6 +1760,28 @@
     },
     "use": "cleared"
   },
+  "sc-vats-console": {
+    "uri": "models/sc-vats-console.glb",
+    "sha256": "9a0caf8025911aa629795e45310bbb47bae5718e26fb343204d8015514318efa",
+    "scale": 1,
+    "offset": [
+      0.0,
+      0.0,
+      -0.0073
+    ],
+    "license": "MIT",
+    "attribution": {
+      "zh-CN": "SurgeryCraft 贡献者，依据该设备类型的体素部件在 Blender 中建模（tools/blender）",
+      "en": "SurgeryCraft contributors, modelled in Blender from the type's voxel parts (tools/blender)"
+    },
+    "source": {
+      "name": "SurgeryCraft tools/blender",
+      "url": "https://github.com/psknlr/SurgeryCraft",
+      "version": "Blender 5.0.1",
+      "changes": "modelled procedurally from the type's voxel parts and footprint"
+    },
+    "use": "cleared"
+  },
   "sc-vats-trainer": {
     "uri": "models/sc-vats-trainer.glb",
     "sha256": "f309d77bd0895d3b86e47ebf136994fd1e2ce118a2a0dac9cd21d24918495561",

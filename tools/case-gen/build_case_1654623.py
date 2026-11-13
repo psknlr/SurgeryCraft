@@ -39,7 +39,7 @@ GUIDE = L('教学设计，依据所引指南；不是原报告记载。', 'Teach
 case = copy.deepcopy(base.case)
 
 # ------------------------------------------------------------------ case card
-case['version'] = '2.5.1'
+case['version'] = '2.6.0'
 
 # 2.5.1 (clinical-accuracy pass): three wordings of the v3 base corrected here, the base file itself staying as it was.
 # The source's "无气过水音" is the high-pitched sound of gas through fluid heard in obstruction, not a succussion splash (振水音).
@@ -220,8 +220,8 @@ case['decisions'].append(dict(
 case['decisions'].append(dict(
     id='postop', kind='multiple',
     prompt=L('转入恢复室后，本例最需要重点观察什么？（多选）', 'In recovery, what matters most to watch in this patient? (select all that apply)'),
-    requires={'intervened': 'pacu-handover'},
-    need=L('先完成恢复室交接。', 'Complete the recovery-room handover first.'),
+    requires={'intervened': 'pacu-handover', 'valid': True},
+    need=L('先把患者送到恢复室，在床旁当面交接给恢复室护士。', 'Take him to recovery and hand him over at the bed, in person, to the recovery nurse first.'),
     options=[
         opt('resp', True, '高龄慢阻肺：氧合、呼吸频率、二氧化碳潴留与咳痰能力。', 'Old age and COPD: oxygenation, respiratory rate, CO₂ retention and ability to cough.',
             '呼吸与氧合', 'Breathing and oxygenation'),
@@ -238,8 +238,8 @@ case['decisions'].append(dict(
 # the v3 safety decision is unlocked by planning and laboratory review (unchanged); v3 anatomy/planning stay
 
 # ------------------------------------------------------------------ interventions: checklist, anaesthesia, recovery
-def iv(id, kind, zh, en, resp_zh, resp_en, risk='none', indicated=None, contra=None, harm=None, phases=None, checklist=False):
-    out = dict(id=id, name=L(zh, en), kind=kind, requires=[], risk=risk, maxDoses=1, response=L(resp_zh, resp_en))
+def iv(id, kind, zh, en, resp_zh, resp_en, risk='none', indicated=None, contra=None, harm=None, phases=None, checklist=False, **extra):
+    out = dict(id=id, name=L(zh, en), kind=kind, requires=[], risk=risk, maxDoses=1, response=L(resp_zh, resp_en), **extra)
     if checklist:
         # a WHO checklist step: an out-of-order attempt is logged, applies nothing and uses none of its single dose
         out['checklist'] = True
@@ -257,6 +257,8 @@ def iv(id, kind, zh, en, resp_zh, resp_en, risk='none', indicated=None, contra=N
 # 2.4.0: an elective operation is entered only on its milestones — the diagnosis made, the operation planned for this
 # anatomy, the operative risk assessed (an audited run that asked only allergies and fasting reached the operation)
 ELECTIVE_MILESTONES = [{'decided': 'diagnosis'}, {'decided': 'planning'}, {'decided': 'risk'}]
+# the operation over on the field: closed, or converted to an open operation
+ENDED = {'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}
 SIGN_IN_CHECKS = {'all': [*ELECTIVE_MILESTONES, {'intervened': 'attach-monitor'}, {'asked': 'allergies'}, {'asked': 'fasting'}]}
 case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-historical-review'] + [
     iv('attach-monitor', 'monitoring', '连接监护：脉搏血氧、心电（镜像导联）与无创血压', 'Attach the monitor: pulse oximetry, ECG (mirror leads), non-invasive blood pressure',
@@ -284,16 +286,43 @@ case['interventions'] = [x for x in case['interventions'] if x['id'] != 'open-hi
        harm=('麻醉前核查与诱导完成之前就进行切皮前暂停核查，顺序不对：已记录为无效，手术仍未开始，需在两者之后重新核查。', 'A Time Out before a valid Sign In and induction is out of order: recorded as invalid; the operation stays locked until a Time Out after both.'), checklist=True),
     # 2.4.0: the Sign Out reads the count record (by item identity) — a count that is not settled is not signed out
     iv('sign-out', 'consult', 'WHO 离室前核查（Sign Out）', 'WHO Sign Out before leaving theatre',
-       '确认实施的手术名称，器械、纱布与缝针清点完成，标本标签（朗读，含患者姓名），有无需要处理的设备问题，以及恢复期需关注的问题（包括任何术中并发症），并交接恢复室。',
-       'The name of the procedure, completion of the instrument, swab and needle counts, specimen labelling (read aloud, with the patient\'s name), any equipment problems to be addressed and the key concerns for recovery (including any intra-operative complication) are confirmed and handed over.',
+       '确认实施的手术名称，器械、纱布与缝针清点完成，标本标签（朗读，含患者姓名），有无需要处理的设备问题，以及恢复期需关注的问题（包括任何术中并发症），供恢复室交接使用。',
+       'The name of the procedure, completion of the instrument, swab and needle counts, specimen labelling (read aloud, with the patient\'s name), any equipment problems to be addressed and the key concerns for recovery (including any intra-operative complication) are confirmed, for the handover in recovery.',
        indicated={'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'not': COUNT_OPEN}]},
        contra={'not': {'all': [{'any': [{'procedure': {'closed': True}}, {'procedure': {'bailout': 'convert-open'}}]}, {'not': COUNT_OPEN}]}},
        harm=('手术尚未结束，或纱布清点尚未相符（也未上报并扫描排除体内遗留）就做离室前核查：已记录为无效，需在手术结束、清点相符后重新核查。',
              'Sign Out before the operation has ended, or while the swab count is not reconciled (nor escalated with a clear scan excluding a retained swab): recorded as invalid; repeat it once the operation has ended and the count is settled.'), checklist=True),
-    iv('pacu-handover', 'monitoring', '恢复室交接', 'Hand over in the recovery room',
-       '交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；需观察的问题。',
-       'Handover: 84 years, COPD, previous stroke, situs inversus totalis; the operation done and anything that happened; what to watch.',
-       indicated={'phase': 'recovery'}),
+    # 2.6.0 (the 2026-11-12 audit): consciousness, the airway and speech each follow their own event — the anaesthetic
+    # reversed (`wake`), the tube out (`extubate`) — never a checklist step or a room; the transfer to recovery is a
+    # step of its own after the Sign Out, intubated or not; the advance report from theatre and the hand-over at the
+    # recovery bed are two records with their own times, the second given there, in person, to the recovery nurse
+    iv('wake', 'airway', '停止麻醉、拮抗肌松，唤醒患者', 'Stop the anaesthetic, reverse the neuromuscular block and let him wake',
+       '停止麻醉药，肌松已拮抗（四个成串刺激比值≥0.9）；患者睁眼、能按指令动作，自主呼吸。气管导管仍在：拔管另行决定。（教学步骤：不涉及具体药物与剂量。）',
+       'The anaesthetic is off and the block reversed (train-of-four ratio ≥ 0.9); he opens his eyes, follows commands and breathes on his own. The tracheal tube is still in: extubation is decided on its own. (Teaching step: no drug or dose is modelled.)',
+       risk='moderate', indicated={'all': [{'intervened': 'induction'}, ENDED]}, contra={'not': ENDED},
+       harm=('手术尚未结束就唤醒患者：术中知晓、体动，切口与器械都在体内。', 'Waking him before the operation has ended: awareness and movement on the table, with the wound open and the instruments in.')),
+    iv('extubate', 'airway', '拔除气管导管', 'Extubate',
+       '清醒、能按指令动作，通气与氧合满意，肌松已恢复，咳嗽有力、能处理分泌物：拔管，面罩吸氧。拔管后、经口进食前做吞咽评估。',
+       'Awake and following commands, ventilating and oxygenating well, the block reversed, an effective cough and secretions handled: extubated, oxygen by face mask. Swallowing is assessed after extubation and before any oral intake.',
+       risk='moderate', indicated={'all': [{'intervened': 'wake'}, ENDED]}, contra={'not': {'all': [{'intervened': 'wake'}, ENDED]}},
+       harm=('仍在麻醉中、未唤醒就拔管：没有保护性反射和有效自主呼吸——误吸与缺氧。', 'Extubated before he was woken: no protective reflexes, no effective breathing of his own — aspiration and hypoxia.')),
+    iv('pacu-report', 'consult', '向恢复室电话预报', 'Call recovery with an advance report',
+       '电话通知恢复室：84岁男性，慢阻肺、既往脑梗死、全内脏反位；腹腔镜胆囊切除已结束，交代气道情况、术中经过和需要准备的事项，几分钟后送到。',
+       'Recovery is called ahead: an 84-year-old man with COPD, a previous stroke and situs inversus totalis; the laparoscopic cholecystectomy is over; his airway, what happened and what to have ready are given; he is on his way in a few minutes.',
+       indicated={'intervened': 'sign-out', 'valid': True}, handover=True),
+    iv('transfer-pacu', 'disposition', '离开手术室，转入恢复室', 'Take him from theatre to the recovery room',
+       '团队把他移到恢复室推床上，麻醉医生在床头、带监护转运到恢复室——按他现在的样子：清醒拔管后，或仍带气管导管。',
+       'The team moves him onto the recovery trolley and takes him to the recovery room, monitored, the anaesthetist at the head — as he is now: awake and extubated, or still intubated.',
+       indicated={'intervened': 'sign-out', 'valid': True}, contra={'not': {'intervened': 'sign-out', 'valid': True}},
+       harm=('离室前核查（Sign Out）完成之前就离开手术室：已记录为无效，患者留在手术室，先完成 Sign Out。', 'Leaving theatre before the Sign Out: recorded as invalid; he stays in theatre until the team has signed out.'),
+       checklist=True, destination={'roomKind': 'recovery'}, posture='lying'),
+    iv('pacu-handover', 'monitoring', '在恢复室床旁当面交接给恢复室护士', 'Hand over at the recovery bed, in person, to the recovery nurse',
+       '在恢复室床旁当面交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；气道（清醒拔管或仍带管）；需观察的问题。恢复室护士复述并接收患者，恢复期护理由她负责，麻醉医生随时可到。',
+       'Handover at the recovery bed, in person: 84 years, COPD, previous stroke, situs inversus totalis; the operation done and anything that happened; his airway (awake and extubated, or still intubated); what to watch. The recovery nurse reads it back and accepts him: his recovery care is hers, the anaesthetist on hand.',
+       indicated={'all': [{'phase': 'recovery'}, {'intervened': 'transfer-pacu', 'valid': True}]},
+       contra={'not': {'intervened': 'transfer-pacu', 'valid': True}},
+       harm=('患者还没有转到恢复室：交接只能在恢复室床旁当面进行，已记录为无效。', 'He has not been taken to recovery yet: the handover is given at the recovery bed, in person — recorded as invalid.'),
+       checklist=True, at={'roomKind': 'recovery'}, receivers=['recovery-nurse'], handover=True),
     iv('open-historical-review', 'consult', '结束模拟，打开原报告的手术、病理与随访记录', 'End the simulation and open the reported operation, histology and follow-up',
        '以下为原报告记载的真实经过；模拟中的操作不改变它。', 'What follows is what the source reports; nothing done in the simulation changes it.',
        indicated={'decided': 'postop'}, contra={'not': {'decided': 'postop'}},
@@ -340,10 +369,17 @@ case['studies'] = [
 ]
 
 # 2.4.0: speech follows the anaesthetic — from induction (effective whatever its order) the patient is anaesthetised and
-# intubated, and cannot answer: a bedside question gets no answer and earns no history credit; speech returns with
-# emergence (extubation decided once the criteria are met) or in recovery
-case['patient']['nonVerbalWhen'] = {'all': [{'intervened': 'induction'}, {'not': {'any': [{'decided': 'emergence'}, {'phase': 'recovery'}, {'phase': 'review'}]}}]}
+# intubated, and cannot answer: a bedside question gets no answer and earns no history credit.
+# 2.6.0 (the 2026-11-12 audit: a Sign Out gave him his voice back): consciousness and the airway each follow their own
+# event — awake once the anaesthetic is reversed (`wake`), the airway his own once the tube is out (`extubate`) — and he
+# speaks only when both hold. A checklist step, a phase, a decision or a room never gives speech back: an intubated
+# transfer to recovery stays without a voice until he is woken and extubated there.
+case['patient']['nonVerbalWhen'] = {'all': [{'intervened': 'induction'}, {'any': [{'not': {'intervened': 'wake'}}, {'not': {'intervened': 'extubate'}}]}]}
 case['patient']['nonVerbalReason'] = L('全身麻醉中（已诱导并气管插管）', 'under general anaesthesia (induced and intubated)')
+case['patient']['nonVerbalReasons'] = [
+    dict(when={'not': {'intervened': 'wake'}}, reason=L('全身麻醉中（已诱导并气管插管）', 'under general anaesthesia (induced and intubated)')),
+    dict(when={'not': {'intervened': 'extubate'}}, reason=L('已清醒，但气管导管还在，说不出话（点头示意）', 'awake, but the tracheal tube is still in: he cannot speak (he nods)')),
+]
 
 # ------------------------------------------------------------------ objectives (6)
 def obj(id, zh, en, hzh, hen, cond, target='patient', gzh=None, gen=None):
@@ -777,7 +813,10 @@ case['rubric'] = [
          {'not': {'any': [P(unsafe='excessive-traction'), P(injury='perforation')]}},
          scored={'any': [OPERATED, P(unsafe='excessive-traction'), P(injury='perforation')]}),
     item('r-clips', 'management', 3, '胆囊管与胆囊动脉可靠夹闭后再离断', 'Cystic duct and artery secured before division',
-         {'all': [P(clipped='cystic-duct', minCount=2), P(clipped='cystic-artery', minCount=2), {'not': P(injury='bleeding')}, {'not': P(injury='bile-leak')}]},
+         # 2.6.0: a leak or a bleed counts against this clipping only when it comes from the cystic duct or artery (the
+         # injury's structure): a subvesical duct opened in the bed is scored by its own items
+         {'all': [P(clipped='cystic-duct', minCount=2), P(clipped='cystic-artery', minCount=2),
+                  {'not': P(injury='bleeding', structure=['cystic-artery'])}, {'not': P(injury='bile-leak', structure=['cystic-duct'])}]},
          scored={'any': [P(divided='cystic-duct'), P(divided='cystic-artery')]}),
     item('r-specimen', 'management', 2, '标本装袋经脐孔取出，或选择了替代方式', 'Specimen bagged and removed through the umbilical port, or an alternative chosen',
          {'any': [P(specimen='extracted'), P(bailout='subtotal-fenestrating'), P(bailout='subtotal-reconstituting'), P(bailout='convert-open')]}, scored={'any': [OPERATED, P(bailout='any'), OPENED]}),
@@ -804,7 +843,7 @@ assert sum(r['weight'] for r in case['rubric']) == 100, sum(r['weight'] for r in
 V = lambda id: P(variant=id)
 case['rubric'] += [
     item('r-v-double-artery', 'safety', 6, '发现并可靠处理第二支胆囊动脉', 'The second (posterior) cystic artery found and secured',
-         {'all': [P(clipped='posterior-cystic-artery', minCount=2), {'not': P(injury='bleeding')}]},
+         {'all': [P(clipped='posterior-cystic-artery', minCount=2), {'not': P(injury='bleeding', structure='posterior-cystic-artery')}]},
          scored={'all': [V('double-cystic-artery'), {'any': [DIVIDED_TARGET, P(divided='posterior-cystic-artery'), P(specimen='detached')]}]}),
     item('r-v-hump', 'safety', 6, '保留绕入三角的肝右动脉，处理其发出的短胆囊动脉', 'The right hepatic artery looping into the triangle preserved; its short cystic branch secured',
          {'all': [{'not': {'any': [P(clipped='right-hepatic-artery'), P(divided='right-hepatic-artery')]}}, P(clipped='cystic-artery', minCount=2)]},
@@ -815,8 +854,13 @@ case['rubric'] += [
     item('r-v-hostile', 'safety', 6, '在致密纤维化处停止分离，改行胆囊次全切除或中转开腹', 'Stopped at the safe plane in dense fibrosis and chose a subtotal cholecystectomy or conversion',
          {'all': [{'any': BAILED_SAFELY}, {'not': P(unsafe='dissection-beyond-safe-plane')}]}, scored=V('hostile-triangle')),
     item('r-v-subvesical', 'management', 4, '胆囊床内的胆囊下胆管在剥离完成前已夹闭', 'The subvesical duct in the bed clipped before the dissection was completed',
-         {'all': [P(clipped='subvesical-duct', minCount=2), {'not': P(injury='bile-leak')}]},
+         {'all': [P(clipped='subvesical-duct', minCount=2), {'not': P(injury='bile-leak', structure='subvesical-duct')}]},
          scored={'all': [V('subvesical-duct'), {'any': [P(specimen='detached'), P(specimen='bagged'), P(specimen='extracted'), P(divided='subvesical-duct')]}]}),
+    # 2.6.0: a leak from the bed's duct, once it has happened, is recognised and managed — said aloud, the bile cleared —
+    # scored apart from preventing it (above) and from the routine clipping (`r-clips`)
+    item('r-v-subvesical-leak', 'management', 3, '胆囊床胆漏被及时说出并处理：吸净胆汁', 'The bile leak from the bed recognised aloud and managed: the bile cleared',
+         {'all': [P(injury='bile-leak', structure='subvesical-duct', recognised=True), P(spillage='bile', cleared=True)]},
+         scored={'all': [V('subvesical-duct'), P(injury='bile-leak', structure='subvesical-duct')]}),
 ]
 
 case['safetyGates'] = [
@@ -1015,7 +1059,10 @@ case['solution'] = [
     OP(op='withdraw', port='C'), OP(op='insert', port='C', instrument='retrieval-bag'), OP(op='bag', port='C'), OP(op='extract', port='A'),
     OP(op='close'),
     dict(type='answer', decisionId='emergence', optionIds=['criteria', 'swallow-after']),
+    dict(type='intervene', interventionId='wake'), dict(type='intervene', interventionId='extubate'),
     dict(type='intervene', interventionId='sign-out'),
+    dict(type='intervene', interventionId='pacu-report'),
+    dict(type='intervene', interventionId='transfer-pacu'),
     dict(type='intervene', interventionId='pacu-handover'),
     dict(type='answer', decisionId='postop', optionIds=['resp', 'neuro', 'bile', 'bleed']),
     dict(type='intervene', interventionId='open-historical-review'),

@@ -1,7 +1,7 @@
 {
   "schema": "clinicalcraft/case@1",
   "id": "cmcr-1654623",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "title": {
     "zh-CN": "上腹痛伴发热 · 84岁男性",
     "en": "Upper abdominal pain and fever · 84-year-old man"
@@ -144,26 +144,49 @@
           "intervened": "induction"
         },
         {
-          "not": {
-            "any": [
-              {
-                "decided": "emergence"
-              },
-              {
-                "phase": "recovery"
-              },
-              {
-                "phase": "review"
+          "any": [
+            {
+              "not": {
+                "intervened": "wake"
               }
-            ]
-          }
+            },
+            {
+              "not": {
+                "intervened": "extubate"
+              }
+            }
+          ]
         }
       ]
     },
     "nonVerbalReason": {
       "zh-CN": "全身麻醉中（已诱导并气管插管）",
       "en": "under general anaesthesia (induced and intubated)"
-    }
+    },
+    "nonVerbalReasons": [
+      {
+        "when": {
+          "not": {
+            "intervened": "wake"
+          }
+        },
+        "reason": {
+          "zh-CN": "全身麻醉中（已诱导并气管插管）",
+          "en": "under general anaesthesia (induced and intubated)"
+        }
+      },
+      {
+        "when": {
+          "not": {
+            "intervened": "extubate"
+          }
+        },
+        "reason": {
+          "zh-CN": "已清醒，但气管导管还在，说不出话（点头示意）",
+          "en": "awake, but the tracheal tube is still in: he cannot speak (he nods)"
+        }
+      }
+    ]
   },
   "phases": [
     {
@@ -1641,8 +1664,8 @@
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "确认实施的手术名称，器械、纱布与缝针清点完成，标本标签（朗读，含患者姓名），有无需要处理的设备问题，以及恢复期需关注的问题（包括任何术中并发症），并交接恢复室。",
-        "en": "The name of the procedure, completion of the instrument, swab and needle counts, specimen labelling (read aloud, with the patient's name), any equipment problems to be addressed and the key concerns for recovery (including any intra-operative complication) are confirmed and handed over."
+        "zh-CN": "确认实施的手术名称，器械、纱布与缝针清点完成，标本标签（朗读，含患者姓名），有无需要处理的设备问题，以及恢复期需关注的问题（包括任何术中并发症），供恢复室交接使用。",
+        "en": "The name of the procedure, completion of the instrument, swab and needle counts, specimen labelling (read aloud, with the patient's name), any equipment problems to be addressed and the key concerns for recovery (including any intra-operative complication) are confirmed, for the handover in recovery."
       },
       "checklist": true,
       "indicatedWhen": {
@@ -1711,21 +1734,220 @@
       }
     },
     {
+      "id": "wake",
+      "name": {
+        "zh-CN": "停止麻醉、拮抗肌松，唤醒患者",
+        "en": "Stop the anaesthetic, reverse the neuromuscular block and let him wake"
+      },
+      "kind": "airway",
+      "requires": [],
+      "risk": "moderate",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "停止麻醉药，肌松已拮抗（四个成串刺激比值≥0.9）；患者睁眼、能按指令动作，自主呼吸。气管导管仍在：拔管另行决定。（教学步骤：不涉及具体药物与剂量。）",
+        "en": "The anaesthetic is off and the block reversed (train-of-four ratio ≥ 0.9); he opens his eyes, follows commands and breathes on his own. The tracheal tube is still in: extubation is decided on its own. (Teaching step: no drug or dose is modelled.)"
+      },
+      "indicatedWhen": {
+        "all": [
+          {
+            "intervened": "induction"
+          },
+          {
+            "any": [
+              {
+                "procedure": {
+                  "closed": true
+                }
+              },
+              {
+                "procedure": {
+                  "bailout": "convert-open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "any": [
+            {
+              "procedure": {
+                "closed": true
+              }
+            },
+            {
+              "procedure": {
+                "bailout": "convert-open"
+              }
+            }
+          ]
+        }
+      },
+      "harm": {
+        "zh-CN": "手术尚未结束就唤醒患者：术中知晓、体动，切口与器械都在体内。",
+        "en": "Waking him before the operation has ended: awareness and movement on the table, with the wound open and the instruments in."
+      }
+    },
+    {
+      "id": "extubate",
+      "name": {
+        "zh-CN": "拔除气管导管",
+        "en": "Extubate"
+      },
+      "kind": "airway",
+      "requires": [],
+      "risk": "moderate",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "清醒、能按指令动作，通气与氧合满意，肌松已恢复，咳嗽有力、能处理分泌物：拔管，面罩吸氧。拔管后、经口进食前做吞咽评估。",
+        "en": "Awake and following commands, ventilating and oxygenating well, the block reversed, an effective cough and secretions handled: extubated, oxygen by face mask. Swallowing is assessed after extubation and before any oral intake."
+      },
+      "indicatedWhen": {
+        "all": [
+          {
+            "intervened": "wake"
+          },
+          {
+            "any": [
+              {
+                "procedure": {
+                  "closed": true
+                }
+              },
+              {
+                "procedure": {
+                  "bailout": "convert-open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "all": [
+            {
+              "intervened": "wake"
+            },
+            {
+              "any": [
+                {
+                  "procedure": {
+                    "closed": true
+                  }
+                },
+                {
+                  "procedure": {
+                    "bailout": "convert-open"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "harm": {
+        "zh-CN": "仍在麻醉中、未唤醒就拔管：没有保护性反射和有效自主呼吸——误吸与缺氧。",
+        "en": "Extubated before he was woken: no protective reflexes, no effective breathing of his own — aspiration and hypoxia."
+      }
+    },
+    {
+      "id": "pacu-report",
+      "name": {
+        "zh-CN": "向恢复室电话预报",
+        "en": "Call recovery with an advance report"
+      },
+      "kind": "consult",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "电话通知恢复室：84岁男性，慢阻肺、既往脑梗死、全内脏反位；腹腔镜胆囊切除已结束，交代气道情况、术中经过和需要准备的事项，几分钟后送到。",
+        "en": "Recovery is called ahead: an 84-year-old man with COPD, a previous stroke and situs inversus totalis; the laparoscopic cholecystectomy is over; his airway, what happened and what to have ready are given; he is on his way in a few minutes."
+      },
+      "handover": true,
+      "indicatedWhen": {
+        "intervened": "sign-out",
+        "valid": true
+      }
+    },
+    {
+      "id": "transfer-pacu",
+      "name": {
+        "zh-CN": "离开手术室，转入恢复室",
+        "en": "Take him from theatre to the recovery room"
+      },
+      "kind": "disposition",
+      "requires": [],
+      "risk": "none",
+      "maxDoses": 1,
+      "response": {
+        "zh-CN": "团队把他移到恢复室推床上，麻醉医生在床头、带监护转运到恢复室——按他现在的样子：清醒拔管后，或仍带气管导管。",
+        "en": "The team moves him onto the recovery trolley and takes him to the recovery room, monitored, the anaesthetist at the head — as he is now: awake and extubated, or still intubated."
+      },
+      "destination": {
+        "roomKind": "recovery"
+      },
+      "posture": "lying",
+      "checklist": true,
+      "indicatedWhen": {
+        "intervened": "sign-out",
+        "valid": true
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "intervened": "sign-out",
+          "valid": true
+        }
+      },
+      "harm": {
+        "zh-CN": "离室前核查（Sign Out）完成之前就离开手术室：已记录为无效，患者留在手术室，先完成 Sign Out。",
+        "en": "Leaving theatre before the Sign Out: recorded as invalid; he stays in theatre until the team has signed out."
+      }
+    },
+    {
       "id": "pacu-handover",
       "name": {
-        "zh-CN": "恢复室交接",
-        "en": "Hand over in the recovery room"
+        "zh-CN": "在恢复室床旁当面交接给恢复室护士",
+        "en": "Hand over at the recovery bed, in person, to the recovery nurse"
       },
       "kind": "monitoring",
       "requires": [],
       "risk": "none",
       "maxDoses": 1,
       "response": {
-        "zh-CN": "交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；需观察的问题。",
-        "en": "Handover: 84 years, COPD, previous stroke, situs inversus totalis; the operation done and anything that happened; what to watch."
+        "zh-CN": "在恢复室床旁当面交接：84岁，慢阻肺，既往脑梗死，全内脏反位；实施的手术和术中情况；气道（清醒拔管或仍带管）；需观察的问题。恢复室护士复述并接收患者，恢复期护理由她负责，麻醉医生随时可到。",
+        "en": "Handover at the recovery bed, in person: 84 years, COPD, previous stroke, situs inversus totalis; the operation done and anything that happened; his airway (awake and extubated, or still intubated); what to watch. The recovery nurse reads it back and accepts him: his recovery care is hers, the anaesthetist on hand."
       },
+      "at": {
+        "roomKind": "recovery"
+      },
+      "receivers": [
+        "recovery-nurse"
+      ],
+      "handover": true,
+      "checklist": true,
       "indicatedWhen": {
-        "phase": "recovery"
+        "all": [
+          {
+            "phase": "recovery"
+          },
+          {
+            "intervened": "transfer-pacu",
+            "valid": true
+          }
+        ]
+      },
+      "contraindicatedWhen": {
+        "not": {
+          "intervened": "transfer-pacu",
+          "valid": true
+        }
+      },
+      "harm": {
+        "zh-CN": "患者还没有转到恢复室：交接只能在恢复室床旁当面进行，已记录为无效。",
+        "en": "He has not been taken to recovery yet: the handover is given at the recovery bed, in person — recorded as invalid."
       }
     },
     {
@@ -2455,11 +2677,12 @@
         "en": "In recovery, what matters most to watch in this patient? (select all that apply)"
       },
       "requires": {
-        "intervened": "pacu-handover"
+        "intervened": "pacu-handover",
+        "valid": true
       },
       "need": {
-        "zh-CN": "先完成恢复室交接。",
-        "en": "Complete the recovery-room handover first."
+        "zh-CN": "先把患者送到恢复室，在床旁当面交接给恢复室护士。",
+        "en": "Take him to recovery and hand him over at the bed, in person, to the recovery nurse first."
       },
       "options": [
         {
@@ -3141,14 +3364,20 @@
           {
             "not": {
               "procedure": {
-                "injury": "bleeding"
+                "injury": "bleeding",
+                "structure": [
+                  "cystic-artery"
+                ]
               }
             }
           },
           {
             "not": {
               "procedure": {
-                "injury": "bile-leak"
+                "injury": "bile-leak",
+                "structure": [
+                  "cystic-duct"
+                ]
               }
             }
           }
@@ -3435,7 +3664,8 @@
           {
             "not": {
               "procedure": {
-                "injury": "bleeding"
+                "injury": "bleeding",
+                "structure": "posterior-cystic-artery"
               }
             }
           }
@@ -3676,7 +3906,8 @@
           {
             "not": {
               "procedure": {
-                "injury": "bile-leak"
+                "injury": "bile-leak",
+                "structure": "subvesical-duct"
               }
             }
           }
@@ -3712,6 +3943,47 @@
                 }
               }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "r-v-subvesical-leak",
+      "domain": "management",
+      "weight": 3,
+      "text": {
+        "zh-CN": "胆囊床胆漏被及时说出并处理：吸净胆汁",
+        "en": "The bile leak from the bed recognised aloud and managed: the bile cleared"
+      },
+      "met": {
+        "all": [
+          {
+            "procedure": {
+              "injury": "bile-leak",
+              "structure": "subvesical-duct",
+              "recognised": true
+            }
+          },
+          {
+            "procedure": {
+              "spillage": "bile",
+              "cleared": true
+            }
+          }
+        ]
+      },
+      "scoredWhen": {
+        "all": [
+          {
+            "procedure": {
+              "variant": "subvesical-duct"
+            }
+          },
+          {
+            "procedure": {
+              "injury": "bile-leak",
+              "structure": "subvesical-duct"
+            }
           }
         ]
       }
@@ -5219,7 +5491,23 @@
     },
     {
       "type": "intervene",
+      "interventionId": "wake"
+    },
+    {
+      "type": "intervene",
+      "interventionId": "extubate"
+    },
+    {
+      "type": "intervene",
       "interventionId": "sign-out"
+    },
+    {
+      "type": "intervene",
+      "interventionId": "pacu-report"
+    },
+    {
+      "type": "intervene",
+      "interventionId": "transfer-pacu"
     },
     {
       "type": "intervene",

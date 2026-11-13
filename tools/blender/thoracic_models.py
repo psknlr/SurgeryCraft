@@ -686,3 +686,42 @@ def vats_trainer(k: Kit, eq):
     k.box((px, py, pz - 0.028), (scr["s"][0] + 0.06, scr["s"][1] + 0.06, 0.05), "sc-matte-black", r=0.014)
     k.screen_bezel(scr, "sc-matte-black", border=0.016, depth=0.01, r=0.004)
     k.box((px + scr["s"][0] / 2 - 0.02, py - scr["s"][1] / 2 - 0.018, pz), (0.03, 0.008, 0.004), "led-green", r=0.002, seg=1)
+
+
+# ------------------------------------------------------------------------------------------------
+# the instructor's console
+# ------------------------------------------------------------------------------------------------
+
+@model("sc-vats-console")
+def vats_console(k: Kit, eq):
+    """The instructor's console beside the training station: a cabinet on levelling feet under a worktop; on its
+    front the key switch of the mode (assessment / practice, the faculty's key) and the power light, a cupboard
+    below; on the worktop a clipboard, and at its back the display on a short stand (its screen is the world's
+    display: the mode, in words)."""
+    for x in (-0.18, 0.18):
+        for z in (-0.13, 0.13):
+            k.cyl((x, 0.008, z), 0.02, 0.016, "coal", seg=14, bevel=0.003)
+    k.box((0, 0.04, 0), (0.42, 0.05, 0.3), "sc-matte-black", r=0.008)
+    k.box((0, 0.45, 0), (0.44, 0.78, 0.34), "plastic", r=0.02)
+    k.slab(rrect(0.5, 0.4, 0.03), 0.84, 0.025, "sc-matte-black", r=0.006)
+    # the cupboard: its door in a shadow gap, a bar handle
+    k.box((0, 0.4, 0.1715), (0.384, 0.604, 0.003), "coal", r=0.002, seg=1)
+    k.box((0, 0.4, 0.174), (0.374, 0.594, 0.006), "plastic", r=0.008, seg=1)
+    handle_bar(k, (0.15, 0.5, 0.19), (0.15, 0.62, 0.19), 0.014, r=0.006)
+    # the mode: a key switch with its two positions marked, the key in it; the power light
+    k.cyl((0.06, 0.78, 0.176), 0.022, 0.012, "chrome", axis="z", seg=20, bevel=0.003)
+    k.box((0.06, 0.78, 0.1835), (0.004, 0.022, 0.003), "coal", seg=1)
+    k.box((0.06, 0.78, 0.192), (0.01, 0.034, 0.012), "steel", r=0.003)
+    k.cyl((0.06, 0.8, 0.192), 0.009, 0.012, "steel", axis="z", seg=12)
+    for x in (0.03, 0.09):
+        k.box((x, 0.808, 0.1705), (0.012, 0.004, 0.001), "white", seg=1)
+    k.box((0.16, 0.79, 0.1735), (0.04, 0.02, 0.006), "led-green", r=0.004, seg=1)
+    # on the worktop: the clipboard with the run sheet
+    k.box((-0.13, 0.868, 0.1), (0.15, 0.006, 0.2), "coal", r=0.004, seg=1)
+    k.box((-0.13, 0.8725, 0.105), (0.13, 0.003, 0.17), "white", seg=1)
+    k.box((-0.13, 0.876, 0.0), (0.06, 0.01, 0.02), "chrome", r=0.003)
+    # the display on a short stand at the back of the worktop, its cable over the back
+    k.box((0, 0.872, -0.07), (0.16, 0.014, 0.1), "steel", r=0.006)
+    k.box((0, 0.905, -0.03), (0.05, 0.07, 0.03), "steel", r=0.008)
+    k.screen_bezel(eq.screens()[0], "sc-matte-black", border=0.025, depth=0.05, r=0.01)
+    k.hose([(0.1, 0.95, 0.004), (0.12, 0.9, -0.1), (0.14, 0.875, -0.205), (0.14, 0.7, -0.18)], 0.005, "coal", seg=6, steps=3)

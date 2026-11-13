@@ -7,10 +7,11 @@
  *   board → the attending's recorded reassessment releases the hold → the baseline count → induction → the session is
  *   saved and reloaded → the Time Out on the board opens the operation → the operation on the field (observe_field,
  *   operate) → before closure, the counts and the RF scan (the count record, swab by swab) → closure on a reconciled
- *   count → extubation decided apart from oral intake → the Sign Out on the board → the recovery handover;
+ *   count → extubation decided apart from oral intake → woken and extubated → the Sign Out on the board → the advance
+ *   report to recovery → the transfer → the handover at the recovery bed, in person, to the recovery nurse;
  *
- * and at the end the clinical record, the physical board and the assessment agree. Patient following (walking with the
- * patient across rooms) is not exercised here: this case's patient stays on the OR 7 table (docs/CASE_126.md).
+ * and at the end the clinical record, the physical board and the assessment agree. The transfer to recovery, awake and
+ * intubated, and when the patient may speak are the subject of tools/case126-recovery.test.ts.
  *
  * `tools/check.sh` copies this file into `<ClinicalCraft>/packages/agent/src/` for the run and removes it afterwards.
  */
@@ -151,20 +152,38 @@ describe("Case 126 · release acceptance in OR 7, history to recovery handover",
     await ok(r, "operate", { op: "close" });
     expect(r.session.state.procedure).toMatchObject({ specimen: "extracted", closed: true });
     expect(r.session.state.count!.unsafe).toEqual([]);
-    // extubation decided apart from oral intake
+    // extubation decided apart from oral intake — then done: woken, extubated (an awake transfer)
     await ok(r, "answer_decision", { decision_id: "emergence", option_ids: ["criteria", "swallow-after"] });
+    await ok(r, "intervene", { intervention_id: "wake" });
+    await ok(r, "intervene", { intervention_id: "extubate" });
     await done(r, PRIMARY_ACTOR, "sign_out", BOARD);
     expect(r.session.state.phase).toBe("recovery");
     expect(board(r)).toBe("signed-out");
 
-    // ---- the recovery handover
+    // ---- the advance report from theatre; the handover is refused here — it is given at the recovery bed
+    await ok(r, "intervene", { intervention_id: "pacu-report" });
+    await ok(r, "navigate_to", { target: "patient" });
+    const notHere = await tool(r, "intervene", { intervention_id: "pacu-handover" });
+    expect(notHere.ok).toBe(false);
+    expect(notHere.output).toMatch(/recovery room \(PACU\)/);
+    expect(validCount(r, "pacu-handover")).toBe(0);
+    // ---- the transfer, the handover at the bed to the recovery nurse, in person
+    await ok(r, "intervene", { intervention_id: "transfer-pacu" });
+    expect(r.session.world()!.patientPlace()).toMatchObject({ room: "pacu" });
     await ok(r, "navigate_to", { target: "patient" });
     await ok(r, "intervene", { intervention_id: "pacu-handover" });
     await ok(r, "answer_decision", { decision_id: "postop", option_ids: ["resp", "neuro", "bile", "bleed"] });
 
     // ---- the record, the board and the score agree
-    for (const id of ["attach-monitor", "sign-in", "induction", "time-out", "sign-out", "pacu-handover"]) expect(validCount(r, id), id).toBe(1);
+    for (const id of ["attach-monitor", "sign-in", "induction", "time-out", "wake", "extubate", "sign-out", "pacu-report", "transfer-pacu", "pacu-handover"]) expect(validCount(r, id), id).toBe(1);
     expect(r.session.state.interventions.filter((x) => x.invalid)).toEqual([]);
+    // the advance report and the acceptance at the bed: two records, each with its own time and place
+    const report = r.session.state.interventions.find((x) => x.interventionId === "pacu-report")!;
+    const handover = r.session.state.interventions.find((x) => x.interventionId === "pacu-handover")!;
+    expect(report.seq!).toBeLessThan(handover.seq!);
+    expect(report).not.toHaveProperty("place");
+    expect(handover).toMatchObject({ place: { room: "pacu", kind: "recovery" }, receivedBy: "pacu.nurse", handover: { speaks: true, airway: expect.arrayContaining(["induction", "wake", "extubate"]) } });
+    expect(r.session.state.arrivals).toEqual([expect.objectContaining({ room: "pacu", kind: "recovery" })]);
     const a = assess(caseDef, r.session.state);
     for (const id of ["r-signin", "r-timeout", "r-signout", "r-cvs", "r-identify", "r-clips", "r-specimen", "r-closed", "r-emergence", "r-postop"]) {
       const item = a.rubric.find((x) => x.id === id);
@@ -172,7 +191,8 @@ describe("Case 126 · release acceptance in OR 7, history to recovery handover",
       expect(item?.scored, id).not.toBe(false);
     }
     expect(a.safety.verdict).toBe("clear");
-    expect(board(r)).toBe("signed-out");
+    // the board belongs to the patient's room: signed out while he was in OR 7, it shows nothing of him once he has gone
+    expect(board(r)).toBe("pending");
     await r.session.close();
   });
 });

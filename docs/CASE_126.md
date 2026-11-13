@@ -395,8 +395,32 @@ authored clinical wording. Scores, gates and the operative suite are unchanged; 
 
 Two findings of the same pass were **not** applied, because they change scoring and need measuring first: in the
 `subvesical-duct` variant the rubric item on clips (`r-clips`) fails together with the variant's own item when the
-subvesical duct leaks, and the synthetic haemoglobin and bilirubin changes after an injury appear at once rather
-than over hours. Both are listed below.
+subvesical duct leaks (applied in 2.6.0, below), and the synthetic haemoglobin and bilirubin changes after an injury
+appear at once rather than over hours (listed below).
+
+## 2.6.0: from the table to the recovery bed, and a leak attributed to what leaked (the 2026-11-12 audit)
+
+An audit on 12 November 2026 (SurgeryCraft `bdb8def`, ClinicalCraft `172453f`, Case 126 2.5.1) reproduced seven
+discrepancies with four runtime probes: each let a learner or an agent be credited with something the simulated
+patient or equipment did not support. Three were in this case:
+
+| finding | what the audit saw | 2.6.0 |
+|---|---|---|
+| 01 · the Sign Out gave speech back | after closure, without the emergence decision, the patient could not answer before the Sign Out and answered "Upper abdominal pain and fever…" after it — speech followed the recovery phase | speech follows consciousness and the airway, each by its own event: **`wake`** (the anaesthetic stopped and the block reversed; contraindicated before the operation has ended) and **`extubate`** (contraindicated before he is woken). `nonVerbalWhen` = induced and not (woken and extubated); `nonVerbalReasons` says which: "under general anaesthesia", then "awake, but the tracheal tube is still in". No checklist step, phase, decision or room gives speech back; an intubated transfer stays without a voice until he is woken and extubated in recovery. The `emergence` decision stays what it is: a decision |
+| 02 · the PACU handover in OR 7 | the recovery-room handover was accepted with the patient still at `or-7.slot` | the transfer is a step of its own: **`transfer-pacu`** (after a valid Sign Out — before it, an invalid attempt that moves nobody — the team takes him to a recovery bay, awake or intubated; the world records the **arrival**, and the recovery nurse comes to the bay; with a patient still intubated the responsible anaesthetist comes too). **`pacu-report`** is the advance report from theatre, by phone; **`pacu-handover`** is given at the recovery bed, in person, to the recovery nurse (`at: {roomKind: "recovery"}`, `receivers: ["recovery-nurse"]`): refused in OR 7 and while no recovery nurse is at the bed, its record keeps where (`place`), who accepted him (`receivedBy`) and what was handed over (`handover`: airway, vitals, drugs, whether he can speak, the operation and its injuries, the count). Two records, two times. In text mode the handover before the transfer is recorded as invalid and opens nothing. The PACU is a room of kind `recovery` |
+| 07 · a bed leak counted against the clips | replaying the routine in the `subvesical-duct` variant recorded the leak against the subvesical duct, yet both `r-clips` and `r-v-subvesical` failed: `r-clips` counted any bile leak | a leak or a bleed counts against the routine clipping only when it comes from the cystic duct or artery (`{procedure: {injury, structure}}`, a structure filter ClinicalCraft added for this); `r-v-double-artery` and `r-v-subvesical` name their own structure; a new variant item **`r-v-subvesical-leak`** scores recognising and managing a leak from the bed (said aloud, the bile cleared) apart from preventing it, scored only once it happened |
+
+Checked by `tools/case126-recovery.test.ts` (speech from the table to the recovery bed; the handover refused in OR 7 —
+by an agent's tool and by the learner's own action — and without the recovery nurse at the bed; the release scenario:
+an awake transfer through an agent's tools and an intubated one through the learner's own actions — when he speaks,
+which bed he reaches, who accepts him), `tools/case126.test.ts` (the same in text mode; two runs with the same routine
+clipping, the subvesical duct clipped in one and opened in the other — managed or missed), the release acceptance run
+and the in-world demonstration (now to the recovery bed) — each in `tools/regressions.tsv`. The rubric's base 100
+points are unchanged; the reference path, every variant's expert trajectory and the operative suite still score
+100 %, and the reported anatomy's routine replayed blind is still safety-critical in every variant.
+
+The other four findings were in the thoracoscopy training station ([THORACOSCOPY.md](THORACOSCOPY.md) "Each
+trainee's run").
 
 ## Validation still required (not done)
 
@@ -420,10 +444,9 @@ than over hours. Both are listed below.
 - **Physiology calibration.** The intra-operative values are illustrative, not calibrated. The haemoglobin fall
   after a bleed and the bilirubin rise after a duct injury are applied at once; a real fall lags haemodilution and
   bilirubin rises over 24–72 hours.
-- **The clip item in the `subvesical-duct` variant.** `r-clips` fails together with `r-v-subvesical` when the
-  subvesical duct leaks, although the cystic duct and artery were secured: the engine records one `bile-leak` for
-  any unclipped duct. Telling them apart needs a structure filter on the injury predicate in ClinicalCraft, and the
-  blind-replay figures measured again.
+- **The recovery handover and the extubation steps** (2.6.0) are authored to the WHO checklist and recovery-room
+  practice; an anaesthetist and a recovery nurse should review what is handed over and when the patient is woken and
+  extubated, and whether an intubated transfer needs more of the team than the anaesthetist who comes with him.
 - **Simulation validity.** Face, content and construct validity, inter-rater reliability.
 - **Teaching corrections and holds.** An anaesthetist should review the induction and emergence corrections, the
   extubation decision and when the attending or anaesthetist places a hold; the corrections are authored teaching

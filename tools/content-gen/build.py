@@ -19,6 +19,7 @@ def write(path, text):
 
 # equipment models: tools/blender/build.py writes the GLBs (content/assets/models/) and their catalog references
 MODELS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "blender", "models.json")
+refs = {}
 if os.path.exists(MODELS):
     with open(MODELS, encoding="utf-8") as f:
         refs = json.load(f)
@@ -27,6 +28,12 @@ if os.path.exists(MODELS):
         assert type_id in types, ("model of an unknown type", type_id)
         assert os.path.exists(os.path.join(OUT, "assets", ref["uri"])), ("model file missing: run tools/blender/build.py", ref["uri"])
         types[type_id]["model"] = ref
+# a type drawn with another type's model (a training count board is the theatre's count board to look at), unless
+# tools/blender/build.py has given it one of its own
+for e in catalog.EQUIPMENT:
+    other = e.pop("_model_of", None)
+    if other and other in refs and "model" not in e:
+        e["model"] = refs[other]
 
 cat = {
     "schema": "clinicalcraft/equipment-catalog@1",

@@ -32,7 +32,8 @@ EQUIPMENT = []
 
 
 def eq(id, name, category, description, footprint, parts, *, usage=None, caps=(), solid=True, interaction="none",
-       prompt=None, screen="none", light=None, tags=(), portable=None, reach=None, points=None, behavior=None, manikin=None):
+       prompt=None, screen="none", light=None, tags=(), portable=None, reach=None, points=None, behavior=None, manikin=None,
+       screen_needs=None):
     w, d, h = footprint
     tol = 0.05
     for i, p in enumerate(parts):
@@ -54,6 +55,10 @@ def eq(id, name, category, description, footprint, parts, *, usage=None, caps=()
         inter["prompt"] = prompt
     e["interaction"] = inter
     e["screen"] = screen
+    if screen_needs:
+        # what the screens' picture needs (ClinicalCraft `screenNeeds`): dark while one does not hold
+        assert screen != "none", (id, "screenNeeds without a screen")
+        e["screenNeeds"] = list(screen_needs)
     if light:
         e["light"] = light
     e["tags"] = list(tags)

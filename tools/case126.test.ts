@@ -24,6 +24,7 @@ import {
   evaluate,
   observeField,
   parseCase,
+  patientNonVerbal,
   reduce,
   type CaseDefinition,
   type ClinicalAction,
@@ -221,6 +222,46 @@ describe("Case 126: the operation", () => {
 /* ------------------------------------------------------------------ */
 
 type Step = Record<string, unknown>;
+describe("Case 126: after the operation, in the record (text mode)", () => {
+  it("speech follows waking and extubation, never the Sign Out or a decision; a recovery handover before the transfer is invalid and opens nothing", () => {
+    const close = c.solution.findIndex((a) => a.type === "operate" && a.op.op === "close");
+    let { s, rejected } = replay(c.solution.slice(0, close + 1));
+    expect(rejected).toEqual([]);
+    const step = (a: ClinicalAction) => {
+      const r = reduce(c, s, a);
+      s = r.state;
+      return r;
+    };
+    const speaks = () => !patientNonVerbal(c, s);
+    expect(speaks()).toBe(false);
+    // the extubation decided and the Sign Out made — the phase is recovery — still no voice
+    expect(step({ type: "answer", decisionId: "emergence", optionIds: ["criteria", "swallow-after"] }).rejected).toBeUndefined();
+    expect(step({ type: "intervene", interventionId: "sign-out" }).rejected).toBeUndefined();
+    expect([s.phase, speaks()]).toEqual(["recovery", false]);
+    // the handover before the transfer: recorded as invalid, nothing applied, the next decision still locked
+    step({ type: "intervene", interventionId: "pacu-handover" });
+    expect(s.interventions.at(-1)).toMatchObject({ interventionId: "pacu-handover", invalid: true });
+    expect(s.interventions.at(-1)).not.toHaveProperty("handover");
+    expect(step({ type: "answer", decisionId: "postop", optionIds: ["resp", "neuro", "bile", "bleed"] }).rejected?.code).toBe("requirements-unmet");
+    // a transfer before the Sign Out would have been invalid too; after it, the handover counts — and keeps its content
+    expect(step({ type: "intervene", interventionId: "pacu-report" }).rejected).toBeUndefined();
+    expect(step({ type: "intervene", interventionId: "transfer-pacu" }).rejected).toBeUndefined();
+    expect(s.interventions.at(-1)).not.toHaveProperty("invalid");
+    expect(step({ type: "intervene", interventionId: "pacu-handover" }).rejected).toBeUndefined();
+    expect(s.interventions.at(-1)).toMatchObject({ interventionId: "pacu-handover", handover: { speaks: false, airway: ["induction"] } });
+    expect(step({ type: "answer", decisionId: "postop", optionIds: ["resp", "neuro", "bile", "bleed"] }).rejected).toBeUndefined();
+    // woken: awake, still intubated — no voice; extubated: speech
+    step({ type: "intervene", interventionId: "wake" });
+    expect(speaks()).toBe(false);
+    step({ type: "intervene", interventionId: "extubate" });
+    expect(speaks()).toBe(true);
+    // extubating before waking is unsafe whatever follows (and woken first, it is in order)
+    const early = replay([...c.solution.slice(0, close + 1), { type: "intervene", interventionId: "extubate" }]).s;
+    expect(early.interventions.at(-1)).toMatchObject({ interventionId: "extubate", appropriateness: "contraindicated" });
+    expect(patientNonVerbal(c, early)).toBe(true);
+  });
+});
+
 const SUITE_DIR = `${process.env.SURGERYCRAFT_CONTENT ?? ""}/operative/case126-v1`;
 const scenarios = readdirSync(SUITE_DIR)
   .filter((f) => f.endsWith(".json"))
@@ -321,6 +362,48 @@ describe("Case 126: anatomical variants", () => {
       expect({ v, verdict: report.safety.verdict }).toEqual({ v, verdict: "safety-critical" });
       expect(report.procedure?.injuries.map((i) => ({ kind: i.kind, structure: i.structure }))).toContainEqual(expected[v]);
     }
+  });
+
+  it("a bile leak is attributed to the structure that leaked (the 2026-11-12 audit, finding 07): the same routine clipping, the subvesical duct clipped in one run and opened in the other", () => {
+    const expert = trajectories.get("subvesical-duct")!;
+    // the routine clipping and division of the cystic duct and artery, and the start of the bed: the same in every run
+    const bedStart = expert.findIndex((x) => x.op === "isolate" && x.handle === "@subvesical-duct");
+    const routine = expert.slice(0, bedStart);
+    const finish: Step[] = [
+      { op: "inspect" }, { op: "withdraw", port: "C" }, { op: "insert", port: "C", instrument: "retrieval-bag" }, { op: "bag", port: "C" }, { op: "extract", port: "A" }, { op: "close" },
+    ];
+    // B: the duct left unclipped — the bed dissection completed through it opens it: bile from the bed …
+    const opened: Step[] = [...routine, { op: "dissect", port: "C", region: "gallbladder-bed", energy: true }];
+    // … recognised and managed (said aloud, the bile suctioned), or not
+    const managed: Step[] = [...opened, { op: "recognise", injury: "bile-leak" }, { op: "withdraw", port: "C" }, { op: "insert", port: "C", instrument: "suction" }, { op: "suction", port: "C" }, ...finish];
+    const missed: Step[] = [...opened, { op: "withdraw", port: "C" }, ...finish.slice(2)];
+    const run = (steps: Step[]) => {
+      const ops = resolveSteps("subvesical-duct", steps);
+      const { s, rejected } = replay([start("subvesical-duct"), ...PREOP.filter((a) => a.type !== "start"), ...ops.map(op), ...AFTER_CLOSE]);
+      expect(rejected).toEqual([]);
+      const report = assess(c, s);
+      const item = (id: string) => {
+        const r = report.rubric.find((x) => x.id === id)!;
+        return r.scored === false ? "unscored" : r.met ? "met" : "not met";
+      };
+      return { s, report, items: Object.fromEntries(["r-clips", "r-v-subvesical", "r-v-subvesical-leak", "r-recognise", "r-spill"].map((id) => [id, item(id)])) };
+    };
+    const a = run(expert);
+    const b = run(managed);
+    const m = run(missed);
+    // the routine clipping is the same in every run, and so is its item: a leak from the bed is not the cystic duct's
+    expect([a.items["r-clips"], b.items["r-clips"], m.items["r-clips"]]).toEqual(["met", "met", "met"]);
+    for (const x of [b, m]) expect(x.s.procedure!.injuries.map((i) => [i.kind, i.structure])).toEqual([["bile-leak", "subvesical-duct"]]);
+    expect(a.s.procedure!.injuries).toEqual([]);
+    // the duct in the bed is scored by its own items: prevented (clipped before the bed was finished) …
+    expect(a.items).toMatchObject({ "r-v-subvesical": "met", "r-v-subvesical-leak": "unscored" });
+    // … and, when it leaked, recognising and managing the leak apart from preventing it
+    expect(b.items).toMatchObject({ "r-v-subvesical": "not met", "r-v-subvesical-leak": "met", "r-recognise": "met", "r-spill": "met" });
+    expect(m.items).toMatchObject({ "r-v-subvesical": "not met", "r-v-subvesical-leak": "not met", "r-recognise": "not met" });
+    // an unrecognised injury is still a safety-critical outcome; a recognised and managed one is not capped by it
+    expect(m.report.safety.verdict).toBe("safety-critical");
+    expect(b.report.score.percent).toBeGreaterThan(m.report.score.percent);
+    expect(a.report.score.percent).toBe(100);
   });
 
   it("the suite: one neutral instruction, a trajectory for every anatomy, held-out anatomies apart from the dev split", () => {
